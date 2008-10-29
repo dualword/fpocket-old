@@ -1,0 +1,586 @@
+
+#include "../headers/rpdb.h"
+
+/**
+
+## ----- GENERAL INFORMATIONS
+##
+## FILE 					rpdb.c
+## AUTHORS					P. Schmidtke and V. Le Guilloux
+## LAST MODIFIED			01-04-08
+##
+## ----- SPECIFICATIONS
+## ----- MODIFICATIONS HISTORY
+##
+##	01-04-08	(v)  Added template for comments and creation of history
+##	01-01-08	(vp) Created (random date...)
+##	
+## ----- TODO or SUGGESTIONS
+##
+
+*/
+
+/**
+	A list of HETATM to keep in each case!
+	REF Peter?
+*/
+
+static const char *ST_keep_hetatm[] = {
+
+	"HEA", "HBI", "BIO", "CFM", "CLP", "FES", "F3S", "FS3", "FS4", "BPH",
+	"BPB", "BCL", "BCB", "COB", "ZN", "FEA", "FEO", "H4B", "BH4", "BHS",
+	"HBL", "THB", "DDH", "DHE", "HAS", "HDD", "HDM", "HEB", "HEC", "HEO",
+	"HES", "HEV", "MHM", "SRM", "VER", "1FH", "2FH", "HC0", "HC1", "HF3",
+	"HF5", "NFS", "OMO", "PHF", "SF3", "SF4", "CFM", "CFN", "CLF", "CLP",
+	"CN1", "CNB", "CNF", "CUB", "CUM", "CUN", "CUO", "F3S", "FES", "FS2",
+	"FS3", "FS4", "FSO", "FSX", "PHO", "BH1", "CHL", "CL1", "CL2", "CLA",
+	"CCH", "CFO", "FE2", "FCI", "FCO", "FDC", "FEA", "FEO", "FNE", "HIF",
+	"OFO", "PFC", "HE5", "BAZ", "BOZ", "FE", "HEM", "HCO", "1CP", "CLN",
+	"COH", "CP3", "DEU", "FDD", "FDE", "FEC", "FMI", "HE5", "HEG", "HIF",
+	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9"
+} ;
+
+static const int ST_nb_keep_hetatm = 110 ;
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Extract the residu name for an ATOM or HETATM pdb record. To remember:
+
+	COLUMNS      DATA TYPE        FIELD      DEFINITION
+	------------------------------------------------------
+	18 - 20      Residue name     resName    Residue name.
+
+	The memory to store the name has to be provided by the user.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *pdb_line	: The PDB line containings info
+	@ char *res_name	: Pointer to residue name
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void
+   -----------------------------------------------------------------------------
+*/
+void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
+{
+	// Position:          1         2         3         4         5         6         7         8
+	// Position: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+	// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 11.92           N
+
+	// Residue name
+	strncpy(res_name, pdb_line + 17, 4);
+	res_name[4] = '\0';
+	str_trim(res_name); /* remove spaces from the resname */
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void rpdb_extract_pdb_atom(char *pdb_line, int *atm_id, char *name, char *res_name, 
+								  char *chain, char *seg_name, int *res_id, char *insert, 
+								  char *alt_loc, char *elem_symbol, float *x, float *y, float *z, 
+								  float *occ, float *beta)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Extract all informations given in a pdb ATOM or HETATM line, and store them 
+	in given pointers. User must therefore provide enough memory.
+	PDB last known standart:
+
+	COLUMNS      DATA TYPE        FIELD      DEFINITION
+	------------------------------------------------------
+	1 -  6      Record name      "ATOM    "
+	7 - 11      Integer          serial     Atom serial number.
+	13 - 16      Atom             name       Atom name.
+	17           Character        altLoc     Alternate location indicator.
+	18 - 20      Residue name     resName    Residue name.
+	22           Character        chainID    Chain identifier.
+	23 - 26      Integer          resSeq     Residue sequence number.
+	27           AChar            iCode      Code for insertion of residues.
+	31 - 38      Real(8.3)        x          Orthogonal coordinates for X in 
+											 Angstroms
+	39 - 46      Real(8.3)        y          Orthogonal coordinates for Y in 
+											 Angstroms
+	47 - 54      Real(8.3)        z          Orthogonal coordinates for Z in 
+											 Angstroms
+	55 - 60      Real(6.2)        occupancy  Occupancy.
+	61 - 66      Real(6.2)        tempFactor Temperature factor.
+	77 - 78      LString(2)       element    Element symbol, right-justified.
+	79 - 80      LString(2)       charge     Charge on the atom.
+
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *pdb_line	: The PDB line containings info
+	@ int *atm_id		: Pointer to atom ID
+	@ char *name		: Pointer to atom name
+	@ char *res_name	: Pointer to residue name
+	@ char *chain		: Pointer to chain name
+	@ char *seg_name	: Pointer to segment	
+	@ int *res_id 		: Pointer to residue ID
+	@ char *insert		: Pointer to insertion code
+	@ char *alt_loc		: Pointer to alternate location
+	@ char *elem_symbol	: Pointer to element symbol
+	@ float *x, *y, *z	: Pointer to coordinates
+	@ float *occ		: Pointer to occupency
+	@ float *bfactor	: Pointer to b-factor
+	@ char *symbol		: Pointer to symbol
+	@ float *bfactor	: Pointer to charge
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void
+   -----------------------------------------------------------------------------
+*/
+
+void rpdb_extract_pdb_atom(char *pdb_line, char *type, int *atm_id, char *name, char *alt_loc, 
+						   char *res_name, char *chain, int *res_id, char *insert, 
+						   float *x, float *y, float *z, float *occ, float *bfactor,
+						   char *symbol, int *charge)
+{
+	// Position:          1         2         3         4         5         6         7         8
+	// Position: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+	// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 11.92           N
+
+	int rlen = strlen(pdb_line) ;
+
+	char *prt,
+		 ctmp ;
+
+	// Record type
+	strncpy(type, pdb_line, 6) ;
+
+	// Atom ID
+	prt = pdb_line + 6 ; 
+	ctmp = pdb_line[11] ; pdb_line[11] = '\0' ;
+	*atm_id = (float) atof(prt) ; pdb_line[11] = ctmp ;
+	
+	// Atom name
+	strncpy(name, pdb_line + 12, 4);
+	name[4] = '\0';
+	str_trim(name) ;
+
+	// Alternate location identifier
+	*alt_loc = pdb_line[16] ;
+	
+	// Residue name
+	strncpy(res_name, pdb_line + 17, 4);
+	res_name[4] = '\0';
+	str_trim(res_name); /* remove spaces from the resname */
+
+	// Chain name
+	chain[0] = pdb_line[21];
+	chain[1] = '\0';
+
+	// Residue id number
+	prt = pdb_line + 22 ; 
+	ctmp = pdb_line[26] ; pdb_line[26] = '\0' ;
+	*res_id = (float) atof(prt) ; pdb_line[26] = ctmp ;
+
+	// Insertion code
+	*insert = pdb_line[26];
+
+	// x, y, and z coordinates, occupancy and b-factor
+	rpdb_extract_atom_values(pdb_line, x, y, z, occ, bfactor);
+
+	// Atomic element symbol
+	if (rlen >= 77) {
+		strncpy(symbol, pdb_line + 76, 2);
+		symbol[2] = '\0';
+		str_trim(symbol); /* remove spaces from the resname */
+	}
+	else symbol[0] = '\0';
+	
+	// Charge
+	if(rlen >= 80) {
+		char buf[3] = "   " ;
+		if((pdb_line[78] == ' ' && pdb_line[79] == ' ') || pdb_line[78] == '\n'){
+			*charge = -1 ;
+		}
+		else {
+			buf[0] = pdb_line[78] ;
+			buf[1] = pdb_line[79] ;
+			buf[2] = '\0' ;
+			*charge = (int) atoi(buf) ;
+		}
+	
+	}
+	
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
+								  float *occ, float *bfactor) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Extract coordinates, occupancy and bfactor values from a pdb ATOM or HETATM
+	line, and store them in given pointers.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *pdb_line	: The PDB line containings info
+	@ float *x, *y, *z	: Pointer to coordinates
+	@ float *occ		: Pointer to occupency
+	@ float *bfactor	: Pointer to b-factor
+   -----------------------------------------------------------------------------
+   ## RETURN: void
+   -----------------------------------------------------------------------------
+*/
+void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
+							  float *occ, float *bfactor) 
+{
+	// Example: 
+	// Position:          1         2         3         4         5         6         7         8
+	// Position: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+	// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 11.92           N
+	
+	char *ptr,
+		 ctmp ;
+	
+	ptr = pdb_line + 30 ;
+	ctmp = pdb_line[38] ; pdb_line[38] = '\0' ;
+	*x = (float) atof(ptr) ; pdb_line[38] = ctmp ;
+
+	ptr = pdb_line + 38 ;
+	ctmp = pdb_line[46] ; pdb_line[46] = '\0' ;
+	*y = (float) atof(ptr) ; pdb_line[46] = ctmp ;
+
+	ptr = pdb_line + 46 ;
+	ctmp = pdb_line[54] ; pdb_line[54] = '\0' ;
+	*z = (float) atof(ptr) ; pdb_line[54] = ctmp ;
+
+	ptr = pdb_line + 54 ;
+	ctmp = pdb_line[60] ; pdb_line[60] = '\0' ;
+	*occ = (float) atof(ptr) ; pdb_line[60] = ctmp ;
+	
+	ptr = pdb_line + 60 ;
+	ctmp = pdb_line[66] ; pdb_line[66] = '\0' ;
+	*bfactor = (float) atof(ptr) ; pdb_line[66] = ctmp ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma, 
+						 float *a, float *b, float *c) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Extract informations on a box size from a pdb CRYSTL line, and store them 
+	in given pointers.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *pdb_line				: The PDB line containings info
+	@ float *alpha, *beta, *gamma	: Pointer to angles
+	@ float *A, B, C				: Pointer sides length
+   -----------------------------------------------------------------------------
+   ## RETURN: void
+   -----------------------------------------------------------------------------
+*/
+void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma, 
+						 float *a, float *b, float *c) 
+{
+	// Example of pbd line:
+	// Position: 1    6   10   15  19   24  28   33 36  40 43  47 49  53 
+	// Record:   CRYST1   73.580   76.280   80.580  90.00  90.00  90.00 P 21 21 21    4  1ATP 161
+
+	char ch, *s;
+	
+	s = pdb_line+6 ;
+	ch = pdb_line[15] ; pdb_line[15] = '\0' ;
+	*a = (float) atof(s) ;
+
+	s = pdb_line+15 ;
+	*s = ch ; ch = pdb_line[24]; pdb_line[24] = '\0' ;
+	*b = (float) atof(s) ;
+
+	s = pdb_line+24 ;
+	*s = ch; ch = pdb_line[33]; pdb_line[33] = '\0' ;
+	*c = (float) atof(s) ;
+
+	s = pdb_line+33;
+	*s = ch; ch = pdb_line[40]; pdb_line[40] = '\0' ;
+	*alpha = (float) atof(s) ;
+
+	s = pdb_line+40;
+	*s = ch; ch = pdb_line[47]; pdb_line[47] = '\0' ;
+	*beta = (float) atof(s) ;
+
+	s = pdb_line+47;
+	*s = ch; ch = pdb_line[54]; pdb_line[54] = '\0' ;
+	*gamma = (float) atof(s) ;
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	s_pdb* rpdb_open(const char *fpath)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Open a PDB file, alloc memory for all informations on this pdb, and store 
+	several informations like the number of atoms, the header, the remark... 
+	This first reading of PDB rewinds the FILE* pointer. No coordinates are
+	read.
+
+	Hydrogens are conserved.
+	All HETATM are removed, except the given ligand if we have to keep it, and
+	important HETATM listed in the static structure at the top of this file.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ const char *fpath: The pdb path.
+	@ const char *ligan: Ligand resname.
+	@ const char *keep_lig:  Keep the given ligand or not?
+   -----------------------------------------------------------------------------
+   ## RETURN: 
+	s_pdb: data containing PDB info.
+   -----------------------------------------------------------------------------
+*/
+s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
+{
+	s_pdb *pdb = NULL ;
+
+	char buf[M_PDB_BUF_LEN],
+		 resb[5] ;
+	int nhetatm = 0,
+		natoms = 0,
+		natm_lig = 0 ;
+	int i ;
+	
+	pdb = (s_pdb *) my_malloc(sizeof(s_pdb)) ; ;
+	
+	pdb->fpdb = fopen(fpath, "r");
+	if (!pdb->fpdb) {
+		my_free(pdb) ;
+		fprintf(stderr, "! File %s does not exist\n", fpath) ;
+		return NULL ;
+	}
+
+	while(fgets(buf, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
+		if (!strncmp(buf, "ATOM ",  5)) {
+			rpdb_extract_atm_resname(buf, resb) ;
+		// If a ligan has been provided, just keep it
+			if(ligan && ligan[0] == resb[0] && ligan[1] == resb[1] && ligan[2] == resb[2]){
+				if(keep_lig) {
+					natm_lig ++ ;
+					natoms++ ;
+				}
+			}
+			else {
+				natoms++ ;
+			}
+		}
+		else if(!strncmp(buf, "HETATM", 6)) {
+			rpdb_extract_atm_resname(buf, resb) ;
+		// If a ligan has been provided, just keep it
+			if(keep_lig && ligan && ligan[0] == resb[0] && ligan[1] == resb[1] && ligan[2] == resb[2]){
+				natm_lig ++ ; natoms++ ;
+			}
+			else {
+				for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
+					if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1] == resb[1]
+					   && ST_keep_hetatm[i][2] == resb[2]) {
+						nhetatm++ ; natoms++ ;
+						break ;
+					}
+				}
+			}
+		}
+		else if (!strncmp(buf, "HEADER", 6)) strncpy(pdb->header, buf, M_PDB_BUF_LEN) ;
+		else if (!strncmp(buf, "END", 3)) break ;
+	}
+
+	if (natoms == 0) {
+		fprintf(stderr, "! File '%s' contains no atoms...\n", fpath) ;
+		my_free(pdb) ;
+	
+		return NULL ;
+	}
+
+	pdb->latoms = (s_atm*) my_calloc(natoms, sizeof(s_atm)) ;
+
+	if(nhetatm > 0) pdb->lhetatm = (s_atm**) my_calloc(nhetatm, sizeof(s_atm*)) ;
+	else pdb->lhetatm = NULL ;
+	
+	if(natm_lig > 0) pdb->latm_lig = (s_atm**) my_calloc(natm_lig, sizeof(s_atm*)) ;
+	else pdb->latm_lig = NULL ;
+	
+	pdb->natoms = natoms ;
+	pdb->nhetatm = nhetatm ;
+	pdb->natm_lig = natm_lig ;
+
+	rewind(pdb->fpdb) ;
+
+	return pdb ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void rpdb_read(s_pdb *pdb, s_atm *atoms) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Read informations on atoms for a pdb file. First we put the FILE cursor at
+	begining (just in case). Then we read informations on atoms and crystl: 
+	coordinates etc...
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_lst_vvertice *lvvert: The structure to fill
+	@ const char fpath[]: File containing vertices
+   -----------------------------------------------------------------------------
+   ## RETURN:
+   -----------------------------------------------------------------------------
+*/
+void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) 
+{
+	s_atm *atom = NULL ;
+	int i,
+		iatoms,
+		ihetatm,
+		iatm_lig,
+		ligfound ;
+
+	char pdb_line[M_PDB_BUF_LEN],
+		 resb[5] ;					// Buffer for the current residue name
+
+	s_atm *atoms = pdb->latoms ;
+	s_atm **atm_lig = pdb->latm_lig ;
+
+	iatoms = 0 ;
+	ihetatm = 0 ;
+	iatm_lig = 0 ;
+	ligfound = 0 ;
+
+	while(fgets(pdb_line, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
+		if (strncmp(pdb_line, "ATOM ",  5) == 0) {
+			rpdb_extract_atm_resname(pdb_line, resb) ;
+			if(ligan && ligan[0] == resb[0] && ligan[1] == resb[1] && ligan[2] == resb[2]){
+				if(keep_lig) {
+					atom = atoms + iatoms ;
+					rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), atom->name, &(atom->pdb_aloc),
+									atom->res_name, atom->chain, &(atom->res_id),
+									&(atom->pdb_insert), &(atom->x), &(atom->y), &(atom->z),
+									&(atom->occupancy), &(atom->bfactor), atom->symbol,
+									&(atom->charge));
+					
+					atom->mass = pte_get_mass(atom->symbol) ;
+					atom->radius = pte_get_vdw_ray(atom->symbol) ;
+					atom->electroneg = pte_get_enegativity(atom->symbol) ;
+					atom->sort_x = -1 ;
+					iatoms++ ;
+
+					atm_lig[iatm_lig] = atom ;
+					iatm_lig ++ ;
+					ligfound = 1 ;
+				}
+			}
+			else {
+				atom = atoms + iatoms ;
+				rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), atom->name, &(atom->pdb_aloc),
+								atom->res_name, atom->chain, &(atom->res_id),
+								&(atom->pdb_insert), &(atom->x), &(atom->y), &(atom->z),
+								&(atom->occupancy), &(atom->bfactor), atom->symbol,
+								&(atom->charge));
+				
+				atom->mass = pte_get_mass(atom->symbol) ;
+				atom->radius = pte_get_vdw_ray(atom->symbol) ;
+				atom->electroneg = pte_get_enegativity(atom->symbol) ;
+				atom->sort_x = -1 ;
+				iatoms++ ;
+			}
+		}
+		else if(strncmp(pdb_line, "HETATM", 6) == 0) {
+			rpdb_extract_atm_resname(pdb_line, resb) ;
+			// Then, if a ligan has been provided, just keep it
+			if(ligan && keep_lig && ligan[0] == resb[0] && ligan[1] == resb[1] && ligan[2] == resb[2]){
+				atom = atoms + iatoms ;
+				rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), atom->name, &(atom->pdb_aloc),
+								  atom->res_name, atom->chain, &(atom->res_id),
+								  &(atom->pdb_insert), &(atom->x), &(atom->y), &(atom->z),
+								  &(atom->occupancy), &(atom->bfactor), atom->symbol,
+								  &(atom->charge));
+
+				atom->mass = pte_get_mass(atom->symbol) ;
+				atom->radius = pte_get_vdw_ray(atom->symbol) ;
+				atom->electroneg = pte_get_enegativity(atom->symbol) ;
+				atom->sort_x = -1 ;
+
+				atm_lig[iatm_lig] = atom ;
+				iatm_lig ++ ; iatoms++ ;
+				ligfound = 1 ;
+			}
+			else if(pdb->lhetatm) {
+				for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
+					if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1] == resb[1]
+					&& ST_keep_hetatm[i][2] == resb[2]) {
+						atom = atoms + iatoms ;
+						rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), atom->name, 
+											  &(atom->pdb_aloc), atom->res_name, atom->chain,		
+											  &(atom->res_id), &(atom->pdb_insert), &(atom->x), 
+											  &(atom->y), &(atom->z), &(atom->occupancy), 
+											  &(atom->bfactor), atom->symbol, &(atom->charge));
+						atom->mass = pte_get_mass(atom->symbol) ;
+						atom->radius = pte_get_vdw_ray(atom->symbol) ;
+						atom->electroneg = pte_get_enegativity(atom->symbol) ;
+						atom->sort_x = -1 ;
+
+// 						printf("\t- Keeping Important HETATM: %s\n", resb);
+						pdb->lhetatm[ihetatm] = atom ;
+						ihetatm ++ ; iatoms++ ;
+						break ;
+					}
+				}
+			}
+		}
+		else if (strncmp(pdb_line, "CRYST1",  6) == 0)  {
+			rpdb_extract_cryst1(pdb_line, &(pdb->alpha), &(pdb->beta), &(pdb->gamma),
+									 &(pdb->A),  &(pdb->B), &(pdb->C));
+		}
+		else if (!strncmp(pdb_line, "END", 3)) break ;
+	}
+
+	if(ligan && keep_lig && (ligfound == 0 || pdb->natm_lig <= 0)) {
+		fprintf(stderr, ">! Warning: ligand '%s' not found in the pdb...\n", ligan) ;
+		if(pdb->latm_lig) fprintf(stderr, "! Ligand list is not NULL however...\n") ;
+		if(ligfound == 1) fprintf(stderr, "! And ligfound == 1!! :-/\n") ;
+	}
+	else if(ligfound == 1 && iatm_lig <= 0) {
+		fprintf(stderr, ">! Warning: ligand '%s' has been detected but no atoms has been stored!\n", ligan) ;
+	}
+	else if((ligfound == 1 && pdb->natm_lig <= 0) || (pdb->natm_lig <=0 && iatm_lig > 0)) {
+		fprintf(stderr, ">! Warning: ligand '%s' has been detected in rpdb_read but not in rpdb_open!\n", ligan) ;
+	}
+
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	void free_pdb_atoms(s_pdb *pdb) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Free memory for s_pdb structure
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_pdb *pdb: pdb struct to free
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void
+   -----------------------------------------------------------------------------
+*/
+void free_pdb_atoms(s_pdb *pdb) 
+{
+	if(pdb) {
+		if(pdb->lhetatm) {
+			my_free(pdb->lhetatm) ;
+			pdb->lhetatm = NULL ;		
+		}
+		if(pdb->latoms) {
+			my_free(pdb->latoms) ;
+			pdb->latoms = NULL ;
+		}
+		if(pdb->latm_lig) {
+			my_free(pdb->latm_lig) ;
+			pdb->latm_lig = NULL ;
+		}
+		if(pdb->fpdb) {
+			fclose(pdb->fpdb) ;
+			pdb->fpdb = NULL ;	
+		}
+
+		my_free(pdb) ;
+	}
+}
