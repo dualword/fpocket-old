@@ -54,7 +54,7 @@ void test_fpocket(s_tparams *par)
 	/* Test all files */
 		for(i = 0 ; i < par->nfiles ; i++) {
 			strcpy(par->fpar->pdb_path, par->fapo[i]) ;
-			status [i] = test_complexe(par, i, ddata, idata) ;
+			status [i] = test_AC(par, i, ddata, idata) ;
 			fprintf(stdout, "> %3d : %s output code %d\n", i+1, par->fapo[i],
 														   status [i]) ;
 			if(status[i] == M_OK) N++ ;
@@ -205,7 +205,7 @@ void test_fpocket(s_tparams *par)
 	void test_complexe(s_tparams *par)
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Test fpocket for a given complexe.
+	Test fpocket for a single set of apo/complexe .
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
@@ -215,7 +215,7 @@ void test_fpocket(s_tparams *par)
 	void
    -----------------------------------------------------------------------------
 */
-int test_complexe(s_tparams *par, int i, float ddata [][M_NDDATA], 
+int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], 
 				   int idata [][M_NIDATA]) 
 {
 	s_atm **accpck = NULL,
