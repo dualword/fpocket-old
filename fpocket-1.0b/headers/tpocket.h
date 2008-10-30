@@ -20,22 +20,27 @@
 
 #define M_DST_CRIT 4.0
 
-#define M_NDDATA 8
-#define M_MAXPCT1 0
-#define M_MAXPCT2 1
-#define M_MINDST 2
-#define M_OREL1 3
-#define M_OREL2 4
-#define M_OREL3 5
-#define M_LIGMASS 6
-#define M_LIGVOL 7
+/* A set of index, giving the position of each value in the tab used to
+ * store them. In the src file, those statistics values are stored in a tab
+ * using indices given here.
+ **/
+#define M_NDDATA 8		/* Number of floating values */
+#define M_MAXPCT1 0		/* Maximum observed overlap for the criteria 1 */
+#define M_MAXPCT2 1		/* Maximum observed overlap for the criteria 2 */
+#define M_MINDST 2		/* Minimum distance observed (barycenter/ligand), crit 3 */
+#define M_OREL1 3		/* Relative overlap of the pocket found for criteria 1 */
+#define M_OREL2 4		/* Relative overlap of the pocket found for criteria 2 */
+#define M_OREL3 5		/* Relative overlap of the pocket found for criteria 3 */
+#define M_LIGMASS 6		/* Mass of the ligand */
+#define M_LIGVOL 7		/* Volume of the ligand */
 
-#define M_NIDATA 4
-#define M_NPOCKET 0
-#define M_POS1 1
-#define M_POS2 2
-#define M_POS3 3
+#define M_NIDATA 4		/* Number of interger values */
+#define M_NPOCKET 0		/* Total number of pocket found */
+#define M_POS1 1		/* Rank of the right pocket for the first criteria */
+#define M_POS2 2		/* Rank of the right pocket for the second criteria */
+#define M_POS3 3		/* Rank of the right pocket for the third criteria */
 
+/* Flags used for the pocket detection */
 #define M_LIGNOTFOUND -2
 #define M_PDBOPENFAILED -1
 #define M_OK 0 
@@ -46,7 +51,7 @@
 // ------------------------------------PROTOTYPES-------------------------------------------
 
 void test_fpocket(s_tparams *par) ;
-int test_complexe(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) ;
+int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) ;
 void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, int nalig, float ligvol,
 				   s_atm **alneigh, int nlneigh, float ddata [][M_NDDATA], int idata [][M_NIDATA], int i,
 				   s_fparams *params) ;
