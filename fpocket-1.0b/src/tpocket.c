@@ -55,7 +55,8 @@ void test_fpocket(s_tparams *par)
 		for(i = 0 ; i < par->nfiles ; i++) {
 			strcpy(par->fpar->pdb_path, par->fapo[i]) ;
 			status [i] = test_complexe(par, i, ddata, idata) ;
-			fprintf(stdout, "> %3d : %s output code %d\n", i, par->fapo[i],status [i]) ;
+			fprintf(stdout, "> %3d : %s output code %d\n", i+1, par->fapo[i],
+														   status [i]) ;
 			if(status[i] == M_OK) N++ ;
 		}
 
