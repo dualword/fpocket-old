@@ -36,9 +36,11 @@ typedef struct s_pdb
 {
 	FILE *fpdb ;
 
-	s_atm *latoms ;			// The list of atoms: contains all atoms!
-	s_atm **lhetatm ;		// List of hetatm. Contains pointers to atoms in the latoms list!
-	s_atm **latm_lig ;		// List of ligand atoms. Contains pointers to atoms in the latoms list!
+	s_atm *latoms ;		// The list of atoms: contains all atoms!
+	s_atm **lhetatm ;	// List of hetatm. Contains pointers to atoms in the 
+						// latoms list!
+	s_atm **latm_lig ;	// List of ligand atoms. Contains pointers to atoms 
+						// in the latoms list!
 
 	int natoms,			// Number of atoms
 		nhetatm,		// Number of HETATM
@@ -61,17 +63,12 @@ void rpdb_extract_cryst1(char *rstr, float *alpha, float *beta, float *gamma,
 						 float *a, float *b, float *c) ;
 void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 							  float *occ, float *beta) ;
-void rpdb_extract_pdb_atom(char *pdb_line, char *type, int *atm_id, char *name, char *alt_loc, 
-						   char *res_name, char *chain, int *res_id, char *insert, 
-						   float *x, float *y, float *z, float *occ, float *bfactor, 
-						   char *symbol, int *charge) ;
-void print_pdb_atoms(FILE *f, s_atm *atoms, int natoms) ;
 
-int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id) ;
-
-float get_mol_mass(s_atm *latoms, int natoms) ;
-float get_mol_mass_ptr(s_atm **latoms, int natoms) ;
-float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter) ;
+void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name, 
+							char *alt_loc, char *res_name, char *chain, 
+							int *res_id, char *insert, 
+							float *x, float *y, float *z, float *occ, 
+							float *bfactor, char *symbol, int *charge) ;
 
 void free_pdb_atoms(s_pdb *pdb) ;
 

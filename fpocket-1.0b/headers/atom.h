@@ -21,6 +21,7 @@
 typedef struct s_atm
 {
 	int sort_x;					// Index in the sorted tab by X coord
+	
 	float x, y, z ;				// Coords
 	char name[5],				// Atom name
 		 type[7],				// Atom type
@@ -39,8 +40,10 @@ typedef struct s_atm
 		  electroneg,			// Electronegativity
 		  occupancy,			// Occupancy
 		  bfactor ;				// B-factor for christal structures
+	
 	char pdb_insert, 			// PDB insertion code
 		 pdb_aloc;				// PDB alternate location code
+	
 	int atomic_num ;   			// Atomic number
 
 } s_atm ;
@@ -54,7 +57,6 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter) ;
 
 int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id) ;	
 float atm_corsp(s_atm **al1, int nl1, s_atm **pocket_neigh, int nal2) ; 
-
 
 void print_atoms(FILE *f, s_atm *atoms, int natoms) ;
 

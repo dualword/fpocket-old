@@ -17,6 +17,8 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+##	(v) Merge with atom.c
+##
 
 */
 

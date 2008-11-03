@@ -26,6 +26,8 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+##	(v) Merge with pertable.c
+##	(v) Add a function to write all known atomic properties for a given atom type
 ##	(v) Maybe implement a structure for a list of atoms instead of a tab.
 ##	(v) Check and update if necessary comments of each function!!
 
@@ -232,7 +234,7 @@ int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id)
 	float atm_corsp(s_atm **al1, int nl1, s_atm **pocket_neigh, int nal2) 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Calculate correspondance between two list of atoms, using the first list as the
+	Calculate correspondance between two list of atoms, using the first list as
 	reference.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
