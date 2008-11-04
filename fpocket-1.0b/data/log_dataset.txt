@@ -1,0 +1,8 @@
+Pocket Picker:
+
+
+Pocket finder:
+	1AUR.pdb: 
+		retiré car ligand ridicule, et semble en plus lié a la prot (pb de visu de VMD?)
+	1L9N.pdb:
+		chaine B virée, ainsi que le ligand en double et l'eau.
