@@ -272,7 +272,7 @@ int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA],
 			}
 		}
 		else {
-			fprintf(stderr, "!! No atoms for ligand %s in the complex %s (apo %s)...\n", lig, fc, fa) ;
+			fprintf(stderr, "! No atoms for ligand %s in the complex %s (apo %s)...\n", lig, fc, fa) ;
 			return M_LIGNOTFOUND ;
 		}
 
@@ -352,19 +352,19 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
 	// Getting the ligan's neighbors.
 	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit, nb_atm) ;
 	if(*nb_atm <= 0) {
-		fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA", lig_dist_crit, lig_dist_crit+0.5) ;
+		fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA\n", lig_dist_crit, lig_dist_crit+0.5) ;
 		if(alneigh) my_free(alneigh) ;
 
 
 		alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit+0.5, nb_atm) ;
 
 		if(*nb_atm <= 0) {
-			fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA", lig_dist_crit+0.5, lig_dist_crit+1.0) ;
+			fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA\n", lig_dist_crit+0.5, lig_dist_crit+1.0) ;
 			if(alneigh) my_free(alneigh) ;
 
 			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit+2.0, nb_atm) ;
 			if(*nb_atm <= 0) {
-				fprintf(stderr, "! No neighbor found for the ligand at %fA !!!?!", lig_dist_crit+2.0) ;
+				fprintf(stderr, "! No neighbor found for the ligand at %fA !!!?!\n", lig_dist_crit+2.0) ;
 				if(alneigh) my_free(alneigh) ;
 				alneigh = NULL ;
 			}
