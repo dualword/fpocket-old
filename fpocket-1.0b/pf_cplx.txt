@@ -32,6 +32,7 @@ data/pf_data/1aiq.pdb	data/pf_data/1aiq.pdb	cb3
 data/pf_data/1alw.pdb	data/pf_data/1alw.pdb	isa
 data/pf_data/1aog.pdb	data/pf_data/1aog.pdb	mae
 data/pf_data/1aq1.pdb	data/pf_data/1aq1.pdb	stu
+data/pf_data/1aur.pdb	data/pf_data/1aur.pdb	pms
 data/pf_data/1av5.pdb	data/pf_data/1av5.pdb	ap2
 data/pf_data/1awb.pdb	data/pf_data/1awb.pdb	ipd
 data/pf_data/1axz.pdb	data/pf_data/1axz.pdb	gla
