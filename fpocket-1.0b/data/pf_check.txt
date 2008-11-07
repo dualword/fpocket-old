@@ -1,0 +1,110 @@
+Modifications urgentes
+
+1A50 !!!
+	Identique a 1A5A :DDDD -> a virer
+1Ai4 !!!
+	Identique a 1AI5 :DDDD -> a virer
+1A0t !!!
+	Deux ligands identiques cote a cote dans la poche, même nom de 
+	résidu... A virer!
+1A80 !!!
+	Même ligand que 1A27 !!! A vérifier (que 1A80 ne soit pas un 
+	domaine de 1A27 notamment....)
+1A96 !!!
+	Deux ligand identiques, même nom de résidu... A virer! PCP 302
+1AAX !!!
+	Ligand BPM en double, l'un a coté de l'autre. Bonne pose difficile 
+	a déterminer... A virer!
+1AOG !!!
+	Ligand MAE ridicule, un autre ligand FAD semble être plus approprié 
+	comme candidat pour le test... A voire.
+
+A vérifier absolument
+11GS
+	Ligand EAA colé a un autre ligand GTT... Un seul??????
+1AXZ
+	Ligand GAL et GLA superposés et identiques... 
+1A8I
+	Petit ligand pour énorme protéine
+1AI4
+	Enorme prot, petit ligand.
+
+1AUR
+	Ligand PMS vraiment petit... un cycle carbonné et un SO2... lié de
+	manière covalante à la prot.
+1AIJ
+	Ligand LDA peu drug like (chaine carbonée), autres ligand plus 
+	drug like, et dimère avec les autres ligands en double.
+1ADL
+	Ligand ACD = chaine carbonée de 21 carbones avec un COO- au bout...
+1AD0
+	Ligand 13P pas super drug-like au premier abord... ms bon :)
+1AHA
+	Ligand ADE pas super drug-like non plus... Un double cycle 
+	seulement, mi-azote mi-carbone
+1A27
+	Deux ligands, dont un énorme (NAP), et un composé exclisivement de 
+	carbone avec deux O (EST). Utilisé: EST
+1B02
+	Ligand C2F lié a un autre ligand UFP lui même lié a la protéine... ??
+1B0O
+	Ligand PML peu drug like: chaine carbonée d'une bonne 10aine d'atomes
+	avec un COOH au bout. De plus, semble similaire (ligand & prot) à 1ADL...
+1B42
+	Deux ligand: SAH et M1A, M1A est utilisé mais SAH m'a l'air bien plus
+	drug like...
+1B8U
+	Contient NAD comme 1B14, sauf qu'ici on regarde OAA qui est bcp plus 
+	petit.
+1B9Z
+	4 ligand MAL à 4 endroits différents...
+1BAV
+	Ligand BIP tout petit: un cycle a 6, trois carbones et un COOH...
+1BD4
+	Ligand URA minuscule: un cycle à 6 carbone/azote et deux oxygènes...
+1BE6
+	Ligand TCA peu drug like: petit, avec que du carbone avec un O au bout. 
+1BGG
+	Ligand petit, 13 atomes: chaine carbonée avec des oxygènes (7) en ramif.
+1BIL
+	Un même ligand qui semble divisé en 5: 5 resname différent, pourtant
+	les 5 semblent former un ligand potable... Un resname utilisé pour le test
+	est CHA, aussi peu drug like que TCA vu juste avant...
+1BIO
+	Ligand SOA minuscule, un cycle a 6 carboné, un azone, un oxygène...
+1BK9
+	Ligand PBP petit, un cycle carboné, un oxygène, pas bcp pluS...
+1B50
+	Piti ligand
+1BRP
+	Ligand RTL trop carboné, un oxygène seulement.
+1BVV
+	Ligand DFX petit: un cycle contenant un O, un fluor et deux O attachés
+1BYD
+	Ligand DOM en double, assez proches l'un de l'autre.
+
+Remarques:
+
+1A4R
+	PDB non utilisé dans le test... Dimère, deux ligands différents dans 
+	chacun d'entre eux: GDP et GNH
+1B14
+	Ligand NAD déja vu il me semble
+1BQ4
+	Ligand original: un cycle carboné décoré tout autour par des fct 
+	carboxyliques...
+
+Protéines OK:
+
+1BIR (petite)
+1BK0
+1BL5
+1BLH (covalent, pas bien gros)
+1BQ6 
+1BR5
+1BSV
+1BT5
+1BTU (covalent, pas bien gros, bizard)
+1BUL (covalent)
+1BX6
+1BXO
