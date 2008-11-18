@@ -196,7 +196,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 						tmpApolar=0;
 						for(j = 0 ; j < 4 ; j++) {
 							v->neigh[j] = &(atoms[lvvert->h_tr[curNbIdx[j]]]);
-							if(atoms[lvvert->h_tr[curNbIdx[j]]].electroneg<2.8) tmpApolar++;	//if this is a C or S atom - use electronegativity instead !!
+							if(atoms[lvvert->h_tr[curNbIdx[j]]].electroneg<2.8) tmpApolar++ ;
 							if(curVnbIdx[j]>0) v->vneigh[j] = curVnbIdx[j];
 						}
 						v->apol_neighbours=0;

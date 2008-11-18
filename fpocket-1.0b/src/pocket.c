@@ -1013,6 +1013,7 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 */
 float set_pocket_score(s_pocket *pok) 
 {
+
 	double e_tmp = -26.57 + 0.55*(float)pok->pdesc->nb_asph + 
 					0.97*(float)pok->pdesc->mean_loc_hyd_dens + 
 					8.42e-2*(float)pok->pdesc->mean_asph_ray - 
@@ -1023,22 +1024,23 @@ float set_pocket_score(s_pocket *pok)
 					2.0*(float)pok->pdesc->volume_score + 
 					3.03e-16*(float)pok->pdesc->charge_score - 
 					0.69*(float)pok->nAlphaApol;
-	
-	pok->score = e_tmp/(1.0 + e_tmp) ;	/* current scoring function */
 
+	
+	pok->score = e_tmp/(1.0 + e_tmp) ;	
+	
 	return pok->score ;
 }
 
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void set_pocket_score(s_pocket *pok) 
+	void set_pocket_score2(s_pocket *pok) 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Set a score to a given pocket. The current scoring function has been determined
 	using a logistic regression based on an analysis of pocket descriptors.
 
-	However, several improvement have to be made to this analysis, and this logistic
+	However, several improvement have to be made to this analysis, and this 
 	model is far from being predictive enough...
    -----------------------------------------------------------------------------
    ## PARAMETRES:
@@ -1051,13 +1053,27 @@ float set_pocket_score(s_pocket *pok)
 float set_pocket_score2(s_pocket *pok) 
 {
 	//score 1
+/*
+ *	// 70/91
 	double e_tmp = -14.835 + 0.29*(float)pok->pdesc->nb_asph +
 							 0.52*(float)pok->pdesc->mean_loc_hyd_dens-
 							 51.77*(float)pok->pdesc->masph_sacc+
 							 10.678*(float)pok->pdesc->mean_asph_ray;
+*/
+/*	// 72/91
+	double e_tmp = -14.835 + 0.56*(float)pok->pdesc->nb_asph +
+							 0.72*(float)pok->pdesc->mean_loc_hyd_dens-
+							 59.77*(float)pok->pdesc->masph_sacc+
+							 6.678*(float)pok->pdesc->mean_asph_ray;
+*/
+	
+	double e_tmp = -14.835 + 0.56*(float)pok->pdesc->nb_asph +
+							 0.72*(float)pok->pdesc->mean_loc_hyd_dens-
+							 59.77*(float)pok->pdesc->masph_sacc+
+							 6.678*(float)pok->pdesc->mean_asph_ray;
 	
 	pok->score = e_tmp;//e_tmp/(1.0 + e_tmp) ;	//current scoring function
-
+	
 	return pok->score ;
 }
 
