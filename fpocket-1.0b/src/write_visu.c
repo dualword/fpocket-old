@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##      20-11-08        (p)  just got rid of a memory issue (fflush after fclose)
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -78,8 +79,9 @@ void write_vmd(char *pdb_name,char *pdb_out_name){
 		if(f_tcl){
 			/* Write bash script for visualization using VMD */
 			fprintf(f,"#!/bin/bash\nvmd %s -e %s.tcl\n",pdb_out_name,c_tmp);
+                        fflush(f);
 			fclose(f);
-			fflush(f);
+			
 			/* Write tcl script */
 			sprintf(sys_cmd,"chmod +x %s",fout);
 			system(sys_cmd);
@@ -152,8 +154,9 @@ void write_pymol(char *pdb_name,char *pdb_out_name){
 		if(f_pml){
 			/* Write bash script for visualization using VMD */
 			fprintf(f,"#!/bin/bash\npymol -e %s.pml\n",c_tmp);
+                        fflush(f);
 			fclose(f);
-			fflush(f);
+			
 			sprintf(sys_cmd,"chmod +x %s",fout);
 			system(sys_cmd);
 			/* Write pml script */

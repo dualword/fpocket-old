@@ -27,6 +27,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##      20-11-08        (p)  Adding support of reading PDB multiple occupancies (only the first is read) & MSE added to kept HETATM list
 ##	03-11-08	(v)  Code slightly restructured, comments added
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -58,10 +59,10 @@ static const char *ST_keep_hetatm[] = {
 	"CCH", "CFO", "FE2", "FCI", "FCO", "FDC", "FEA", "FEO", "FNE", "HIF",
 	"OFO", "PFC", "HE5", "BAZ", "BOZ", "FE", "HEM", "HCO", "1CP", "CLN",
 	"COH", "CP3", "DEU", "FDD", "FDE", "FEC", "FMI", "HE5", "HEG", "HIF",
-	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9"
+	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9","MSE"
 } ;
 
-static const int ST_nb_keep_hetatm = 110 ;
+static const int ST_nb_keep_hetatm = 111 ;
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
@@ -393,6 +394,7 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 
 	while(fgets(buf, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
 		if (!strncmp(buf, "ATOM ",  5)) {
+                     if(buf[16]==' ' || buf[16]=='A'){  /*check if this is the first occurence of this atom*/
 		/* Atom entry: check if there is a ligand in there (just in case)... */
 			rpdb_extract_atm_resname(buf, resb) ;
 			if( ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
@@ -406,8 +408,10 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 			else {
 				natoms++ ;
 			}
+                     }
 		}
 		else if(!strncmp(buf, "HETATM", 6)) {
+                     if(buf[16]==' ' || buf[16]=='A'){ /*check again for the first occurence*/
 		/* Hetatom entry: check if there is a ligand in there too... */
 			rpdb_extract_atm_resname(buf, resb) ;
 			if( keep_lig && ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
@@ -416,14 +420,15 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 			}
 			else {
 			/* Keep specific HETATM given in the static list ST_keep_hetatm */
-				for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
-					if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1]
-					    == resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
-						nhetatm++ ; natoms++ ;
-						break ;
-					}
-				}
+                            for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
+                                    if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1]
+                                        == resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
+                                            nhetatm++ ; natoms++ ;
+                                            break ;
+                                    }
+                            }
 			}
+                     }
 		}
 		else if (!strncmp(buf, "HEADER", 6)) 
 			strncpy(pdb->header, buf, M_PDB_BUF_LEN) ;
@@ -500,6 +505,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 	while(fgets(pdb_line, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
 		
 		if (strncmp(pdb_line, "ATOM ",  5) == 0) {
+                    if(pdb_line[16]==' ' || pdb_line[16]=='A'){ /*if within first occurence*/
 		/* Store ATOM entry */
 			rpdb_extract_atm_resname(pdb_line, resb) ;
 			/* Check if the desired ligand is in such entry */
@@ -543,8 +549,10 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 				atom->sort_x = -1 ;
 				iatoms++ ;
 			}
+                    }
 		}
 		else if(strncmp(pdb_line, "HETATM", 6) == 0) {
+                    if(pdb_line[16]==' ' || pdb_line[16]=='A'){/*first occurence*/
 		/* Check HETATM entry */
 			rpdb_extract_atm_resname(pdb_line, resb) ;
 			/* Check if the desired ligand is in HETATM entry */
@@ -593,6 +601,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 					}
 				}
 			}
+                    }
 		}
 		else if (strncmp(pdb_line, "CRYST1",  6) == 0)  {
 			rpdb_extract_cryst1(pdb_line, &(pdb->alpha), &(pdb->beta), &(pdb->gamma),
