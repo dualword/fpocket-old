@@ -15,7 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##      20-11-08        (p)  just got rid of a memory issue (fflush after fclose)
+##      20-11-08        (p)  just got rid of a memory issue (fflush after fclose) 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	

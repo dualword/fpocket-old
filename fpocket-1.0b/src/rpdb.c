@@ -650,7 +650,7 @@ void free_pdb_atoms(s_pdb *pdb)
 			pdb->latoms = NULL ;
 		}
 		if(pdb->latm_lig) {
-			my_free(pdb->latm_lig) ;
+			my_free(pdb->latm_lig) ; 
 			pdb->latm_lig = NULL ;
 		}
 		if(pdb->fpdb) {
