@@ -1,0 +1,24 @@
+This is a TODO text file for the developers of fpocket. Here current development 
+aims of the group can be seen. If you have ideas of how to design fpocket in a 
+more convenient way for you, just drop us a line.
+
+
+    Priority        Todo
+    --------------------
+fpocket
+    high            adapt dpocket and tpocket to be able to design correct statistics if the ligand appears multiple times
+    low             performance issues : implement the index neighbour lists everywhere we can
+
+qhull    
+    low             use qhull as static library object in order to provide bigger portability of fpocket (contact the qhull team)
+    medium          assess limits of qhull (maximum number of points) -> enhance error management
+
+input
+    medium          enable input of "to keep" HETATM tags by command line
+
+output
+    medium          provide possibility to define the output path through command line, keeping the current behaviour as default
+
+visualization
+    low             write a tcl based gui frontend for viewing and navigating through results using VMD
+    medium          enhance PYMOL vizualisation output
