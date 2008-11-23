@@ -12,6 +12,7 @@ fpocket
 qhull    
     low             use qhull as static library object in order to provide bigger portability of fpocket (contact the qhull team)
     medium          assess limits of qhull (maximum number of points) -> enhance error management
+    high            erase voronoi tmp files after use
 
 input
     medium          enable input of "to keep" HETATM tags by command line
