@@ -37,10 +37,10 @@
 */
 void test_fpocket(s_tparams *par)
 {
-	int nranks = 4, novlp = 2, 
+	int nranks = 10, novlp = 8, 
 		i, j, k, nok = 0  ;
-	int ranks [] = {1, 3, 5, 10} ;
-	float ovlp[] = {50.0, 80.0} ;
+	int ranks [] = {1,2, 3, 4, 5, 6,7,8,9, 10} ;
+	float ovlp[] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0,90.0} ;
 	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0,
 		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0 ;
 	int n1, n2, n3, N = 0 ;
@@ -113,15 +113,24 @@ void test_fpocket(s_tparams *par)
 	/* Printing global statistics */
 		FILE *fg = fopen(par->g_output, "w") ;
 		if(fg) {
-		/* Write the first overlap statistics */
+	// Write the first overlap statistics
 			fprintf(fg, "===================== General statistics on all complexes =======================\n") ;
 			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
-			fprintf(fg, "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
-			fprintf(fg, "\t--------------------------------------------------------------------\n\n") ;
-			fprintf(fg, "\t   :   > 50%%  :    > 80%%  :\n") ;
-			fprintf(fg, "-------------------------------------\n") ;
+			fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
+			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+			//fprintf(fg,   "\t   :   > 50%%       :    > 80%%    :\n") ;
+			//fprintf(fg,   "-------------------------------------\n") ;
 
-				
+			fprintf(fg,"           :");
+                        for( j = 0 ; j < novlp ; j++) {
+                            	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
+                        }
+                        fprintf(fg,"\n");
+                	fprintf(fg,"------------");
+                        for( j = 0 ; j < novlp ; j++) {
+                            fprintf(fg, "-------------") ;
+                        }
+                        fprintf(fg,"\n");
 			for(i = 0 ; i < nranks ; i++) {
 				fprintf(fg, "Rank <= %2d :", ranks[i]) ;
 				for( j = 0 ; j < novlp ; j++) {
@@ -147,9 +156,18 @@ void test_fpocket(s_tparams *par)
 			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 			fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
 			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			fprintf(fg, "\t   :   > 50%%  :    > 80%%  :\n") ;
-			fprintf(fg, "---------------------------------------\n") ;
-			
+			//fprintf(fg, "\t   :   > 50%%  :    > 80%%  :\n") ;
+			//fprintf(fg, "---------------------------------------\n") ;
+			fprintf(fg,"           :");
+                        for( j = 0 ; j < novlp ; j++) {
+                            	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
+                        }
+                        fprintf(fg,"\n");
+			fprintf(fg,"------------");
+                        for( j = 0 ; j < novlp ; j++) {
+                            fprintf(fg, "-------------") ;
+                        }
+                        fprintf(fg,"\n");
 			for(i = 0 ; i < nranks ; i++) {
 				fprintf(fg, "Rank <= %2d :", ranks[i]) ;
 				for( j = 0 ; j < novlp ; j++) {
