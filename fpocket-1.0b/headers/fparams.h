@@ -20,24 +20,24 @@
 // standard parameters
 //use min alpha sphere radius of : 3.0
 #define M_MIN_ASHAPE_SIZE_DEFAULT 3.0
-//use max alpha sphere radius of : 7.5
-#define M_MAX_ASHAPE_SIZE_DEFAULT 7.5
+//use max alpha sphere radius of : 6.0
+#define M_MAX_ASHAPE_SIZE_DEFAULT 6.0
 //use first connection distance (see report) : 2.0
 #define M_CLUST_MAX_DIST 2.0
 //use second connection distance (see report) : 4.5
 #define M_REFINE_DIST 4.5
 //at least a proportion of  M_REFINE_MIN_NAPOL_AS apolar alpha spheres in the pocket 0.0
 #define M_REFINE_MIN_PROP_APOL_AS 0.0
-//single linkage clustering connection distance 2.7
-#define M_SLCLUST_MAX_DIST 2.7
+//single linkage clustering connection distance 2.5
+#define M_SLCLUST_MAX_DIST 2.5
 //minimum number of common neighbours for single linkage clustering 5
-#define M_SLCLUST_MIN_NUM_NEIGH 5
+#define M_SLCLUST_MIN_NUM_NEIGH 3
 //number of iterations for the Monte Carlo volume calculation 3000
 #define M_MC_ITER 3000
 //precision for "exact" volume integration, set to -1 if not used -1
 #define M_BASIC_VOL_DIVISION -1
-//minimum number of alpha spheres for a pocket to be kept 25
-#define M_MIN_POCK_NB_ASPH 35
+//minimum number of alpha spheres for a pocket to be kept 5
+#define M_MIN_POCK_NB_ASPH 5
 //minimum number of atoms having a low electronegativity in order to declare an alpha sphere to be apolar 3
 #define M__MIN_APOL_NEIGH_DEFAULT 3
 
