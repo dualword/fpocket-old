@@ -1071,7 +1071,7 @@ float set_pocket_score2(s_pocket *pok)
 							 0.72*(float)pok->pdesc->mean_loc_hyd_dens-
 							 59.77*(float)pok->pdesc->masph_sacc+
 							 6.678*(float)pok->pdesc->mean_asph_ray;
-	
+        
 	pok->score = e_tmp;//e_tmp/(1.0 + e_tmp) ;	//current scoring function
 	
 	return pok->score ;
