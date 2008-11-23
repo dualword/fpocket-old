@@ -118,9 +118,6 @@ void test_fpocket(s_tparams *par)
 			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 			fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
 			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			//fprintf(fg,   "\t   :   > 50%%       :    > 80%%    :\n") ;
-			//fprintf(fg,   "-------------------------------------\n") ;
-
 			fprintf(fg,"           :");
                         for( j = 0 ; j < novlp ; j++) {
                             	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
@@ -156,8 +153,6 @@ void test_fpocket(s_tparams *par)
 			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 			fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
 			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			//fprintf(fg, "\t   :   > 50%%  :    > 80%%  :\n") ;
-			//fprintf(fg, "---------------------------------------\n") ;
 			fprintf(fg,"           :");
                         for( j = 0 ; j < novlp ; j++) {
                             	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
