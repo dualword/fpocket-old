@@ -37,7 +37,7 @@
 //precision for "exact" volume integration, set to -1 if not used -1
 #define M_BASIC_VOL_DIVISION -1
 //minimum number of alpha spheres for a pocket to be kept 5
-#define M_MIN_POCK_NB_ASPH 5
+#define M_MIN_POCK_NB_ASPH 40
 //minimum number of atoms having a low electronegativity in order to declare an alpha sphere to be apolar 3
 #define M__MIN_APOL_NEIGH_DEFAULT 3
 

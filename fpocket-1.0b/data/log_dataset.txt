@@ -1,5 +1,10 @@
 Pocket Picker:
-
+	The following complexes have been added:
+		data/pp_data/complex/1acj.pdb	data/pp_data/complex/1acj.pdb	tha
+		data/pp_data/complex/1apu.pdb	data/pp_data/complex/1apu.pdb	iva
+		data/pp_data/complex/1ida.pdb	data/pp_data/complex/1ida.pdb	qnd
+		data/pp_data/complex/1pso.pdb	data/pp_data/complex/1pso.pdb	iva
+		data/pp_data/complex/2tmn.pdb	data/pp_data/complex/2tmn.pdb	po3
 
 Pocket finder:
 	1L9N.pdb:

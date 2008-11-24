@@ -453,7 +453,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		}
 
 		if(! found[1]) {
-			if(ov1 > 20.0) {
+			if(ov1 > 50.0) {
 				idata[i][M_POS1] = pos ;
 				ddata[i][M_MAXPCT1] = ov1 ;
 				ddata[i][M_OREL1] = (nlneigh <= 0.0)? -1.0 : (float)npneigh/(float)nlneigh*100.0 ;
@@ -462,7 +462,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		}
 	
 		if(! found[2]) {
-			if(ov2 > 20.0) {
+			if(ov2 > 50.0) {
 				idata[i][M_POS2] = pos ;
 				ddata[i][M_MAXPCT2] = ov2 ;
 				ddata[i][M_OREL2] = (naccpck <= 0.0)?-1.0 : (float)npneigh/(float)naccpck*100.0 ;

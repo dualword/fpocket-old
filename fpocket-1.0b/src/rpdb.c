@@ -27,7 +27,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##      20-11-08        (p)  Adding support of reading PDB multiple occupancies (only the first is read) & MSE added to kept HETATM list
+##  20-11-08    (p)  Adding support of reading PDB multiple occupancies (only 
+##					 the first is read) & MSE added to kept HETATM list
 ##	03-11-08	(v)  Code slightly restructured, comments added
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -59,7 +60,8 @@ static const char *ST_keep_hetatm[] = {
 	"CCH", "CFO", "FE2", "FCI", "FCO", "FDC", "FEA", "FEO", "FNE", "HIF",
 	"OFO", "PFC", "HE5", "BAZ", "BOZ", "FE", "HEM", "HCO", "1CP", "CLN",
 	"COH", "CP3", "DEU", "FDD", "FDE", "FEC", "FMI", "HE5", "HEG", "HIF",
-	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9","MSE"
+	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9",
+	"MSE"
 } ;
 
 static const int ST_nb_keep_hetatm = 111 ;
@@ -394,21 +396,22 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 
 	while(fgets(buf, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
 		if (!strncmp(buf, "ATOM ",  5)) {
-                     if(buf[16]==' ' || buf[16]=='A'){  /*check if this is the first occurence of this atom*/
-		/* Atom entry: check if there is a ligand in there (just in case)... */
-			rpdb_extract_atm_resname(buf, resb) ;
-			if( ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
-				&& ligan[2] == resb[2]){
-				
-				if(keep_lig) {
-					natm_lig ++ ;
+		/* Check if this is the first occurence of this atom*/
+			if(buf[16]==' ' || buf[16]=='A'){  
+			/* Atom entry: check if there is a ligand in there (just in case)... */
+				rpdb_extract_atm_resname(buf, resb) ;
+				if( ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
+					&& ligan[2] == resb[2]){
+
+					if(keep_lig) {
+						natm_lig ++ ;
+						natoms++ ;
+					}
+				}
+				else {
 					natoms++ ;
 				}
 			}
-			else {
-				natoms++ ;
-			}
-                     }
 		}
 		else if(!strncmp(buf, "HETATM", 6)) {
                      if(buf[16]==' ' || buf[16]=='A'){ /*check again for the first occurence*/
@@ -616,10 +619,13 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 		if(ligfound == 1) fprintf(stderr, "! And ligfound == 1!! :-/\n") ;
 	}
 	else if(ligfound == 1 && iatm_lig <= 0) {
-		fprintf(stderr, ">! Warning: ligand '%s' has been detected but no atoms has been stored!\n", ligan) ;
+		fprintf(stderr, ">! Warning: ligand '%s' has been detected but no atoms \
+						has been stored!\n", ligan) ;
 	}
-	else if((ligfound == 1 && pdb->natm_lig <= 0) || (pdb->natm_lig <=0 && iatm_lig > 0)) {
-		fprintf(stderr, ">! Warning: ligand '%s' has been detected in rpdb_read but not in rpdb_open!\n", ligan) ;
+	else if((ligfound == 1 && pdb->natm_lig <= 0) || (pdb->natm_lig <=0 
+			 && iatm_lig > 0)) {
+		fprintf(stderr, ">! Warning: ligand '%s' has been detected in rpdb_read \
+						but not in rpdb_open!\n", ligan) ;
 	}
 
 }

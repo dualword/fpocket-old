@@ -41,6 +41,7 @@ typedef struct s_amino_a
 	char name3[4] ;
 	char code ;
 
+	float mw ;
 	float volume;
 	float hydrophobicity;
 	int charge,
@@ -54,6 +55,7 @@ typedef struct s_amino_a
 int get_aa_index(const char *name) ; 
 char* get_aa_name3(const int index) ;
 
+float get_aa_mw(const char *name) ;
 float get_aa_volume_score(const char *name) ;
 float get_aa_hydrophobicity_score(const char *name) ;
 int get_aa_charge(const char *name)  ;

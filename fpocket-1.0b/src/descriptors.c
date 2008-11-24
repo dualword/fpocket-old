@@ -254,36 +254,36 @@ void set_aa_desc(s_desc *desc, const char *aa_name)
 	// Only A, C, G, H, I, L, M, P, S, T and V possibility for the first letter:
 	switch(l1) {
 		case 'A' : // Either ALA, ASP, ASN or ARG
-			if(l2 == 'L') aa_idx = M_ALA_IDX ; 							// ALA amino acid!
-			else if(l2 == 'R') aa_idx = M_ARG_IDX ; 					// ARG amino acid!
-			else if(l2 == 'S' && l3 ==  'P') aa_idx = M_ASP_IDX ; 		// ASP amino acid!
-			else aa_idx = M_ASN_IDX ; break ;							// ASN amino acid!
+			if(l2 == 'L') aa_idx = M_ALA_IDX ; 						// ALA amino acid!
+			else if(l2 == 'R') aa_idx = M_ARG_IDX ; 				// ARG amino acid!
+			else if(l2 == 'S' && l3 ==  'P') aa_idx = M_ASP_IDX ; 	// ASP amino acid!
+			else aa_idx = M_ASN_IDX ; break ;						// ASN amino acid!
 			
-		case 'C' : aa_idx = M_CYS_IDX ; break ;							// CYS amino acid!
+		case 'C' : aa_idx = M_CYS_IDX ; break ;						// CYS amino acid!
 			
 		case 'G' : // Either GLU, GLY, or GLN, so just check the 3rd letter
-			if(l3 == 'U') aa_idx = M_GLU_IDX ; 							// GLU amino acid!
-			else if(l3 == 'Y') aa_idx = M_GLY_IDX ; 					// GLY amino acid!
-			else aa_idx = M_GLN_IDX ; break ;							// GLN amino acid!
+			if(l3 == 'U') aa_idx = M_GLU_IDX ; 						// GLU amino acid!
+			else if(l3 == 'Y') aa_idx = M_GLY_IDX ; 				// GLY amino acid!
+			else aa_idx = M_GLN_IDX ; break ;						// GLN amino acid!
 
-		case 'H' : aa_idx = M_HIS_IDX ; break ;							// HIS amino acid!
-		case 'I' : aa_idx = M_ILE_IDX ; break ;							// ILE amino acid!
+		case 'H' : aa_idx = M_HIS_IDX ; break ;						// HIS amino acid!
+		case 'I' : aa_idx = M_ILE_IDX ; break ;						// ILE amino acid!
 			
 		case 'L' : // Either ALA, ASP, ASN or ARG
-			if(l2 == 'Y') aa_idx = M_LYS_IDX ; 							// LYS amino acid!
-			else aa_idx = M_LEU_IDX ; break ;							// LEU amino acid!
+			if(l2 == 'Y') aa_idx = M_LYS_IDX ; 						// LYS amino acid!
+			else aa_idx = M_LEU_IDX ; break ;						// LEU amino acid!
 			
-		case 'M' : aa_idx = M_MET_IDX ; break ;							// MET amino acid!
+		case 'M' : aa_idx = M_MET_IDX ; break ;						// MET amino acid!
 		case 'P' : // Either ALA, ASP, ASN or ARG
-			if(l2 == 'H') aa_idx = M_PHE_IDX ; 							// PHE amino acid!
-			else aa_idx = M_PRO_IDX ; break ;							// PRO amino acid!
+			if(l2 == 'H') aa_idx = M_PHE_IDX ; 						// PHE amino acid!
+			else aa_idx = M_PRO_IDX ; break ;						// PRO amino acid!
 
-		case 'S' : aa_idx = M_SER_IDX ; break ;							// SER amino acid!
+		case 'S' : aa_idx = M_SER_IDX ; break ;						// SER amino acid!
 
 		case 'T' : // Either ALA, ASP, ASN or ARG
-			if(l2 == 'H') aa_idx = M_THR_IDX ; 							// THR amino acid!
-			else if(l2 == 'R') aa_idx = M_TRP_IDX ; 					// TRP amino acid!
-			else aa_idx = M_TYR_IDX ; break ;							// TYR amino acid!
+			if(l2 == 'H') aa_idx = M_THR_IDX ; 						// THR amino acid!
+			else if(l2 == 'R') aa_idx = M_TRP_IDX ; 				// TRP amino acid!
+			else aa_idx = M_TYR_IDX ; break ;						// TYR amino acid!
 
 		case 'V' : aa_idx = M_VAL_IDX ; break ;							// VAL amino acid!
 

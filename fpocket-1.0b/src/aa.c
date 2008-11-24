@@ -6,18 +6,19 @@
 ##
 ## FILE 				aa.h
 ## AUTHORS				P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED		20-11-08 (v)
 ##
 ## ----- SPECIFICATIONS
 ##
 ##	This file contains severals functions that allow one to
-##	deal with amino-acids and there properties. Properties
+##	deal with amino-acids and their properties. Properties
 ##	should be stored in the static variable ST_aa, that
 ##	contains for each amino-acids, several properties
 ##	stored in a specific structure.
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	20-11-08	(v)  Added molecular weight
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -66,33 +67,35 @@
 	This one seems to be better, and there is the reference:
 		Monera & al. Journal of Protein Science 1, 319-329 (1995)
 
-	This the current relative hydrophobicity index used.
+	This is the current relative hydrophobicity index used.
 
+	Molecular weight taken from:
+	http://www.expasy.ch/tools/pscale/Molecularweight.html
  
 */
 static const s_amino_a ST_aa[20] = 
 {
-	// Name Code Volume Hydrophobicity charge polatity func_grp
-	{ "ALA", 'A', 2.0,  41.0,  0, 0, 2 },
-	{ "CYS", 'C', 3.0,  49.0,  0, 0, 6 },
-	{ "ASP", 'D', 3.0, -55.0, -1, 1, 3 },
-	{ "GLU", 'E', 4.0, -31.0, -1, 1, 3 },
-	{ "PHE", 'F', 6.0, 100.0,  0, 0, 1 },
-	{ "GLY", 'G', 1.0,   0.0,  0, 0, 2 },
-	{ "HIS", 'H', 4.0,   8.0,  1, 1, 1 },
-	{ "ILE", 'I', 5.0,  99.0,  0, 0, 2 },
-	{ "LYS", 'K', 6.0, -23.0,  1, 1, 5 },
-	{ "LEU", 'L', 5.0,  97.0,  0, 0, 2 },
-	{ "MET", 'M', 5.0,  74.0,  0, 0, 5 },
-	{ "ASN", 'N', 3.0, -28.0,  0, 1, 3 },
-	{ "PRO", 'P', 3.0, -46.0,  0, 0, 2 },
-	{ "GLN", 'Q', 4.0, -10.0,  0, 1, 3 },
-	{ "ARG", 'R', 7.0, -14.0,  1, 1, 5 },
-	{ "SER", 'S', 2.0,  -5.0,  0, 1, 4 },
-	{ "THR", 'T', 3.0,  13.0,  0, 1, 4 },
-	{ "VAL", 'V', 4.0,  76.0,  0, 0, 2 },
-	{ "TRP", 'W', 8.0,  97.0,  0, 1, 1 },
-	{ "TYR", 'Y', 7.0,  63.0,  0, 1, 1 }
+	// Name Code Molecular weight VolumeScore Hydrophobicity Charge Polatity func_grp
+	{ "ALA", 'A',  89.0, 2.0,  41.0,  0, 0, 2 },
+	{ "ARG", 'R', 174.0, 7.0, -14.0,  1, 1, 5 },
+	{ "ASN", 'N', 132.0, 3.0, -28.0,  0, 1, 3 },
+	{ "ASP", 'D', 133.0, 3.0, -55.0, -1, 1, 3 },
+	{ "CYS", 'C', 121.0, 3.0,  49.0,  0, 0, 6 },
+	{ "GLN", 'Q', 146.0, 4.0, -10.0,  0, 1, 3 },
+	{ "GLU", 'E', 147.0, 4.0, -31.0, -1, 1, 3 },
+	{ "GLY", 'G',  75.0, 1.0,   0.0,  0, 0, 2 },
+	{ "HIS", 'H', 155.0, 4.0,   8.0,  1, 1, 1 },
+	{ "ILE", 'I', 131.0, 5.0,  99.0,  0, 0, 2 },
+	{ "LEU", 'L', 131.0, 5.0,  97.0,  0, 0, 2 },
+	{ "LYS", 'K', 146.0, 6.0, -23.0,  1, 1, 5 },
+	{ "MET", 'M', 149.0, 5.0,  74.0,  0, 0, 5 },
+	{ "PHE", 'F', 165.0, 6.0, 100.0,  0, 0, 1 },
+	{ "PRO", 'P', 115.0, 3.0, -46.0,  0, 0, 2 },
+	{ "SER", 'S', 105.0, 2.0,  -5.0,  0, 1, 4 },
+	{ "THR", 'T', 119.0, 3.0,  13.0,  0, 1, 4 },
+	{ "TRP", 'W', 204.0, 8.0,  97.0,  0, 1, 1 },
+	{ "TYR", 'Y', 181.0, 7.0,  63.0,  0, 1, 1 },
+	{ "VAL", 'V', 117.0, 4.0,  76.0,  0, 0, 2 }
 } ;
 
 /**-----------------------------------------------------------------------------
@@ -151,6 +154,34 @@ int get_aa_index(const char *name)
 
 /************** Getting informations from an AA name in the static tab **************/
 
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	char* get_aa_mw(const int index) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 
+	Return the molecular weight of AA given in argument
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ const int index: Index of the AA in the tab
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	Molecular weight if the index is valid, NULL if not.
+   -----------------------------------------------------------------------------
+*/
+float get_aa_mw(const char *name) 
+{
+	int aa_index = get_aa_index(name) ;
+
+	if(aa_index != -1) {
+		return ST_aa[aa_index].mw ;
+	}/*
+	else {
+		fprintf(stderr, "! Amino acid '%s' could not be found in property table...\n", name);
+	}*/
+
+	return -1.0 ;
+}
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 

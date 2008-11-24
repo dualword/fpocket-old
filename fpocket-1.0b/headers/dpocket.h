@@ -27,7 +27,7 @@
 #define M_DP_POCKET   2
 #define M_DP_POCETLIG 3
 
-#define M_DP_OUTP_HEADER "pdb ligand lig_vol pocket_vol nb_alpha_spheres mean_asph_ray mean_asph_solv_acc apolar_asphere_prop mean_loc_hyd_dens hydrophobicity_score volume_score polarity_score charge_score flex prop_polar_atm"
+#define M_DP_OUTP_HEADER "pdb ligand overlap lig_vol pocket_vol nb_alpha_spheres mean_asph_ray mean_asph_solv_acc apolar_asphere_prop mean_loc_hyd_dens hydrophobicity_score volume_score polarity_score charge_score flex prop_polar_atm"
 
 #define M_DP_OUTP_FORMAT "%s %s %6.2f %8.2f %8.2f %5d %5.2f %5.2f %4.2f %6.2f %8.2f %6.2f %4d %4d %5.2f %6.2f"
 #define M_DP_OUTP_VAR(fc, l, ovlp, lv, d) fc, l, ovlp, lv, d->volume, d->nb_asph, d->mean_asph_ray, \

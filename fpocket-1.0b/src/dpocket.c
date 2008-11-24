@@ -82,7 +82,7 @@ void dpocket(s_dparams *par)
 	FILE *fout[3] ;
 
 	if(par) {
-	// Opening output file file
+	/* Opening output file file */
 
 		fout[0] = fopen(par->f_exp,"w") ;
 		fout[1] = fopen(par->f_fpckp,"w") ;
@@ -90,7 +90,7 @@ void dpocket(s_dparams *par)
 
 		if(fout[0] && fout[1] && fout[2]) {
 
-		// Writing column names
+		/* Writing column names */
 	
 			for( i = 0 ; i < 3 ; i++ ) {
 				fprintf(fout[i], M_DP_OUTP_HEADER) ;
@@ -98,7 +98,7 @@ void dpocket(s_dparams *par)
 				fprintf(fout[i], "\n");
 			}
 	
-		// Begins dpocket
+		/* Begins dpocket */
 			for(i = 0 ; i < par->nfiles ; i++) {
 				fprintf(stdout, "======= > Describing interface for protein %s... < =======\n", par->fcomplex[i]) ;
 
@@ -109,9 +109,18 @@ void dpocket(s_dparams *par)
 			for( i = 0 ; i < 3 ; i++ ) fclose(fout[i]) ;
 		}
 		else {
-			if(! fout[0]) fprintf(stdout, "! Output file <%s> couldn't be opened.\n", par->f_exp) ;
-			else if (! fout[1]) fprintf(stdout, "! Output file <%s> couldn't be opened.\n", par->f_fpckp) ;
-			else fprintf(stdout, "! Output file <%s> couldn't be opened.\n", par->f_fpcknp) ;
+			if(! fout[0]) {
+				fprintf(stdout, "! Output file <%s> couldn't be opened.\n", 
+						par->f_exp) ;
+			}
+			else if (! fout[1]) {
+				fprintf(stdout, "! Output file <%s> couldn't be opened.\n", 
+						par->f_fpckp) ;
+			}
+			else {
+				fprintf(stdout, "! Output file <%s> couldn't be opened.\n", 
+						par->f_fpcknp) ;
+			}
 		}
 	}
 }
@@ -138,7 +147,7 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 
 	float vol, ovlp ;
 	int nal = 0,
-		nai = 0,	// Number of atoms in the interface
+		nai = 0,	/* Number of atoms in the interface */
 		nbpa ;
 
 	fprintf(stdout, "dpocket: Loading pdb... ") ; fflush(stdout) ;
@@ -147,13 +156,13 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 	
 	if(pdb_cplx_l && pdb_cplx_nl && pdb_cplx_l->natm_lig > 0) {
 		rpdb_read(pdb_cplx_l, ligname, M_KEEP_LIG) ;	
-		rpdb_read(pdb_cplx_nl, ligname, M_DONT_KEEP_LIG) ;	//get rid of HETATM in the apo structure
+		rpdb_read(pdb_cplx_nl, ligname, M_DONT_KEEP_LIG) ;
 		fprintf(stdout, " OK\n") ;
 
 		lig = pdb_cplx_l->latm_lig ;
 		nal = pdb_cplx_l->natm_lig ;
 
-		// Getting explicit interface using the known ligand
+		/* Getting explicit interface using the known ligand */
 		fprintf(stdout, "dpocket: Explicit pocket definition... \n") ; fflush(stdout) ;
 		verts = load_vvertices(pdb_cplx_nl, 3, par->fpar->asph_min_size, par->fpar->asph_max_size) ;
 
@@ -170,12 +179,12 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 			dropSmallNpolarPockets(pockets, par->fpar);
 			set_pockets_descriptors(pockets);
 	
-			// Writing output
-			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 	// Ligand volume
+			/* Writing output */
+			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 
 			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, f[0]) ;
 			node_pocket *cur = pockets->first ;
 			while(cur) {
-			// For each pocket, save descriptors and say if the pocket contains the ligand
+			/* For each pocket, save descriptors and say if the pocket contains the ligand */
 				patoms = get_vert_contacted_atms(cur->pocket->v_lst, &nbpa) ;
 				ovlp = atm_corsp(interface, nai, patoms, nbpa) ;
 
@@ -205,13 +214,15 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION: get_explicit_desc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
+	Determine the explicit pocket (see comments at the top of the file).
    -----------------------------------------------------------------------------
    ## PARAMETRES:
    -----------------------------------------------------------------------------
    ## RETURN:
+	List of atoms defining the explicit pocket.
    -----------------------------------------------------------------------------
 */
 s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig, int nal, int *nai, s_dparams *par, s_desc *desc)
@@ -220,20 +231,26 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 
 	s_atm **interface = NULL ;
 
-	fprintf(stdout, "dpocket: Determning explicit interface... ") ; fflush(stdout) ;
+	fprintf(stdout, "dpocket: Determning explicit interface... ") ; 
+	fflush(stdout) ;
+	
 	if(par->interface_method == M_INTERFACE_METHOD2) {
-	// Use the distance-based method to define the interface
-		interface = get_mol_atm_neigh(lig, nal, pdb_cplx_l, par->interface_dist_crit, nai) ;
+	/* Use the distance-based method to define the interface */
+		interface = get_mol_atm_neigh(lig, nal, pdb_cplx_l, 
+									  par->interface_dist_crit, nai) ;
 	}
 	else {
-	// Use the voronoi vertices-based method to define the interface
-		interface = get_mol_ctd_atm_neigh(lig, nal, pdb_cplx_l, verts, par->interface_dist_crit, 
+	/* Use the voronoi vertices-based method to define the interface */
+		interface = get_mol_ctd_atm_neigh(lig, nal, pdb_cplx_l, verts, 
+										  par->interface_dist_crit, 
 										  M_INTERFACE_SEARCH, nai) ; 
 	}
 	fprintf(stdout, " OK\n") ;
 
-	// Get a tab of pointer for interface's vertices to send a correct argument type to set_descriptors
-	s_vvertice **tpverts = get_mol_vert_neigh(lig, nal, verts, pdb_cplx_l, par->interface_dist_crit, &nvn) ;
+	/* Get a tab of pointer for interface's vertices to send a correct argument 
+	 * type to set_descriptors */
+	s_vvertice **tpverts = get_mol_vert_neigh(lig, nal, verts, pdb_cplx_l, 
+											  par->interface_dist_crit, &nvn) ;
 	
 	// Ok we have the interface and the correct vertices list, now calculate descriptors and write it.
 	fprintf(stdout, "dpocket: Calculating descriptors... ") ; fflush(stdout) ;
@@ -247,16 +264,18 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION: write_pocket_desc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
+     Write pocket descriptors into a file.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, float ovlp, FILE *f) 
+void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, 
+					   float ovlp, FILE *f) 
 {
 	fprintf(f, M_DP_OUTP_FORMAT, M_DP_OUTP_VAR(fc, l, ovlp, lv, d)) ;
 

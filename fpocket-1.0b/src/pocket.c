@@ -872,8 +872,9 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 			cur = cur->next ;
 		}
 
-		// Normalisation of flexibility between pockets, with the most flexible pocket as reference...
-		// Remember, flexibility is very abusive, as we just sum the b-factor of all atoms...
+		/** Normalisation of flexibility between pockets, with the most flexible
+		    pocket as reference... Remember, flexibility is very abusive, as we 
+			just sum the b-factor of all atoms... */
 		cur = pockets->first ;
 		while(cur) {
 			pcur = cur->pocket ;
