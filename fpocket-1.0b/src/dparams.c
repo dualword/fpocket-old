@@ -42,11 +42,11 @@
 */
 s_dparams* init_def_dparams(void)
 {
-	s_dparams *par = my_malloc(sizeof(s_dparams)) ;
+	s_dparams *par = (s_dparams*) my_malloc(sizeof(s_dparams)) ;
 
-	par->f_exp = my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-	par->f_fpckp = my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-	par->f_fpcknp = my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_exp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_fpckp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_fpcknp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
 
 	strcpy(par->f_exp, M_OUTPUT_FILE1_DEFAULT) ;
 	strcpy(par->f_fpckp, M_OUTPUT_FILE2_DEFAULT) ;
@@ -285,8 +285,8 @@ int add_complexe(char *complex, char *ligand, s_dparams *par)
 			par->ligs   = (char**) my_realloc(par->ligs, (par->nfiles)*sizeof(char*)) ;
 			par->fcomplex = (char**) my_realloc(par->fcomplex, (par->nfiles)*sizeof(char*)) ;
 	
-			par->fcomplex[nm1] = my_malloc((strlen(complex)+1)*sizeof(char)) ;
-			par->ligs[nm1]   = my_malloc((strlen(ligand)+1)*sizeof(char)) ;
+			par->fcomplex[nm1] = (char *)my_malloc((strlen(complex)+1)*sizeof(char)) ;
+			par->ligs[nm1]   = (char *)my_malloc((strlen(ligand)+1)*sizeof(char)) ;
 	
 			strcpy(par->fcomplex[nm1], complex) ;
 			strcpy(par->ligs[nm1], ligand) ;

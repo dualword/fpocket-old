@@ -160,7 +160,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 // --- Variable initialisation
 
 	i = nb_string = 0 ;
-	cline =  my_malloc(nchar_max*sizeof(char)) ;
+	cline = (char *) my_malloc(nchar_max*sizeof(char)) ;
 
 // --- How many lines is there in the file?
 
@@ -176,8 +176,8 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 
 	f = my_fopen(fpath, "r") ;
 
-	lines = my_malloc(sizeof(tab_str)) ;
-	f_lines = my_malloc(nb_string*sizeof(char*)) ;
+	lines = (tab_str *)my_malloc(sizeof(tab_str)) ;
+	f_lines = (char **)my_malloc(nb_string*sizeof(char*)) ;
 	
 // --- Getting lines.
 
@@ -189,7 +189,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 				cline[n] = '\0' ;
 			}
 			
-			char *line = my_malloc((n+1)*sizeof(char)) ;
+			char *line =(char *) my_malloc((n+1)*sizeof(char)) ;
 			memcpy (line, cline, n+1);
 	
 			f_lines[i] = line ;

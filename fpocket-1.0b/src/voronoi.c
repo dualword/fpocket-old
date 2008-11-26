@@ -59,13 +59,13 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	
 	
 	if(fvoro != NULL) { 
-		lvvert = my_malloc(sizeof(s_lst_vvertice)) ;
+		lvvert = (s_lst_vvertice *)my_malloc(sizeof(s_lst_vvertice)) ;
 		lvvert->h_tr=NULL;
 		//loop a first time to get out how many heavy atoms are in the file
 		for(i = 0; i <  pdb->natoms ; i++){
 			ca = (pdb->latoms)+i ;
 			if(strcmp(ca->symbol,"H")) {
-				lvvert->h_tr=my_realloc(lvvert->h_tr,sizeof(int)*(i-nb_h+1)) ;
+				lvvert->h_tr=(int *)my_realloc(lvvert->h_tr,sizeof(int)*(i-nb_h+1)) ;
 				lvvert->h_tr[i-nb_h]=i ;
 			}
 			else nb_h++;
@@ -166,7 +166,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 	lvvert->tr = (int *) my_malloc(lvvert->nvert*sizeof(int));
 	for(i = 0 ; i < lvvert->nvert ; i++) lvvert->tr[i] = -1;		// Initialize corres to -1
 	
- 	lvvert->vertices = my_calloc(lvvert->nvert, sizeof(s_vvertice)) ;
+ 	lvvert->vertices = (s_vvertice *) my_calloc(lvvert->nvert, sizeof(s_vvertice)) ;
 	
 	// Get the string of number of vertices to read, to look up the neighbour list from qhull
 	sprintf(s_nvert,"%d",lvvert->nvert);

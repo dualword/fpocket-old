@@ -191,7 +191,7 @@ void* my_realloc(void *ptr, size_t nb)
 */
 static ptr_node* ptr_node_alloc(void *ptr)
 {
-	ptr_node *node = malloc(sizeof(ptr_node)) ;
+	ptr_node *node = (ptr_node *) malloc(sizeof(ptr_node)) ;
 
 	if(node) {
 		node->ptr = ptr ;

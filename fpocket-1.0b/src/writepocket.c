@@ -282,7 +282,7 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 	int cur_size = 0,
 		cur_allocated = 10 ;
 
-	s_atm **atms = my_malloc(sizeof(s_atm*)*10) ;
+	s_atm **atms = (s_atm**)my_malloc(sizeof(s_atm*)*10) ;
 	s_atm *atom = NULL ;
 
 	FILE *f = fopen(out, "w") ;
@@ -315,7 +315,7 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 				if(!is_in_lst_atm(atms, cur_size, vcur->vertice->neigh[i]->id)) {
 					if(cur_size >= cur_allocated-1) {
 						cur_allocated *= 2 ;
-						atms = my_realloc(atms, sizeof(s_atm)*cur_allocated) ;
+						atms = (s_atm**)my_realloc(atms, sizeof(s_atm)*cur_allocated) ;
 					}
 					atms[cur_size] = vcur->vertice->neigh[i] ;
 					cur_size ++ ;

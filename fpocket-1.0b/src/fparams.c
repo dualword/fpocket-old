@@ -42,7 +42,7 @@
 */
 s_fparams* init_def_fparams(void)
 {
-	s_fparams *par = my_malloc(sizeof(s_fparams)) ;
+	s_fparams *par = (s_fparams *) my_malloc(sizeof(s_fparams)) ;
 
 	par->min_apol_neigh = M__MIN_APOL_NEIGH_DEFAULT ;
 	par->asph_min_size = M_MIN_ASHAPE_SIZE_DEFAULT ;

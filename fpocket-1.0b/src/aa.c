@@ -115,7 +115,7 @@ static const s_amino_a ST_aa[20] =
 char* get_aa_name3(const int index) 
 {
 	if(index < M_NB_AA && index >= 0) {
-		return ST_aa[index].name3 ;
+		return (char*)ST_aa[index].name3 ;
 	}
 	return NULL ;
 }

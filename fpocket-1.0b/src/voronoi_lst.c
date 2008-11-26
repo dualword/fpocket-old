@@ -35,7 +35,7 @@
 */
 c_lst_vertices *c_lst_vertices_alloc(void) 
 {
-	c_lst_vertices *lst = my_malloc(sizeof(c_lst_vertices)) ;
+	c_lst_vertices *lst = (c_lst_vertices *)my_malloc(sizeof(c_lst_vertices)) ;
 
 	lst->first = NULL ;
 	lst->last = NULL ;
@@ -61,7 +61,7 @@ c_lst_vertices *c_lst_vertices_alloc(void)
 */
 node_vertice *node_vertice_alloc(s_vvertice *vertice)
 {
-	node_vertice *n_vertice = my_malloc(sizeof(node_vertice)) ;
+	node_vertice *n_vertice = (node_vertice *) my_malloc(sizeof(node_vertice)) ;
 
 	n_vertice->next = NULL ;
 	n_vertice->prev = NULL ;
@@ -193,7 +193,7 @@ s_atm** get_vert_contacted_atms(c_lst_vertices *v_lst, int *nneigh)
 	int nb_neigh = 0 ;
 	int atm_seen[v_lst->n_vertices * 4] ;
 
-	s_atm **neigh = my_malloc(sizeof(s_atm*)*v_lst->n_vertices * 4) ;
+	s_atm **neigh = (s_atm **)my_malloc(sizeof(s_atm*)*v_lst->n_vertices * 4) ;
 	
 	node_vertice *cur = v_lst->first ;
 

@@ -188,7 +188,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	
 	// Charge
 	if(rlen >= 80) {
-		char buf[3] = "   " ;
+            char buf[4] = "   " ;
 		if((pdb_line[78] == ' ' && pdb_line[79] == ' ') || pdb_line[78] == '\n'){
 			*charge = -1 ;
 		}

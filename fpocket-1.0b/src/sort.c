@@ -46,12 +46,12 @@ static int partition_x(s_vect_elem *lst, int start, int end) ;
 */
 s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert) 
 {
-	s_vsort *lsort = my_malloc(sizeof(s_vsort)) ;
+	s_vsort *lsort = (s_vsort *) my_malloc(sizeof(s_vsort)) ;
 	
 	lsort->nelem = pdb->natoms ;
 	if(lvert) lsort->nelem += lvert->nvert ;
 
-	lsort->xsort = my_malloc((lsort->nelem)*sizeof(s_vect_elem)) ;
+	lsort->xsort = (s_vect_elem*) my_malloc((lsort->nelem)*sizeof(s_vect_elem)) ;
 	merge_atom_vert(lsort, pdb, lvert) ;
 	qsort_dim(lsort->xsort, lsort->nelem) ;
 	

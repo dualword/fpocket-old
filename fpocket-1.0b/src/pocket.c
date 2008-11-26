@@ -60,8 +60,8 @@ static void pock_qsort_rec(c_lst_pockets *pockets, node_pocket **pocks, int star
 */
 s_pocket* alloc_pocket(void) 
 {
-	s_pocket *p = my_malloc(sizeof(s_pocket)) ;
-	p->pdesc = my_malloc(sizeof(s_desc)) ;
+	s_pocket *p = (s_pocket*)my_malloc(sizeof(s_pocket)) ;
+	p->pdesc = (s_desc*)my_malloc(sizeof(s_desc)) ;
 	p->v_lst = NULL ;
 
 	reset_pocket(p) ;
@@ -84,7 +84,7 @@ s_pocket* alloc_pocket(void)
 */
 c_lst_pockets *c_lst_pockets_alloc(void) 
 {
-	c_lst_pockets *lst = my_malloc(sizeof(c_lst_pockets)) ;
+	c_lst_pockets *lst = (c_lst_pockets *)my_malloc(sizeof(c_lst_pockets)) ;
 
 	lst->first = NULL ;
 	lst->last = NULL ;
@@ -111,7 +111,7 @@ c_lst_pockets *c_lst_pockets_alloc(void)
 */
 node_pocket *node_pocket_alloc(s_pocket *pocket)
 {
-	node_pocket *n_pocket = my_malloc(sizeof(node_pocket)) ;
+	node_pocket *n_pocket = (node_pocket*)my_malloc(sizeof(node_pocket)) ;
 
 	n_pocket->next = NULL ;
 	n_pocket->prev = NULL ;
@@ -851,7 +851,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 			pcur = cur->pocket ;
 
 		/* Getting a list of vertices in a tab of pointer */
-			s_vvertice **tab_vert = my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
+			s_vvertice **tab_vert = (s_vvertice **)my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
 			i = 0 ;
 			node_vertice *nvcur = pcur->v_lst->first ;
 			while(nvcur) {
@@ -969,14 +969,14 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 		int atm_ids[pocket->v_lst->n_vertices * 4] ;	// Maximum nb_vert*4 atoms contacting the pocket ;
 
 	// Do the search 
-		catoms = my_malloc(actual_size*sizeof(s_atm*)) ;
+		catoms = (s_atm **)my_malloc(actual_size*sizeof(s_atm*)) ;
 		nvcur = pocket->v_lst->first ;
 		while(nvcur) {
 			vcur = nvcur->vertice ;
 			for(i = 0 ; i < 4 ; i++) {
 				if(in_tab(atm_ids,  nb_atoms, vcur->neigh[i]->id) == 0) {
 					if(nb_atoms >= actual_size) {
-						catoms = my_realloc(catoms, (actual_size+10)*sizeof(s_atm**)) ;
+						catoms = (s_atm **)my_realloc(catoms, (actual_size+10)*sizeof(s_atm**)) ;
 						actual_size += 10 ;
 					}
 	
@@ -1105,7 +1105,7 @@ float set_pocket_score2(s_pocket *pok)
 void sort_pockets(c_lst_pockets *pockets, int (*fcmp)(const node_pocket*, const node_pocket*)) 
 {
 	size_t npock = 0 ;
-	node_pocket **pocks = my_calloc(pockets->n_pockets, sizeof(node_pocket*)) ;
+	node_pocket **pocks = (node_pocket **)my_calloc(pockets->n_pockets, sizeof(node_pocket*)) ;
 	node_pocket *cur = pockets->first ;
 
 	while(cur && npock < pockets->n_pockets) {

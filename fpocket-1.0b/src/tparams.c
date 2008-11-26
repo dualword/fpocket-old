@@ -35,10 +35,10 @@
 */
 s_tparams* init_def_tparams(void)
 {
-	s_tparams *par = my_malloc(sizeof(s_tparams)) ;
-	par->p_output = my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	s_tparams *par = (s_tparams *)my_malloc(sizeof(s_tparams)) ;
+	par->p_output = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
 	strcpy(par->p_output, M_STATS_OUTP) ;
-	par->g_output = my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->g_output = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
 	strcpy(par->g_output, M_STATS_OUTG) ;
 	par->fapo = NULL ;
 	par->fcomplex = NULL ;
@@ -298,9 +298,9 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 				par->fligan   = (char**) my_realloc(par->fligan, (par->nfiles)*sizeof(char*)) ;
 				par->fcomplex = (char**) my_realloc(par->fcomplex, (par->nfiles)*sizeof(char*)) ;
 	
-				par->fapo[nm1]     = my_malloc((strlen(apo)+1)*sizeof(char)) ;
-				par->fcomplex[nm1] = my_malloc((strlen(complex)+1)*sizeof(char)) ;
-				par->fligan[nm1]   = my_malloc((strlen(ligan)+1)*sizeof(char)) ;
+				par->fapo[nm1]     = (char *)my_malloc((strlen(apo)+1)*sizeof(char)) ;
+				par->fcomplex[nm1] = (char *)my_malloc((strlen(complex)+1)*sizeof(char)) ;
+				par->fligan[nm1]   = (char *)my_malloc((strlen(ligan)+1)*sizeof(char)) ;
 	
 				strcpy(par->fapo[nm1], apo) ;
 				strcpy(par->fcomplex[nm1], complex) ;

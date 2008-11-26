@@ -61,7 +61,7 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 		i, seen ;
 	
 	s_atm *curap = NULL, *curam = NULL ;
-	s_atm **neigh = my_malloc(sizeof(s_atm*)*real_size) ;
+	s_atm **neigh = (s_atm**)my_malloc(sizeof(s_atm*)*real_size) ;
 	
 	nb_neigh = 0 ;
 	for(i = 0 ; i < natoms ; i++) {
@@ -92,7 +92,7 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 						if(!seen) {
 							if(nb_neigh >= real_size-1) {
 								real_size *= 2 ;
-								neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+								neigh =(s_atm**) my_realloc(neigh, sizeof(s_atm)*real_size) ;
 							}
 							neigh[nb_neigh] = curap ;
 							nb_neigh ++ ;
@@ -117,7 +117,7 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 						if(!seen) {
 							if(nb_neigh >= real_size-1) {
 								real_size *= 2 ;
-								neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+								neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 							}
 							neigh[nb_neigh] = curam ;
 							nb_neigh ++ ;
@@ -177,7 +177,7 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 		i, seen ;
 	
 	s_vvertice *curvp = NULL, *curvm = NULL ;
-	s_vvertice **neigh = my_malloc(sizeof(s_vvertice*)*real_size) ;
+	s_vvertice **neigh = (s_vvertice**)my_malloc(sizeof(s_vvertice*)*real_size) ;
 	
 	nb_neigh = 0 ;
 	for(i = 0 ; i < natoms ; i++) {
@@ -207,7 +207,7 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 						if(!seen) {
 							if(nb_neigh >= real_size-1) {
 								real_size *= 2 ;
-								neigh = my_realloc(neigh, sizeof(s_vvertice)*real_size) ;
+								neigh = (s_vvertice **)my_realloc(neigh, sizeof(s_vvertice)*real_size) ;
 							}
 							neigh[nb_neigh] = curvp ;
 							nb_neigh ++ ;
@@ -231,7 +231,7 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 						if(!seen) {
 							if(nb_neigh >= real_size-1) {
 								real_size *= 2 ;
-								neigh = my_realloc(neigh, sizeof(s_vvertice)*real_size) ;
+								neigh = (s_vvertice**)my_realloc(neigh, sizeof(s_vvertice)*real_size) ;
 							}
 							neigh[nb_neigh] = curvm ;
 							nb_neigh ++ ;
@@ -293,7 +293,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvert
 	
 	s_vvertice *curvp = NULL, *curvm = NULL ;
 	s_atm *curatm = NULL ;
-	s_atm **neigh = my_malloc(sizeof(s_atm*)*real_size) ;
+	s_atm **neigh = (s_atm**)my_malloc(sizeof(s_atm*)*real_size) ;
 
 	for(i = 0 ; i < natoms ; i++) {
 		s_atm *cur = atoms[i] ;
@@ -327,7 +327,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvert
 								// If we have not seen yet this atom and if he is not too far away from the ligand, add it
 									if(nb_neigh >= real_size-1) {
 										real_size *= 2 ;
-										neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
@@ -336,7 +336,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvert
 								// If we have not seen yet this atom and if he is not too far away from the ligand, add it
 									if(nb_neigh >= real_size-1) {
 										real_size *= 2 ;
-										neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
@@ -365,7 +365,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvert
 								// If we have not seen yet this atom and if he is not too far away from the ligand, add it
 									if(nb_neigh >= real_size-1) {
 										real_size *= 2 ;
-										neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
@@ -374,7 +374,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvert
 								// If we have not seen yet this atom and if he is not too far away from the ligand, add it
 									if(nb_neigh >= real_size-1) {
 										real_size *= 2 ;
-										neigh = my_realloc(neigh, sizeof(s_atm)*real_size) ;
+										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;

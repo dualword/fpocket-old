@@ -44,7 +44,7 @@
 */
 s_desc* allocate_s_desc(void) 
 {
-	s_desc *desc = my_malloc(sizeof(s_desc)) ;
+	s_desc *desc = (s_desc*)my_malloc(sizeof(s_desc)) ;
 	
 	reset_s_desc(desc) ;
 
