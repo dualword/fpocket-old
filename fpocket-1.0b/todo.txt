@@ -5,21 +5,45 @@ more convenient way for you, just drop us a line.
 
     Priority        Todo
     --------------------
-fpocket
-    high            adapt dpocket and tpocket to be able to design correct statistics if the ligand appears multiple times
-    low             performance issues : implement the index neighbour lists everywhere we can
+
+Code
+    high            > Complete comments
+					> Adapt dpocket and tpocket to be able to design correct  
+					  statistics if the ligand appears multiple times
+					> Give the possibility to keep fpocket output when running
+					  tpocket
+					> Make the code as sexy as possible!!
+					 
+	low				> Satisfy g++ compilation requirement
+					> Performance issues : implement the index neighbour lists 
+					  everywhere we can
+					> Performance issues : Remove the memory handler, find another
+					  solution.
+				
+documentation
+	high			> Retrieve and complete manuals.
+					> Propose a full PDF documentation giving installation
+					  instructions and examples of usage.
+
+	medium			> Include in the documentation an exemple showing how to
+					  modify the scoring function & the way fpocket sort pockets
 
 qhull    
-    low             use qhull as static library object in order to provide bigger portability of fpocket (contact the qhull team)
-    medium          assess limits of qhull (maximum number of points) -> enhance error management
-    high            erase voronoi tmp files after use
+    high            > Erase voronoi tmp files after use, or don't even use it.
+
+    medium          > Assess limits of qhull (maximum number of points) -> enhance 
+					  error management
+					> Use qhull as static library object in order to provide 
+					  bigger portability of fpocket (contact the qhull team)
 
 input
-    medium          enable input of "to keep" HETATM tags by command line
+    medium          > Enable input of "to keep" HETATM tags by command line
 
 output
-    medium          provide possibility to define the output path through command line, keeping the current behaviour as default
+    medium          > Give the possibility to define the output path through 
+					  command line, keeping the current behaviour as default
 
 visualization
-    low             write a tcl based gui frontend for viewing and navigating through results using VMD
-    medium          enhance PYMOL vizualisation output
+    low             > Write a tcl based gui frontend for viewing and navigating 
+					  through results using VMD
+    medium          > Enhance PYMOL vizualisation output
