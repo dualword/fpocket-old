@@ -13,8 +13,8 @@ TPOCKET		= tpocket
 DPOCKET		= dpocket
 MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET)
 
-CC          = gcc
-LINKER		= gcc
+CC          = g++
+LINKER		= g++
 
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
