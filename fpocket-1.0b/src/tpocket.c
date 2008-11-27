@@ -11,6 +11,7 @@
 ## ----- SPECIFICATIONS
 ## ----- MODIFICATIONS HISTORY
 ##
+##	27-11-08	(v)  Write fpocket output if asked + relooking
 ##	15-10-08	(v)  Fixed bad count when PDB file not found.
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -228,8 +229,7 @@ void test_fpocket(s_tparams *par)
 	void
    -----------------------------------------------------------------------------
 */
-int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], 
-				   int idata [][M_NIDATA]) 
+int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) 
 {
 	s_atm **accpck = NULL,
 		  **accpck2 = NULL ;
@@ -250,57 +250,71 @@ int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA],
 	s_pdb *cpdb = rpdb_open(fc, lig, M_KEEP_LIG) ;
 	s_pdb *cpdb_nolig = rpdb_open(fc, lig, M_DONT_KEEP_LIG) ;
 	
-	/* if both pdb files found and opened */
-	if(apdb && cpdb) {
-	/* if the ligand was correctly identified */
-		if(cpdb->natm_lig > 0) {
-			rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;	//get rid of HETATM in the apo structure
-			rpdb_read(cpdb, lig, M_KEEP_LIG) ;	
-			rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;	
-	
-			c_lst_pockets *pockets = search_pocket(apdb, par->fpar);
-			set_pockets_bary(pockets) ;
-			if(pockets && pockets->n_pockets > 0) {
-			/* We found pocket on the apo form get volume and mass of the ligand */
-				idata[i][M_NPOCKET] = pockets->n_pockets ;
-				ddata[i][M_LIGMASS] = get_mol_mass_ptr(cpdb->latm_lig, cpdb->natm_lig) ;
-				ddata[i][M_LIGVOL] = get_mol_volume_ptr(cpdb->latm_lig, cpdb->natm_lig, par->fpar->nb_mcv_iter);
-
-			/* Get atoms involved in the actual pocket */
-				accpck = get_actual_pocket_DEPRECATED(cpdb, M_DST_CRIT, &naccpck) ;
-				accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
-				if (naccpck <= 0 || naccpck2 <= 0) {
-					fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %d %d\n", naccpck, naccpck2) ; 
-				}
-			
-				check_pockets(pockets, accpck2, naccpck2, cpdb->latm_lig, cpdb->natm_lig, ddata[i][M_LIGVOL],	
-							  accpck, naccpck, ddata, idata, i, par->fpar) ;
-
-				c_lst_pocket_free(pockets) ;
-				my_free(accpck) ;
-			}
-			else {
-				if(pockets) c_lst_pocket_free(pockets) ;
-				return M_NOPOCKETFOUND ;
-			}
-		}
-		else {
-			fprintf(stderr, "! No atoms for ligand %s in the complex %s (apo %s)...\n", lig, fc, fa) ;
-			return M_LIGNOTFOUND ;
-		}
-
-		//write_pdb_com(cpdb, par->fcomplex[i]) ;
-		free_pdb_atoms(apdb) ;
-		free_pdb_atoms(cpdb) ;
-		free_pdb_atoms(cpdb_nolig) ;
-	}
-	else {
+	/* Check that both pdb files are opened */
+	if(! apdb || !cpdb) {
 		fprintf(stderr, "!! PDB loading failed for %s-%s ligand %s... %p %p\n", 
 						fc, fa, lig, apdb, cpdb) ;
 		if(cpdb) free_pdb_atoms(cpdb) ;
 		if(apdb) free_pdb_atoms(apdb) ;
+		
 		return M_LIGNOTFOUND ;
 	}
+	
+	/* Check now if the ligand have been found */
+	if(cpdb->natm_lig <= 0) {
+		
+		fprintf(stderr, "! Ligand %s not found in the complex %s (apo %s)...\n", 
+						lig, fc, fa) ;
+		
+		return M_LIGNOTFOUND ;
+	}
+	
+	
+	/* PDBs and ligand OK, now read PDB and launch fpocket */	
+	rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;	//get rid of HETATM in the apo structure
+	rpdb_read(cpdb, lig, M_KEEP_LIG) ;	
+	rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;	
+
+	c_lst_pockets *pockets = search_pocket(apdb, par->fpar);
+	set_pockets_bary(pockets) ;
+	
+	/* Check that at least one pocket have been found */
+	if(!pockets || pockets->n_pockets <= 0) {
+		if(pockets) c_lst_pocket_free(pockets) ;
+		return M_NOPOCKETFOUND ;
+	}
+	
+	/* Everything is OK, so now perform the evaluation*/
+	
+	/* We found pocket on the apo form get volume and mass of the ligand */
+	idata[i][M_NPOCKET] = pockets->n_pockets ;
+	ddata[i][M_LIGMASS] = get_mol_mass_ptr(cpdb->latm_lig, cpdb->natm_lig) ;
+	ddata[i][M_LIGVOL]  = get_mol_volume_ptr(cpdb->latm_lig, cpdb->natm_lig, par->fpar->nb_mcv_iter);
+
+	/* Get atoms involved in the actual pocket */
+	accpck = get_actual_pocket_DEPRECATED(cpdb, M_DST_CRIT, &naccpck) ;
+	accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
+	if (naccpck <= 0 || naccpck2 <= 0) {
+		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %d %d\n", naccpck, naccpck2) ; 
+	}
+
+	/* Calculate evaluation criterias */
+	check_pockets(pockets, accpck2, naccpck2, cpdb->latm_lig, cpdb->natm_lig, ddata[i][M_LIGVOL],	
+				  accpck, naccpck, ddata, idata, i, par->fpar) ;
+
+	printf("%d", par->keep_fpout) ;
+	if(par->keep_fpout != 0) {
+		write_out_fpocket(pockets, apdb, par->fpar) ;
+	}
+	//write_pdb_com(cpdb, par->fcomplex[i]) ;
+	
+	/* Free memory */
+	c_lst_pocket_free(pockets) ;
+	my_free(accpck) ;
+	free_pdb_atoms(apdb) ;
+	free_pdb_atoms(cpdb) ;
+	free_pdb_atoms(cpdb_nolig) ;
+		
 	return M_OK ;
 }
 

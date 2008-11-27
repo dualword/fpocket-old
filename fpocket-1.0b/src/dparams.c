@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	27-11-08	(v)  Minor Relooking
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -93,27 +94,38 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-') {
 			switch (args[i][1]) {
-				case M_PAR_MAX_ASHAPE_SIZE	  : status += parse_asph_max_size(args[++i], par->fpar) ; 
+				case M_PAR_MAX_ASHAPE_SIZE	  : 
+					status += parse_asph_max_size(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_MIN_ASHAPE_SIZE	  : status += parse_asph_min_size(args[++i], par->fpar) ; 
+				case M_PAR_MIN_ASHAPE_SIZE	  : 
+					status += parse_asph_min_size(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_MIN_APOL_NEIGH	  : status += parse_min_apol_neigh(args[++i], par->fpar) ;
+				case M_PAR_MIN_APOL_NEIGH	  : 
+					status += parse_min_apol_neigh(args[++i], par->fpar) ;
 											  break ;
-				case M_PAR_CLUST_MAX_DIST	  : status += parse_clust_max_dist(args[++i], par->fpar) ; 
+				case M_PAR_CLUST_MAX_DIST	  : 
+					status += parse_clust_max_dist(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_SL_MAX_DIST		  : status += parse_sclust_max_dist(args[++i], par->fpar) ; 
+				case M_PAR_SL_MAX_DIST		  : 
+					status += parse_sclust_max_dist(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_SL_MIN_NUM_NEIGH   : status += parse_sclust_min_nneigh(args[++i], par->fpar) ; 
+				case M_PAR_SL_MIN_NUM_NEIGH   : 
+					status += parse_sclust_min_nneigh(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_MC_ITER 			  : status += parse_mc_niter(args[++i], par->fpar) ; 
+				case M_PAR_MC_ITER 			  : 
+					status += parse_mc_niter(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_BASIC_VOL_DIVISION : status += parse_basic_vol_div(args[++i], par->fpar) ; 
+				case M_PAR_BASIC_VOL_DIVISION : 
+					status += parse_basic_vol_div(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_MIN_POCK_NB_ASPH   : status += parse_min_pock_nb_asph(args[++i], par->fpar) ; 
+				case M_PAR_MIN_POCK_NB_ASPH   : 
+					status += parse_min_pock_nb_asph(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_REFINE_DIST		  : status += parse_refine_dist(args[++i], par->fpar) ; 
+				case M_PAR_REFINE_DIST		  : 
+					status += parse_refine_dist(args[++i], par->fpar) ; 
 											  break ;
-				case M_PAR_REFINE_MIN_NAPOL_AS: status += parse_refine_min_apolar_asphere_prop(args[++i], par->fpar) ; 
+				case M_PAR_REFINE_MIN_NAPOL_AS: 
+					status += parse_refine_minaap(args[++i], par->fpar) ; 
 											  break ;
 			
 				case M_DPAR_DISTANCE_CRITERIA : 

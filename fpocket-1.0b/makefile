@@ -75,7 +75,7 @@ $(PATH_OBJ)fparams.o: $(PATH_HEADER)fparams.h $(PATH_HEADER)utils.h $(PATH_HEADE
 
 #---------- Files for tpocket
 
-$(PATH_OBJ)tpocket.o: $(PATH_HEADER)tpocket.h $(PATH_HEADER)fpocket.h $(PATH_HEADER)neighbor.h $(PATH_HEADER)memhandler.h $(PATH_HEADER)tparams.h
+$(PATH_OBJ)tpocket.o: $(PATH_HEADER)tpocket.h $(PATH_HEADER)fpocket.h $(PATH_HEADER)neighbor.h $(PATH_HEADER)memhandler.h $(PATH_HEADER)tparams.h $(PATH_HEADER)fpout.h
 
 $(PATH_OBJ)tpmain.o: $(PATH_HEADER)tpmain.h $(PATH_HEADER)tparams.h $(PATH_HEADER)tpocket.h $(PATH_HEADER)fpout.h
 $(PATH_OBJ)tparams.o: $(PATH_HEADER)tparams.h $(PATH_HEADER)fparams.h $(PATH_HEADER)utils.h $(PATH_HEADER)memhandler.h

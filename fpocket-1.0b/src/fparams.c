@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	27-11-08	(v)  PDB file check moved in fpmain + minor modif + relooking
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -79,11 +80,8 @@ s_fparams* init_def_fparams(void)
 s_fparams* get_fpocket_args(int nargs, char **args)
 {
 	int i,
+		npdb = 0,
 		status = 0 ;
-
-	int npdb = 0;
-	
-	char *str_pdb_file = NULL;
 
 	s_fparams *par = init_def_fparams() ;
 
@@ -91,61 +89,43 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
 			switch (args[i][1]) {
-				case M_PAR_MAX_ASHAPE_SIZE	  : status += parse_asph_max_size(args[++i], par) ; 
-											  break ;
-				case M_PAR_MIN_ASHAPE_SIZE	  : status += parse_asph_min_size(args[++i], par) ; 
-											  break ;
-				case M_PAR_MIN_APOL_NEIGH	  : status += parse_min_apol_neigh(args[++i], par) ;
-											  break ;
-				case M_PAR_CLUST_MAX_DIST	  : status += parse_clust_max_dist(args[++i], par) ; 
-											  break ;
-				case M_PAR_SL_MAX_DIST		  : status += parse_sclust_max_dist(args[++i], par) ; 
-											  break ;
-				case M_PAR_SL_MIN_NUM_NEIGH   : status += parse_sclust_min_nneigh(args[++i], par) ; 
-											  break ;
-				case M_PAR_MC_ITER 			  : status += parse_mc_niter(args[++i], par) ; 
-											  break ;
-				case M_PAR_BASIC_VOL_DIVISION : status += parse_basic_vol_div(args[++i], par) ; 
-											  break ;
-				case M_PAR_MIN_POCK_NB_ASPH   : status += parse_min_pock_nb_asph(args[++i], par) ; 
-											  break ;
-				case M_PAR_REFINE_DIST		  : status += parse_refine_dist(args[++i], par) ; 
-											  break ;
-				case M_PAR_REFINE_MIN_NAPOL_AS: status += parse_refine_min_apolar_asphere_prop(args[++i], par) ; 
-											  break ;
+				case M_PAR_MAX_ASHAPE_SIZE	  : 
+					status += parse_asph_max_size(args[++i], par) ;		break ;
+				case M_PAR_MIN_ASHAPE_SIZE	  : 
+					status += parse_asph_min_size(args[++i], par) ;		break ;
+				case M_PAR_MIN_APOL_NEIGH	  : 
+					status += parse_min_apol_neigh(args[++i], par) ;	break ;
+				case M_PAR_CLUST_MAX_DIST	  : 
+					status += parse_clust_max_dist(args[++i], par) ;	break ;
+				case M_PAR_SL_MAX_DIST		  : 
+					status += parse_sclust_max_dist(args[++i], par) ;	break ;
+				case M_PAR_SL_MIN_NUM_NEIGH   : 
+					status += parse_sclust_min_nneigh(args[++i], par) ; break ;
+				case M_PAR_MC_ITER 			  : 
+					status += parse_mc_niter(args[++i], par) ;			break ;
+				case M_PAR_BASIC_VOL_DIVISION : 
+					status += parse_basic_vol_div(args[++i], par) ;		break ;
+				case M_PAR_MIN_POCK_NB_ASPH   : 
+					status += parse_min_pock_nb_asph(args[++i], par) ;	break ;
+				case M_PAR_REFINE_DIST		  : 
+					status += parse_refine_dist(args[++i], par) ;		break ;
+				case M_PAR_REFINE_MIN_NAPOL_AS: 
+					status += parse_refine_minaap(args[++i], par) ; 
+					break ;
 				case M_PAR_PDB_FILE			  : 
-						if(npdb >= 1) fprintf(stderr, "! More than one single pdb has been given. Ignoring the rest.\n") ;
-						else {
-							str_pdb_file = args[++i] ; npdb++ ;
-						}
+						if(npdb >= 1) fprintf(stderr, 
+							"! Only first input pdb will be used.\n") ;
+						else strcpy(par->pdb_path, args[++i]) ; npdb++ ;
 						break ;
-				default: printf("> Unknown option '%s'. Ignoring it.\n", args[i]) ; break ;
+				default: break ;
 			}
 		}
 	}
+	
 	if(status > 0) {
  		free_fparams(par) ;
 		par = NULL ;
 		print_pocket_usage(stdout);
-	}
-	else {
-		if(str_pdb_file) {
-			int len = strlen(str_pdb_file) ;
-			if(len < M_MAX_PDB_NAME_LEN) {
-				strcpy(par->pdb_path, str_pdb_file)	;
-			}
-			else {
-				fprintf(stderr, "! Maximum number of caracters (%d) for the pdb names has been reached...\n", M_MAX_PDB_NAME_LEN) ;
-				free_fparams(par) ;
-				par = NULL ;
-			}
-		}
-		else {
-			fprintf(stderr, "! No pdb file given!\n") ;
-			free_fparams(par) ;
-			par = NULL ;
-			print_pocket_usage(stdout);
-		}
 	}
 
 	return par;
@@ -423,7 +403,7 @@ int parse_refine_dist(char *str, s_fparams *p)
 	0 if the parameter is valid (here a valid integer), 1 if not
    -----------------------------------------------------------------------------
 */
-int parse_refine_min_apolar_asphere_prop(char *str, s_fparams *p) 
+int parse_refine_minaap(char *str, s_fparams *p) 
 {
 	if(str_is_float(str, M_NO_SIGN)) {
 		p->refine_min_apolar_asphere_prop = (float) atof(str) ;

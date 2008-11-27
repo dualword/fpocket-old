@@ -98,7 +98,7 @@ int parse_asph_max_size(char *str, s_fparams *p) ;
 int parse_mc_niter(char *str, s_fparams *p) ;
 int parse_basic_vol_div(char *str, s_fparams *p)  ;
 int parse_refine_dist(char *str, s_fparams *p)  ;
-int parse_refine_min_apolar_asphere_prop(char *str, s_fparams *p)  ;
+int parse_refine_minaap(char *str, s_fparams *p)  ;
 int parse_min_pock_nb_asph(char *str, s_fparams *p) ;
 
 void free_fparams(s_fparams *p) ;

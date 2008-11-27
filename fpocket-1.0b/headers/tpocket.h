@@ -13,6 +13,7 @@
 #include "tparams.h"
 #include "neighbor.h"
 #include "fpocket.h"
+#include "fpout.h"
 
 #include "memhandler.h"
 

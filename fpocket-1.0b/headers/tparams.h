@@ -26,6 +26,7 @@
 #define M_PAR_VALID_INPUT_FILE 'L'
 #define M_PAR_P_STATS_OUT 'o'
 #define M_PAR_G_STATS_OUT 'e'
+#define M_PAR_KEEP_FP_OUTPUT 'k'
 
 
 //write the statistics output of tpocket to :
@@ -47,11 +48,12 @@ typedef struct s_tparams
 		 **fligan;
 	char *p_output;
 	char *g_output;
-	char stats_g[128] ;//M_STATS_OUTG ,
+	char stats_g[128] ; //M_STATS_OUTG ,
 	char stats_p[128] ; //M_STATS_OUTP ;
 
 	float lig_neigh_dist ;
 	int nfiles ;
+	int keep_fpout ;
 
 // Parameters for the pocket finder program (also needed for validation program...)
 
@@ -66,6 +68,7 @@ s_tparams* get_tpocket_args(int nargs, char **args) ;
 int add_list_data(char *str_list_file, s_tparams *par) ;
 int add_prot(char *apo, char *complex, char *ligan, s_tparams *par) ;
 int parse_lig_neigh_dist(char *str, s_tparams *p) ;
+int parse_keep_fpout(char *str, s_tparams *p) ;
 void free_tparams(s_tparams *p);
 void print_test_usage(FILE *f) ;
 void print_params(s_tparams *p, FILE *f) ;

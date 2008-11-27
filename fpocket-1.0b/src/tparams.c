@@ -12,6 +12,9 @@
 ## ----- SPECIFICATIONS
 ## ----- MODIFICATIONS HISTORY
 ##
+##	27-11-08	(v)  Added option to keep fpocket output + minor relooking
+##					 Also, fpocket option parsing is now performed exclusively
+##					 using fparams.c and the function get_fpocket_args
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -44,8 +47,9 @@ s_tparams* init_def_tparams(void)
 	par->fcomplex = NULL ;
 	par->fligan = NULL ;
 	par->nfiles = 0 ;
+	par->keep_fpout = 0 ;
 	par->lig_neigh_dist = M_LIG_NEIG_DIST ;
-	par->fpar = init_def_fparams() ;
+	
 	return par ;
 }
 
@@ -75,40 +79,32 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 		napo = 0,
 		nstats = 0;
 	
-	char *str_ligan_file = NULL,
+	char *str_lig = NULL,
 		 *str_complex_file = NULL,
 		 *str_apo_file = NULL,
 		 *str_list_file = NULL ;
 
 	s_tparams *par = init_def_tparams() ;
-	//read arguments by flags
+	par->fpar = get_fpocket_args(nargs, args) ;
+	
+	if(!par->fpar) {
+		free_tparams(par) ;
+		print_test_usage(stdout);
+		
+		return NULL ;
+	}
+	
+	// Read arguments by flags
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
 			switch (args[i][1]) {
-				case M_PAR_MAX_ASHAPE_SIZE	  : status += parse_asph_max_size(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_ASHAPE_SIZE	  : status += parse_asph_min_size(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_CLUST_MAX_DIST	  : status += parse_clust_max_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_SL_MAX_DIST		  : status += parse_sclust_max_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_SL_MIN_NUM_NEIGH   : status += parse_sclust_min_nneigh(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MC_ITER 			  : status += parse_mc_niter(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_BASIC_VOL_DIVISION : status += parse_basic_vol_div(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_POCK_NB_ASPH   : status += parse_min_pock_nb_asph(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_REFINE_DIST		  : status += parse_refine_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_REFINE_MIN_NAPOL_AS: status += parse_refine_min_apolar_asphere_prop(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_APOL_NEIGH	  : status += parse_min_apol_neigh(args[++i], par->fpar) ;
-											  break ;
-				case M_PAR_LIG_NEIG_DIST	  : status += parse_lig_neigh_dist(args[++i], par) ; 
-											  break ;
+				case M_PAR_LIG_NEIG_DIST	  : 
+					status += parse_lig_neigh_dist(args[++i], par) ; 
+					break ;
+				case M_PAR_KEEP_FP_OUTPUT     :
+					status += parse_keep_fpout(args[++i], par) ;
+					break ;
+					
 				case M_PAR_VALID_COMPLEX_FILE	:
 						if(ncomp >= 1) fprintf(stderr, "! More than one single file for complex protein has been given. Ignoring it.\n") ;
 						else {
@@ -123,9 +119,9 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 						break ;
 
 				case M_PAR_VALID_LIG_CODE		: 
-						if(nlig >= 1) fprintf(stderr, "! More than one single file for ligand has been given. Ignoring it.\n") ;
+						if(nlig >= 1) fprintf(stderr, "! More than one PDB ligand code has been given. Ignoring it.\n") ;
 						else {
-							str_ligan_file = args[++i] ; nlig++ ; 
+							str_lig = args[++i] ; nlig++ ; 
 						}
 						break ;
 				case M_PAR_P_STATS_OUT : 
@@ -181,8 +177,8 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 			}
 		}
 		else {
-			if(str_ligan_file && str_apo_file && str_complex_file) {
-				if(add_prot(str_apo_file, str_complex_file, str_ligan_file, par) == 0){
+			if(str_lig && str_apo_file && str_complex_file) {
+				if(add_prot(str_apo_file, str_complex_file, str_lig, par) == 0){
 					fprintf(stderr, "! No data has been read.\n") ;
 					free_tparams(par) ;
 					par = NULL ;
@@ -327,6 +323,35 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 
 	return 1 ;
 }
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION: 
+	int parse_keep_fpout(char *str, s_fparams *p) 
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION: 	
+	Parsing function for the fpocket output keeper flag
+   -----------------------------------------------------------------------------
+   ## PARAMETERS:
+	@ char *str: The string to parse
+	@ s_fparams *p: The structure than will contain the parsed parameter
+   -----------------------------------------------------------------------------
+   ## RETURN: 
+	0 if the parameter is valid (here a valid float), 1 if not
+   -----------------------------------------------------------------------------
+*/
+int parse_keep_fpout(char *str, s_tparams *p) 
+{
+	if(str_is_number(str, M_NO_SIGN)) {
+		p->keep_fpout = atoi(str) ;
+	}
+	else {
+		fprintf(stdout, "! Invalid value (%s) given for distance criteria to define interface atoms.\n", str) ;
+		return 1 ;
+	}
+
+	return 0 ;
+}
+
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
