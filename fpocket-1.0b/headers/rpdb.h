@@ -1,4 +1,35 @@
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 #ifndef DH_RPDBB
 #define DH_RPDBB
 
@@ -36,25 +67,25 @@ typedef struct s_pdb
 {
 	FILE *fpdb ;
 
-	s_atm *latoms ;		// The list of atoms: contains all atoms!
-	s_atm **lhetatm ;	// List of hetatm. Contains pointers to atoms in the 
-						// latoms list!
-	s_atm **latm_lig ;	// List of ligand atoms. Contains pointers to atoms 
-						// in the latoms list!
+	s_atm *latoms ;		/* The list of atoms: contains all atoms! */
+	s_atm **lhetatm ;	/* List of hetatm. Contains pointers to atoms in the  */
+						/* latoms list! */
+	s_atm **latm_lig ;	/* List of ligand atoms. Contains pointers to atoms  */
+						/* in the latoms list! */
 
-	int natoms,			// Number of atoms
-		nhetatm,		// Number of HETATM
-		natm_lig ;		// Number of ligand atoms
+	int natoms,			/* Number of atoms */
+		nhetatm,		/* Number of HETATM */
+		natm_lig ;		/* Number of ligand atoms */
 
-	float A, B, C, 				// Side lengths of the unit cell
-		  alpha, beta, gamma ;		// Angle between B and C, A and C, A and C
+	float A, B, C, 				/* Side lengths of the unit cell */
+		  alpha, beta, gamma ;	/* Angle between B and C, A and C, A and C */
 
 	char header[M_PDB_BUF_LEN] ;
 
 } s_pdb ;
 
 
-// ------------------------------------ PUBLIC FUNCTIONS -------------------------------------------
+/* ------------------------------ PUBLIC FUNCTIONS ---------------------------*/
 
 s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig) ;
 void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) ;

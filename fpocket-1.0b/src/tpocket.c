@@ -9,8 +9,14 @@
 ## LAST MODIFIED			01-04-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  This file contains all routines used to execute tpocket and test the fpocket
+##  performance, given a set of complexe-apo-ligand structure stored in a single
+##  text file.
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Relooking + comments UTD
 ##	27-11-08	(v)  Write fpocket output if asked + relooking
 ##	15-10-08	(v)  Fixed bad count when PDB file not found.
 ##	01-04-08	(v)  Added template for comments and creation of history
@@ -21,16 +27,48 @@
 
 */
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void test_fpocket(s_tparams *par)
+	test_fpocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Test fpocket for a set of data.
+	Test fpocket for a set of pdb files. The output is writen in this function,
+	and consists of two files (see documentation for details)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
-	of data set to test. 
+					  of data set informations.
    -----------------------------------------------------------------------------
    ## RETURN:
 	void
@@ -55,7 +93,7 @@ void test_fpocket(s_tparams *par)
 	/* Test all files */
 		for(i = 0 ; i < par->nfiles ; i++) {
 			strcpy(par->fpar->pdb_path, par->fapo[i]) ;
-			status [i] = test_AC(par, i, ddata, idata) ;
+			status [i] = test_set(par, i, ddata, idata) ;
 			fprintf(stdout, "> %3d : %s output code %d\n", i+1, par->fapo[i],
 														   status [i]) ;
 			if(status[i] == M_OK) N++ ;
@@ -114,7 +152,7 @@ void test_fpocket(s_tparams *par)
 	/* Printing global statistics */
 		FILE *fg = fopen(par->g_output, "w") ;
 		if(fg) {
-	// Write the first overlap statistics
+	/* Write the first overlap statistics */
 			fprintf(fg, "===================== General statistics on all complexes =======================\n") ;
 			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 			fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
@@ -155,15 +193,19 @@ void test_fpocket(s_tparams *par)
 			fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
 			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
 			fprintf(fg,"           :");
-                        for( j = 0 ; j < novlp ; j++) {
-                            	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
-                        }
-                        fprintf(fg,"\n");
+			
+			for( j = 0 ; j < novlp ; j++) {
+					fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
+			}
+			
+			fprintf(fg,"\n");
 			fprintf(fg,"------------");
-                        for( j = 0 ; j < novlp ; j++) {
-                            fprintf(fg, "-------------") ;
-                        }
-                        fprintf(fg,"\n");
+			
+			for( j = 0 ; j < novlp ; j++) {
+				fprintf(fg, "-------------") ;
+			}
+			fprintf(fg,"\n");
+			
 			for(i = 0 ; i < nranks ; i++) {
 				fprintf(fg, "Rank <= %2d :", ranks[i]) ;
 				for( j = 0 ; j < novlp ; j++) {
@@ -200,13 +242,13 @@ void test_fpocket(s_tparams *par)
 						nok ++ ;
 					}
 				}
-				fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i], ((float)nok) / ((float) N)) ;
+				fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i], 
+						((float)nok) / ((float) N)) ;
 			}
 
 			fprintf(fg, "-------------------------------------\n") ;
 			fprintf(fg, "Mean distance          : %f\n", mean_dst) ;
 			fprintf(fg, "Mean relative overlap : %f\n", mean_ovr3) ;
-
 
 			fclose(fg) ;
 		}
@@ -216,20 +258,28 @@ void test_fpocket(s_tparams *par)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void test_complexe(s_tparams *par)
+	void test_set(s_tparams *par)
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Test fpocket for a single set of apo/complexe .
+	Test fpocket for a single set of apo/complexe/ligand.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
-	of data set to test. 
+	@ s_tparams *par  : Parameters, contain the fpocket parameters, and the list
+					    of data set to test. 
+    @ int i           : ID if the current test set. Used to fill the two following
+ 					    statistic arrays
+    @ float ddata[][] : Used to store statistics for the evaluation (float)
+    @ float idata[][] : Used to store statistics for the evaluation (integers)
    -----------------------------------------------------------------------------
    ## RETURN:
-	void
+	int - A flag saying whether or not the evaluation is successfull. Values:
+		M_LIGNOTFOUND -2
+		M_PDBOPENFAILED -1
+		M_OK 0 
+		M_NOPOCKETFOUND 1
    -----------------------------------------------------------------------------
 */
-int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) 
+int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) 
 {
 	s_atm **accpck = NULL,
 		  **accpck2 = NULL ;
@@ -270,8 +320,10 @@ int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDA
 	}
 	
 	
-	/* PDBs and ligand OK, now read PDB and launch fpocket */	
-	rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;	//get rid of HETATM in the apo structure
+	/* PDBs and ligand OK, now read PDB and launch fpocket */
+	
+	/* Get rid of HETATM in the apo structure*/
+	rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;	
 	rpdb_read(cpdb, lig, M_KEEP_LIG) ;	
 	rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;	
 
@@ -289,24 +341,25 @@ int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDA
 	/* We found pocket on the apo form get volume and mass of the ligand */
 	idata[i][M_NPOCKET] = pockets->n_pockets ;
 	ddata[i][M_LIGMASS] = get_mol_mass_ptr(cpdb->latm_lig, cpdb->natm_lig) ;
-	ddata[i][M_LIGVOL]  = get_mol_volume_ptr(cpdb->latm_lig, cpdb->natm_lig, par->fpar->nb_mcv_iter);
+	ddata[i][M_LIGVOL]  = get_mol_volume_ptr(cpdb->latm_lig, cpdb->natm_lig, 
+											 par->fpar->nb_mcv_iter);
 
 	/* Get atoms involved in the actual pocket */
 	accpck = get_actual_pocket_DEPRECATED(cpdb, M_DST_CRIT, &naccpck) ;
 	accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
 	if (naccpck <= 0 || naccpck2 <= 0) {
-		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %d %d\n", naccpck, naccpck2) ; 
+		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %d %d\n", naccpck, 
+						naccpck2) ; 
 	}
 
 	/* Calculate evaluation criterias */
-	check_pockets(pockets, accpck2, naccpck2, cpdb->latm_lig, cpdb->natm_lig, ddata[i][M_LIGVOL],	
-				  accpck, naccpck, ddata, idata, i, par->fpar) ;
+	check_pockets(pockets, accpck2, naccpck2, cpdb->latm_lig, cpdb->natm_lig, 
+				  accpck, naccpck, ddata, idata, i) ;
 
-	printf("%d", par->keep_fpout) ;
 	if(par->keep_fpout != 0) {
-		write_out_fpocket(pockets, apdb, par->fpar) ;
+		write_out_fpocket(pockets, apdb, par->fapo[i]) ;
 	}
-	//write_pdb_com(cpdb, par->fcomplex[i]) ;
+	/* write_pdb_com(cpdb, par->fcomplex[i]) ; */
 	
 	/* Free memory */
 	c_lst_pocket_free(pockets) ;
@@ -320,20 +373,24 @@ int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDA
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par, int *nb_atm) 
+	get_actual_pocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Get atoms contacted by voronoi vertices present in the actual pocket.
+	Get atoms contacted by voronoi vertices present in the actual pocket and 
+	situated at a distance of M_DST_CRIT from each ligand atoms.
 	This way of finding exact atoms contacted by the ligand is more accurate,
 	but need an extra search by fpocket to find voronoi vertices in the complexe
 	form without the ligand...
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
-	of data set to test. 
+	@ s_pdb *cpdb       : The pdb structure of the complexe.
+	@ s_pdb *cpdb_nolig : The pdb structure of the complexe WITHOUT the ligand
+ 	@ int i             : ID of the current test set
+	@ s_tparams *par    : Parameters
+	@ int *nb_atm       : Number of atom (this an output, it should be set here)
    -----------------------------------------------------------------------------
    ## RETURN:
-	void
+	s_atm **: A 2D table containing pointers to atoms which defines the pocket.
    -----------------------------------------------------------------------------
 */
 s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par, int *nb_atm) 
@@ -342,7 +399,7 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
 
 	c_lst_pockets *pockets = search_pocket(cpdb_nolig, par->fpar);
 	if(pockets && pockets->n_pockets > 0) {
-	// Get the list of atoms contacted by the vertices near the ligand.
+	/* Get the list of atoms contacted by the vertices near the ligand. */
 		neigh = get_mol_ctd_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, 
 				cpdb, pockets->vertices, M_DST_CRIT, M_INTERFACE_SEARCH, nb_atm) ;
 
@@ -360,38 +417,52 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_atm) 
+	get_actual_pocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Get atoms near the ligand using a distance criteria. This can define the
-	atoms involved in the interface between the ligand and the protein.
+	Get atoms situated at a distance of lig_dist_crit from each ligand atoms.
+    This is a quite inacurate way of defining the pocket -> DEPRECATED
+    If the distance criteria used does not allow any identification, we will
+    test a larger distance until 6A. 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
-					 of data set to test. 
+	@ s_pdb *cpdb         : The pdb structure of the complexe.
+	@ float lig_dist_crit : The distance criteria
+	@ int *nb_atm         : OUTPUT: Number of atom found in the pocket
    -----------------------------------------------------------------------------
    ## RETURN:
-	void
+	s_atm **: A 2D table containing pointers to atoms which defines the pocket.
    -----------------------------------------------------------------------------
 */
 s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_atm) 
 {	
-	// Getting the ligan's neighbors.
-	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit, nb_atm) ;
+	/* Getting the ligan's neighbors. */
+	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
+										lig_dist_crit, nb_atm) ;
 	if(*nb_atm <= 0) {
-		fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA\n", lig_dist_crit, lig_dist_crit+0.5) ;
+		fprintf(stderr, 
+				"! No neighbor found for the ligand at %fA, trying with %fA\n", 
+				lig_dist_crit, lig_dist_crit+0.5) ;
+		
 		if(alneigh) my_free(alneigh) ;
 
 
-		alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit+0.5, nb_atm) ;
+		alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
+									lig_dist_crit+0.5, nb_atm) ;
 
 		if(*nb_atm <= 0) {
-			fprintf(stderr, "! No neighbor found for the ligand at %fA, trying with %fA\n", lig_dist_crit+0.5, lig_dist_crit+1.0) ;
+			fprintf(stderr, 
+					"! No neighbor found for the ligand at %fA, trying with %fA\n", 
+					lig_dist_crit+0.5, lig_dist_crit+1.0) ;
+			
 			if(alneigh) my_free(alneigh) ;
 
-			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, lig_dist_crit+2.0, nb_atm) ;
+			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
+										lig_dist_crit+2.0, nb_atm) ;
 			if(*nb_atm <= 0) {
-				fprintf(stderr, "! No neighbor found for the ligand at %fA !!!?!\n", lig_dist_crit+2.0) ;
+				fprintf(stderr, 
+						"! No neighbor found for the ligand at %fA !!!?!\n", 
+						lig_dist_crit+2.0) ;
 				if(alneigh) my_free(alneigh) ;
 				alneigh = NULL ;
 			}
@@ -403,53 +474,69 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void check_pockets(c_lst_pockets *pockets, int naccpck ) 
+	check_pockets
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Checking the pocket prediction for one data set. (apo+complex+ligand)
-	This function will calculate atom several overlap for each pockets found.
+	This function will calculate three criterias:
+		1 - Overlap using the first definition of the pocket (atoms contacted
+ 			by vertices next to the ligand)
+		2 - Overlap using the second definition of the pocket (atoms situated
+ 			at N A of the ligand)
+		3 - Smallest distance of each ligand atom from the barycenter of the
+ 			pocket. Cutoff: 4A
+  
+   The two arrays ddata and idata given in paramet are used as output.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The pockets found for this set.
-	@ s_pdb *cpdb: The complex corresponding pdb data
-	@ float lig_dist_crit: The distance criteria for searching ligand's neighbours.
+    @ s_atm accpck          : The actual pocket using first definition
+    @ int naccpckk          : Number of atoms in the actual pocket definition 1
+    @ s_atm lig             : Ligand atoms
+    @ int nalig             : Number of ligand atoms
+    @ s_atm alneigh         : The actual pocket using second definition
+    @ int nlneigh           : Number of atoms in the actual pocket definition 2
+    @ float ddata[][]       : Used to store statistics for the evaluation (float)
+    @ float idata[][]       : Used to store statistics for the evaluation (integers)
+    @ int i                 : ID if the current test set. Used to fill the two 
+ 							  following statistic arrays
    -----------------------------------------------------------------------------
    ## RETURN:
-	int: the real pocket has been found?
+	void
    -----------------------------------------------------------------------------
 */
-void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, int nalig, float ligvol,
-				   s_atm **alneigh, int nlneigh, float ddata [][M_NDDATA], int idata [][M_NIDATA], int i,
-				   s_fparams *params)
+void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, 
+				   int nalig, s_atm **alneigh, int nlneigh, 
+				   float ddata [][M_NDDATA], int idata [][M_NIDATA], int i)
 {
 	int found [] = {0, 0, 0} ;
 	int npneigh = 0, pos, j ;
 	float ov1, ov2, dst ;
-	//float ovol ;
+	/* float ovol ; */
 	
 	s_atm **pneigh = NULL ;
 
 	node_pocket *ncur = NULL ;
 	s_pocket *pcur = NULL ;
 	
-	// Check the correspondance for each pocket found
+	/* Check the correspondance for each pocket found */
 	ncur = pockets->first ;
 
 	pos = 0 ;
-	//printf("=====\n") ;
 	while(ncur) {
 		pos ++ ;
 		pcur = ncur->pocket ;
 	
-	// Getting the pocket's vertices neighbors, and then calculate the pocket properties
-		//pneigh = get_vert_contacted_atms(pcur->v_lst, &npneigh) ;
+	/* Getting the pocket's vertices neighbors, and then calculate the pocket 
+	 * properties */
+		/* pneigh = get_vert_contacted_atms(pcur->v_lst, &npneigh) ; */
 		pneigh = get_pocket_contacted_atms(pcur, &npneigh) ;
 
 		ov1 = atm_corsp(alneigh, nlneigh, pneigh, npneigh) ;
 		ov2 = atm_corsp(accpck, naccpck, pneigh, npneigh) ;
-		//ovol =  set_overlap_volumes(pcur, lig, nalig, ligvol, params) ;
+		/* ovol =  set_overlap_volumes(pcur, lig, nalig, ligvol, params) ; */
 		
-		//printf ("%f\n", ovol) ;
+		/* printf ("%f\n", ovol) ; */
 		fflush(stdout) ;
 		
 		if(! found[0]) {
@@ -457,7 +544,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 				dst = dist(lig[j]->x, lig[j]->y, lig[j]->z, 
 							pcur->bary[0], pcur->bary[1], pcur->bary[2]) ;
 				if(dst < 4.0) {
-				// Criteria 3 OK
+				/* Criteria 3 OK  */
 					ddata[i][M_MINDST] = dst ;
 					ddata[i][M_OREL3] = (naccpck <= 0.0)?-1.0 :(float)npneigh/(float)naccpck*100.0 ;
 					idata[i][M_POS3] = pos ;
@@ -487,7 +574,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		my_free(pneigh) ;
 		ncur = ncur->next ;
 
-		// Break the loop if all criteria are OK
+		/* Break the loop if all criteria are OK */
 		if(found[0] && found[1] && found[2]) break ;
 		
 	}
@@ -532,27 +619,31 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void set_overlap_volumes(c_lst_pockets *pockets, s_atm **lig, int natoms, float lig_vol, s_fparams *params) 
+	void set_overlap_volumes
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	This function will set an overlap volume between each pocket and the ligand.
-	Function of the parameters, the method used will be either Monte Carlo 
+	This function will set an overlap volume between a pocket, defined here by
+    its voronoi vertices, and the ligand.
+	Depending on the parameters, the method used will be either Monte Carlo 
 	approximation, or discret basic approximation.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_pockets *pockets: Pockets
-	@ s_atm **lig: The ligand atoms.
-	@ int natoms natoms: Number of atoms of the ligand.
-	@ float lig_vol: Volume of the ligand
-	@ s_fparams *params: Parameters, giving the algorithm to use and the corresponding 
-						 parameter.
+	@ s_pocket *pockets : The pocket
+	@ s_atm **lig       : The ligand atoms.
+	@ int natoms natoms : Number of atoms of the ligand.
+	@ float lig_vol     : Volume of the ligand
+	@ s_fparams *params : Parameters, giving the algorithm to use and the 
+ 					      corresponding parameter.
    -----------------------------------------------------------------------------
    ## RETURN:
+	float: The overlap volume found
    -----------------------------------------------------------------------------
 */
-float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_vol, s_fparams *params) 
+float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_vol, 
+						  s_fparams *params) 
 {
-	float (*pf_set_vol)(s_atm**, int, float, s_pocket*, int ) = NULL ;	// The function to use for calculation
+	/* The function to use for calculation */
+	float (*pf_set_vol)(s_atm**, int, float, s_pocket*, int ) = NULL ;	
 	int crit = 0,
 		method = 0 ;
 
@@ -574,24 +665,25 @@ float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_v
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
-	float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *pocket, int niter)
+   ## FUNCTION:
+	set_mc_overlap_volume
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function will set an overlap volume between each pocket and the ligand.
-	Monte Carlo aproximation.
+	Method: monte Carlo aproximation.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_pocket *pocket: The Pocket
-	@ s_atm **lig: The ligand atoms.
-	@ int natoms natoms: Number of atoms of the ligand.
-	@ float lig_vol: Volume of the ligand
-	@ int niter: Number of iterations to perform.
+	@ s_atm **lig       : The ligand atoms.
+	@ int natoms natoms : Number of atoms of the ligand.
+	@ float lig_vol     : Volume of the ligand
+	@ s_pocket *pockets : The pocket
+	@ int niter         : Number of monte-carlo iterations
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *pocket, int niter)
+float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, 
+							s_pocket *pocket, int niter)
 {
 	c_lst_vertices *vertices = pocket->v_lst ;
 	s_vvertice *vcur = NULL ;
@@ -609,7 +701,7 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 
 	s_atm *acur = NULL ;
 
-	// First, search extrems coordinates in the ligan
+	/* First, search extrems coordinates in the ligan */
 	for(i = 0 ; i < natoms ; i++) {
 		acur = lig[i] ;
 		if(i == 0) {
@@ -618,7 +710,7 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 			zmin = acur->z - acur->radius ; zmax = acur->z + acur->radius ;
 		}
 		else {
-		// Update the minimum and maximum extreme point
+		/* Update the minimum and maximum extreme point */
 			if(xmin > (xtmp = acur->x - acur->radius)) xmin = xtmp ;
 			else if(xmax < (xtmp = acur->x + acur->radius)) xmax = xtmp ;
 	
@@ -631,7 +723,7 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 	}
 
 	node_vertice *cur = vertices->first ;
-	// Continue with the pocket
+	/* Continue with the pocket */
 	while(cur) {
 		vcur = cur->vertice ;
 		if(xmin > (xtmp = vcur->x - vcur->ray)) xmin = xtmp ;
@@ -647,10 +739,10 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 	}
 
 
-	// Next calculate the box volume
+	/* Next calculate the box volume */
 	vbox = (xmax - xmin)*(ymax - ymin)*(zmax - zmin) ;
 
-	// Then apply monte carlo approximation of the volume
+	/* Then apply monte carlo approximation of the volume */
 	for(i = 0 ; i < niter ; i++) {
 		found = 0 ;
 		xr = rand_uniform(xmin, xmax) ;
@@ -664,9 +756,9 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 			ytmp = vcur->y - yr ;
 			ztmp = vcur->z - zr ;
 
-		// Compare r^2 and dist(center, random_point)^2
+		/* Compare r^2 and dist(center, random_point)^2 */
 			if((vcur->ray*vcur->ray) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
-			//the point is inside one of the vertice!!
+			/* The point is inside one of the vertice!!*/ 
 				nb_in ++ ; found = 1 ; break ;
 			}
 			cur = cur->next ;
@@ -679,9 +771,9 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 				ytmp = acur->y - yr ;
 				ztmp = acur->z - zr ;
 	
-			// Compare r^2 and dist(center, random_point)^2
+			/* Compare r^2 and dist(center, random_point)^2 */
 				if((acur->radius*acur->radius) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
-				//the point is inside one of the vertice!!
+				/* The point is inside one of the vertice!! */
 					nb_in ++ ; break ;
 				}
 			}
@@ -696,23 +788,25 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, s_pocket *po
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *pocket, int niter)
+	set_basic_overlap_volume
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function will set an overlap volume between each pocket and the ligand.
-	Discrete aproximation. (algo in idiscret*idiscret*idiscret minimum)
+	Discrete aproximation. (algo in idiscret*idiscret*idiscret operation minimum)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_pocket *pocket: The Pocket
-	@ s_atm **lig: The ligand atoms.
-	@ int natoms natoms: Number of atoms of the ligand.
-	@ float lig_vol: Volume of the ligand
-	@ int niter: Number of iterations to perform.
+	@ s_atm **lig       : The ligand atoms.
+	@ int natoms natoms : Number of atoms of the ligand.
+	@ float lig_vol     : Volume of the ligand
+	@ s_pocket *pockets : The pocket
+	@ int idiscret      : Discretisation of the space: splitt the space in N*N*N
+						  cubes.
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *pocket, int idiscret)
+float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,
+							   s_pocket *pocket, int idiscret)
 {
 	c_lst_vertices *vertices = pocket->v_lst ;
 	s_vvertice *vcur = NULL ;
@@ -735,7 +829,7 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 
 	s_atm *acur = NULL ;
 
-	// First, search extrems coordinates in the ligan
+	/* First, search extrems coordinates in the ligan */
 	for(i = 0 ; i < natoms ; i++) {
 		acur = lig[i] ;
 		if(i == 0) {
@@ -744,7 +838,7 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 			zmin = acur->z - acur->radius ; zmax = acur->z + acur->radius ;
 		}
 		else {
-		// Update the minimum and maximum extreme point
+		/* Update the minimum and maximum extreme point */
 			if(xmin > (xtmp = acur->x - acur->radius)) xmin = xtmp ;
 			else if(xmax < (xtmp = acur->x + acur->radius)) xmax = xtmp ;
 	
@@ -757,7 +851,7 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 	}
 
 	node_vertice *cur = vertices->first ;
-	// Continue with the pocket
+	/* Continue with the pocket */
 	while(cur) {
 		vcur = cur->vertice ;
 		if(xmin > (xtmp = vcur->x - vcur->ray)) xmin = xtmp ;
@@ -773,14 +867,14 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 	}
 
 
-	// Next calculate the box volume
+	/* Next calculate the box volume */
 	vbox = (xmax - xmin)*(ymax - ymin)*(zmax - zmin) ;
 
 	xstep = discret * (xmax - xmin) ;
 	ystep = discret * (ymax - ymin) ;
 	zstep = discret * (zmax - zmin) ;
 
-	// Then apply monte carlo approximation of the volume
+	/* Then apply monte carlo approximation of the volume */
 	for(x = xmin ; x < xmax ; x += xstep) {
 		for(y = ymin ; y < ymax ; y += ystep) {	
 			for(z = zmin ; z < zmax ; z += zstep) {
@@ -792,9 +886,9 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 					ytmp = vcur->y - y ;
 					ztmp = vcur->z - z ;
 		
-				// Compare r^2 and dist(center, random_point)^2
+				/* Compare r^2 and dist(center, random_point)^2 */
 					if((vcur->ray*vcur->ray) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
-					//the point is inside one of the vertice!!
+					/* The point is inside one of the vertice!! */
 						nb_in ++ ; found = 1 ; break ;
 					}
 					cur = cur->next ;
@@ -807,9 +901,9 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 						ytmp = acur->y - y ;
 						ztmp = acur->z - z ;
 			
-					// Compare r^2 and dist(center, random_point)^2
+					/* Compare r^2 and dist(center, random_point)^2 */
 						if((acur->radius*acur->radius) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
-						//the point is inside one of the vertice!!
+						/* The point is inside one of the vertice!! */
 							nb_in ++ ; break ;
 						}
 					}
@@ -822,6 +916,6 @@ float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *
 	full_vol = ((float)nb_in)/((float)niter)*vbox ;	
 	pocket->vol_corresp = ((pocket->pdesc->volume + lig_vol) - full_vol)/lig_vol ;
 
-	// Ok lets just return the volume Vpok = Nb_in/Niter*Vbox
+	/* Ok lets just return the volume Vpok = Nb_in/Niter*Vbox */
 	return pocket->vol_corresp ;
 }

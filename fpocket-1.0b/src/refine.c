@@ -9,27 +9,66 @@
 ## LAST MODIFIED			01-04-08
 ##
 ## ----- SPECIFICATIONS
+##
+## This file defins several routines which refine the clustering algorithm
+## used by fpocket. In particular, we merge pockets too closed from each other
+## we drop small pockets, and we perform reindexation after those operations.
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+## (v) Improve and optimize the algorithm.
+##
 
 */
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void refinePockets(c_lst_pockets *pockets, s_fparams *params)
+	refinePockets
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Refine algorithm: will merge two pockets whose barycenters are
 	close together (distance criteria given in params).
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_pockets *pockets: The list of pockets.
-	@ s_fparams *params: Parameters
+	@ c_lst_pockets *pockets : The list of pockets.
+	@ s_fparams *params      : Parameters
    -----------------------------------------------------------------------------
    ## RETURN:
 	void
@@ -72,7 +111,7 @@ void refinePockets(c_lst_pockets *pockets, s_fparams *params)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
+	dropSmallNpolarPockets
 	-----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Refine algorithm: will remove small pockets (depends on the corresponding
@@ -80,8 +119,8 @@ void refinePockets(c_lst_pockets *pockets, s_fparams *params)
 	(given in params)..
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_pockets *pockets: The list of pockets.
-	@ s_fparams *params: Parameters
+	@ c_lst_pockets *pockets : The list of pockets.
+	@ s_fparams *params      : Parameters
    -----------------------------------------------------------------------------
    ## RETURN:
 	void
@@ -101,9 +140,9 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 			nextPocket1 = npcur->next ;
 			pasph = (float)((float)pcur->nAlphaApol/(float)pcur->v_lst->n_vertices) ;
 
-// 			printf("%f %d %d\n", pasph, pcur->nAlphaApol, pcur->v_lst->n_vertices) ;
 
-			if(pcur->v_lst->n_vertices < (size_t) params->min_pock_nb_asph ||  pasph <  (params->refine_min_apolar_asphere_prop)){
+			if(pcur->v_lst->n_vertices < (size_t) params->min_pock_nb_asph 
+				||  pasph <  (params->refine_min_apolar_asphere_prop)){
 			// If the pocket is too small or has not enough apolar alpha spheres, drop it
 				dropPocket(pockets, npcur);		
 			}
@@ -120,7 +159,7 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void reIndexPockets(c_lst_pockets *pockets)
+	reIndexPockets
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Reindex pockets, after dropping and merging operations on pockets and

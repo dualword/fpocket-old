@@ -4,9 +4,9 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 				aa.h
+## FILE 				aa.c
 ## AUTHORS				P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED		20-11-08 (v)
+## LAST MODIFIED		28-11-08 (v)
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -18,23 +18,55 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	20-11-08	(v)  Added molecular weight
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
-##	(v) Get more revelant descriptors, namely for the volume, 
-##		polarity and charge
+##	(v) Get more accurate descriptors, namely for the volume and charge *score*
 ##	(v) Check and update if necessary comments of each function!!
 
 */
+
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
 
 /**
 	Several amino-acid properties, taken from:
 	http://www.info.univ-angers.fr/~gh/Idas/proprietes.htm
 
-	May be updated, because it seems to be a huge approximation... Moreover,
+	Should be rplaced, because it seems to be a huge approximation... Moreover,
 	no citations are given!
 	Previous tab:
 
@@ -68,7 +100,9 @@
 		Monera & al. Journal of Protein Science 1, 319-329 (1995)
 
 	This is the current relative hydrophobicity index used.
-
+    
+    ------
+ 
 	Molecular weight taken from:
 	http://www.expasy.ch/tools/pscale/Molecularweight.html
  
@@ -100,7 +134,7 @@ static const s_amino_a ST_aa[20] =
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	char* get_aa_name3(const int index) 
+	get_aa_name3
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the name of AA given in argument (index in the static table)
@@ -109,7 +143,7 @@ static const s_amino_a ST_aa[20] =
 	@ const int index: Index of the AA in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	Name if index is valid, NULL if not.
+	char *: Name if index is valid, NULL if not.
    -----------------------------------------------------------------------------
 */
 char* get_aa_name3(const int index) 
@@ -122,17 +156,17 @@ char* get_aa_name3(const int index)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void get_aa_index(const char *name) 
+	get_aa_index
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the index of AA given in argument (3letter code representation) in the
 	static AA tab.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	const char *name: Amno acid name (3 letter code representation)
+	@ const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
-	index of the given amino acid, -1 if not found in the tab
+	int: index of the given amino acid, -1 if not found in the tab
    -----------------------------------------------------------------------------
 */
 int get_aa_index(const char *name) 
@@ -151,13 +185,12 @@ int get_aa_index(const char *name)
 	return aa_index ;
 }
 
-
-/************** Getting informations from an AA name in the static tab **************/
+/*********** Getting informations from an AA name in the static tab ***********/
 
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	char* get_aa_mw(const int index) 
+	get_aa_mw
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the molecular weight of AA given in argument
@@ -166,7 +199,7 @@ int get_aa_index(const char *name)
 	@ const int index: Index of the AA in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	Molecular weight if the index is valid, NULL if not.
+	float: Molecular weight if the index is valid, NULL if not.
    -----------------------------------------------------------------------------
 */
 float get_aa_mw(const char *name) 
@@ -185,16 +218,16 @@ float get_aa_mw(const char *name)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_aa_volume_score(const char *name) 
+	get_aa_volume_score
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Return the volume of given amino acid
+	Return the volume score of given amino acid (very approximative...)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	const char *name: Amno acid name (3 letter code representation)
+	@ const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
-	volume score, -1 if aa not found in the tab
+	float: volume score, -1 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 float get_aa_volume_score(const char *name) 
@@ -208,21 +241,21 @@ float get_aa_volume_score(const char *name)
 		fprintf(stderr, "! Amino acid '%s' could not be found in property table...\n", name);
 	}*/
 
-	return 0 ;
+	return -1.0 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float get_aa_hydrophobicity_score(const char *name) 
+	get_aa_hydrophobicity_score
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the hydrophobicity score of given amino acid
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	const char *name: Amno acid name (3 letter code representation)
+	@ const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
-	hydrophobicity score, -1 if aa not found in the tab
+	float: hydrophobicity score, -1 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 float get_aa_hydrophobicity_score(const char *name) 
@@ -236,12 +269,12 @@ float get_aa_hydrophobicity_score(const char *name)
 		fprintf(stderr, "! Amino acid '%s' could not be found in property table...\n", name);
 	}*/
 
-	return 0 ;
+	return -1.0 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_aa_charge(const char *name) 
+	get_aa_charge
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the charge score of given amino acid
@@ -250,7 +283,7 @@ float get_aa_hydrophobicity_score(const char *name)
 	const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
-	charge (positiv, negativ, neutral, see header for more details), -1 if aa 
+	charge (positiv, negativ, neutral, see header for more details), 0 if aa 
 	not found in the tab
    -----------------------------------------------------------------------------
 */
@@ -270,16 +303,16 @@ int get_aa_charge(const char *name)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_aa_polarity(const char *name) 
+	get_aa_polarity
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the polarity score of given amino acid
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	const char *name: Amno acid name (3 letter code representation)
+	@ const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
-	polarity (polar, apolar), -1 if aa not found in the tab
+	int polarity (polar, apolar), 0 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 int get_aa_polarity(const char *name) 
@@ -293,18 +326,18 @@ int get_aa_polarity(const char *name)
 		fprintf(stderr, "! Amino acid '%s' could not be found in property table...\n", name);
 	}*/
 
-	return 0 ;
+	return -1 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_func_grp_from_idx(const char *name) 
+	get_func_grp_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the functional group type of the given amino acid
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	const char *name: Amno acid name (3 letter code representation)
+	@ const char *name: Amno acid name (3 letter code representation)
    -----------------------------------------------------------------------------
    ## RETURN:
 	int: functional group id
@@ -321,7 +354,7 @@ int get_aa_func_grp(const char *name)
 		fprintf(stderr, "! Amino acid '%s' could not be found in property table...\n", name);
 	}*/
 
-	return 0 ;
+	return -1 ;
 }
 
 
@@ -330,7 +363,7 @@ int get_aa_func_grp(const char *name)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_volume_score_from_idx(int aa_index) 
+	get_volume_score_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the volume score of given amino acid
@@ -339,7 +372,7 @@ int get_aa_func_grp(const char *name)
 	@ int aa_index: Index of the amino acid in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	volume score, -1 if aa not found in the tab
+	float: volume score, -1 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 float get_volume_score_from_idx(int aa_index) 
@@ -351,12 +384,12 @@ float get_volume_score_from_idx(int aa_index)
 		fprintf(stderr, "! Amino acid %d could not be found in property table...\n", aa_index);
 	}*/
 
-	return 0 ;
+	return -1.0 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float get_hydrophobicity_score_from_idx(int aa_index) 
+	get_hydrophobicity_score_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the hydrophobicity score of given amino acid
@@ -365,7 +398,7 @@ float get_volume_score_from_idx(int aa_index)
 	@ int aa_index: Index of the amino acid in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	hydrophobicity score, -1 if aa not found in the tab
+	float hydrophobicity score, -1 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 float get_hydrophobicity_score_from_idx(int aa_index) 
@@ -377,12 +410,12 @@ float get_hydrophobicity_score_from_idx(int aa_index)
 		fprintf(stderr, "! Amino acid %d could not be found in property table...\n", aa_index);
 	}*/
 
-	return 0.0 ;
+	return -1.0 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_charge_from_idx(int aa_index) 
+	get_charge_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the charge score of given amino acid
@@ -391,7 +424,7 @@ float get_hydrophobicity_score_from_idx(int aa_index)
 	@ int aa_index: Index of the amino acid in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	charge (positiv, negativ, neutral, see header for more details), -1 if aa 
+	int charge (positiv, negativ, neutral, see header for more details), 0 if aa 
 	not found in the tab
    -----------------------------------------------------------------------------
 */
@@ -409,7 +442,7 @@ int get_charge_from_idx(int aa_index)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_polarity_from_idx(int aa_index) 
+	get_polarity_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the polarity score of given amino acid
@@ -418,7 +451,7 @@ int get_charge_from_idx(int aa_index)
 	@ int aa_index: Index of the amino acid in the tab
    -----------------------------------------------------------------------------
    ## RETURN:
-	int polarity (polar, apolar), -1 if aa not found in the tab
+	int: polarity (polar, apolar), -1 if aa not found in the tab
    -----------------------------------------------------------------------------
 */
 int get_polarity_from_idx(int aa_index) 
@@ -430,12 +463,12 @@ int get_polarity_from_idx(int aa_index)
 		fprintf(stderr, "! Amino acid %d could not be found in property table...\n", aa_index);
 	}*/
 
-	return 0 ;
+	return -1 ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int get_func_grp_from_idx(const char *name) 
+	get_func_grp_from_idx
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return the functional group type of the given amino acid
@@ -456,5 +489,5 @@ int get_func_grp_from_idx(int aa_index)
 		fprintf(stderr, "! Amino acid %d could not be found in property table...\n", aa_index);
 	}*/
 
-	return 0 ;
+	return -1 ;
 }

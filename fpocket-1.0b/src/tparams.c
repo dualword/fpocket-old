@@ -7,11 +7,15 @@
 ##
 ## FILE 					tparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  Handle and parse parameters for the tpocket program.
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	27-11-08	(v)  Added option to keep fpocket output + minor relooking
 ##					 Also, fpocket option parsing is now performed exclusively
 ##					 using fparams.c and the function get_fpocket_args
@@ -22,6 +26,37 @@
 ##
 
 */
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
@@ -55,15 +90,15 @@ s_tparams* init_def_tparams(void)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_tparams* get_tpocket_args(int nargs, char **args)
+	get_tpocket_args
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function analyse the user's command line and parse it to store parameters
 	for the test programm.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ int nargs :  Number of arguments
-	@ char **args: Arguments of main program
+	@ int nargs   :  Number of arguments
+	@ char **args : Arguments of main program
    -----------------------------------------------------------------------------
    ## RETURN: 
 	s_tparams*: Pointer to parameters
@@ -94,15 +129,17 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 		return NULL ;
 	}
 	
-	// Read arguments by flags
+	/* Read arguments by flags */
 	for (i = 1; i < nargs; i++) {
-		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
+		if (strlen(args[i]) == 2 && args[i][0] == '-' && 
+			(i < (nargs-1) || args[i][1] != M_PAR_VALID_COMPLEX_FILE) ) {
+			
 			switch (args[i][1]) {
 				case M_PAR_LIG_NEIG_DIST	  : 
 					status += parse_lig_neigh_dist(args[++i], par) ; 
 					break ;
 				case M_PAR_KEEP_FP_OUTPUT     :
-					status += parse_keep_fpout(args[++i], par) ;
+					par->keep_fpout = 1 ;
 					break ;
 					
 				case M_PAR_VALID_COMPLEX_FILE	:
@@ -204,7 +241,7 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int add_list_data(char *str_list_file, s_tparams *par) 
+	add_list_data
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Load a list of apo-complex-ligand file. This file should have the following
@@ -213,7 +250,7 @@ s_tparams* get_tpocket_args(int nargs, char **args)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ char *str_list_file : Path of the file containing all data
-	@ s_tparams *par: Structures that stores all thoses files
+	@ s_tparams *par      : Structures that stores all thoses files
    -----------------------------------------------------------------------------
    ## RETURN: 
 	int: Number of file read.
@@ -231,7 +268,7 @@ int add_list_data(char *str_list_file, s_tparams *par)
 		 complexbuf[M_MAX_PDB_NAME_LEN],
 		 ligbuf[5];
 
-	// Loading data.
+	/* Loading data. */
 	f = fopen(str_list_file, "r") ;
 	if(f) {
 		while(fgets(buf, 210, f)) {
@@ -250,14 +287,14 @@ int add_list_data(char *str_list_file, s_tparams *par)
 		fprintf(stderr, "! File %s doesn't exists\n", str_list_file) ;
 	}
 
-// 	print_params(par, stdout) ;
+/* 	print_params(par, stdout) ; */
 
 	return nread ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int add_prot(char *apo, char *complex, char *ligan, s_tparams *par) 
+	add_prot
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Add a set of data to the list of set of data in the parameters. this function
@@ -267,13 +304,13 @@ int add_list_data(char *str_list_file, s_tparams *par)
 	two files exists, and if the name of the ligand is valid.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *apo: The apo path
-	@ char *complex: The complex path
-	@ char *ligan: The ligand resname: a 4 letter (max!) 
-	@ s_tparams *p: The structure than contains parameters.
+	@ char *apo     : The apo path
+	@ char *complex : The complex path
+	@ char *ligan   : The ligand resname: a 4 letter (max!) 
+	@ s_tparams *p  : The structure than contains parameters.
    -----------------------------------------------------------------------------
    ## RETURN: 
-	The file, NULL if the openning fails.
+	int: Flag: 1 = ok, 0 : ko
    -----------------------------------------------------------------------------
 */
 int add_prot(char *apo, char *complex, char *ligan, s_tparams *par) 
@@ -316,7 +353,7 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 		}
 	}
 	else {
-	// If the file does not exists, try with upper case
+	/* If the file does not exists, try with upper case */
 		fprintf(stdout, "! The pdb apo file '%s' doesn't exists.\n", apo) ;
 		return 0 ;
 	}
@@ -326,46 +363,17 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_keep_fpout(char *str, s_fparams *p) 
-   -----------------------------------------------------------------------------
-   ## SPECIFICATION: 	
-	Parsing function for the fpocket output keeper flag
-   -----------------------------------------------------------------------------
-   ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
-   -----------------------------------------------------------------------------
-   ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
-   -----------------------------------------------------------------------------
-*/
-int parse_keep_fpout(char *str, s_tparams *p) 
-{
-	if(str_is_number(str, M_NO_SIGN)) {
-		p->keep_fpout = atoi(str) ;
-	}
-	else {
-		fprintf(stdout, "! Invalid value (%s) given for distance criteria to define interface atoms.\n", str) ;
-		return 1 ;
-	}
-
-	return 0 ;
-}
-
-
-/**-----------------------------------------------------------------------------
-   ## FUNCTION: 
-	int parse_lig_neigh_dist(char *str, s_fparams *p) 
+	parse_lig_neigh_dist
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the distance criteria to find ligand neighbours.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_lig_neigh_dist(char *str, s_tparams *p) 
@@ -383,7 +391,7 @@ int parse_lig_neigh_dist(char *str, s_tparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_tparams(s_tparams *p) 
+	free_tparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free parameters
@@ -424,7 +432,7 @@ void free_tparams(s_tparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_test_usage(FILE *f) 
+	print_test_usage
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Displaying usage of the programm in the given buffer
@@ -433,6 +441,7 @@ void free_tparams(s_tparams *p)
 	@ FILE *f: buffer to print in
    -----------------------------------------------------------------------------
    ## RETURN: 
+    void
    -----------------------------------------------------------------------------
 */
 void print_test_usage(FILE *f)
@@ -471,12 +480,14 @@ void print_test_usage(FILE *f)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_params(s_tparams *p, FILE *f)
+	print_params
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Print function
    -----------------------------------------------------------------------------
    ## PARAMETRES:
+   @ s_tparams *p : Pointer to parameters structure
+   @ FILE *f      : Buffer to write in
    -----------------------------------------------------------------------------
    ## RETURN: 
    -----------------------------------------------------------------------------

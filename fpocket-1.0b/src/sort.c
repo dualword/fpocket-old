@@ -7,18 +7,56 @@
 ##
 ## FILE 					sort.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  This file contains routines used to sort atoms and vertices systems using
+##  coordinates x, y or z. We define a structure containing all informations
+##  
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+##	(v) Gives more explanation for the file description.
 
 */
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
 
 static void merge_atom_vert(s_vsort *lsort, s_pdb *pdb, s_lst_vvertice *lvert)  ;
 static void qsort_dim(s_vect_elem *lst, int len) ;
@@ -27,7 +65,7 @@ static int partition_x(s_vect_elem *lst, int start, int end) ;
  
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void get_sorted_list(s_lst_atoms *latoms, s_lst_vvertice *lvert) 
+	get_sorted_list
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function will return a lists which will contains all atoms and vertices 
@@ -37,11 +75,11 @@ static int partition_x(s_vect_elem *lst, int start, int end) ;
 	 and atoms as criteria for sorting.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_lst_atoms *latoms: List of atoms
-	@ s_lst_vvertice *lvert: List of vertices (if NULL, only atoms will be sorted)
+	@ s_pdb *pdb			: PDB structure, basically containing atoms
+	@ s_lst_vvertice *lvert : List of vertices (if NULL, only atoms will be sorted)
    -----------------------------------------------------------------------------
    ## RETURN:
-	   pointer to the structure containing data
+	  s_vsort*: pointer to the structure containing all sorted data (see .h)
    -----------------------------------------------------------------------------
 */
 s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert) 
@@ -61,16 +99,16 @@ s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void merge_atom_vert(s_vsort *lsort, s_lst_atoms *latoms, s_lst_vvertice *lvert) 
+	merge_atom_vert
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Merge atom and vertice lists into three single list that
 	will be sorted next.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vsort *lsort: Structure that should contains the 3 lists
-	@ s_lst_atoms *latoms: List of atoms
-	@ s_lst_vvertice *lvert: List of v ertices
+	@ s_vsort *lsort        : Structure that should contains the 3 lists
+	@ s_pdb *pdb            : pdb structure containing atoms
+	@ s_lst_vvertice *lvert : List of v ertices
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -105,13 +143,13 @@ static void merge_atom_vert(s_vsort *lsort, s_pdb *pdb, s_lst_vvertice *lvert)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	static void qsort_dim(s_vect_elem *lst, int len) 
+	qsort_dim
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vect_elem *lst: List of vector to sort
-	@ int *len: Length of the list
+	@ s_vect_elem *lst : List of vector to sort
+	@ int *len         : Length of the list
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -123,16 +161,18 @@ static void qsort_dim(s_vect_elem *lst, int len)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	static int partition_x(s_vect_elem *lst, int start, int end) 
+	static qsort_rec
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
+    qsort routine adapted to what we wanna do.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vect_elem *lst: List of vector to sort
-	@ int start: Sort from start
-	@ int end: to end
+	@ s_vect_elem *lst : List of vector to sort
+	@ int start		   : Sort from start
+	@ int end		   : to end
    -----------------------------------------------------------------------------
    ## RETURN:
+    void
    -----------------------------------------------------------------------------
 */
 static void qsort_rec(s_vect_elem *lst, int start, int end)
@@ -148,18 +188,19 @@ static void qsort_rec(s_vect_elem *lst, int start, int end)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	static int partition_x(s_vect_elem *lst, int start, int end)
+	static partition_x
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Partition function for the qsort on atoms and vertices, using the X coordinate
 	as criteria to sort the list.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vect_elem *lst: List of vector to sort
-	@ int start: Sort from start
-	@ int end: to end
+	@ s_vect_elem *lst : List of vector to sort
+	@ int start        : Sort from start
+	@ int end          : to end
    -----------------------------------------------------------------------------
    ## RETURN:
+   int: qsort index
    -----------------------------------------------------------------------------
 */
 static int partition_x(s_vect_elem *lst, int start, int end)
@@ -171,9 +212,10 @@ static int partition_x(s_vect_elem *lst, int start, int end)
 	int c = start,
 		i ;
 		
-	float piv ;	 // TODO: chose randomly the pivot.
+	float piv ;	 /* TODO: chose randomly the pivot. */
 	
-	piv = (lst[start].type == M_ATOM_TYPE)? ((s_atm*)lst[start].data)->x : ((s_vvertice*)lst[start].data)->x ;
+	piv = (lst[start].type == M_ATOM_TYPE)? ((s_atm*)lst[start].data)->x : 
+											((s_vvertice*)lst[start].data)->x ;
 	
 	for(i = start+1 ; i <= end ; i++) {
 		if(lst[i].type == M_ATOM_TYPE) {
@@ -181,7 +223,7 @@ static int partition_x(s_vect_elem *lst, int start, int end)
 			if(acur->x < piv) {
 				c++ ;
 			
-				// We have to swap, so change indices, and swap elements.
+				/* We have to swap, so change indices, and swap elements. */
 				if(lst[c].type == M_ATOM_TYPE) ((s_atm*)lst[c].data)->sort_x = i ;
 				else ((s_vvertice*)lst[c].data)->sort_x = i ;
 				
@@ -196,7 +238,7 @@ static int partition_x(s_vect_elem *lst, int start, int end)
 			if(vcur->x < piv) {
 				c++ ;
 			
-				// We have to swap, so change indices, and swap elements.
+				/* We have to swap, so change indices, and swap elements. */
 				if(lst[c].type == M_ATOM_TYPE) ((s_atm*)lst[c].data)->sort_x = i ;
 				else ((s_vvertice*)lst[c].data)->sort_x = i ;
 				
@@ -222,14 +264,14 @@ static int partition_x(s_vect_elem *lst, int start, int end)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_sorted_lst(s_vsort *lsort, int which_dim, FILE *buf)
+	print_sorted_lst
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Print one of the sorted tab of a  s_vsort structure
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vsort *lsort: Structure containing tab
-	@ FILE *buf: Buffer to print in.
+	@ s_vsort *lsort : Structure containing tab
+	@ FILE *buf      : Buffer to print in.
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -265,7 +307,7 @@ void print_sorted_lst(s_vsort *lsort, FILE *buf)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_s_vsort(s_vsort *lsort)
+	free_s_vsort
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free memory for s_vsort structure

@@ -5,9 +5,9 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					dparams.h
+## FILE 					dparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD + relooking
 ##	27-11-08	(v)  Minor Relooking
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -28,17 +29,48 @@
 
 */
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	s_dparams* init_def_dparams(void)
+	init_def_dparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Initialisation of default parameters
+	Initialisation of default parameters.
    -----------------------------------------------------------------------------
    ## PARAMETRES: void
    -----------------------------------------------------------------------------
    ## RETURN: 
-	Pointer to allocated paramers.
+	s_dparams*: Pointer to allocated paramers.
    -----------------------------------------------------------------------------
 */
 s_dparams* init_def_dparams(void)
@@ -66,15 +98,15 @@ s_dparams* init_def_dparams(void)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_dparams* get_dpocket_args(int nargs, char **args)
+	get_dpocket_args
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	This function analyse the user's command line and parse it to store parameters
-	for the descriptor calculator programm.
+	This function analyse the user's command line and parse it to store 
+	parameters for the descriptor calculator programm.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ int nargs :  Number of arguments
-	@ char **args: Arguments of main program
+	@ int nargs   : Number of arguments
+	@ char **args : Arguments of main program
    -----------------------------------------------------------------------------
    ## RETURN:
 	s_dparams*: Pointer to parameters
@@ -83,14 +115,14 @@ s_dparams* init_def_dparams(void)
 s_dparams* get_dpocket_args(int nargs, char **args)
 {
 	int i,
-		status = 0 ;
-
-	int nstats = 0 ;
+		status = 0,
+		nstats = 0 ;
 	
 	char *str_list_file = NULL ;
 
 	s_dparams *par = init_def_dparams() ;
-	//read arguments by flags
+	
+	/* Read arguments by flags */
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-') {
 			switch (args[i][1]) {
@@ -139,13 +171,11 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 				case M_DPAR_INTERFACE_METHOD1 :
 						par->interface_method = M_INTERFACE_METHOD1 ;
 						par->interface_dist_crit = M_VERT_LIG_NEIG_DIST ;
-						//if(i < nargs-1)  status += parse_interface_method(args[++i], par) ; 
 						break ;
 
 				case M_DPAR_INTERFACE_METHOD2 :
 						par->interface_method = M_INTERFACE_METHOD2 ; 
 						par->interface_dist_crit = M_LIG_NEIG_DIST ;
-						//if(i < nargs-1) status += parse_interface_method(args[++i], par) ;
 						break ;
 
 				case M_DPAR_OUTPUT_FILE : 
@@ -208,20 +238,22 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int add_list_complexes(char *str_list_file, s_dparams *par) 
+	add_list_complexes
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Load a list of protein-ligand pdb file path. This file should have the following
-	format:
+	Load a list of protein-ligand pdb file path. This file should have the 
+	following format:
 
 	complex_pdb_file	ligand_code
 	complex_pdb_file2	ligand_code2
 	complex_pdb_file3	ligand_code3
 	(...)
+ 
+ 	Each complexe-ligand set will be stored in the parameters structure.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ char *str_list_file : Path of the file containing all data
-	@ s_dparams *par: Structures that stores all thoses files
+	@ s_dparams *par      : Structures that stores all thoses files
    -----------------------------------------------------------------------------
    ## RETURN: 
 	int: Number of file read.
@@ -238,7 +270,7 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 		 complexbuf[M_MAX_PDB_NAME_LEN],
 		 ligbuf[5];
 
-	// Loading data.
+	/* Loading data. */
 	f = fopen(str_list_file, "r") ;
 	if(f) {
 		while(fgets(buf, 210, f)) {
@@ -246,7 +278,8 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 			status = sscanf(buf, "%s\t%s", complexbuf, ligbuf) ;
 
 			if(status < 2) {
-				fprintf(stderr, "! Skipping row '%s' with bad format (status %d).\n", buf, status) ;
+				fprintf(stderr, "! Skipping row '%s' with bad format (status %d).\n",
+								buf, status) ;
 			}
 			else {
 				nread += add_complexe(complexbuf, ligbuf, par) ;
@@ -262,23 +295,23 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int add_complexe(char *apo, char *complex, char *ligan, s_dparams *par) 
+	add_complexe
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Add a set of data to the list of set of data in the parameters. this function
 	is used for the tpocket program only.
 	
-	The function will try to open each file, and data will be stored only if the
-	two files exists, and if the name of the ligand is valid.
+	The function will try to open the file, and data will be stored only if the
+	file exists, and if the name of the ligand is valid.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *apo: The apo path
-	@ char *complex: The complex path
-	@ char *ligan: The ligand resname: a 4 letter (max!) 
-	@ s_dparams *p: The structure than contains parameters.
+	@ char *apo     : The apo path
+	@ char *complex : The complex path
+	@ char *ligan   : The ligand resname: a 4 letter (max!) 
+	@ s_dparams *par: The structure than contains parameters.
    -----------------------------------------------------------------------------
    ## RETURN: 
-	The file, NULL if the openning fails.
+	int: 1 if everything is OK, 0 if not.
    -----------------------------------------------------------------------------
 */
 int add_complexe(char *complex, char *ligand, s_dparams *par) 
@@ -322,42 +355,15 @@ int add_complexe(char *complex, char *ligand, s_dparams *par)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_interface_method(char *str, s_fparams *p, int method) 
+	parse_dist_crit
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
-	Parsing function for the distance criteria to find ligand neighbours.
+	Parsing function for the distance criteria defining the protein-ligand 
+	interface.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
-   -----------------------------------------------------------------------------
-   ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
-   -----------------------------------------------------------------------------
-*/
-int parse_interface_method(char *str, s_dparams *p) 
-{
-	if(str_is_float(str, M_NO_SIGN)) {
-		p->interface_dist_crit = atof(str) ;
-	}
-	else {
-		fprintf(stdout, "! Invalid value (%s) given for distance criteria to define interface atoms.\n", str) ;
-		return 1 ;
-	}
-
-	return 0 ;
-}
-
-/**-----------------------------------------------------------------------------
-   ## FUNCTION: 
-	int parse_dist_crit(char *str, s_fparams *p) 
-   -----------------------------------------------------------------------------
-   ## SPECIFICATION: 	
-	Parsing function for the distance criteria defining the protein-ligand interface
-   -----------------------------------------------------------------------------
-   ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_dparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
 	0 if the parameter is valid (here a valid integer), 1 if not
@@ -378,14 +384,17 @@ int parse_dist_crit(char *str, s_dparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_dparams(s_tparams *p, FILE *f)
+	print_dparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Print function
+	Print function, usefull to debug
    -----------------------------------------------------------------------------
    ## PARAMETRES:
+	@ s_dparams *p : The structure than will contain the parsed parameter
+	@ FILE *f      : The file to write in
    -----------------------------------------------------------------------------
    ## RETURN: 
+    void
    -----------------------------------------------------------------------------
 */
 void print_dparams(s_dparams *p, FILE *f)
@@ -398,10 +407,12 @@ void print_dparams(s_dparams *p, FILE *f)
 			fprintf(f, "> Protein %d: '%s', '%s'\n", i+1, p->fcomplex[i], p->ligs[i]) ;
 		}
 		
-		if(p->interface_method == M_INTERFACE_METHOD1) fprintf(f, "> Method used to define explicitely the interface atoms: contacted atom by alpha spheres.\n") ; 
+		if(p->interface_method == M_INTERFACE_METHOD1) 
+			fprintf(f, "> Method used to define explicitely the interface atoms: contacted atom by alpha spheres.\n") ; 
 		else fprintf(f, "> Method used to define explicitely the interface atoms: ligand's neighbors.\n") ;
 		
-		fprintf(f, "> Distance used to define explicitely the interface: %f.\n", p->interface_dist_crit) ;
+		fprintf(f, "> Distance used to define explicitely the interface: %f.\n", 
+					p->interface_dist_crit) ;
 		
 		fprintf(f, "==============\n");
 	}
@@ -410,7 +421,7 @@ void print_dparams(s_dparams *p, FILE *f)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_dparams_usage(FILE *f) 
+	print_dparams_usage
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Displaying usage of the programm in the given buffer
@@ -472,7 +483,7 @@ void print_dpocket_usage(FILE *f)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_params(s_dparams *p) 
+	free_params
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free parameters

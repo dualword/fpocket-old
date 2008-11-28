@@ -1,8 +1,39 @@
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 #ifndef DH_DESCR
 #define DH_DESCR
 
-// -----------------------------------INCLUDES--------------------------------------------
+/* ---------------------------------INCLUDES--------------------------------- */
 
 #include <math.h>
 #include <stdio.h>
@@ -16,28 +47,28 @@
 #include "aa.h"
 #include "utils.h"
 
-// ------------------------------------STRUCTURES-------------------------------------------
+/* --------------------------------STRUCTURES---------------------------------*/
 
 typedef struct s_desc 
 {
-	float hydrophobicity_score,		// Hydropathie score - for each aa
-		  volume_score,				// Volume score - for each aa
-		  volume,					// Pocket volume
-		  flex,						// Flexibility - based on B factors
-		  prop_polar_atm,			// Proportion of polar atoms
-		  mean_asph_ray,			// Mean alpha sphere radius
-		  masph_sacc,	// Mean alpha sphere solvent accessibility
-		  apolar_asphere_prop,		// Proportion of apolar alpha spheres
-		  mean_loc_hyd_dens ;		// Mean local hydrophobic density (from alpha spheres)
+	float hydrophobicity_score,		/* Hydropathie score - for each aa */
+		  volume_score,				/* Volume score - for each aa */
+		  volume,					/* Pocket volume */
+		  flex,						/* Flexibility - based on B factors */
+		  prop_polar_atm,			/* Proportion of polar atoms */
+		  mean_asph_ray,			/* Mean alpha sphere radius */
+		  masph_sacc,	/* Mean alpha sphere solvent accessibility */
+		  apolar_asphere_prop,		/* Proportion of apolar alpha spheres */
+		  mean_loc_hyd_dens ;		/* Mean local hydrophobic density (from alpha spheres) */
 	
-	int aa_compo[20] ;				// Absolute amino acid composition
-	int nb_asph,					// Number of alpha spheres
-		polarity_score,				// Polarity score (based on amino acids properties ; see aa.c & aa.h)
-		charge_score ;				// Sum of all net charges at pH = 7 (see aa.c & aa.h)
+	int aa_compo[20] ;				/* Absolute amino acid composition */
+	int nb_asph,					/* Number of alpha spheres */
+		polarity_score,				/* Polarity score (based on amino acids properties ; see aa.c & aa.h) */
+		charge_score ;				/* Sum of all net charges at pH = 7 (see aa.c & aa.h) */
 
 } s_desc ;
 
-// ------------------------------------PROTOTYPES-------------------------------------------
+/* ------------------------------PROTOTYPES---------------------------------- */
 
 s_desc* allocate_s_desc(void) ;
 void reset_s_desc(s_desc *desc) ;

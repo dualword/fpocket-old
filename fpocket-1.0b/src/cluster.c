@@ -7,7 +7,7 @@
 ##
 ## FILE 					cluster.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -17,7 +17,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##	01-04-08	(v)  singleLinkageClustering -> pck_sl_clust
+##	28-11-08	(v)  Comments UTD + minor relooking
+##	11-05-08	(v)  singleLinkageClustering -> pck_sl_clust
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -33,6 +34,37 @@
 
 */
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
@@ -45,9 +77,9 @@
 	then merge the two pockets.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_pockets *pockets: The list of pockets
-	@ s_fparams *params: Parameters of the program, including single linkage 
-						 parameters
+	@ c_lst_pockets *pockets  : The list of pockets
+	@ s_fparams *params       : Parameters of the program, including single  
+								linkage parameters
    -----------------------------------------------------------------------------
    ## RETURN: 
 	void
@@ -67,26 +99,33 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 	float vcurx,
 		  vcury,
 		  vcurz ;
-
-	int distFlag;						//flag to know if two clusters are next to each other by single linkage clustering...or not
+	
+	/* Flag to know if two clusters are next to each other by single linkage 
+	 * clustering...or not */
+	int distFlag;
 	if(pockets) {
-		pcur = pockets->first ;				//set first pocket
+		/* Set the first pocket */
+		pcur = pockets->first ;				
 		while(pcur) {
-			curMobilePocket = pcur->next ;		//set the second pocket
+			/* Set the second pocket */
+			curMobilePocket = pcur->next ;	
 			while(curMobilePocket) {
 				distFlag = 0 ;
- 
-				vcur = pcur->pocket->v_lst->first ;	//set the first vertice of the first pocket
+				/* Set the first vertice of the first pocket */
+				vcur = pcur->pocket->v_lst->first ;	
 				while(vcur && distFlag <= params->sl_clust_min_nneigh){
-					curMobileVertice = curMobilePocket->pocket->v_lst->first;	//set the first vertice of the second pocket
+					/* Set the first vertice of the second pocket */
+					curMobileVertice = curMobilePocket->pocket->v_lst->first ;
 					vvcur = vcur->vertice ;
 					vcurx = vvcur->x ;
 					vcury = vvcur->y ;
 					vcurz = vvcur->z ;
 					
-					while(curMobileVertice && (distFlag <= params->sl_clust_min_nneigh)){					//double loop for vertices -> if not near
+					/* Double loop for vertices -> if not near */
+					while(curMobileVertice && (distFlag <= params->sl_clust_min_nneigh)){					
 						mvvcur = curMobileVertice->vertice ;
-						if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z) < params->sl_clust_max_dist) {
+						if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z) 
+							< params->sl_clust_max_dist) {
 							distFlag++;
 						}
 						curMobileVertice = curMobileVertice->next;
@@ -96,7 +135,8 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 				
 				pnext =  curMobilePocket->next ;
 				if(distFlag >= params->sl_clust_min_nneigh) {
-					mergePockets(pcur,curMobilePocket,pockets);	//if they are near to each other, merge them
+					/* If they are next to each other, merge them */
+					mergePockets(pcur,curMobilePocket,pockets);
 				}
 				curMobilePocket = pnext ;
 			}
@@ -105,6 +145,6 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 		}
 	}
 	else {
-		printf("> Incorrect argument during Single Linkage Clustering.\n") ; //exit(0);
+		fprintf(stderr, "! Incorrect argument during Single Linkage Clustering.\n") ;
 	}
 }

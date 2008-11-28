@@ -5,7 +5,7 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					fpmain.h
+## FILE 					fpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
@@ -19,6 +19,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -27,19 +28,54 @@
 
 */
 
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	c_lst_pockets *pockets search_pocket(s_pdb *pdb, s_fparams *params)
+	pockets search_pocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function will call all functions needed for the pocket finding algorith
 	and will return the list of pockets found on the protein.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_pdb *pdb: The pdb data of the protein to handle.
+	@ s_pdb *pdb : The pdb data of the protein to handle.
+	@ s_fparams  : Parameters of the algorithm
    -----------------------------------------------------------------------------
    ## RETURN:
-	A list of pockets found.
+	A chained list of pockets found, sorted according to the current critera
+	(the default is a scoring function)
    -----------------------------------------------------------------------------
 */
 c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
@@ -126,7 +162,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 
 		/* Sorting pockets */
 			sort_pockets(pockets, M_SCORE_SORT_FUNCT) ;
-			//sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;
+			/*sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;*/
 			
 			reIndexPockets(pockets) ;
 /*

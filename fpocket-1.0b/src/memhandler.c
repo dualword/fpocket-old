@@ -5,9 +5,9 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					fpmain.h
+## FILE 					memhandler.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -32,6 +32,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -39,6 +40,40 @@
 ##
 
 */
+
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
+
 /* Simple chained structures to store allocated pointers */
 
 typedef struct ptr_node 
@@ -70,22 +105,21 @@ static void remove_bloc(void *bloc) ;
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	my_malloc(size_t s, size_t nb) 
+	my_malloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Allocate memory for nb bloc of size s.
+	Allocate memory for a bloc of size s.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ size_t s : Size of the bloc to allocate
-	@ int exit : Whether we exit the programm if malloc fails.
    -----------------------------------------------------------------------------
    ## RETURN:
 	void *: Pointer to the allocated bloc
    -----------------------------------------------------------------------------
 */
-void* my_malloc(size_t nb)
+void* my_malloc(size_t s)
 {
-	void *bloc = malloc(nb) ;
+	void *bloc = malloc(s) ;
 
 	if(bloc == NULL) {
 		fprintf(stderr, "! malloc failed in my_bloc_malloc. Programm will exit, as demanded.\n") ;
@@ -93,7 +127,7 @@ void* my_malloc(size_t nb)
 	}
 
 	#ifdef M_MEM_DEBUG
-		if(ST_fdebug) fprintf(ST_fdebug, "> (M)Allocation success at: <%p>\n", bloc) ;
+	if(ST_fdebug) fprintf(ST_fdebug, "> (M)Allocation success at: <%p>\n", bloc) ;
 	#endif
 	add_bloc(bloc) ;
 
@@ -102,15 +136,14 @@ void* my_malloc(size_t nb)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	my_calloc(size_t s, size_t nb) 
+	my_calloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Allocate memory for nb bloc of size s using calloc standart function.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ size_t nb : Number of bloc to allocate
-	@ size_t s : Size of the bloc to allocate
-	@ int exit : Whether we exit the programm if malloc fails.
+	@ size_t s  : Size of the bloc to allocate
    -----------------------------------------------------------------------------
    ## RETURN:
 	void *: Pointer to the allocated bloc
@@ -134,13 +167,12 @@ void* my_calloc(size_t nb, size_t s)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	my_realloc(void *ptr, size_t s, size_t nb) 
+	my_realloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Allocate memory for nb bloc of size s using calloc standart function.
+	Allocate memory for a bloc of size s using calloc standart function.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ size_t nb : Number of bloc to allocate
 	@ size_t s : Size of the bloc to allocate
 	@ int exit : Whether we exit the programm if malloc fails.
    -----------------------------------------------------------------------------
@@ -148,10 +180,10 @@ void* my_calloc(size_t nb, size_t s)
 	void *: Pointer to the allocated bloc
    -----------------------------------------------------------------------------
 */
-void* my_realloc(void *ptr, size_t nb)
+void* my_realloc(void *ptr, size_t s)
 {
 	void *tmp = ptr ;
-	ptr = realloc(ptr, nb) ;
+	ptr = realloc(ptr, s) ;
 
 	if(ptr == NULL){
 		fprintf(stderr, "! malloc failed in my_bloc_malloc. Programm will exit, as demanded.\n") ;
@@ -177,7 +209,7 @@ void* my_realloc(void *ptr, size_t nb)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	ptr_node* ptr_node_alloc(void *ptr)
+	ptr_node_alloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Allocate a simple chained node.
@@ -208,7 +240,7 @@ static ptr_node* ptr_node_alloc(void *ptr)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void my_free(void *bloc) 
+	my_free
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free memory for the given bloc, and remove this pointer from the list.
@@ -239,7 +271,7 @@ void my_free(void *bloc)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	static void add_bloc(void *bloc) 
+	static add_bloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Add an allocated pointer (bloc) to the list ST_lst_alloc. 
@@ -293,7 +325,7 @@ static void add_bloc(void *bloc)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	static void remove_bloc(void *bloc)
+	static remove_bloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Remove the given pointer (node) from the list ST_lst_alloc. Donc free the
@@ -366,7 +398,7 @@ static void remove_bloc(void *bloc)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_all(void) 
+	free_all 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free all pointers allocated and present in the list ST_lst_alloc. If a
@@ -417,7 +449,7 @@ void free_all(void)
  
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void my_exit(void)
+	my_exit
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Before exiting the programm, just free all allocated pointers (if any). This
@@ -442,10 +474,10 @@ void my_exit(void)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_ptr_lst(void) 
+	print_ptr_lst 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Print allocated pointers stored in ST_lst_alloc.
+	Print allocated pointers stored in ST_lst_alloc for debugging purpose.
    -----------------------------------------------------------------------------
    ## PARAMETRES:	void
    -----------------------------------------------------------------------------

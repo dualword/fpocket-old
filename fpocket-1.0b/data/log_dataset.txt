@@ -6,6 +6,13 @@ Pocket Picker:
 		data/pp_data/complex/1pso.pdb	data/pp_data/complex/1pso.pdb	iva
 		data/pp_data/complex/2tmn.pdb	data/pp_data/complex/2tmn.pdb	po3
 
+	The following unbound alligned proteins have been added
+		data/pp_data/unbound/1QIF-1ACJ.pdb	data/pp_data/complex/1ACJ.pdb	tha
+		data/pp_data/unbound/3APP-1APU.pdb	data/pp_data/complex/1APU.pdb	iva
+		data/pp_data/unbound/1HSI-1IDA.pdb	data/pp_data/complex/1IDA.pdb	qnd
+		data/pp_data/unbound/1PSN-1PSO.pdb	data/pp_data/complex/1PSO.pdb	iva
+		data/pp_data/unbound/1L3F-2TMN.pdb	data/pp_data/complex/2TMN.pdb	po3
+
 Pocket finder:
 	1L9N.pdb:
 		chaine B virée, ainsi que le ligand en double et l'eau.

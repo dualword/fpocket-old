@@ -1,16 +1,18 @@
  
 #include "../headers/tpmain.h"
+
 /**
 
 ## ----- GENERAL INFORMATIONS
 ##
 ## FILE 					tpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments OK
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	

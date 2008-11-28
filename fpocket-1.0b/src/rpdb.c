@@ -13,7 +13,8 @@
 ##
 ##  PDB utilities, mainly reading routines. Not all informations are stored,
 ##  this reader is specific to fpocket, and essentially deals with ATOMS,
-##  HETATMS and several other fields. 
+##  HETATMS and several other fields.
+##
 ##
 ##  Curently:
 ##		- Hydrogens present in the PDB are kept
@@ -25,8 +26,12 @@
 ##	The reading process stop at the end of the file or as soon as the END flag
 ##	is reached.
 ##
+##  We used VMD as a base for the code developpement, but now codes are quite
+##  differents... 
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  28-11-08    (v)  Comments UTD + minor corrections
 ##  20-11-08    (p)  Adding support of reading PDB multiple occupancies (only 
 ##					 the first is read) & MSE added to kept HETATM list
 ##	03-11-08	(v)  Code slightly restructured, comments added
@@ -42,6 +47,39 @@
 ##
 
 */
+
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 
 /**
 	A list of HETATM to keep in the PDB structure.
@@ -68,11 +106,7 @@ static const int ST_nb_keep_hetatm = 111 ;
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void rpdb_extract_pdb_atom(
- 			char *pdb_line, int *atm_id, char *name, char *res_name, 
-			char *chain, char *seg_name, int *res_id, char *insert, 
-			char *alt_loc, char *elem_symbol, float *x, float *y, float *z, 
-			float *occ, float *beta)
+	rpdb_extract_pdb_atom
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Extract all informations given in a pdb ATOM or HETATM line, and store them 
@@ -129,56 +163,56 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 							float *x, float *y, float *z, float *occ, 
 							float *bfactor, char *symbol, int *charge)
 {
-// Position:          1         2         3         4         5         6
-// Position: 123456789012345678901234567890123456789012345678901234567890
-// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00
+/* Position:          1         2         3         4         5         6 */
+/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
 
-// Position: 6         7         8
-// Position: 012345678901234567890
-// Record:   0 11.92           N
+/* Position: 6         7         8 */
+/* Position: 012345678901234567890 */
+/* Record:   0 11.92           N   */
 
 	int rlen = strlen(pdb_line) ;
 
 	char *prt,
 		 ctmp ;
 
-	// Record type
+	/* Record type */
 	strncpy(type, pdb_line, 6) ;
 
-	// Atom ID
+	/* Atom ID */
 	prt = pdb_line + 6 ; 
 	ctmp = pdb_line[11] ; pdb_line[11] = '\0' ;
-	*atm_id = (float) atof(prt) ; pdb_line[11] = ctmp ;
+	*atm_id = atoi(prt) ; pdb_line[11] = ctmp ;
 	
-	// Atom name
+	/* Atom name */
 	strncpy(name, pdb_line + 12, 4);
 	name[4] = '\0';
 	str_trim(name) ;
 
-	// Alternate location identifier
+	/* Alternate location identifier */
 	*alt_loc = pdb_line[16] ;
 	
-	// Residue name
+	/* Residue name */
 	strncpy(res_name, pdb_line + 17, 4);
 	res_name[4] = '\0';
 	str_trim(res_name); /* remove spaces from the resname */
 
-	// Chain name
+	/* Chain name */
 	chain[0] = pdb_line[21];
 	chain[1] = '\0';
 
-	// Residue id number
+	/* Residue id number */
 	prt = pdb_line + 22 ; 
 	ctmp = pdb_line[26] ; pdb_line[26] = '\0' ;
-	*res_id = (float) atof(prt) ; pdb_line[26] = ctmp ;
+	*res_id = atoi(prt) ; pdb_line[26] = ctmp ;
 
-	// Insertion code
+	/* Insertion code */
 	*insert = pdb_line[26];
 
-	// x, y, and z coordinates, occupancy and b-factor
+	/* x, y, and z coordinates, occupancy and b-factor */
 	rpdb_extract_atom_values(pdb_line, x, y, z, occ, bfactor);
 
-	// Atomic element symbol
+	/* Atomic element symbol */
 	if (rlen >= 77) {
 		strncpy(symbol, pdb_line + 76, 2);
 		symbol[2] = '\0';
@@ -186,7 +220,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	}
 	else symbol[0] = '\0';
 	
-	// Charge
+	/* Charge */
 	if(rlen >= 80) {
             char buf[4] = "   " ;
 		if((pdb_line[78] == ' ' && pdb_line[79] == ' ') || pdb_line[78] == '\n'){
@@ -205,7 +239,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
+	rpdb_extract_atm_resname
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Extract the residu name for an ATOM or HETATM pdb record. To remember:
@@ -226,24 +260,22 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 */
 void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 {
-// Position:          1         2         3         4         5         6
-// Position: 123456789012345678901234567890123456789012345678901234567890
-// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00
+/* Position:          1         2         3         4         5         6 */
+/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
 
-// Position: 6         7         8
-// Position: 012345678901234567890
-// Record:   0 11.92           N
+/* Position: 6         7         8 */
+/* Position: 012345678901234567890 */
+/* Record:   0 11.92           N   */
 	
-// Residue name
-	strncpy(res_name, pdb_line + 17, 4);
+/* Residue name */	strncpy(res_name, pdb_line + 17, 4);
 	res_name[4] = '\0';
 	str_trim(res_name); /* remove spaces from the resname */
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
-								  float *occ, float *bfactor) 
+	rpdb_extract_atom_values
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Extract coordinates, occupancy and bfactor values from a pdb ATOM or HETATM
@@ -261,13 +293,13 @@ void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 							  float *occ, float *bfactor) 
 {
-// Position:          1         2         3         4         5         6
-// Position: 123456789012345678901234567890123456789012345678901234567890
-// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00
+/* Position:          1         2         3         4         5         6 */
+/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
 
-// Position: 6         7         8
-// Position: 012345678901234567890
-// Record:   0 11.92           N
+/* Position: 6         7         8 */
+/* Position: 012345678901234567890 */
+/* Record:   0 11.92           N   */
 	
 	char *ptr,
 		 ctmp ;
@@ -295,8 +327,7 @@ void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, 
- 							 float *gamma, float *a, float *b, float *c) 
+	rpdb_extract_cryst1
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Extract informations on a box size from a pdb CRYSTL line, and store them 
@@ -313,13 +344,13 @@ void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma, 
 						 float *a, float *b, float *c) 
 {
-// Position:          1         2         3         4         5         6
-// Position: 123456789012345678901234567890123456789012345678901234567890
-// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00
+/* Position:          1         2         3         4         5         6 */
+/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
 
-// Position: 6         7         8
-// Position: 012345678901234567890
-// Record:   0 11.92           N
+/* Position: 6         7         8 */
+/* Position: 012345678901234567890 */
+/* Record:   0 11.92           N   */
 
 	char ch, *s;
 	
@@ -351,7 +382,7 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_pdb* rpdb_open(const char *fpath)
+	rpdb_open
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Open a PDB file, alloc memory for all informations on this pdb, and store 
@@ -364,9 +395,9 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 	important HETATM listed in the static structure at the top of this file.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char *fpath: The pdb path.
-	@ const char *ligan: Ligand resname.
-	@ const char *keep_lig:  Keep the given ligand or not?
+	@ const char *fpath    : The pdb path.
+	@ const char *ligan    : Ligand resname.
+	@ const char *keep_lig :  Keep the given ligand or not?
    -----------------------------------------------------------------------------
    ## RETURN: 
 	s_pdb: data containing PDB info.
@@ -414,24 +445,25 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 			}
 		}
 		else if(!strncmp(buf, "HETATM", 6)) {
-                     if(buf[16]==' ' || buf[16]=='A'){ /*check again for the first occurence*/
-		/* Hetatom entry: check if there is a ligand in there too... */
-			rpdb_extract_atm_resname(buf, resb) ;
-			if( keep_lig && ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
-				&& ligan[2] == resb[2]){
-				natm_lig ++ ; natoms++ ;
+			/*Check again for the first occurence*/
+			if(buf[16]==' ' || buf[16]=='A'){ 
+				/* Hetatom entry: check if there is a ligand in there too... */
+				rpdb_extract_atm_resname(buf, resb) ;
+				if( keep_lig && ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
+					&& ligan[2] == resb[2]){
+					natm_lig ++ ; natoms++ ;
+				}
+				else {
+				/* Keep specific HETATM given in the static list ST_keep_hetatm */
+					for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
+							if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1]
+								== resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
+									nhetatm++ ; natoms++ ;
+									break ;
+							}
+					}
+				}
 			}
-			else {
-			/* Keep specific HETATM given in the static list ST_keep_hetatm */
-                            for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
-                                    if(ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1]
-                                        == resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
-                                            nhetatm++ ; natoms++ ;
-                                            break ;
-                                    }
-                            }
-			}
-                     }
 		}
 		else if (!strncmp(buf, "HEADER", 6)) 
 			strncpy(pdb->header, buf, M_PDB_BUF_LEN) ;
@@ -466,10 +498,10 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void rpdb_read(s_pdb *pdb, s_atm *atoms) 
+	rpdb_read
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Read informations on atoms for a pdb file.
+	Read and store informations on atoms for a pdb file.
     Curently:
 		- Hydrogens present in the PDB are kept
 		- HETATM are ignored except for specific cofactor, small molecule... 
@@ -478,8 +510,9 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 		- Solvent molecules are ignored
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_lst_vvertice *lvvert: The structure to fill
-	@ const char fpath[]: File containing vertices
+	@ s_pdb *pdb           : The structure to fill
+	@ const char *ligand   : The ligand resname
+	@ const char *keep_lig :  Keep the given ligand or not?
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -508,103 +541,103 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 	while(fgets(pdb_line, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
 		
 		if (strncmp(pdb_line, "ATOM ",  5) == 0) {
-                    if(pdb_line[16]==' ' || pdb_line[16]=='A'){ /*if within first occurence*/
-		/* Store ATOM entry */
-			rpdb_extract_atm_resname(pdb_line, resb) ;
-			/* Check if the desired ligand is in such entry */
-			if( ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
-				&& ligan[2] == resb[2]){
-				if(keep_lig) {
+			if(pdb_line[16]==' ' || pdb_line[16]=='A'){ /*if within first occurence*/
+				/* Store ATOM entry */
+				rpdb_extract_atm_resname(pdb_line, resb) ;
+				/* Check if the desired ligand is in such entry */
+				if( ligan && ligan[0] == resb[0] && ligan[1] == resb[1] 
+					&& ligan[2] == resb[2]){
+					if(keep_lig) {
+						atom = atoms + iatoms ;
+						/* Read atom informations */
+						rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
+								atom->name, &(atom->pdb_aloc), atom->res_name, 
+								atom->chain, &(atom->res_id), &(atom->pdb_insert), 
+								&(atom->x), &(atom->y), &(atom->z), 
+								&(atom->occupancy), &(atom->bfactor), atom->symbol,
+								&(atom->charge));
+
+						/* Store additional informations not given in the pdb */
+						atom->mass = pte_get_mass(atom->symbol) ;
+						atom->radius = pte_get_vdw_ray(atom->symbol) ;
+						atom->electroneg = pte_get_enegativity(atom->symbol) ;
+						atom->sort_x = -1 ;
+						iatoms++ ;
+
+						atm_lig[iatm_lig] = atom ;
+						iatm_lig ++ ;
+						ligfound = 1 ;
+					}
+				}
+				else {
+				/* A simple atom not supposed to be stored as a ligand */
 					atom = atoms + iatoms ;
-					/* Read atom informations */
 					rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
 							atom->name, &(atom->pdb_aloc), atom->res_name, 
 							atom->chain, &(atom->res_id), &(atom->pdb_insert), 
-							&(atom->x), &(atom->y), &(atom->z), 
-							&(atom->occupancy), &(atom->bfactor), atom->symbol,
-							&(atom->charge));
-					
+							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
+							&(atom->bfactor), atom->symbol, &(atom->charge));
+
 					/* Store additional informations not given in the pdb */
 					atom->mass = pte_get_mass(atom->symbol) ;
 					atom->radius = pte_get_vdw_ray(atom->symbol) ;
 					atom->electroneg = pte_get_enegativity(atom->symbol) ;
 					atom->sort_x = -1 ;
 					iatoms++ ;
-
-					atm_lig[iatm_lig] = atom ;
-					iatm_lig ++ ;
-					ligfound = 1 ;
 				}
 			}
-			else {
-			/* A simple atom not supposed to be stored as a ligand */
-				atom = atoms + iatoms ;
-				rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
-						atom->name, &(atom->pdb_aloc), atom->res_name, 
-						atom->chain, &(atom->res_id), &(atom->pdb_insert), 
-						&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
-						&(atom->bfactor), atom->symbol, &(atom->charge));
-				
-				/* Store additional informations not given in the pdb */
-				atom->mass = pte_get_mass(atom->symbol) ;
-				atom->radius = pte_get_vdw_ray(atom->symbol) ;
-				atom->electroneg = pte_get_enegativity(atom->symbol) ;
-				atom->sort_x = -1 ;
-				iatoms++ ;
-			}
-                    }
 		}
 		else if(strncmp(pdb_line, "HETATM", 6) == 0) {
-                    if(pdb_line[16]==' ' || pdb_line[16]=='A'){/*first occurence*/
-		/* Check HETATM entry */
-			rpdb_extract_atm_resname(pdb_line, resb) ;
-			/* Check if the desired ligand is in HETATM entry */
-			if( ligan && keep_lig && ligan[0] == resb[0] && ligan[1] == resb[1] 
-				&& ligan[2] == resb[2]){
-				
-				atom = atoms + iatoms ;
-				rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
-						atom->name, &(atom->pdb_aloc), atom->res_name, 
-						atom->chain, &(atom->res_id), &(atom->pdb_insert), 
-						&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
-						&(atom->bfactor), atom->symbol, &(atom->charge));
+			if(pdb_line[16]==' ' || pdb_line[16]=='A'){/*first occurence*/
+				/* Check HETATM entry */
+				rpdb_extract_atm_resname(pdb_line, resb) ;
+				/* Check if the desired ligand is in HETATM entry */
+				if( ligan && keep_lig && ligan[0] == resb[0] && ligan[1] == resb[1] 
+					&& ligan[2] == resb[2]){
 
-				/* Store additional informations not given in the pdb */
-				atom->mass = pte_get_mass(atom->symbol) ;
-				atom->radius = pte_get_vdw_ray(atom->symbol) ;
-				atom->electroneg = pte_get_enegativity(atom->symbol) ;
-				atom->sort_x = -1 ;
+					atom = atoms + iatoms ;
+					rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
+							atom->name, &(atom->pdb_aloc), atom->res_name, 
+							atom->chain, &(atom->res_id), &(atom->pdb_insert), 
+							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
+							&(atom->bfactor), atom->symbol, &(atom->charge));
 
-				atm_lig[iatm_lig] = atom ;
-				iatm_lig ++ ; iatoms++ ;
-				ligfound = 1 ;
-			}
-			else if(pdb->lhetatm) {
-			/* Keep specific HETATM given in the static list ST_keep_hetatm. */
-				for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
-					if( ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1] 
-						== resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
-						atom = atoms + iatoms ;
-						rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
-								atom->name, &(atom->pdb_aloc), atom->res_name, 
-								atom->chain, &(atom->res_id), &(atom->pdb_insert), 
-								&(atom->x), &(atom->y), &(atom->z), 
-								&(atom->occupancy), &(atom->bfactor), 
-								atom->symbol, &(atom->charge));
-						
 					/* Store additional informations not given in the pdb */
-						atom->mass = pte_get_mass(atom->symbol) ;
-						atom->radius = pte_get_vdw_ray(atom->symbol) ;
-						atom->electroneg = pte_get_enegativity(atom->symbol) ;
-						atom->sort_x = -1 ;
+					atom->mass = pte_get_mass(atom->symbol) ;
+					atom->radius = pte_get_vdw_ray(atom->symbol) ;
+					atom->electroneg = pte_get_enegativity(atom->symbol) ;
+					atom->sort_x = -1 ;
 
-						pdb->lhetatm[ihetatm] = atom ;
-						ihetatm ++ ; iatoms++ ;
-						break ;
+					atm_lig[iatm_lig] = atom ;
+					iatm_lig ++ ; iatoms++ ;
+					ligfound = 1 ;
+				}
+				else if(pdb->lhetatm) {
+				/* Keep specific HETATM given in the static list ST_keep_hetatm. */
+					for(i = 0 ; i < ST_nb_keep_hetatm ; i++) {
+						if( ST_keep_hetatm[i][0] == resb[0] && ST_keep_hetatm[i][1] 
+							== resb[1] && ST_keep_hetatm[i][2] == resb[2]) {
+							atom = atoms + iatoms ;
+							rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
+									atom->name, &(atom->pdb_aloc), atom->res_name, 
+									atom->chain, &(atom->res_id), &(atom->pdb_insert), 
+									&(atom->x), &(atom->y), &(atom->z), 
+									&(atom->occupancy), &(atom->bfactor), 
+									atom->symbol, &(atom->charge));
+
+						/* Store additional informations not given in the pdb */
+							atom->mass = pte_get_mass(atom->symbol) ;
+							atom->radius = pte_get_vdw_ray(atom->symbol) ;
+							atom->electroneg = pte_get_enegativity(atom->symbol) ;
+							atom->sort_x = -1 ;
+
+							pdb->lhetatm[ihetatm] = atom ;
+							ihetatm ++ ; iatoms++ ;
+							break ;
+						}
 					}
 				}
 			}
-                    }
 		}
 		else if (strncmp(pdb_line, "CRYST1",  6) == 0)  {
 			rpdb_extract_cryst1(pdb_line, &(pdb->alpha), &(pdb->beta), &(pdb->gamma),
@@ -632,7 +665,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_pdb_atoms(s_pdb *pdb) 
+	free_pdb_atoms
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Free memory for s_pdb structure

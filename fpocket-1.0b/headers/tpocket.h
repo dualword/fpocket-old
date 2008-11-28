@@ -1,8 +1,38 @@
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
 
 #ifndef DH_TPOCKET
 #define DH_TPOCKET
 
-// -----------------------------------INCLUDES--------------------------------------------
+/* -----------------------------INCLUDES--------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -17,7 +47,7 @@
 
 #include "memhandler.h"
 
-// --------------------------------------MACROS---------------------------------------------
+/* --------------------------------MACROS-------------------------------------*/
 
 #define M_DST_CRIT 4.0
 
@@ -47,15 +77,16 @@
 #define M_OK 0 
 #define M_NOPOCKETFOUND 1
 
-// --------------------------------------SRUCTURES------------------------------------------
+/* ------------------------------SRUCTURES------------------------------------*/
 
-// ------------------------------------PROTOTYPES-------------------------------------------
+/* -----------------------------PROTOTYPES------------------------------------*/
 
 void test_fpocket(s_tparams *par) ;
-int test_AC(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) ;
-void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, int nalig, float ligvol,
-				   s_atm **alneigh, int nlneigh, float ddata [][M_NDDATA], int idata [][M_NIDATA], int i,
-				   s_fparams *params) ;
+int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) ;
+
+void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, 
+				   int nalig, s_atm **alneigh, int nlneigh, 
+				   float ddata [][M_NDDATA], int idata [][M_NIDATA], int i) ;
 
 s_atm** get_actual_pocket(s_pdb *com_pdb, s_pdb *com_pdb_nolig, int i, s_tparams *par, int *nb_atm) ;
 s_atm** get_actual_pocket_DEPRECATED(s_pdb *com_pdb, float lig_dist_crit, int *nb_atm) ;
@@ -64,7 +95,7 @@ float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_v
 float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *pocket, int niter) ;
 float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,s_pocket *pocket, int idiscret) ;
 
-//void write_tpocket(c_lst_pockets *pockets, s_pdb *pdb, const char base_pdb_name[]) ;
+/*void write_tpocket(c_lst_pockets *pockets, s_pdb *pdb, const char base_pdb_name[]) ;*/
 void write_pockets_stats(c_lst_pockets *pockets, const char base_pdb_name[]);
 
 

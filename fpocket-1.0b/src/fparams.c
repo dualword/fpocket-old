@@ -5,9 +5,9 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					fparams.h
+## FILE 					fparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -16,6 +16,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  List of pdb taken into account as a single file input.
+##					 Comments UTD
 ##	27-11-08	(v)  PDB file check moved in fpmain + minor modif + relooking
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -30,7 +32,7 @@
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	s_fparams* init_def_fparams(void)
+	init_def_fparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Initialisation of default parameters
@@ -38,7 +40,7 @@
    ## PARAMETRES: void
    -----------------------------------------------------------------------------
    ## RETURN: 
-	Pointer to allocated paramers.
+	s_fparams*: Pointer to allocated paramers.
    -----------------------------------------------------------------------------
 */
 s_fparams* init_def_fparams(void)
@@ -57,21 +59,22 @@ s_fparams* init_def_fparams(void)
 	par->refine_clust_dist = M_REFINE_DIST ;
 	par->refine_min_apolar_asphere_prop = M_REFINE_MIN_PROP_APOL_AS ;
 	par->clust_max_dist = M_CLUST_MAX_DIST ;
+	par->npdb = 0 ;
 
 	return par ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_params* get_fpocket_args(int nargs, char **args)
+	get_fpocket_args
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	This function analyse the user's command line and parse it to store parameters
 	for the pocket finder programm.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ int nargs :  Number of arguments
-	@ char **args: Arguments of main program
+	@ int nargs   :  Number of arguments
+	@ char **args : Arguments of main program
    -----------------------------------------------------------------------------
    ## RETURN: 
 	s_params*: Pointer to parameters
@@ -84,7 +87,8 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 		status = 0 ;
 
 	s_fparams *par = init_def_fparams() ;
-
+	char *pdb_lst = NULL ;
+	
 	//read arguments by flags
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
@@ -112,10 +116,15 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 				case M_PAR_REFINE_MIN_NAPOL_AS: 
 					status += parse_refine_minaap(args[++i], par) ; 
 					break ;
+				case M_PAR_PDB_LIST :
+					pdb_lst = args[++i] ; break ;
+					
 				case M_PAR_PDB_FILE			  : 
 						if(npdb >= 1) fprintf(stderr, 
 							"! Only first input pdb will be used.\n") ;
-						else strcpy(par->pdb_path, args[++i]) ; npdb++ ;
+						else {
+							strcpy(par->pdb_path, args[++i]) ; npdb++ ;
+						}
 						break ;
 				default: break ;
 			}
@@ -124,26 +133,71 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 	
 	if(status > 0) {
  		free_fparams(par) ;
-		par = NULL ;
 		print_pocket_usage(stdout);
+		return NULL ;
 	}
+	
+	par->npdb = npdb ;
+	
+	/* Handle a file containing a list of PDB */
+	if(pdb_lst != NULL) {
+		FILE *f = fopen(pdb_lst, "r") ;
+		if(f != NULL) {
+		/* Count the number of lines */
+			int n = 0 ;
+			char cline [M_MAX_PDB_NAME_LEN + 1] ;
+			
+			while(fgets(cline, M_MAX_PDB_NAME_LEN, f) != NULL) {
+				if(strcmp("\n", cline) != 0) {
+					n ++ ;
+				}
+			}
+			fclose(f) ;
+			printf("%d\n", n) ;
+			if(n == 0) {
+				return par ;
+			}
+			
+		/* Allocate memory and store each line */
+			par->pdb_lst = (char **)my_malloc(n*sizeof(char*)) ;
 
+			f = fopen (pdb_lst, "r") ; 
+			int i = 0, l = 0 ;
+			while(fgets(cline, M_MAX_PDB_NAME_LEN, f) != NULL) {
+				if(strcmp("\n", cline) != 0) {
+					l = strlen(cline) ;
+					if(cline[l-1] == '\n') {
+						l -- ;
+						cline[l] = '\0' ;
+					}
+					char *line = (char *) my_malloc((l+1)*sizeof(char)) ;
+					memcpy (line, cline, l+1);
+	
+					par->pdb_lst[i] = line ;
+					i ++ ;
+				}
+			}
+			
+			par->npdb = n ;
+		}
+	}
+	
 	return par;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_clust_max_dist(char *str, s_fparams *p) 
+	parse_clust_max_dist
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the distance criteria first clustering algorithm.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_clust_max_dist(char *str, s_fparams *p) 
@@ -162,17 +216,17 @@ int parse_clust_max_dist(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_sclust_max_dist(char *str, s_fparams *p) 
+	parse_sclust_max_dist
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the distance criteria in the single linkage clustering.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_sclust_max_dist(char *str, s_fparams *p) 
@@ -190,17 +244,17 @@ int parse_sclust_max_dist(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_sclust_min_nneigh(char *str, s_fparams *p) 
+	parse_sclust_min_nneigh
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the number of neighbours in the single linkage clustering.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid int), 1 if not
+	int: 0 if the parameter is valid (here a valid int), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_sclust_min_nneigh(char *str, s_fparams *p) 
@@ -218,18 +272,18 @@ int parse_sclust_min_nneigh(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_min_apol_neigh(char *str, s_fparams *p) 
+	parse_min_apol_neigh
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
-	Parsing function for the minimum number of apolar atom neighbour for an alpha
+	Parsing function for the minimum number of apolar contacted atom for an alpha
 	sphere to be considered as apolar.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid int), 1 if not
+	int: 0 if the parameter is valid (here a valid int), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_min_apol_neigh(char *str, s_fparams *p)
@@ -249,7 +303,7 @@ int parse_min_apol_neigh(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_asph_min_size(char *str, s_fparams *p) 
+	parse_asph_min_size
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the minimum radius of each alpha shpere
@@ -259,7 +313,7 @@ int parse_min_apol_neigh(char *str, s_fparams *p)
 	@ s_fparams *p: The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_asph_min_size(char *str, s_fparams *p) 
@@ -277,17 +331,17 @@ int parse_asph_min_size(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_asph_max_size(char *str, s_fparams *p) 
+	parse_asph_max_size
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the maximum radius of each alpha shpere
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_asph_max_size(char *str, s_fparams *p) 
@@ -305,18 +359,18 @@ int parse_asph_max_size(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_mc_niter(char *str, s_fparams *p) 
+	parse_mc_niter
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the number of iteration for the Monte Carlo volume
 	calculation.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_mc_niter(char *str, s_fparams *p)
@@ -334,17 +388,17 @@ int parse_mc_niter(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_basic_vol_div(char *str, s_fparams *p) 
+	parse_basic_vol_div
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the number of iteration for the basic volume calculation.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid integer), 1 if not
+	int: 0 if the parameter is valid (here a valid integer), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_basic_vol_div(char *str, s_fparams *p) 
@@ -362,17 +416,17 @@ int parse_basic_vol_div(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_refine_dist(char *str, s_fparams *p) 
+	parse_refine_dist
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the distance in the refine algorithm
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid float), 1 if not
+	int: 0 if the parameter is valid (here a valid float), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_refine_dist(char *str, s_fparams *p) 
@@ -390,17 +444,17 @@ int parse_refine_dist(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_refine_min_apol(char *str, s_fparams *p) 
+	parse_refine_min_apol
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the minimum number of apolar sphere per pocket.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid integer), 1 if not
+	int: 0 if the parameter is valid (here a valid integer), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_refine_minaap(char *str, s_fparams *p) 
@@ -418,17 +472,17 @@ int parse_refine_minaap(char *str, s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int parse_min_pock_nb_asph(char *str, s_fparams *p) 
+	parse_min_pock_nb_asph
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 	
 	Parsing function for the minimum number of alpha sphere per pocket.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *str: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *str    : The string to parse
+	@ s_fparams *p : The structure than will contain the parsed parameter
    -----------------------------------------------------------------------------
    ## RETURN: 
-	0 if the parameter is valid (here a valid integer), 1 if not
+	int: 0 if the parameter is valid (here a valid integer), 1 if not
    -----------------------------------------------------------------------------
 */
 int parse_min_pock_nb_asph(char *str, s_fparams *p) 
@@ -461,6 +515,13 @@ int parse_min_pock_nb_asph(char *str, s_fparams *p)
 void free_fparams(s_fparams *p)
 {
 	if(p) {
+		if(p->npdb > 0 && p->pdb_lst != NULL) {
+			int i ;
+			for (i = 0 ; i < p->npdb ; i++) {
+				if(p->pdb_lst[i] != NULL) my_free(p->pdb_lst[i]) ;
+			}
+			my_free(p->pdb_lst) ;
+		}
 		my_free(p) ;
 	}
 }
@@ -475,7 +536,8 @@ void free_fparams(s_fparams *p)
    ## PARAMETRES:
 	@ FILE *f: buffer to print in
    -----------------------------------------------------------------------------
-   ## RETURN: 
+   ## RETURN:
+    void
    -----------------------------------------------------------------------------
 */
 void print_pocket_usage(FILE *f)
@@ -510,6 +572,8 @@ void print_pocket_usage(FILE *f)
 	Print function
    -----------------------------------------------------------------------------
    ## PARAMETRES:
+    @ s_fparams *p : Parameters to print
+	@ FILE *f      : Buffer to write in
    -----------------------------------------------------------------------------
    ## RETURN: 
    -----------------------------------------------------------------------------

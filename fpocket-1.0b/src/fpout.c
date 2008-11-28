@@ -7,14 +7,16 @@
 ##
 ## FILE 					fpout.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
 ##	Write output for fpocket.
 ##
 ## ----- MODIFICATIONS HISTORY
-##
+##	
+##	28-11-08	(v)  Last argument of write_out_fpocket changed to char *
+##					 Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -25,15 +27,54 @@
 */
 
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_out(c_lst_pockets *pockets) 
+	write_out_fpocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Output routine.
+	Output routine. See the documentation for more informations.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+ *  @ c_lst_pockets *pockets : All pockets found and kept.
+ *  @ c_lst_pockets *pockets : The (input) pdb structure
+	@ char *pdbname          : Name of the pdb
+   -----------------------------------------------------------------------------
+   ## RETURN: 
+	void
    -----------------------------------------------------------------------------
 */
-void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, s_fparams *params) 
+void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname) 
 {
 	char pdb_code[350] = "" ;
 	char pdb_path[350] = "" ;
@@ -43,9 +84,9 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, s_fparams *params)
 	char command[370] = "" ;
 
 	if(pockets) {
-	// Extract path, pdb code...
-		strcpy(pdb_code, params->pdb_path) ;
-		extract_path(params->pdb_path, pdb_path) ;
+	/* Extract path, pdb code... */
+		strcpy(pdb_code, pdbname) ;
+		extract_path(pdbname, pdb_path) ;
 		remove_ext(pdb_code) ;
 		remove_path(pdb_code) ;
 		sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
@@ -53,10 +94,10 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, s_fparams *params)
 		system(command) ;
 		sprintf(out_path, "%s/%s_out/%s", pdb_path, pdb_code, pdb_code) ;
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
-	//Write vmd and pymol scripts
+	/* Write vmd and pymol scripts */
 		sprintf(fout, "%s_out.pdb", pdb_code) ;
 		write_visualization(out_path, fout);	
-	// Print the whole pockets informations in a single file
+	/* Print the whole pockets informations in a single file */
 		sprintf(fout, "%s_pockets.info", out_path) ;
 		FILE *f = fopen(fout, "w") ;
 		if(f) {
@@ -64,16 +105,16 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, s_fparams *params)
 			fclose(f) ;
 		}
 
-	// Writing full pdb
+	/* Writing full pdb */
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
 
 		write_pockets_single_pdb(pdb_out_path, pdb, pockets) ;
 	
-	// Writing pockets as a single pqr
+	/* Writing pockets as a single pqr */
 		sprintf(fout, "%s_pockets.pqr", out_path) ;
 		write_pockets_single_pqr(fout, pockets) ;
 
-	// Writing individual pockets pqr
+	/* Writing individual pockets pqr */
 
 		sprintf(out_path, "%s/%s_out/pockets", pdb_path, pdb_code) ;
 		sprintf(command, "mkdir %s", out_path) ;

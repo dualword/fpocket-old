@@ -1,8 +1,39 @@
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 #ifndef DH_TPARAMS
 #define DH_TPARAMS
 
-// ----------------------------------- INCLUDES --------------------------------------------
+/* ------------------------------- INCLUDES ----------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +49,7 @@
 
 // -------------------------------------- PUBLIC MACROS ---------------------------------------------
 
-// Options of the test program
+/* Options of the test program */
 #define M_PAR_LIG_NEIG_DIST 'd'
 #define M_PAR_VALID_COMPLEX_FILE 'c'
 #define M_PAR_VALID_APO_FILE 'a'
@@ -29,16 +60,16 @@
 #define M_PAR_KEEP_FP_OUTPUT 'k'
 
 
-//write the statistics output of tpocket to :
+/* Write the statistics output of tpocket to : */
 #define M_STATS_OUTP "stats_p.txt"
 #define M_STATS_OUTG "stats_g.txt"
 #define M_MAX_FILE_NAME_LENGTH 300
-//#define M_PAR_P_STATS_OUT 'o'
-//in order to get the atom set of the pocket, detect around x A of the ligand
+/* #define M_PAR_P_STATS_OUT 'o' */
+/* in order to get the atom set of the pocket, detect around x A of the ligand*/
 #define M_LIG_NEIG_DIST 4.0
 
 
-// ------------------------------- PUBLIC STRUCTURES --------------------------------------
+/* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 
 
 typedef struct s_tparams
@@ -46,29 +77,31 @@ typedef struct s_tparams
 	char **fapo,
 		 **fcomplex,
 		 **fligan;
+	
 	char *p_output;
 	char *g_output;
-	char stats_g[128] ; //M_STATS_OUTG ,
-	char stats_p[128] ; //M_STATS_OUTP ;
+	
+	char stats_g[128] ; /* M_STATS_OUTG */
+	char stats_p[128] ; /* M_STATS_OUTP */
 
 	float lig_neigh_dist ;
 	int nfiles ;
 	int keep_fpout ;
 
-// Parameters for the pocket finder program (also needed for validation program...)
+/* Parameters for the pocket finder program (also needed for validation program...) */
 
 	s_fparams *fpar ;
 
 } s_tparams ;
 
-// ----------------------------------- PROTOTYPES ----------------------------------------
+/* ------------------------------ PROTOTYPES ---------------------------------*/
 
 s_tparams* init_def_tparams(void) ;
 s_tparams* get_tpocket_args(int nargs, char **args) ;
 int add_list_data(char *str_list_file, s_tparams *par) ;
 int add_prot(char *apo, char *complex, char *ligan, s_tparams *par) ;
 int parse_lig_neigh_dist(char *str, s_tparams *p) ;
-int parse_keep_fpout(char *str, s_tparams *p) ;
+
 void free_tparams(s_tparams *p);
 void print_test_usage(FILE *f) ;
 void print_params(s_tparams *p, FILE *f) ;

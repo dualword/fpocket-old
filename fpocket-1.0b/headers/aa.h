@@ -1,4 +1,35 @@
 
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 #ifndef DH_AA
 #define DH_AA
 
@@ -7,7 +38,7 @@
 #include <string.h>
 #include <ctype.h>
 
-// ------------------------------------MACROS-------------------------------------------
+/* ------------------------------MACROS---------------------------------------*/
 
 #define M_NB_AA 20
 #define M_ALA_IDX 0
@@ -31,7 +62,7 @@
 #define M_TRP_IDX 18
 #define M_TYR_IDX 19
 
-// ------------------------------------ PUBLIC STRUCTURES -------------------------------------------
+/* --------------------------- PUBLIC STRUCTURES ------------------------------*/
 
 /**
 	A structure for the modelisation of an amino acid
@@ -50,7 +81,7 @@ typedef struct s_amino_a
 
 } s_amino_a ;
 
-// ------------------------------------PROTOTYPES-------------------------------------------
+/* -----------------------------PROTOTYPES------------------------------------*/
 
 int get_aa_index(const char *name) ; 
 char* get_aa_name3(const int index) ;

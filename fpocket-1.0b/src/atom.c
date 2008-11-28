@@ -5,7 +5,7 @@
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					atom.h
+## FILE 					atom.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
@@ -21,6 +21,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -33,16 +34,49 @@
 
 */
 
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float get_mol_mass_ptr(s_atm **latoms, int natoms)
+	get_mol_mass
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Claculate mass of a molecule represented by a list of atoms. (structure)
+	Calculate mass of a molecule represented by a list of atoms. (structure)
+	Perform a simple sum of atoms mass.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_atm *atoms: List of atoms structures
-	@ int natoms: Number of atoms
+	@ s_atm *atoms : List of atoms structures
+	@ int natoms   : Number of atoms
    -----------------------------------------------------------------------------
    ## RETURN:
 	float: mass of the molecule
@@ -62,14 +96,14 @@ float get_mol_mass(s_atm *latoms, int natoms)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float get_mol_mass_ptr(s_atm **latoms, int natoms)
+	get_mol_mass_ptr
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Claculate mass of a molecule represented by a list of atoms. (pointers to structures)
+	Same as previous, but using different input type (array of pointers)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_atm **atoms: List of pointers to atoms structures
-	@ int natoms: Number of atoms
+	@ s_atm **atoms : List of pointers to atom structures
+	@ int natoms    : Number of atoms
    -----------------------------------------------------------------------------
    ## RETURN:
 	float: mass of the molecule
@@ -89,22 +123,22 @@ float get_mol_mass_ptr(s_atm **latoms, int natoms)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float set_mol_barycenter_ptr(s_atm **latoms, int natoms)
+	set_mol_barycenter_ptr
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Calculate the barycenter of a molecule represented by a list of atoms. 
-	(pointers to structures)
+	Calculate the barycenter of a molecule represented by a list of atoms 
+    pointers.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_atm **atoms	: List of pointers to atoms structures
 	@ int natoms	: Number of atoms
-	@ float bary[]	: Where to store the barycenter
+	@ float bary[3]	: OUTPUT: Where to store the calculated barycenter
    -----------------------------------------------------------------------------
    ## RETURN:
-	float: mass of the molecule
+	void (the OUTPUT is set using the input parameter bary)
    -----------------------------------------------------------------------------
 */
-void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[])
+void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[3])
 {
 	float xsum = 0.0, 
 		  ysum = 0.0,
@@ -126,19 +160,19 @@ void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[])
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter) 
+	get_mol_volume_ptr
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Get an monte carlo approximation of the volume occupied by the atoms given 
-	in argument (list of pointers)
+	in argument (list of pointers).
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_atm **atoms: List of pointer to atoms
-	@ int natoms: Number of atoms
-	@ int niter: Number of monte carlo iteration to perform
+	@ s_atm **atoms : List of pointer to atoms
+	@ int natoms    : Number of atoms
+	@ int niter     : Number of monte carlo iteration to perform
    -----------------------------------------------------------------------------
    ## RETURN:
-	float: volume.
+	float: calculated volume (approximation).
    -----------------------------------------------------------------------------
 */
 float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
@@ -155,7 +189,7 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 
 	s_atm *acur = NULL ;
 
-	// First, search extrems coordinates to get a contour box of the molecule
+	/* First, search extrems coordinates to get a contour box of the molecule */
 	for(i = 0 ; i < natoms ; i++) {
 		acur = atoms[i] ;
 
@@ -165,7 +199,7 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 			zmin = acur->z - acur->radius ; zmax = acur->z + acur->radius ;
 		}
 		else {
-		// Update the minimum and maximum extreme point
+		/* Update the minimum and maximum extreme point */
 			if(xmin > (xtmp = acur->x - acur->radius)) xmin = xtmp ;
 			else if(xmax < (xtmp = acur->x + acur->radius)) xmax = xtmp ;
 	
@@ -177,10 +211,10 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 		}
 	}
 
-	// Next calculate the contour box volume
+	/* Next calculate the contour box volume */
 	vbox = (xmax - xmin)*(ymax - ymin)*(zmax - zmin) ;
 
-	// Then apply monte carlo approximation of the volume.	
+	/* Then apply monte carlo approximation of the volume.	 */
 	for(i = 0 ; i < niter ; i++) {
 		xr = rand_uniform(xmin, xmax) ;
 		yr = rand_uniform(ymin, ymax) ;
@@ -192,27 +226,29 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 			ytmp = acur->y - yr ;
 			ztmp = acur->z - zr ;
 
-		// Compare r^2 and dist(center, random_point)^2
+		/* Compare r^2 and dist(center, random_point)^2 */
 			if((acur->radius*acur->radius) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
-			//the point is inside one of the vertice!!
+			/* The point is inside one of the vertice!! */
 				nb_in ++ ; break ;
 			}
 		}
 	}
 
-	// Ok lets just return the volume Vpok = Nb_in/Niter*Vbox
+	/* Ok lets just return the volume Vpok = Nb_in/Niter*Vbox */
 	return ((float)nb_in)/((float)niter)*vbox;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int is_in_lst_atm(s_atm lst_atm, int nb_atm, int atm_id) 
+	is_in_lst_atm
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Says wether an atom of id atm_id is in a list of atoms or not 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	s_atm **lst_atm
+	@ s_atm **lst_atm :  List of atoms
+    @ int nb_atms     : Number of atoms in the list
+    @ int atm_id      : ID of the atom to look for.
    -----------------------------------------------------------------------------
    ## RETURN:
 	1 if the atom is in the tab, 0 if not
@@ -231,7 +267,7 @@ int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	float atm_corsp(s_atm **al1, int nl1, s_atm **pocket_neigh, int nal2) 
+	atm_corsp
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Calculate correspondance between two list of atoms, using the first list as
@@ -244,7 +280,7 @@ int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id)
 	@ int nal2    : Number of atoms of the second list
    -----------------------------------------------------------------------------
    ## RETURN:
-	% of atoms of the first list present in the second list
+	float: % of atoms of the first list present in the second list
    -----------------------------------------------------------------------------
 */
 float atm_corsp(s_atm **al1, int nal1, s_atm **al2, int nal2) 
@@ -283,9 +319,9 @@ float atm_corsp(s_atm **al1, int nal1, s_atm **al2, int nal2)
 	Print list of atoms...
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ FILE *f: File to write in.
-	@ s_atm *atoms: List of atoms
-	@ int natoms: Number of atoms
+	@ FILE *f      : File to write in.
+	@ s_atm *atoms : List of atoms
+	@ int natoms   : Number of atoms
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -297,8 +333,11 @@ void print_atoms(FILE *f, s_atm *atoms, int natoms)
 	for(i = 0 ; i < natoms ; i++) {
 		atom = atoms + i ; 
 		fprintf(f, "======== Atom %s (%d) ========\n", atom->name, atom->id) ;
-		fprintf(f, "Type: '%s', Residu: '%s' (%d), Chain: '%s'\n", atom->type, atom->res_name, atom->res_id, atom->chain);
-		fprintf(f, "x: %f, y: %f, z: %f, occ: %f, bfact: %f\n", atom->x, atom->y, atom->z, atom->occupancy, atom->bfactor);
-		fprintf(f, "symbol: '%s', charge: %d, mass: %f, vdw: %f\n", atom->symbol, atom->charge, atom->mass, atom->radius);
+		fprintf(f, "Type: '%s', Residu: '%s' (%d), Chain: '%s'\n",
+					atom->type, atom->res_name, atom->res_id, atom->chain);
+		fprintf(f, "x: %f, y: %f, z: %f, occ: %f, bfact: %f\n", 
+					atom->x, atom->y, atom->z, atom->occupancy, atom->bfactor);
+		fprintf(f, "symbol: '%s', charge: %d, mass: %f, vdw: %f\n", 
+					atom->symbol, atom->charge, atom->mass, atom->radius);
 	}
 }

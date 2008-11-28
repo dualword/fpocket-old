@@ -1,29 +1,27 @@
-#include "../headers/calc.h"
+
+#include "../headers/pscoring.h"
 
 /**
 
 ## ----- GENERAL INFORMATIONS
 ##
-## FILE 					calc.c
+## FILE 					pscoring.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
 ## ----- SPECIFICATIONS
 ##
-##	Several function for calculations. CUrrently, only euclidian
-##	distances are available.
+## This file stores scoring functions for pockets.
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##	28-11-08	(v) Comments UTD
-##	01-04-08	(v)  Added comments and creation of history
-##	01-01-08	(vp) Created (random date...)
+##	28-11-08	(v) Created + Comments UTD
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+##
 
 */
-
 
 /**
     COPYRIGHT DISCLAIMER
@@ -57,52 +55,75 @@
 **/
 
 /**-----------------------------------------------------------------------------
-   ## FONCTION: 
-	float dist(float x1, float y1, float z1, float x2, float y2, float z2) 
+   ## FUNCTION: 
+	void set_pocket_score(s_desc *pdesc) 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Calculate euclidian distance between two points in space p1(x1, y1, z2) and 
-	p2(x2, y2, z2)
+	Set a score to a given pocket. The current scoring function has been determined
+	using a logistic regression based on an analysis of pocket descriptors.
+
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ float x1, y1, z1: The first point's coordinates.
-	@ float x2, y2, z2: The second point's coordinates.
+	@ s_desc *pdesc: The pocket
    -----------------------------------------------------------------------------
-   ## RETURN: 
-	float: the distance between p1(x1, y1, z2) and p2(x2, y2, z2)
+   ## RETURN:
+	float: The score
    -----------------------------------------------------------------------------
 */
-float dist(float x1, float y1, float z1, float x2, float y2, float z2) 
+float score_pocket(s_desc *pdesc) 
 {
-	float xdif = x1 - x2 ;
-	float ydif = y1 - y2 ;
-	float zdif = z1 - z2 ;
 
-	return sqrt((xdif*xdif) + (ydif*ydif) + (zdif*zdif)) ;
+	double e_tmp = -26.57 + 0.55    * (float)pdesc->nb_asph + 
+					        0.97    * (float)pdesc->mean_loc_hyd_dens + 
+					        8.42e-2 * (float)pdesc->mean_asph_ray - 
+					        1.58e-15* (float)pdesc->masph_sacc - 
+							5.85	* (float)pdesc->flex - 
+							1.49e-16* (float)pdesc->hydrophobicity_score + 
+							1.41e-14* (float)pdesc->prop_polar_atm - 
+							2.0		* (float)pdesc->volume_score + 
+							3.03e-16* (float)pdesc->charge_score ;
+	
+	return e_tmp/(1.0 + e_tmp) ;
 }
+
 
 /**-----------------------------------------------------------------------------
-   ## FONCTION: 
-	float ddist(float x1, float y1, float z1, float x2, float y2, float z2) 
+   ## FUNCTION: 
+	set_pocket_score2
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Calculate the square of the euclidian distance between two points in space 
-	p1(x1, y1, z2) and 	p2(x2, y2, z2)
+	Set a score to a given pocket. The current scoring function has been determined
+	using a logistic regression based on an analysis of pocket descriptors.
+
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ float x1, y1, z1: The first point's coordinates.
-	@ float x2, y2, z2: The second point's coordinates.
+	@ s_pocket *pocket: The pocket
    -----------------------------------------------------------------------------
-   ## RETURN: 
-	float: the squared euclidian distance between the two points.
+   ## RETURN:
+	float: The score
    -----------------------------------------------------------------------------
 */
-float ddist(float x1, float y1, float z1, float x2, float y2, float z2) 
+float score_pocket2(s_desc *pdesc) 
 {
-	float xdif = x1 - x2 ;
-	float ydif = y1 - y2 ;
-	float zdif = z1 - z2 ;
+/*
+ *	
+	double e_tmp = -14.835 + 0.29*(float)pdesc->nb_asph +
+							 0.52*(float)pdesc->mean_loc_hyd_dens-
+							 51.77*(float)pdesc->masph_sacc+
+							 10.678*(float)pdesc->mean_asph_ray;
+*/
 
-	return (xdif*xdif) + (ydif*ydif) + (zdif*zdif) ;
+/*	
+	double e_tmp = -14.835 + 0.56*(float)pdesc->nb_asph +
+							 0.72*(float)pdesc->mean_loc_hyd_dens-
+							 59.77*(float)pdesc->masph_sacc+
+							 6.678*(float)pdesc->mean_asph_ray;
+*/
+	
+	double e_tmp = -14.835 + 0.56  *(float)pdesc->nb_asph +
+							 0.72  *(float)pdesc->mean_loc_hyd_dens-
+							 59.77 *(float)pdesc->masph_sacc+
+							 6.678 *(float)pdesc->mean_asph_ray;
+	
+	return e_tmp ;
 }
-

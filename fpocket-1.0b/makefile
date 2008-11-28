@@ -32,11 +32,11 @@ LFLAGS	    = -fno-underscoring -lm
 # BINARIES OBJECTS 
 #------------------------------------------------------------
 
-FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o
+FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o
 
-TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)tpocket.o  $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o
+TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)tpocket.o  $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o
 
-DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)dpocket.o $(PATH_OBJ)dparams.o  $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o $(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o $(PATH_OBJ)voronoi_lst.o
+DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)dpocket.o $(PATH_OBJ)dparams.o  $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o $(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o $(PATH_OBJ)voronoi_lst.o
 
 #------------------------------------------------------------
 # GENERAL RULES FOR COMPILATION
@@ -67,7 +67,7 @@ $(PATH_BIN)$(DPOCKET): $(DPOBJ)
 
 $(PATH_OBJ)fpmain.o: $(PATH_HEADER)fpmain.h $(PATH_HEADER)fpocket.h $(PATH_HEADER)rpdb.h $(PATH_HEADER)fparams.h $(PATH_HEADER)fpout.h $(PATH_HEADER)memhandler.h
 
-$(PATH_OBJ)fpocket.o: $(PATH_HEADER)fpocket.h $(PATH_HEADER)rpdb.h $(PATH_HEADER)voronoi.h $(PATH_HEADER)rpdb.h  $(PATH_HEADER)pocket.h $(PATH_HEADER)cluster.h $(PATH_HEADER)refine.h $(PATH_HEADER)fparams.h $(PATH_HEADER)memhandler.h
+$(PATH_OBJ)fpocket.o: $(PATH_HEADER)fpocket.h $(PATH_HEADER)psorting.h $(PATH_HEADER)rpdb.h $(PATH_HEADER)voronoi.h $(PATH_HEADER)rpdb.h  $(PATH_HEADER)pocket.h $(PATH_HEADER)cluster.h $(PATH_HEADER)refine.h $(PATH_HEADER)fparams.h $(PATH_HEADER)memhandler.h
 
 $(PATH_OBJ)fpout.o: $(PATH_HEADER)fpout.h $(PATH_HEADER)writepocket.h $(PATH_HEADER)pocket.h $(PATH_HEADER)writepdb.h $(PATH_HEADER)write_visu.h $(PATH_HEADER)utils.h $(PATH_HEADER)fparams.h
 
@@ -98,7 +98,9 @@ $(PATH_OBJ)descriptors.o: $(PATH_HEADER)descriptors.h $(PATH_HEADER)atom.h $(PAT
 
 $(PATH_OBJ)neighbor.o: $(PATH_HEADER)neighbor.h $(PATH_HEADER)rpdb.h $(PATH_HEADER)voronoi.h $(PATH_HEADER)sort.h $(PATH_HEADER)atom.h $(PATH_HEADER)memhandler.h
 
-$(PATH_OBJ)pocket.o: $(PATH_HEADER)pocket.h $(PATH_HEADER)voronoi_lst.h $(PATH_HEADER)aa.h $(PATH_HEADER)fparams.h $(PATH_HEADER)descriptors.h $(PATH_HEADER)utils.h $(PATH_HEADER)memhandler.h
+$(PATH_OBJ)pocket.o: $(PATH_HEADER)pocket.h $(PATH_HEADER)pscoring.h $(PATH_HEADER)voronoi_lst.h $(PATH_HEADER)aa.h $(PATH_HEADER)fparams.h $(PATH_HEADER)descriptors.h $(PATH_HEADER)utils.h $(PATH_HEADER)memhandler.h
+$(PATH_OBJ)psorting.o: $(PATH_HEADER)psorting.h $(PATH_HEADER)pocket.h
+$(PATH_OBJ)pscoring.o: $(PATH_HEADER)pscoring.h $(PATH_HEADER)descriptors.h
 
 $(PATH_OBJ)voronoi.o: $(PATH_HEADER)voronoi.h $(PATH_HEADER)rpdb.h $(PATH_HEADER)writepdb.h $(PATH_HEADER)calc.h  $(PATH_HEADER)memhandler.h
 
