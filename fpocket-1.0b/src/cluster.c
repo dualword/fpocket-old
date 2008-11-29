@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					cluster.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -12,11 +12,12 @@
 ## ----- SPECIFICATIONS
 ##
 ##	This file contains currently only one function, providing
-##	a single linkage clustering algorithm performed on a list
+##	a mutliple linkage clustering algorithm performed on a list
 ##	of pockets.
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##      19-11-08        (p)  Extension of comments, change in multiple linkage clustering
 ##	28-11-08	(v)  Comments UTD + minor relooking
 ##	11-05-08	(v)  singleLinkageClustering -> pck_sl_clust
 ##	01-04-08	(v)  Added comments and creation of history
@@ -27,7 +28,7 @@
 ##	(v) Possible improvement:
 ##		Use the sorted structure to find neighbors in a more
 ##		efficient way.
-##	(v) Rename the file ! (slcluster.c for example...)
+##	(v) Rename the file ! (mlcluster.c for example...)
 ##		Or maybe move this function into pocket.c, as the
 ##		algorithm deals with pockets only...
 ##	(v) Check and update if necessary comments of each function!!
@@ -68,12 +69,12 @@
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
+	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	This function will apply a single linkage clusturing algorithm on the given
-	list of pockets. Considering two pockets, if params->sl_clust_min_nneigh
-	alpha spheres are separated by a distance lower than params->sl_clust_max_dist,
+	This function will apply a mutliple linkage clustering algorithm on the given
+	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
+	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
 	then merge the two pockets.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
@@ -85,7 +86,7 @@
 	void
    -----------------------------------------------------------------------------
 */
-void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
+void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 {
 	node_pocket *pcur = NULL,
 				*pnext = NULL ,
@@ -111,10 +112,10 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 			curMobilePocket = pcur->next ;	
 			while(curMobilePocket) {
 				distFlag = 0 ;
-				/* Set the first vertice of the first pocket */
+				/* Set the first vertice/alpha sphere center of the first pocket */
 				vcur = pcur->pocket->v_lst->first ;	
 				while(vcur && distFlag <= params->sl_clust_min_nneigh){
-					/* Set the first vertice of the second pocket */
+					/* Set the first vertice/alpha sphere center of the second pocket */
 					curMobileVertice = curMobilePocket->pocket->v_lst->first ;
 					vvcur = vcur->vertice ;
 					vcurx = vvcur->x ;
@@ -126,7 +127,8 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 						mvvcur = curMobileVertice->vertice ;
 						if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z) 
 							< params->sl_clust_max_dist) {
-							distFlag++;
+                                                        /*if beneath the clustering max distance, increment the distance flag*/
+							distFlag++; 
 						}
 						curMobileVertice = curMobileVertice->next;
 					}
@@ -134,6 +136,7 @@ void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params)
 				}
 				
 				pnext =  curMobilePocket->next ;
+                                /*if the distance flag has counted enough occurences of near neighbours, merge pockets*/
 				if(distFlag >= params->sl_clust_min_nneigh) {
 					/* If they are next to each other, merge them */
 					mergePockets(pcur,curMobilePocket,pockets);

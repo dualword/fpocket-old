@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					dpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

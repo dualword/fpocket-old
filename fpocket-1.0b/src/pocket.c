@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					pocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

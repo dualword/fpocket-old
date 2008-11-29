@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					fpout.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -63,7 +63,7 @@
 	write_out_fpocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Output routine. See the documentation for more informations.
+	Output routine. See the documentation for more information.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
  *  @ c_lst_pockets *pockets : All pockets found and kept.
@@ -97,7 +97,7 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 	/* Write vmd and pymol scripts */
 		sprintf(fout, "%s_out.pdb", pdb_code) ;
 		write_visualization(out_path, fout);	
-	/* Print the whole pockets informations in a single file */
+	/* Print the whole pockets information in a single file */
 		sprintf(fout, "%s_pockets.info", out_path) ;
 		FILE *f = fopen(fout, "w") ;
 		if(f) {

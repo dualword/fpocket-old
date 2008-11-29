@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					tpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

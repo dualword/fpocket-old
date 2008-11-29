@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					fpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -136,7 +136,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 /*
  			fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
 */
-			pck_sl_clust(pockets, params);	/* Single Linkage Clustering */
+			pck_ml_clust(pockets, params);	/* Single Linkage Clustering */
 			reIndexPockets(pockets) ;
 
 		/* Descriptors calculation */

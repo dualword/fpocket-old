@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					dpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -216,7 +216,7 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 			reIndexPockets(pockets) ;
 			refinePockets(pockets, par->fpar) ;
 			reIndexPockets(pockets) ;
-			pck_sl_clust(pockets, par->fpar);
+			pck_ml_clust(pockets, par->fpar);
 			dropSmallNpolarPockets(pockets, par->fpar);
 			set_pockets_descriptors(pockets);
 	

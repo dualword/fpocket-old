@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					fparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -561,7 +561,7 @@ void print_pocket_usage(FILE *f)
 	fprintf(f, "\t-b (integer): Space approximation for the basic method of the volume calculation. (-1)\n") ;
 	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
 	fprintf(f, "\t              of Monte-Carlo. \n") ;
-	fprintf(f, "\nSee the manual for mor informations on those parameters.\n") ;
+	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
 }
 
 /**-----------------------------------------------------------------------------

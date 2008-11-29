@@ -2,7 +2,7 @@
 #include "../headers/writepdb.h"
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					writepdb.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

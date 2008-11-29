@@ -2,7 +2,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					refine.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

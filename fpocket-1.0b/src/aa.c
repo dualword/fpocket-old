@@ -2,7 +2,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 				aa.c
 ## AUTHORS				P. Schmidtke and V. Le Guilloux
@@ -185,7 +185,7 @@ int get_aa_index(const char *name)
 	return aa_index ;
 }
 
-/*********** Getting informations from an AA name in the static tab ***********/
+/*********** Getting information from an AA name in the static tab ***********/
 
 
 /**-----------------------------------------------------------------------------
@@ -358,7 +358,7 @@ int get_aa_func_grp(const char *name)
 }
 
 
-/************** Getting informations from an AA index in the static tab **************/
+/************** Getting information from an AA index in the static tab **************/
 
 
 /**-----------------------------------------------------------------------------

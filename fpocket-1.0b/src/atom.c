@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					atom.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -14,7 +14,7 @@
 ##	This file should be used to deal with atoms. The corresponding
 ##	header contains a structure that define an atoms and its 
 ##	properties, like it's vdW radius, its coordinates ...
-##	Several informations related to the PDB format are also available.
+##	Several information related to the PDB format are also available.
 ##
 ##	In this file one will find most of functions that deal with atoms
 ##	structures.

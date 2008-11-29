@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					dparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -284,6 +284,7 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 			else {
 				nread += add_complexe(complexbuf, ligbuf, par) ;
 			}
+                        
 		}
 	}
 	else {
@@ -321,7 +322,7 @@ int add_complexe(char *complex, char *ligand, s_dparams *par)
 	FILE *f = fopen_pdb_check_case(complex, "r") ;
 	if(f) {
 		l = strlen(ligand) ;
-		if(strlen(ligand) >= 3) {
+		if(strlen(ligand) >= 2) {
 			for(i = 0 ; i < l ; i++) ligand[i] = toupper(ligand[i]) ;
 
 			nm1 = par->nfiles ;
@@ -439,10 +440,11 @@ void print_dpocket_usage(FILE *f)
 	fprintf(f, "\n-------------------\nUSAGE (dpocket):\n") ;
 	fprintf(f, "The program needs as input a file containing at each \n\
 				line a pdb path and a ligand code.\n") ;
-	fprintf(f, "The format of each line must be: PATH/2fej.pdb LIG.\n\n") ;
+	fprintf(f, "The format of each line must be: PATH/2fej.pdb  LIG.\n\n") ;
 	fprintf(f, "The ligand code is the resname of the ligand atoms in \n\
-				the pdb file.\n") ;
-	fprintf(f, "See the manual for more informations.\n") ;
+				the pdb file and has to separated by a tab\
+                                from the pdb structure in the input file.\n") ;
+	fprintf(f, "See the manual for more information.\n") ;
 	fprintf(f, "Example of command using default parameters:\n") ;
 	fprintf(f, "\t./bin/dpocket -f file_path\n\n") ;
 	fprintf(f, "Options: \n") ;
@@ -477,7 +479,7 @@ void print_dpocket_usage(FILE *f)
 	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
 
 
-	fprintf(f, "\nSee the manual for mor informations on those parameters.\n") ;
+	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
 	fprintf(f, "-------------------\n") ;
 }
 

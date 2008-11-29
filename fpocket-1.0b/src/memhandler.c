@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					memhandler.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					sort.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -12,7 +12,7 @@
 ## ----- SPECIFICATIONS
 ##
 ##  This file contains routines used to sort atoms and vertices systems using
-##  coordinates x, y or z. We define a structure containing all informations
+##  coordinates x, y or z. We define a structure containing all information
 ##  
 ##
 ## ----- MODIFICATIONS HISTORY

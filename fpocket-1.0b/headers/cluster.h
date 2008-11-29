@@ -51,6 +51,6 @@
 
 /* ------------------------------PROTOTYPES---------------------------------- */
 
-void pck_sl_clust(c_lst_pockets *pockets, s_fparams *params);
+void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params);
 
 #endif

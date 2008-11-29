@@ -2,7 +2,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					write_visu.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

@@ -2,7 +2,7 @@
 #include "../headers/writepocket.h"
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					writepocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -228,7 +228,7 @@ void write_pocket_pqr(const char out[], s_pocket *pocket)
 		fprintf(f, "HEADER It represent the voronoi vertices of a single pocket found by the         \n") ;
 		fprintf(f, "HEADER algorithm.                                                                \n") ;
 		fprintf(f, "HEADER                                                                           \n") ;
-		fprintf(f, "HEADER Informations on the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
+		fprintf(f, "HEADER Information about the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
 		fprintf(f, "HEADER 0  - Pocket Score                      : %.4f\n", pocket->score) ;
 		fprintf(f, "HEADER 1  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
 		fprintf(f, "HEADER 2  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;
@@ -292,7 +292,7 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 		fprintf(f, "HEADER This is a pdb format file writen by the programm fpocket.                 \n") ;
 		fprintf(f, "HEADER It represents the atoms contacted by the voronoi vertices of the pocket.  \n") ;
 		fprintf(f, "HEADER                                                                           \n") ;
-		fprintf(f, "HEADER Informations on the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
+		fprintf(f, "HEADER Information about the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
 		fprintf(f, "HEADER 0  - Pocket Score                      : %.4f\n", pocket->score) ;
 		fprintf(f, "HEADER 1  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
 		fprintf(f, "HEADER 2  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;

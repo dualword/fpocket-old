@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					tparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -322,7 +322,7 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 		f = fopen_pdb_check_case(complex, "r") ;
 		if(f) {
 			l = strlen(ligan) ;
-			if(ligan && l >= 3) {
+			if(ligan && l >= 2) {
 				for(i = 0 ; i < l ; i++) ligan[i] = toupper(ligan[i]) ;
 
 				nm1 = par->nfiles ;
@@ -474,7 +474,7 @@ void print_test_usage(FILE *f)
 	fprintf(f, "\t-b (integer): Space approximation for the basic method of the volume calculation. (-1)\n") ;
 	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
 	fprintf(f, "\t              of Monte-Carlo. \n") ;
-	fprintf(f, "\nSee the manual for mor informations on those parameters.\n") ;
+	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
 	fprintf(f, "-------------------\n") ;
 }
 

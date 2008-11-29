@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					rpdb.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -11,7 +11,7 @@
 ##
 ## ----- SPECIFICATIONS
 ##
-##  PDB utilities, mainly reading routines. Not all informations are stored,
+##  PDB utilities, mainly reading routines. Not all information are stored,
 ##  this reader is specific to fpocket, and essentially deals with ATOMS,
 ##  HETATMS and several other fields.
 ##
@@ -109,7 +109,7 @@ static const int ST_nb_keep_hetatm = 111 ;
 	rpdb_extract_pdb_atom
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Extract all informations given in a pdb ATOM or HETATM line, and store them 
+	Extract all information given in a pdb ATOM or HETATM line, and store them 
 	in given pointers. User must therefore provide enough memory in parameter.
 	PDB last known standart:
 
@@ -330,7 +330,7 @@ void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 	rpdb_extract_cryst1
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Extract informations on a box size from a pdb CRYSTL line, and store them 
+	Extract information on a box size from a pdb CRYSTL line, and store them 
 	in given pointers.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
@@ -385,8 +385,8 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 	rpdb_open
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Open a PDB file, alloc memory for all informations on this pdb, and store 
-	several informations like the number of atoms, the header, the remark... 
+	Open a PDB file, alloc memory for all information on this pdb, and store 
+	several information like the number of atoms, the header, the remark... 
 	This first reading of PDB rewinds the FILE* pointer. No coordinates are
 	actually read.
 
@@ -501,7 +501,7 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 	rpdb_read
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Read and store informations on atoms for a pdb file.
+	Read and store information on atoms for a pdb file.
     Curently:
 		- Hydrogens present in the PDB are kept
 		- HETATM are ignored except for specific cofactor, small molecule... 
@@ -549,7 +549,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 					&& ligan[2] == resb[2]){
 					if(keep_lig) {
 						atom = atoms + iatoms ;
-						/* Read atom informations */
+						/* Read atom information */
 						rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
 								atom->name, &(atom->pdb_aloc), atom->res_name, 
 								atom->chain, &(atom->res_id), &(atom->pdb_insert), 
@@ -557,7 +557,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 								&(atom->occupancy), &(atom->bfactor), atom->symbol,
 								&(atom->charge));
 
-						/* Store additional informations not given in the pdb */
+						/* Store additional information not given in the pdb */
 						atom->mass = pte_get_mass(atom->symbol) ;
 						atom->radius = pte_get_vdw_ray(atom->symbol) ;
 						atom->electroneg = pte_get_enegativity(atom->symbol) ;
@@ -578,7 +578,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
 							&(atom->bfactor), atom->symbol, &(atom->charge));
 
-					/* Store additional informations not given in the pdb */
+					/* Store additional information not given in the pdb */
 					atom->mass = pte_get_mass(atom->symbol) ;
 					atom->radius = pte_get_vdw_ray(atom->symbol) ;
 					atom->electroneg = pte_get_enegativity(atom->symbol) ;
@@ -602,7 +602,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
 							&(atom->bfactor), atom->symbol, &(atom->charge));
 
-					/* Store additional informations not given in the pdb */
+					/* Store additional information not given in the pdb */
 					atom->mass = pte_get_mass(atom->symbol) ;
 					atom->radius = pte_get_vdw_ray(atom->symbol) ;
 					atom->electroneg = pte_get_enegativity(atom->symbol) ;
@@ -625,7 +625,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 									&(atom->occupancy), &(atom->bfactor), 
 									atom->symbol, &(atom->charge));
 
-						/* Store additional informations not given in the pdb */
+						/* Store additional information not given in the pdb */
 							atom->mass = pte_get_mass(atom->symbol) ;
 							atom->radius = pte_get_vdw_ray(atom->symbol) ;
 							atom->electroneg = pte_get_enegativity(atom->symbol) ;

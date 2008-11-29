@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					psorting.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux

@@ -2,7 +2,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					tpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
@@ -68,7 +68,7 @@
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
-					  of data set informations.
+					  of data set information.
    -----------------------------------------------------------------------------
    ## RETURN:
 	void

@@ -3,7 +3,7 @@
 
 /**
 
-## ----- GENERAL INFORMATIONS
+## ----- GENERAL INFORMATION
 ##
 ## FILE 					pscoring.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
