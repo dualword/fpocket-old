@@ -448,14 +448,14 @@ void print_dpocket_usage(FILE *f)
 	fprintf(f, "Example of command using default parameters:\n") ;
 	fprintf(f, "\t./bin/dpocket -f file_path\n\n") ;
 	fprintf(f, "Options: \n") ;
-	fprintf(f, "\t-o string  : Write statistics to this file. (stats.txt \n") ;
+	fprintf(f, "\t-o string  : Prefix of the output file. (dpout) \n") ;
 	fprintf(f, "\t             by default).\n") ;
 	fprintf(f, "\t-e         : Use the first protein-ligand explicit \n") ;
 	fprintf(f, "\t             interface definition (default). \n") ;
 	fprintf(f, "\t-E         : Use the second protein-ligand explicit \n") ;
 	fprintf(f, "\t             interface definition. \n") ;
 	fprintf(f, "\t-d float   : Distance criteria for the choosen interface \n") ;
-	fprintf(f, "               definition.\n") ;
+	fprintf(f, "               definition.\n");
 
 	fprintf(f, "\nOptions specific to fpocket: (find standard parameters \n") ;
 	fprintf(f, "in brackets)\n") ;

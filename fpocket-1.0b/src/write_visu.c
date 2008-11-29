@@ -10,11 +10,12 @@
 ##
 ## ----- SPECIFICATIONS
 ##
-##		Write output script to launch visualisation of fpocket output using
+##		Write output script to launch visualization of fpocket output using
 ##		pymol and VMD.
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##      29-11-08        (p)  enhanced VMD output, corrected bug in pymol output
 ##      20-11-08        (p)  just got rid of a memory issue (fflush after fclose) 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -107,8 +108,23 @@ void write_vmd(char *pdb_name,char *pdb_out_name){
    			fprintf(f_tcl,"mol representation \"Bonds\"\n");
    			fprintf(f_tcl,"mol color Element\n");
    			fprintf(f_tcl,"mol selection \"not protein and not resname STP\"\n");
-   			fprintf(f_tcl,"mol addrep $id\n");
-			fclose(f_tcl);
+   			fprintf(f_tcl,"mol addrep $id\n\n");
+			
+                        
+                        fprintf(f_tcl,"mol new \"../%s.pdb\"\n",c_tmp);
+                        fprintf(f_tcl,"mol selection \"not protein and not water\" \n \
+                                mol material \"Opaque\" \n \
+                                mol delrep 0 1 \n \
+                                mol representation \"Lines 10\" \n \
+                                mol addrep 1 \n \
+                                mol new \"%s_pockets.pqr\"\n \
+                                mol selection \"all\" \n \
+                                mol material \"Glass1\" \n \
+                                mol delrep 0 2 \n \
+                                mol representation \"VDW\" \n \
+                                mol color ResID 2 \n \
+                                mol addrep 2 \n",c_tmp);
+                        fclose(f_tcl);
 
 		}
 		else {
@@ -153,7 +169,7 @@ void write_pymol(char *pdb_name,char *pdb_out_name){
 		f_pml=fopen(fout2,"w");
 		if(f_pml){
 			/* Write bash script for visualization using VMD */
-			fprintf(f,"#!/bin/bash\npymol -e %s.pml\n",c_tmp);
+			fprintf(f,"#!/bin/bash\npymol %s.pml\n",c_tmp);
                         fflush(f);
 			fclose(f);
 			
