@@ -91,7 +91,7 @@ void write_vmd(char *pdb_name,char *pdb_out_name){
 			fprintf(f_tcl,"   puts \"highlighting $id\"\n");
    			fprintf(f_tcl,"   mol delrep 0 $id\n");
    			fprintf(f_tcl,"   mol representation $representation\n");
-   			fprintf(f_tcl,"   mol color ResID\n");
+   			fprintf(f_tcl,"   mol color $colorId\n");
    			fprintf(f_tcl,"   mol selection $selection\n");
    			fprintf(f_tcl,"   mol addrep $id\n}\n\n");
 			fprintf(f_tcl,"set repr \"Points 10\"\n");
@@ -117,6 +117,9 @@ void write_vmd(char *pdb_name,char *pdb_out_name){
                                 mol delrep 0 1 \n \
                                 mol representation \"Lines 10\" \n \
                                 mol addrep 1 \n \
+                                highlighting Element \"NewCartoon\" 1 \"protein\"\n \
+                                mol representation \"NewCartoon\" \n \
+                                mol addrep $id \n \
                                 mol new \"%s_pockets.pqr\"\n \
                                 mol selection \"all\" \n \
                                 mol material \"Glass1\" \n \
