@@ -10,8 +10,12 @@
 ## LAST MODIFIED			01-04-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  Some usefull functions
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -20,7 +24,41 @@
 
 */
 
-static int ST_is_rand_init = 0 ;	// Says wether we have seeded the generator.
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
+
+
+/* Says wether we have seeded the generator. */ 
+static int ST_is_rand_init = 0 ;
 
 #ifdef MD_USE_GSL	/* GSL */
 static gsl_rng *ST_r = NULL ;
@@ -28,40 +66,36 @@ static gsl_rng *ST_r = NULL ;
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	start_rand_generator()
-   -----------------------------------------------------------------------------
-   ## RETURN: 
-	void
-   -----------------------------------------------------------------------------
-   ## PARAMETRES:
+	start_rand_generator
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Initialize generator. This initialisation depends on the library to use.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+   -----------------------------------------------------------------------------
+   ## RETURN: 
+	void
    -----------------------------------------------------------------------------
 */
 void start_rand_generator(void) 
 {
 	if(ST_is_rand_init == 0) {
-	// On vérifie si il y a eu un précédent générateur et qu'il a bien été arrété
 
-	#ifdef MD_USE_GSL	/* GSL */
-// 		fprintf(stdout, "> GSL generator used\n");
+	#ifdef MD_USE_GSL	/* use GSL if defined */
+/* 		fprintf(stdout, "> GSL generator used\n"); */
 		if(ST_r != NULL) {
-		// Si il n'a pas été arrété on libère la mémoire
 			gsl_rng_free(ST_r);
 		}
 
-		// Initialisation de la graine
 		gsl_rng_default_seed = time(NULL);
 
-		// Initialisation des variables statiques
 		const gsl_rng_type *T = M_GEN_MTWISTER ;
 		ST_r = gsl_rng_alloc(T);
 		gsl_rng_set (ST_r, gsl_rng_default_seed);
 
 	#else				/* /GSL */
 
-// 		fprintf(stdout, "> Standard C generator used\n");
+/* 		fprintf(stdout, "> Standard C generator used\n"); */
 		srand((int)time(NULL));
 
 	#endif
@@ -72,15 +106,17 @@ void start_rand_generator(void)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	rand_uniform()
-   -----------------------------------------------------------------------------
-   ## RETURN: 
-	double
-   -----------------------------------------------------------------------------
-   ## PARAMETRES:
+	rand_uniform
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Generate a random number between 0 and 1 using a uniform distribution.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+    @ float min : Lower boundary 
+    @ float max : Upper boundary
+   -----------------------------------------------------------------------------
+   ## RETURN: 
+	double: A uniform random number between min and max
    -----------------------------------------------------------------------------
 */
 float rand_uniform(float min, float max)
@@ -89,7 +125,6 @@ float rand_uniform(float min, float max)
 		start_rand_generator() ;
 	}
 
-	// Génération du nb aléatoire
 	float rnd = 0.0 ;	
 
 	#ifdef MD_USE_GSL	/* GSL */
@@ -103,35 +138,6 @@ float rand_uniform(float min, float max)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	my_fopen(char *fpath, char *mode)
-   -----------------------------------------------------------------------------
-   ## RETURN: 
-	FILE* : Un pointeur sur le descripteur de fichier.	
-   -----------------------------------------------------------------------------
-   ## PARAMETRES:
-	@ '*fpath' : Un pointeur sur le chemin du fichier a ouvrir
-	@ '*mode'  : Le mode d'ouverture du fichier
-   -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
-	Test the existance of a file, open it if it does, and print an error of it
-	doesn't, asking the user to exit or not.
-   -----------------------------------------------------------------------------
-*/
-
-FILE* my_fopen(const char *fpath, const char *mode)
-{
-	FILE *f = fopen(fpath, mode) ;
-
-	if(!f) {
-		fprintf(stderr, "! The file <%s> couldn't be opened.\n", fpath);
-		exit(1) ;
-	}
-  
-	return f ;
-}
-
-/**-----------------------------------------------------------------------------
-   ## FUNCTION: 
 	 tab_str* f_readl(const char fpath[], int nchar_max) 
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
@@ -139,8 +145,8 @@ FILE* my_fopen(const char *fpath, const char *mode)
 	lines.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char *fpath: Full path of the file.
-	@ int nchar_max: A number giving the max number of caractere in each line.
+	@ const char *fpath : Full path of the file.
+	@ int nchar_max     : A number giving the max number of caractere in each line.
    -----------------------------------------------------------------------------
    ## RETURN: 
 	tab_str* : Pointer to the sab_str structure containing lines of the file.
@@ -148,7 +154,7 @@ FILE* my_fopen(const char *fpath, const char *mode)
 */
 tab_str* f_readl(const char *fpath, int nchar_max) 
 {
-// --- Variable declaration
+/* --- Variable declaration */
 
 	FILE *f ;
 	int i, n,
@@ -157,14 +163,19 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 		 **f_lines ;
 	tab_str *lines ;
 
-// --- Variable initialisation
+/* --- Variable initialisation */
 
 	i = nb_string = 0 ;
 	cline = (char *) my_malloc(nchar_max*sizeof(char)) ;
 
-// --- How many lines is there in the file?
+/* --- How many lines is there in the file? */
 
- 	f = my_fopen(fpath, "r") ;
+ 	f = fopen(fpath, "r") ;
+	if(f == NULL) {
+		my_free(cline) ;
+		return NULL ;
+	}
+	
 	while(fgets(cline, nchar_max, f) != NULL) {
 		if(strcmp("\n", cline) != 0) {
 			nb_string ++ ;
@@ -172,14 +183,18 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	}
 	fclose(f) ;
 
-// --- Once we have the number of lines, lets allocate memory and get the lines
+/* --- Once we have the number of lines, lets allocate memory and get the lines */
 
-	f = my_fopen(fpath, "r") ;
+	f = fopen(fpath, "r") ;
+	if(f == NULL) {
+		my_free(cline) ;
+		return NULL ;
+	}
 
 	lines = (tab_str *)my_malloc(sizeof(tab_str)) ;
 	f_lines = (char **)my_malloc(nb_string*sizeof(char*)) ;
 	
-// --- Getting lines.
+/* --- Getting lines. */
 
 	while(fgets(cline, nchar_max, f) != NULL) {
 		if(strcmp("\n", cline) != 0) {
@@ -200,7 +215,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	lines->nb_str  = nb_string ;
 	lines->t_str = f_lines ;
 
-// --- Free memory and close file
+/* --- Free memory and close file */
 
 	fclose(f) ;
 	my_free(cline);
@@ -210,7 +225,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
  
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_tab_str(tab_str *tstr)
+	free_tab_str
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free the given structure
@@ -232,26 +247,17 @@ void free_tab_str(tab_str *tstr)
 					my_free(tstr->t_str[i]) ;
 					tstr->t_str[i] = NULL ;
 				}
-				else {
-					fprintf(stderr, "! string %d is NULL and canot be freed in free_tab_str().\n", i);
-				}
 			}
 			my_free(tstr->t_str) ;
 		}
-		else {
-			fprintf(stderr, "! t_str is NULL and cannot be freed in free_tab_str().\n");
-		}
 
 		my_free(tstr) ;
-	}
-	else {
-		fprintf(stderr, "! Argument NULL in free_tab_str().\n");
 	}
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_tab_str(tab_str* strings)
+	print_tab_str
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Print strings contained in the given tab_str.
@@ -283,14 +289,14 @@ void print_tab_str(tab_str* strings)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int str_is_number(const char *str, const int sign)
+	str_is_number
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Check if the string given in argument is a number.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ char *str: The string to deal with
-	@ const int sign: The first caractere is the sign?
+	@ char *str      : The string to deal with
+	@ const int sign : The first caractere is the sign?
    -----------------------------------------------------------------------------
    ## RETURN:
 	int: 1 if its a valid number, 0 else
@@ -304,7 +310,8 @@ int str_is_number(const char *str, const int sign)
 		const char *p = str ;
 		int c = *p ;
 
-		if (sign) {	// Checking the first caractere if the sign has to be taken in account
+		/* Checkthe first caractere if the sign has to be taken into account */
+		if (sign) {
 
 			if(isdigit (c) || ((c == '+' || c == '-') && str[1] != 0)) {
 				ok = 1 ;
@@ -335,14 +342,14 @@ int str_is_number(const char *str, const int sign)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int str_is_float(const char *str, const int sign)
+	str_is_float
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Check if the string given in argument is a valid float.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ char *str: The string to deal with
-	@ const int sign: The first caractere is the sign?
+	@ char *str      : The string to deal with
+	@ const int sign : The first caractere is the sign?
    -----------------------------------------------------------------------------
    ## RETURN:
 	int:  1 if its a valid float, 0 else
@@ -357,7 +364,8 @@ int str_is_float(const char *str, const int sign)
 		const char *p = str ;
 		int c = *p ;
 
-		if (sign) {	// Checking the first caractere if the sign has to be taken in account
+		/* Checkthe first caractere if the sign has to be taken into account */
+		if (sign) {	
 
 			if(isdigit (c) || ((c == '+' || c == '-') && str[1] != 0)) {
 				ok = 1 ;
@@ -396,7 +404,7 @@ int str_is_float(const char *str, const int sign)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int in_tab(int *tab, int size, int val)
+	in_tab
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Check if val is present in tab.
@@ -424,7 +432,7 @@ int in_tab(int *tab, int size, int val)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	int index_of(int *tab, int size, int val) 
+	index_of
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Check if val is present in tab and return its index if so
@@ -452,10 +460,10 @@ int index_of(int *tab, int size, int val)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void str_trim(char *str) 
+	str_trim
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Remove spaces from given string
+	Remove spaces from a given string
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ char *str: String to deal with
@@ -480,12 +488,15 @@ void str_trim(char *str)
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: extract_path(char *str, char *dest)
+   ## FUNCTION: 
+	 extract_path
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: extract path from a string
+   ## SPECIFICATION: 
+	 Extract path from a string
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ char *str: String to deal with
+	@ char *str  : String to deal with
+	@ char *dest : OUTPUT The destination string
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -497,16 +508,16 @@ void extract_path(char *str, char *dest)
 		 *last_backsl = NULL ;
 	
 	while(*pstr) {
-	// Advance in the path name while it is possible
+	/* Advance in the path name while it is possible */
 		if(*pstr == '/') {
-		// If we encounter a '/', save its position
+		/* If we encounter a '/', save its position */
 			last_backsl = pstr ;
 		}
 		pstr ++ ;
 	}
 
 	if(last_backsl) {
-	// If we have found one '/' at least, copy the path
+	/* If we have found one '/' at least, copy the path */
 		sav = *(last_backsl) ;
 		(*last_backsl) = '\0' ;
 
@@ -514,18 +525,21 @@ void extract_path(char *str, char *dest)
 		(*last_backsl) = sav ;	
 	}
 	else {
-	// If no '/' has been found, just return a dot as current folder 
+	/* If no '/' has been found, just return a dot as current folder  */
 		dest[0] = '\0' ;
 	}
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: extract_ext(char *str, char *dest) 
+   ## FUNCTION: 
+	 extract_ext
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: get rid of the extension of a string (.pdb eg.)
+   ## SPECIFICATION: 
+	 Get rid of the extension of a string (.pdb eg.)
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ char *str: String to deal with
+	@ char *dest : OUTPUT The destination string
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -536,9 +550,9 @@ void extract_ext(char *str, char *dest)
 		 *last_dot = NULL ;
 	
 	while(*pstr) {
-	// Advance in the path name while it is possible
+	/* Advance in the path name while it is possible */
 		if(*pstr == '.') {
-		// If we encounter a '/', save its position
+		/* If we encounter a '/', save its position */
 			last_dot = pstr ;
 		}
 		pstr ++ ;
@@ -548,20 +562,23 @@ void extract_ext(char *str, char *dest)
 		strcpy(dest, last_dot+1) ;
 	}
 	else {
-	// If no '/' has been found, just return a dot as current folder 
+	/* If no '/' has been found, just return a dot as current folder  */
 		dest[0] = '\0' ;
 	}
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: remove_path(char *str)
+   ## FUNCTION: 
+	remove_path
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: remove the path from a string
+   ## SPECIFICATION: 
+	Remove the path from a string
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ char *str: String to deal with
+	@ char *str: INOUT String to deal with
    -----------------------------------------------------------------------------
    ## RETURN:
+     The input string is modified
    -----------------------------------------------------------------------------
 */
 void remove_path(char *str) 
@@ -571,16 +588,16 @@ void remove_path(char *str)
 		 *last_backsl = NULL ;
 	
 	while(*pstr) {
-	// Advance in the path name while it is possible
+	/* Advance in the path name while it is possible */
 		if(*pstr == '/') {
-		// If we encounter a '/', save its position
+		/* If we encounter a '/', save its position */
 			last_backsl = pstr ;
 		}
 		pstr = pstr + 1 ;
 	}
 
 	if(last_backsl) {
-	// If we have found one '/' at least, copy the path, else dont do anything
+	/* If we have found one '/' at least, copy the path, else dont do anything */
 		last_backsl = last_backsl + 1 ;
 		filelen = strlen(last_backsl) ;
 		for(i = 0 ; i < filelen ; i++) {
@@ -592,13 +609,16 @@ void remove_path(char *str)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
+    remove_ext
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
+    Remove the extention of a given string
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ char *str: String to deal with
+	@ char *str: INOUT String to deal with
    -----------------------------------------------------------------------------
    ## RETURN:
+    The input string is modified
    -----------------------------------------------------------------------------
 */
 void remove_ext(char *str)
@@ -607,9 +627,9 @@ void remove_ext(char *str)
 		 *last_dot = NULL ;
 	
 	while(*pstr) {
-	// Advance in the path name while it is possible
+	/* Advance in the path name while it is possible */
 		if(*pstr == '.') {
-		// If we encounter a '/', save its position
+		/* If we encounter a '/', save its position */
 			last_dot = pstr ;
 		}
 		pstr ++ ;
@@ -622,16 +642,16 @@ void remove_ext(char *str)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	FILE* fopen_pdb_check_case(char *str, const char *mode) 
+	 fopen_pdb_check_case
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 	
+   ## SPECIFICATION:
 	Try to open a pdb file. If the open failed, put the 4 letter before extention
 	at the lower case and try again.
 	This function assume that the file name has the format path/file.pdb !
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *name: The string to parse
-	@ s_fparams *p: The structure than will contain the parsed parameter
+	@ char *name       : The string to parse
+	@ const char *mode : Opening mode
    -----------------------------------------------------------------------------
    ## RETURN: 
 	The file, NULL if the openning fails.

@@ -6,7 +6,7 @@
 ##
 ## FILE 					write_visu.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			02-12-08
 ##
 ## ----- SPECIFICATIONS
 ##
@@ -15,8 +15,9 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##      29-11-08        (p)  enhanced VMD output, corrected bug in pymol output
-##      20-11-08        (p)  just got rid of a memory issue (fflush after fclose) 
+##  02-12-08    (v)  Comments UTD
+##  29-11-08    (p)  Enhanced VMD output, corrected bug in pymol output
+##  20-11-08    (p)  Just got rid of a memory issue (fflush after fclose) 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -25,32 +26,64 @@
 
 */
 
+ /**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+ 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_visualization(char *pdb_name,char *pdb_out_name) 
+	write_visualization
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	write visualization scripts for VMD and PyMol
+	Write visualization scripts for VMD and PyMol
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *pdb_name : pdb code
+	@ char *pdb_name     : pdb code
 	@ char *pdb_out_name : name of the pdb output file
    -----------------------------------------------------------------------------
    ## RETURN: void
    -----------------------------------------------------------------------------
 */
 
-void write_visualization(char *pdb_name,char *pdb_out_name){
+void write_visualization(char *pdb_name,char *pdb_out_name)
+{
 	write_vmd(pdb_name,pdb_out_name);
  	write_pymol(pdb_name,pdb_out_name);
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_vmd(char *pdb_name,char *pdb_out_name) 
+	write_vmd
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	write visualization script for VMD
+	Write visualization script for VMD
    -----------------------------------------------------------------------------
    ## PARAMETERS:
 	@ char *pdb_name : pdb code
@@ -61,7 +94,8 @@ void write_visualization(char *pdb_name,char *pdb_out_name){
 */
 
 
-void write_vmd(char *pdb_name,char *pdb_out_name){
+void write_vmd(char *pdb_name,char *pdb_out_name)
+{
 	char fout[250] = "" ;
 	char fout2[250] = "" ;
 	char sys_cmd[250] ="";
@@ -143,19 +177,20 @@ void write_vmd(char *pdb_name,char *pdb_out_name){
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_vmd(char *pdb_name,char *pdb_out_name) 
+	write_pymol
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	write visualization script for PyMol
    -----------------------------------------------------------------------------
    ## PARAMETERS:
-	@ char *pdb_name : pdb code
+	@ char *pdb_name     : pdb code
 	@ char *pdb_out_name : name of the pdb output file
    -----------------------------------------------------------------------------
    ## RETURN: void
    -----------------------------------------------------------------------------
 */
-void write_pymol(char *pdb_name,char *pdb_out_name){
+void write_pymol(char *pdb_name,char *pdb_out_name)
+{
 	char fout[250] = "" ;
 	char fout2[250] = "" ;
 	char sys_cmd[250] ="";

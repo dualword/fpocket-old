@@ -6,22 +6,59 @@
 ##
 ## FILE 					writepdb.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			02-12-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  Routine to write several data in the PDB/PQR format
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  02-12-08    (v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
+##  (v) Handle (unlakely) error when entries are actually writen (using fprinf)
+##
 
 */
 
+ /**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+ 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_pdb_atom_line(FILE *f, s_atm *a, int aid) 
+	write_pdb_atom_line
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write an atom in the following pdb format 2.3.
@@ -58,10 +95,14 @@ void write_pdb_atom_line(FILE *f, const char rec_name[], int id, const char atom
 						 int res_id, const char insert, float x, float y, float z, float occ, 
 						 float bfactor,	const char *symbol, int charge) 
 {
-	// Example of pdb record:
-	// Position:          1         2         3         4         5         6         7         8
-	// Position: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-	// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 11.92           N
+	/* Example of pdb record: */
+	/* Position:          1         2         3         4         5         6 */
+	/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+	/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
+	
+	/* Position: 6         7         8 */
+	/* Position: 012345678901234567890 */
+	/* Record:   0 11.92           N   */
 
 	int status = 0 ;
 	char id_buf[6] = "*****",
@@ -89,10 +130,7 @@ void write_pdb_atom_line(FILE *f, const char rec_name[], int id, const char atom
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_pqr_atom_line(FILE *f, const char *rec_name, int id, const char *atom_name, 
-						 char alt_loc, const char *res_name, const char *chain, 
-						 int res_id, const char insert, float x, float y, float z, float charge, 
-						 float radius)
+	write_pqr_atom_line
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write an atom in pqr format.
@@ -126,15 +164,19 @@ void write_pqr_atom_line(FILE *f, const char *rec_name, int id, const char *atom
 						 int res_id, const char insert, float x, float y, float z, float charge, 
 						 float radius) 
 {
-	// Example of pdb record:
-	// Position:          1         2         3         4         5         6         7         8
-	// Position: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-	// Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 11.92           N
-
+	/* Example of pdb record: */
+	/* Position:          1         2         3         4         5         6 */
+	/* Position: 123456789012345678901234567890123456789012345678901234567890 */
+	/* Record:   ATOM    145  N   VAL A  25      32.433  16.336  57.540  1.00 */
+	
+	/* Position: 6         7         8 */
+	/* Position: 012345678901234567890 */
+	/* Record:   0 11.92           N   */
+	
 	int status ;
  	char id_buf[7],
  		 res_id_buf[6];
-// 		 charge_buf[3] ;
+/* 		 charge_buf[3] ; */
  	
  	if (id < 100000) sprintf(id_buf, "%5d", id);
  	else sprintf(id_buf, "%05x", id);
@@ -144,12 +186,12 @@ void write_pqr_atom_line(FILE *f, const char *rec_name, int id, const char *atom
  	
  	alt_loc = (alt_loc == '\0')? ' ': alt_loc;
  	
-// 	if(charge == -1) {
-// 		charge_buf[0] = charge_buf[1] = ' ' ;
-// 		charge_buf[2] = '\0' ;
-// 	}
-// 	else sprintf(charge_buf, "%2d", charge) ;
- 	
+/* 	if(charge == -1) { 
+ 		charge_buf[0] = charge_buf[1] = ' ' ;
+ 		charge_buf[2] = '\0' ;
+ 	}
+ 	else sprintf(charge_buf, "%2d", charge) ;
+*/ 	
  	status = fprintf(f, "%-6s%5s %4s%c%-4s%c%4s%c   %8.3f%8.3f%8.3f  %6.2f   %6.2f\n",
  						 rec_name, id_buf, atom_name, alt_loc, res_name, chain[0], 
  						 res_id_buf, insert, x, y, z, charge,radius) ;

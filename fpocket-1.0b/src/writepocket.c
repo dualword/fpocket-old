@@ -6,11 +6,15 @@
 ##
 ## FILE 					writepocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			02-12-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  Output routine for pockets.
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  02-12-08    (v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -19,10 +23,41 @@
 
 */
 
+ /**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+ 
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_single_pdb(const char out[], s_lst_atoms *atoms, s_lst_vvertice *vertices) 
+	write_single_pdb
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write atoms and vertices given in argument in the following standard v2.2 
@@ -30,9 +65,9 @@
 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char out[]: Out file
-	@ s_lst_atoms *latoms: List of atoms
-	@ s_lst_vvertice *vertices: List of voronoi vertices
+	@ const char out[]       : Output file name
+	@ s_pdb *pdb             : PDB infos
+	@ c_lst_pockets *pockets : All pockets
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -74,15 +109,15 @@ void write_pockets_single_pdb(const char out[],  s_pdb *pdb, c_lst_pockets *pock
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms)  
+	write_pdb_atoms
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Print list of atoms as pdb format in given buffer
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ FILE *f: File to write in.
-	@ s_atm *atoms: List of atoms
-	@ int natoms: Number of atoms
+	@ FILE *f      : Buffer to write in.
+	@ s_atm *atoms : List of atoms
+	@ int natoms   : Number of atoms
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -93,10 +128,6 @@ void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms)
 	int i = 0 ;
 	for(i = 0 ; i < natoms ; i++) {
 		atom = atoms + i ;
-		//fprintf(stdout, "%d\n", i) ; fflush(stdout) ;
-// 		fprintf(stdout, ">> Atom %p: %d vs %d\n", atom, i, natoms) ; fflush(stdout) ;
-// 		fprintf(stdout, "%s %d %s %c %s %s %d %c %f %f %f %f %f %s %d\n", atom->type, atom->id, atom->name, atom->pdb_aloc, atom->res_name, atom->chain, atom->res_id, 	atom->pdb_insert, atom->x, atom->y, atom->z, atom->occupancy, atom->bfactor, atom->symbol, atom->charge) ;
- 		
 		write_pdb_atom_line(f, atom->type, atom->id, atom->name, atom->pdb_aloc, 
 							atom->res_name, atom->chain, atom->res_id, 
  							atom->pdb_insert, atom->x, atom->y, atom->z,
@@ -107,7 +138,7 @@ void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_pockets_single_pqr(const char out[], s_lst_atoms *atoms, s_lst_vvertice *vertices) 
+	write_pockets_single_pqr
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write only pockets (alpha sphere) given in argument in the pqr format.
@@ -115,9 +146,8 @@ void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms)
 	!! No atoms writen here, only all pockets in a single pqr file.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char out[]: Out file
-	@ s_lst_atoms *latoms: List of atoms
-	@ s_lst_vvertice *vertices: List of voronoi vertices
+	@ const char out[]       : Output file path
+	@ c_lst_pockets *pockets : List of pockets
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -161,15 +191,14 @@ void write_pockets_single_pqr(const char out[], c_lst_pockets *pockets)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_each_pocket(const char out_path[], c_lst_pockets *pockets)
+	write_each_pocket
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write each pocket in a single pqr (vertices) and pdb (atoms) file format.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char out[]: Output path
-	@ s_lst_atoms *latoms: List of atoms
-	@ s_lst_vvertice *vertices: List of voronoi vertices
+	@ const char out[]       : Output file path
+	@ c_lst_pockets *pockets : List of pockets
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -204,15 +233,15 @@ void write_each_pocket(const char out_path[], c_lst_pockets *pockets)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_pocket_pqr(const char out[], s_pocket *pocket) 
+	void write_pocket_pqr
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Write vertices of the pocket given in argument in the pqr format.
 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char out[]: Out file
-	@  s_pocket *pocket: The pocket to write
+	@ const char out[]  : Output file path
+	@ s_pocket *pocket : The pocket to write
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -262,15 +291,16 @@ void write_pocket_pqr(const char out[], s_pocket *pocket)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_pocket_pdb(const char out[], s_pocket *pocket) 
+	write_pocket_pdb
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
-	Write vertices of thje pocket given in argument in the pqr format.
+	Write atoms contacted by vertices of the pocket given in argument in 
+	the pdb format.
 
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ const char out[]: Out file
-	@  s_pocket *pocket: The pocket to write
+	@ const char out[]  : Output file path
+	@  s_pocket *pocket : The pocket to write
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
@@ -307,7 +337,7 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 		fprintf(f, "HEADER 11 - Number of apolar alpha sphere     : %5d\n", pocket->nAlphaApol) ;
 		fprintf(f, "HEADER 12 - Proportion of apolar alpha sphere : %.4f\n", pocket->pdesc->apolar_asphere_prop) ;
 
-	// First get the list of atoms
+	/* First get the list of atoms */
 		vcur = pocket->v_lst->first ;
 
 		while(vcur){
@@ -325,7 +355,7 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 			vcur = vcur->next ;
 		}
 
-	// Then write atoms...
+	/* Then write atoms... */
 
 		for(i = 0 ; i < cur_size ; i++) {
 			atom = atms[i] ;

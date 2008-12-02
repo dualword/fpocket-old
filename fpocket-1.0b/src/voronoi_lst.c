@@ -7,11 +7,15 @@
 ##
 ## FILE 					voronoi_lst.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			02-12-08
 ##
 ## ----- SPECIFICATIONS
+##
+##  Routines dealing with chained list of vertices.
+##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -20,9 +24,40 @@
 
 */
 
+ /**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-   c_lst_vertices* lst_vertices_alloc(void)
+   lst_vertices_alloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Allocate a list of vertices
@@ -47,16 +82,16 @@ c_lst_vertices *c_lst_vertices_alloc(void)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	node_vertice_alloc (s_vvertice *vertice)
+	node_vertice_alloc
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Allocate memory for one vertice node.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vvertice *vertice : pointer to the vertice
+	@ s_vvertice *vertice : pointer to the vertice to store in the node
    -----------------------------------------------------------------------------
    ## RETURN:
-	node_vertice*
+	node_vertice*: Allocated node
    -----------------------------------------------------------------------------
 */
 node_vertice *node_vertice_alloc(s_vvertice *vertice)
@@ -72,17 +107,17 @@ node_vertice *node_vertice_alloc(s_vvertice *vertice)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	node_vertice *c_vertice_lst_add_first(c_lst_vertices *lst, s_vvertice *vertice)
+	c_vertice_lst_add_first
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Add a vertice at the first position of the list.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_vertices *lst: chained list of vertices
-	@ s_vvertice *vertice: vertice to add
+	@ c_lst_vertices *lst : chained list of vertices
+	@ s_vvertice *vertice : vertice to add
    -----------------------------------------------------------------------------
    ## RETURN:
-	pointer toi the new node.
+	node_vertice *: pointer toi the new node.
    -----------------------------------------------------------------------------
 */
 node_vertice *c_lst_vertices_add_first(c_lst_vertices *lst, s_vvertice *vertice)
@@ -103,17 +138,17 @@ node_vertice *c_lst_vertices_add_first(c_lst_vertices *lst, s_vvertice *vertice)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-	node_vertice *c_vertice_lst_add_last(c_lst_vertices *lst,s_vvertice *vertice)
+	c_vertice_lst_add_last
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Add a vertice at the end of the chained list
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_pocket *lst: chained list of pockets
-	@ s_vvertice *vertice: vertice to add
+	@ c_lst_pocket *lst   : chained list of pockets
+	@ s_vvertice *vertice : vertice to add
    -----------------------------------------------------------------------------
    ## RETURN:
-	node_vertice *
+	node_vertice *: Pointer to the new node
    -----------------------------------------------------------------------------
 */
 node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
@@ -139,7 +174,7 @@ node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 
 /**-----------------------------------------------------------------------------
    ## FONCTION: 
-   c_lst_vertices *lst_vertice_free(c_lst_vertices *lst) 
+   lst_vertice_free
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free memory of a chained list
@@ -148,7 +183,6 @@ node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 	@ c_lst_vertices *lst: list of voronoi vertices
    -----------------------------------------------------------------------------
    ## RETURN:
-	c_lst_vertice*
    -----------------------------------------------------------------------------
 */
 void c_lst_vertices_free(c_lst_vertices *lst) 
@@ -174,14 +208,15 @@ void c_lst_vertices_free(c_lst_vertices *lst)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	s_atm** get_pocket_neigh(c_lst_vertices *v_lst, int *nneigh) 
+	get_vert_contacted_atms
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Get the list of atoms contacted by each vertice in the given list of vertices.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ c_lst_vertices *v_lst: The list of vertices of the pocket.
-	@ int *nneigh: A pointer to the number of neighbour found, will be modified
+	@ c_lst_vertices *v_lst : The list of vertices of the pocket.
+	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found, 
+ 							  will be modified
    -----------------------------------------------------------------------------
    ## RETURN:
 	A tab of pointers to the pocket contacting atoms.
@@ -201,7 +236,7 @@ s_atm** get_vert_contacted_atms(c_lst_vertices *v_lst, int *nneigh)
 		s_vvertice *vcur = cur->vertice ;
 		
 		for(i = 0 ; i < 4 ; i++) {
-		// For each neighbor, if this atom has not been see yet, add it.
+		/* For each neighbor, if this atom has not been see yet, add it. */
 			if(!in_tab(atm_seen, nb_neigh, vcur->neigh[i]->id)) {
 				neigh[nb_neigh] = vcur->neigh[i] ;
 				atm_seen[nb_neigh] = neigh[nb_neigh]->id ;
