@@ -81,7 +81,7 @@
 #define M_BASIC_VOL_DIVISION -1
 
 /* Minimum number of alpha spheres for a pocket to be kept 5 */
-#define M_MIN_POCK_NB_ASPH 40
+#define M_MIN_POCK_NB_ASPH 30
 
 /* Minimum number of atoms having a low electronegativity in order to declare 
  * an alpha sphere to be apolar 3 */
@@ -153,6 +153,8 @@ int parse_basic_vol_div(char *str, s_fparams *p)  ;
 int parse_refine_dist(char *str, s_fparams *p)  ;
 int parse_refine_minaap(char *str, s_fparams *p)  ;
 int parse_min_pock_nb_asph(char *str, s_fparams *p) ;
+
+int is_fpocket_opt(const char opt) ;
 
 void free_fparams(s_fparams *p) ;
 void print_pocket_usage(FILE *f) ;

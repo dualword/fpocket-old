@@ -27,7 +27,7 @@
 ##
 ##  (v) Improve the reading of vertices. Better: include qhull algorithm in our
 ##		source code.
-##
+##  (v) Handle errors when reading/filling vertices..........
 
 */
 
@@ -200,12 +200,14 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 	fNb = fopen(fpath,"r") ;
 	fvNb = fopen(fpath,"r") ;
 
-	fgets(cline, nchar_max, f) ;		/* Skip first line */
-	fgets(cline, nchar_max, f) ;		/* Load 2nd line containing nbr of coors. */
-	fgets(nbline, nchar_max, fNb) ;		/* Skip first line */
-	fgets(nbline, nchar_max, fNb) ;		/* Load 2nd line containing nbr of coors. */
-	fgets(vNbline, nchar_max, fvNb) ;	/* Skip first line */
-	fgets(vNbline, nchar_max, fvNb) ;	/* Load 2nd line containing nbr of coors. */
+	char *status = NULL ;
+
+	status = fgets(cline, nchar_max, f) ;		/* Skip fir=st line */
+	status = fgets(cline, nchar_max, f) ;		/* Load 2nd line containing nbr of coors. */
+	status = fgets(nbline, nchar_max, fNb) ;	/* Skip first line */
+	status = fgets(nbline, nchar_max, fNb) ;	/* Load 2nd line containing nbr of coors. */
+	status = fgets(vNbline, nchar_max, fvNb) ;	/* Skip first line */
+	status = fgets(vNbline, nchar_max, fvNb) ;	/* Load 2nd line containing nbr of coors. */
 
  	sscanf(cline,"%d",&(lvvert->nvert)) ;
 	lvvert->qhullSize = lvvert->nvert ;

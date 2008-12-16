@@ -50,11 +50,8 @@
 // -------------------------------------- PUBLIC MACROS ---------------------------------------------
 
 /* Options of the test program */
-#define M_PAR_LIG_NEIG_DIST 'd'
-#define M_PAR_VALID_COMPLEX_FILE 'c'
-#define M_PAR_VALID_APO_FILE 'a'
-#define M_PAR_VALID_LIG_CODE 'l'
 #define M_PAR_VALID_INPUT_FILE 'L'
+#define M_PAR_LIG_NEIG_DIST 'd'
 #define M_PAR_P_STATS_OUT 'o'
 #define M_PAR_G_STATS_OUT 'e'
 #define M_PAR_KEEP_FP_OUTPUT 'k'

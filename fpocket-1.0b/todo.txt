@@ -7,12 +7,8 @@ more convenient way for you, just drop us a line.
     --------------------
 
 Code
-    high            > Complete comments
-					> Adapt dpocket and tpocket to be able to design correct  
+    high            > Adapt dpocket and tpocket to be able to design correct  
 					  statistics if the ligand appears multiple times
-					> Give the possibility to keep fpocket output when running
-					  tpocket
-					> Make the code as sexy as possible!!
 					 
 	low				> Satisfy g++ compilation requirement
 					> Performance issues : implement the index neighbour lists 
@@ -28,7 +24,7 @@ documentation
 	medium			> Include in the documentation an example showing how to
 					  modify the scoring function & the way fpocket sort pockets
 
-        medium                  > Include in the documentation an example showing how to add a new descriptor
+    medium          > Include in the documentation an example showing how to add a new descriptor
 
 qhull    
     high            > Erase voronoi tmp files after use, or don't even use it.
@@ -39,9 +35,13 @@ qhull
 					  bigger portability of fpocket (contact the qhull team)
 
 input
+    high            > Test parameters options of fpocket, dpocket, tpocket in
+                      each files to avoid warning message "unknown option"
     medium          > Enable input of "to keep" HETATM tags by command line
 
 output
+    high            > Handle error when the input file of fpocket is in the
+                      current directory.
     medium          > Give the possibility to define the output path through 
 					  command line, keeping the current behaviour as default
 

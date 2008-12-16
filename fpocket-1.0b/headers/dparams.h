@@ -90,7 +90,7 @@ typedef struct s_dparams
 	float interface_dist_crit;
 
 	int nfiles,
-		interface_method ;
+	    interface_method ;
 
 	s_fparams *fpar ;
 

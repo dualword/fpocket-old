@@ -103,7 +103,7 @@ s_desc* allocate_s_desc(void)
 */
 void reset_s_desc(s_desc *desc) 
 {
-	desc->hydrophobicity_score = 0.0 ;
+    desc->hydrophobicity_score = 0.0 ;
 	desc->volume_score = 0.0 ;
 	desc->volume = 0.0 ;
 	desc->flex = 0.0 ;

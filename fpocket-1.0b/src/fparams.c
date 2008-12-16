@@ -16,6 +16,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	15-12-08	(v)  Added function to check if a single letter is a fpocket
+##					 command line option (usefull for t/dpocket) + minor modifs
 ##	28-11-08	(v)  List of pdb taken into account as a single file input.
 ##					 Comments UTD
 ##	27-11-08	(v)  PDB file check moved in fpmain + minor modif + relooking
@@ -498,9 +500,45 @@ int parse_min_pock_nb_asph(char *str, s_fparams *p)
 	return 0 ;
 }
 
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	is_fpocket_opt
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Say either or not a single letter code is a fpocket option (excluding
+	input file/list option.)
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ const char opt: The one letter code option.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	integer: 1 if it's a valid option parmeter, 0 if not.
+   -----------------------------------------------------------------------------
+*/
+
+int is_fpocket_opt(const char opt)
+{
+	if( opt == M_PAR_MAX_ASHAPE_SIZE ||
+		opt == M_PAR_MIN_ASHAPE_SIZE ||
+		opt == M_PAR_MIN_APOL_NEIGH ||
+		opt == M_PAR_CLUST_MAX_DIST ||
+		opt == M_PAR_SL_MAX_DIST ||
+		opt == M_PAR_SL_MIN_NUM_NEIGH ||
+		opt == M_PAR_MC_ITER ||
+		opt == M_PAR_BASIC_VOL_DIVISION ||
+		opt == M_PAR_MIN_POCK_NB_ASPH ||
+		opt == M_PAR_REFINE_DIST ||
+		opt == M_PAR_REFINE_MIN_NAPOL_AS) {
+		return 1 ;
+	}
+
+	return 0 ;
+}
+
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void free_fparams(s_params *p) 
+	free_fparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Free parameters
@@ -528,7 +566,7 @@ void free_fparams(s_fparams *p)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_pocket_usage(FILE *f) 
+	print_pocket_usage
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Displaying usage of the programm in the given buffer
@@ -544,29 +582,63 @@ void print_pocket_usage(FILE *f)
 {
 	f = (f == NULL) ? stdout:f ;
 
-	fprintf(f, "\n\n-------------------\nUSAGE: \n") ;
-	fprintf(f, "Pocket finding on a pdb file: \n") ;
-	fprintf(f, "\t./bin/fpocket -f pdb\n\n") ;
-	fprintf(f, "Options: (find standard parameters in brackets)\n") ;
-	fprintf(f, "\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;
-	fprintf(f, "\t-M (float)  : Maximum radius of an alpha-sphere. (6.5)\n") ;
-	fprintf(f, "\t-A (int)    : Minimum number of apolar neighbor for an a-sphere to be considered as apolar. (3) \n") ;
-	fprintf(f, "\t-i (int)    : Minimum number of a-sphere per pocket. (3)\n") ;
-	fprintf(f, "\t-D (float)  : Maximum distance for first clustering algorithm. (1.2)\n") ;
-	fprintf(f, "\t-s (float)  : Maximum distance for single linkage clustering. (1.5)\n") ;
-	fprintf(f, "\t-n (integer): Minimum number of neighbor close from each other for single linkage clustering. (4)\n") ;
-	fprintf(f, "\t-r (float)  : Maximum distance between two pocket barycenter for refine algorithm. (4.0)\n") ;
-	fprintf(f, "\t-p (float)  : Minimum proportion of apolar sphere in a pocket to keep it. (0.0)\n") ;
-	fprintf(f, "\t-v (integer): Number of Monte-Carlo iteration for the calculation of each pocket volume. (2500)\n") ;
-	fprintf(f, "\t-b (integer): Space approximation for the basic method of the volume calculation. (-1)\n") ;
-	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
-	fprintf(f, "\t              of Monte-Carlo. \n") ;
-	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
+	fprintf(f,
+	"\n\n-------------------\nUSAGE: \n") ;
+	fprintf(f,
+	"Pocket finding on a pdb/list of pdb files: \n") ;
+	fprintf(f,
+	"\t./bin/fpocket -f pdb\n\n") ;
+	fprintf(f,
+	"\t./bin/fpocket -F pdb_list\n\n") ;
+	fprintf(f,
+	"Options: (find standard parameters in brackets)\n") ;
+	fprintf(f,
+	"\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;
+	fprintf(f,
+	"\t-M (float)  : Maximum radius of an alpha-sphere. (6.5)\n") ;
+	fprintf(f,
+	"\t-A (int)    : Minimum number of apolar neighbor for an a-sphere  ") ;
+	fprintf(f,
+	"\t              to be considered as apolar. (3) \n") ;
+	fprintf(f,
+	"\t-i (int)    : Minimum number of a-sphere per pocket. (3)\n") ;
+	fprintf(f,
+	"\t-D (float)  : Maximum distance for first clustering algorithm. (1.2)\n") ;
+	fprintf(f,
+	"\t-s (float)  : Maximum distance for single linkage clustering. (1.5)\n") ;
+	fprintf(f,
+	"\t-n (integer): Minimum number of neighbor close from each other");
+	fprintf(f,
+	"\t              for single linkage clustering. (4)\n") ;
+	fprintf(f,
+	"\t-r (float)  : Maximum distance between two pocket barycenter for");
+	fprintf(f,
+	"\t              refine algorithm. (4.0)\n") ;
+	fprintf(f,
+	"\t-p (float)  : Minimum proportion of apolar sphere in a pocket to  ");
+	fprintf(f,
+	"\t              keep it. (0.0)\n") ;
+	fprintf(f,
+	"\t-v (integer): Number of Monte-Carlo iteration for the calculation ");
+	fprintf(f,
+	"\t              of each pocket volume. (2500)\n") ;
+	fprintf(f,
+	"\t-b (integer): Space approximation for the basic method of the volume ");
+	fprintf(f,
+	"\t              calculation. (-1)\n") ;
+	fprintf(f,
+	"\t              If this option is used, the programm will use this method");
+	fprintf(f,
+	"\t              instead \n") ;
+	fprintf(f,
+	"\t              of Monte-Carlo. \n") ;
+	fprintf(f,
+	"\nSee the manual (man fpocket) for mor information on those parameters.\n") ;
 }
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void print_fparams(s_params *p, FILE *f)
+	print_fparams
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Print function
@@ -581,7 +653,7 @@ void print_pocket_usage(FILE *f)
 void print_fparams(s_fparams *p, FILE *f)
 {
 	if(p) {
-		fprintf(f, "==============\nParameters of the program: \n");
+		fprintf(f, "==============\nParameters of fpocket: \n");
 		fprintf(f, "> Minimum alpha sphere radius: %f\n", p->asph_min_size);
 		fprintf(f, "> Maximum alpha sphere radius: %f\n", p->asph_max_size);
 		fprintf(f, "> Minimum number of apolar neighbor: %d\n", p->min_apol_neigh);

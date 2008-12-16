@@ -8,7 +8,7 @@ PATH_SRC    = src/
 PATH_HEADER = headers/
 PATH_BIN    = bin/
 
-FPOCKET     = fpocket
+FPOCKET     = fpocket/
 TPOCKET		= tpocket
 DPOCKET		= dpocket
 MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET)
@@ -19,14 +19,12 @@ LINKER		= g++
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
 CDEBUG		= -DMNO_MEM_DEBUG
-CWARN       = -Wall -Wextra -Wwrite-strings -Wstrict-prototypes
+CWARN       = -Wall -Wextra -Wwrite-strings
 
-CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -pg -g -O2
-#$(CGSL)
+CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -pg -g -O2 #$(CGSL)
 
 LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas
-LFLAGS	    = -fno-underscoring -lm 
-#$(LGSL)
+LFLAGS	    = -fno-underscoring -lm  #$(LGSL)
 
 #------------------------------------------------------------
 # BINARIES OBJECTS 

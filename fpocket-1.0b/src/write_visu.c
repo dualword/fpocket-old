@@ -23,7 +23,8 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
-
+## (v) Handle system command failure
+##
 */
 
  /**
@@ -100,6 +101,7 @@ void write_vmd(char *pdb_name,char *pdb_out_name)
 	char fout2[250] = "" ;
 	char sys_cmd[250] ="";
 	char c_tmp[255];
+	int status ;
 	
 	strcpy(c_tmp,pdb_name);
 	remove_ext(c_tmp) ;
@@ -117,9 +119,11 @@ void write_vmd(char *pdb_name,char *pdb_out_name)
                         fflush(f);
 			fclose(f);
 			
-			/* Write tcl script */
+			/* Make tcl script executable, and Write tcl script */
 			sprintf(sys_cmd,"chmod +x %s",fout);
-			system(sys_cmd);
+			status = system(sys_cmd);
+
+			
 			fprintf(f_tcl,"proc highlighting { colorId representation id selection } {\n");
 			fprintf(f_tcl,"   set id [[atomselect $id $selection] molid]\n");
 			fprintf(f_tcl,"   puts \"highlighting $id\"\n");
@@ -196,6 +200,7 @@ void write_pymol(char *pdb_name,char *pdb_out_name)
 	char sys_cmd[250] ="";
 	FILE *f,*f_pml;
 	char c_tmp[255];
+	int status ;
 	
 	strcpy(c_tmp,pdb_name);
 	remove_ext(c_tmp) ;
@@ -212,7 +217,7 @@ void write_pymol(char *pdb_name,char *pdb_out_name)
 			fclose(f);
 			
 			sprintf(sys_cmd,"chmod +x %s",fout);
-			system(sys_cmd);
+			status = system(sys_cmd);
 			/* Write pml script */
 			fprintf(f_pml,"from pymol import cmd,stored\n");
 			fprintf(f_pml,"load %s\n",pdb_out_name);

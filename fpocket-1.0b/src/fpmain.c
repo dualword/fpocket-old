@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 {
 	fprintf(stdout, "=========== Pocket hunting begins ========== \n") ;
 
-	s_fparams *params= get_fpocket_args(argc, argv) ;
+	s_fparams *params = get_fpocket_args(argc, argv) ;
 	
 	/* If parameters parsing is ok */
 	if(params) {
@@ -86,10 +86,21 @@ int main(int argc, char *argv[])
                 process_pdb(params->pdb_lst[i], params) ;
             }
 		}
-		else process_pdb(params->pdb_path, params) ;
+		else {
+			if(params->pdb_path == NULL || strlen(params->pdb_path) <= 0) {
+				fprintf(stdout, "! Invalid pdb name given.\n");
+				print_pocket_usage(stdout) ;
+			}
+			else {
+				process_pdb(params->pdb_path, params) ;
+			}
+		}
 	
 		fprintf(stdout, "> Freeing remainnig memory...\n");
 		free_fparams(params) ;
+	}
+	else {
+		print_pocket_usage(stdout) ;
 	}
 	
 	fprintf(stdout, "=========== Pocket hunting ends ========== \n") ;

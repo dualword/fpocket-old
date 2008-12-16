@@ -24,7 +24,8 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
-
+## (v) Check fpocket parameters to avoid 'unknown option' warning message
+##
 */
 
 /**
@@ -109,10 +110,7 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 	int i,
 		status = 0 ;
 
-	int nlig = 0,
-		ncomp = 0,
-		napo = 0,
-		nstats = 0;
+	int nstats = 0;
 	
 	char *str_lig = NULL,
 		 *str_complex_file = NULL,
@@ -121,7 +119,7 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 
 	s_tparams *par = init_def_tparams() ;
 	par->fpar = get_fpocket_args(nargs, args) ;
-	
+
 	if(!par->fpar) {
 		free_tparams(par) ;
 		print_test_usage(stdout);
@@ -131,9 +129,8 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 	
 	/* Read arguments by flags */
 	for (i = 1; i < nargs; i++) {
-		if (strlen(args[i]) == 2 && args[i][0] == '-' && 
-			(i < (nargs-1) || args[i][1] != M_PAR_VALID_COMPLEX_FILE) ) {
-			
+		if (strlen(args[i]) == 2 && args[i][0] == '-' &&
+			(i < (nargs-1) || args[i][1] == M_PAR_KEEP_FP_OUTPUT) ) {
 			switch (args[i][1]) {
 				case M_PAR_LIG_NEIG_DIST	  : 
 					status += parse_lig_neigh_dist(args[++i], par) ; 
@@ -142,25 +139,6 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 					par->keep_fpout = 1 ;
 					break ;
 					
-				case M_PAR_VALID_COMPLEX_FILE	:
-						if(ncomp >= 1) fprintf(stderr, "! More than one single file for complex protein has been given. Ignoring it.\n") ;
-						else {
-							str_complex_file = args[++i] ; ncomp++ ;
-						}
-						break ;
-				case M_PAR_VALID_APO_FILE		: 
-						if(napo >= 1) fprintf(stderr, "! More than one single file for apo protein has been given. Ignoring it.\n") ; 
-						else {
-							str_apo_file = args[++i] ; napo++ ; 
-						}
-						break ;
-
-				case M_PAR_VALID_LIG_CODE		: 
-						if(nlig >= 1) fprintf(stderr, "! More than one PDB ligand code has been given. Ignoring it.\n") ;
-						else {
-							str_lig = args[++i] ; nlig++ ; 
-						}
-						break ;
 				case M_PAR_P_STATS_OUT : 
 						if(nstats >= 1) fprintf(stdout, "! More than one single file for the stats output file has been given. Ignoring this one.\n") ;
 						else {
@@ -188,7 +166,13 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 						}
 						break ;
 				case M_PAR_VALID_INPUT_FILE		: str_list_file = args[++i] ; break ;
-				default: printf("> Unknown option '%s'. Ignoring it.\n", args[i]) ; break ;
+				default:
+					//  Check fpocket parameters!!
+					if(!is_fpocket_opt(args[i][1])) {
+						fprintf(stdout, "> Unknown option '%s'. Ignoring it.\n",
+								args[i]) ;
+					}
+					break ;
 			}
 		}
 	}
@@ -235,7 +219,7 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 			}
 		}
 	}
-
+	
 	return par;
 }
 
@@ -454,11 +438,12 @@ void print_test_usage(FILE *f)
 	fprintf(f, "2 - To launch a test on one single protein:\n") ;
 	fprintf(f, "\t./bin/tpocket -a apo_pdb -c complex_pdb -l ligan_pdb_name\n\n") ;
 	fprintf(f, "Options: \n") ;
-	fprintf(f, "\t-o string  : Write pocket detailed statistics to this file. (stats_p.txt \n") ;
-	fprintf(f, "\t             by default).\n") ;
-	fprintf(f, "\t-e string  : Write global pocket statistics to this file. (stats_g.txt \n") ;
-	fprintf(f, "\t             by default).\n") ;
-	fprintf(f, "\t-d (float)  : Radius to use for searching ligand's neighbours in the test. (3.5) \n") ;	
+	fprintf(f, "\t-o string   : Write pocket detailed statistics to this file. (stats_p.txt \n") ;
+	fprintf(f, "\t              by default).\n") ;
+	fprintf(f, "\t-e string   : Write global pocket statistics to this file. (stats_g.txt \n") ;
+	fprintf(f, "\t              by default).\n") ;
+	fprintf(f, "\t-d (float)  : Radius to use for searching ligand's neighbours in the test. (3.5) \n") ;
+	fprintf(f, "\t-k (no val) : Keep fpocket output on apo files.  \n") ;
 
 	fprintf(f, "\nOptions specific to fpocket: (find standard parameters in brackets)\n") ;
 	fprintf(f, "\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;

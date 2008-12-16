@@ -14,7 +14,8 @@
 ##	Write output for fpocket.
 ##
 ## ----- MODIFICATIONS HISTORY
-##	
+##
+##	15-12-08	(v)  Minor bug corrected (output dir in the current dir...)
 ##	28-11-08	(v)  Last argument of write_out_fpocket changed to char *
 ##					 Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
@@ -22,7 +23,7 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
-##	(v) Clean!
+##	(v) Handle system command failure, clean!
 
 */
 
@@ -82,16 +83,27 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 	char pdb_out_path[350] = "" ;
 	char fout[350] = "" ;
 	char command[370] = "" ;
-
+	int status ;
+	
 	if(pockets) {
 	/* Extract path, pdb code... */
 		strcpy(pdb_code, pdbname) ;
 		extract_path(pdbname, pdb_path) ;
 		remove_ext(pdb_code) ;
 		remove_path(pdb_code) ;
-		sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
+
+		if(strlen(pdb_path) > 0) {
+			sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
+		}
+		else {
+			sprintf(out_path, "%s_out", pdb_code) ;
+		}
 		sprintf(command, "mkdir %s", out_path) ;
-		system(command) ;
+		status = system(command) ;
+		if(status != 0) {
+			return ;
+		}
+		
 		sprintf(out_path, "%s/%s_out/%s", pdb_path, pdb_code, pdb_code) ;
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
 	/* Write vmd and pymol scripts */
@@ -118,7 +130,10 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 
 		sprintf(out_path, "%s/%s_out/pockets", pdb_path, pdb_code) ;
 		sprintf(command, "mkdir %s", out_path) ;
-		system(command) ;
+		status = system(command) ;
+		if(status != 0) {
+			return ;
+		}
 
 		write_each_pocket(out_path, pockets) ;
 	}
