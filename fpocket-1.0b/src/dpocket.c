@@ -51,6 +51,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	14-01-09	(v)  Added some normalized descriptors and pockerpicker criteria
 ##	01-04-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -132,11 +133,10 @@ void dpocket(s_dparams *par)
 	
 		/* Begins dpocket */
 			for(i = 0 ; i < par->nfiles ; i++) {
-				fprintf(stdout, "=> Describing interface for protein %s...\n", 
-						par->fcomplex[i]) ;
+				fprintf(stdout, "<dpocket>s %d/%d - %s:",
+						i+1, par->nfiles, par->fcomplex[i]) ;
 
 				desc_pocket(par->fcomplex[i], par->ligs[i], par, fout) ;
-				
 			}
 
 			for( i = 0 ; i < 3 ; i++ ) fclose(fout[i]) ;
@@ -183,26 +183,33 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 	s_atm **lig = NULL,
 		  **patoms ;
 
-	float vol, ovlp ;
+	float vol, ovlp, dst = 0.0, tmp ;
 	int nal = 0,
 		nai = 0,	/* Number of atoms in the interface */
 		nbpa ;
+	int j ;
 
+/*
 	fprintf(stdout, "dpocket: Loading pdb... ") ; fflush(stdout) ;
+*/
 	s_pdb *pdb_cplx_l = rpdb_open(fcomplexe, ligname, M_KEEP_LIG) ;
 	s_pdb *pdb_cplx_nl = rpdb_open(fcomplexe, ligname, M_DONT_KEEP_LIG) ;
 	
 	if(pdb_cplx_l && pdb_cplx_nl && pdb_cplx_l->natm_lig > 0) {
 		rpdb_read(pdb_cplx_l, ligname, M_KEEP_LIG) ;	
 		rpdb_read(pdb_cplx_nl, ligname, M_DONT_KEEP_LIG) ;
+/*
 		fprintf(stdout, " OK\n") ;
+*/
 
 		lig = pdb_cplx_l->latm_lig ;
 		nal = pdb_cplx_l->natm_lig ;
 
 		/* Getting explicit interface using the known ligand */
+/*
 		fprintf(stdout, "dpocket: Explicit pocket definition... \n") ; 
 		fflush(stdout) ;
+*/
 		verts = load_vvertices(pdb_cplx_nl, 3, par->fpar->asph_min_size, 
 							   par->fpar->asph_max_size) ;
 
@@ -219,24 +226,38 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 			pck_ml_clust(pockets, par->fpar);
 			dropSmallNpolarPockets(pockets, par->fpar);
 			set_pockets_descriptors(pockets);
-	
+
+			fprintf(stdout, " %d pockets.\r", pockets->n_pockets) ;
+			fflush(stdout);
 			/* Writing output */
 			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 
-			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, f[0]) ;
+			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, 0.0, f[0]) ;
+			
 			node_pocket *cur = pockets->first ;
 			while(cur) {
-			/* For each pocket, save descriptors and say if the pocket contains 
-			 * the ligand */
+				/* Get the natomic overlap */
 				patoms = get_vert_contacted_atms(cur->pocket->v_lst, &nbpa) ;
 				ovlp = atm_corsp(interface, nai, patoms, nbpa) ;
 
-				if(ovlp > 40.0) {
+				/* Get the smallest distance of the ligand to the pocket */
+				for (j = 0 ; j < nal ; j++) {
+					tmp = dist(lig[j]->x, lig[j]->y, lig[j]->z,
+							   cur->pocket->bary[0], cur->pocket->bary[1],
+							   cur->pocket->bary[2]) ;
+					if(j == 0) dst = tmp ;
+					else {
+						if(tmp < dst) dst = tmp ;
+					}
+				}
+
+				/* */
+				if(ovlp > 40.0 || dst < 4.0) {
 					write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol, 
-									  ovlp, f[1]) ;
+									  ovlp, dst, f[1]) ;
 				}
 				else {
 					write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol, 
-									  ovlp, f[2]) ;
+									  ovlp, dst, f[2]) ;
 				}
 				my_free(patoms) ;
 				cur = cur->next ;
@@ -291,8 +312,10 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 
 	s_atm **interface = NULL ;
 
+/*
 	fprintf(stdout, "dpocket: Determning explicit interface... ") ; 
 	fflush(stdout) ;
+*/
 	
 	if(par->interface_method == M_INTERFACE_METHOD2) {
 	/* Use the distance-based method to define the interface */
@@ -305,7 +328,9 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 										  par->interface_dist_crit, 
 										  M_INTERFACE_SEARCH, nai) ; 
 	}
+/*
 	fprintf(stdout, " OK\n") ;
+*/
 
 	/* Get a tab of pointer for interface's vertices to send a correct argument 
 	 * type to set_descriptors */
@@ -315,9 +340,13 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 	/* Ok we have the interface and the correct vertices list, now calculate 
 	 * descriptors and write it.
 	 **/
+/*
 	fprintf(stdout, "dpocket: Calculating descriptors... ") ; fflush(stdout) ;
+*/
 	set_descriptors(interface, *nai, tpverts, nvn, desc) ;
+/*
 	fprintf(stdout, " OK\n") ;
+*/
 
 	/* Free memory */
 	my_free(tpverts) ;
@@ -345,9 +374,12 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
    -----------------------------------------------------------------------------
 */
 void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, 
-					   float ovlp, FILE *f) 
+					   float ovlp, float dst, FILE *f)
 {
-	fprintf(f, M_DP_OUTP_FORMAT, M_DP_OUTP_VAR(fc, l, ovlp, lv, d)) ;
+	int status = 0 ;
+	if(dst < 4.0) status = 1 ;
+
+	fprintf(f, M_DP_OUTP_FORMAT, M_DP_OUTP_VAR(fc, l, ovlp, status, dst, lv, d)) ;
 
 	int i ;
 	for(i = 0 ; i < 20 ; i++) fprintf(f, " %3d", d->aa_compo[i]) ;

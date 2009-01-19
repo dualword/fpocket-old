@@ -91,8 +91,6 @@ s_dparams* init_def_dparams(void)
 	par->interface_dist_crit = M_VERT_LIG_NEIG_DIST ;
 	par->interface_method = M_INTERFACE_METHOD1 ;
 
-	par->fpar = init_def_fparams() ;
-
 	return par ;
 }
 
@@ -121,45 +119,12 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 	char *str_list_file = NULL ;
 
 	s_dparams *par = init_def_dparams() ;
+	par->fpar = get_fpocket_args(nargs, args) ;
 	
 	/* Read arguments by flags */
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-') {
 			switch (args[i][1]) {
-				case M_PAR_MAX_ASHAPE_SIZE	  : 
-					status += parse_asph_max_size(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_ASHAPE_SIZE	  : 
-					status += parse_asph_min_size(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_APOL_NEIGH	  : 
-					status += parse_min_apol_neigh(args[++i], par->fpar) ;
-											  break ;
-				case M_PAR_CLUST_MAX_DIST	  : 
-					status += parse_clust_max_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_SL_MAX_DIST		  : 
-					status += parse_sclust_max_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_SL_MIN_NUM_NEIGH   : 
-					status += parse_sclust_min_nneigh(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MC_ITER 			  : 
-					status += parse_mc_niter(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_BASIC_VOL_DIVISION : 
-					status += parse_basic_vol_div(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_MIN_POCK_NB_ASPH   : 
-					status += parse_min_pock_nb_asph(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_REFINE_DIST		  : 
-					status += parse_refine_dist(args[++i], par->fpar) ; 
-											  break ;
-				case M_PAR_REFINE_MIN_NAPOL_AS: 
-					status += parse_refine_minaap(args[++i], par->fpar) ; 
-											  break ;
-			
 				case M_DPAR_DISTANCE_CRITERIA : 
 						if(i < nargs-1) status += parse_dist_crit(args[++i], par) ;
 						else {
@@ -205,7 +170,13 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 						}
 						 break ;
 
-				default: fprintf(stdout, "> Unknown option '%s'. Ignoring it.\n", args[i]) ; break ;
+				default:
+					//  Check fpocket parameters!
+					if(!is_fpocket_opt(args[i][1])) {
+						fprintf(stdout, "> Unknown option '%s'. Ignoring it.\n",
+								args[i]) ;
+					}
+					break ;
 			}
 		}
 	}
@@ -272,16 +243,27 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 
 	/* Loading data. */
 	f = fopen(str_list_file, "r") ;
+/*
+	printf(str_list_file);
+*/
 	if(f) {
 		while(fgets(buf, 210, f)) {
+/*
+			printf("B: %s\n" , buf);
+*/
 			n = par->nfiles ;
 			status = sscanf(buf, "%s\t%s", complexbuf, ligbuf) ;
 
 			if(status < 2) {
+/*
 				fprintf(stderr, "! Skipping row '%s' with bad format (status %d).\n",
 								buf, status) ;
+*/
 			}
 			else {
+/*
+				printf("%s %s\n", complexbuf, ligbuf );
+*/
 				nread += add_complexe(complexbuf, ligbuf, par) ;
 			}
                         
@@ -437,50 +419,7 @@ void print_dpocket_usage(FILE *f)
 {
 	f = (f == NULL) ? stdout:f ;
 
-	fprintf(f, "\n-------------------\nUSAGE (dpocket):\n") ;
-	fprintf(f, "The program needs as input a file containing at each \n\
-				line a pdb path and a ligand code.\n") ;
-	fprintf(f, "The format of each line must be: PATH/2fej.pdb  LIG.\n\n") ;
-	fprintf(f, "The ligand code is the resname of the ligand atoms in \n\
-				the pdb file and has to separated by a tab\
-                                from the pdb structure in the input file.\n") ;
-	fprintf(f, "See the manual for more information.\n") ;
-	fprintf(f, "Example of command using default parameters:\n") ;
-	fprintf(f, "\t./bin/dpocket -f file_path\n\n") ;
-	fprintf(f, "Options: \n") ;
-	fprintf(f, "\t-o string  : Prefix of the output file. (dpout) \n") ;
-	fprintf(f, "\t             by default).\n") ;
-	fprintf(f, "\t-e         : Use the first protein-ligand explicit \n") ;
-	fprintf(f, "\t             interface definition (default). \n") ;
-	fprintf(f, "\t-E         : Use the second protein-ligand explicit \n") ;
-	fprintf(f, "\t             interface definition. \n") ;
-	fprintf(f, "\t-d float   : Distance criteria for the choosen interface \n") ;
-	fprintf(f, "               definition.\n");
-
-	fprintf(f, "\nOptions specific to fpocket: (find standard parameters \n") ;
-	fprintf(f, "in brackets)\n") ;
-	fprintf(f, "\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;
-	fprintf(f, "\t-M (float)  : Maximum radius of an alpha-sphere. (6.5)\n") ;
-	fprintf(f, "\t-A (int)    : Minimum number of apolar neighbor for an \n") ;
-	fprintf(f, "\t              a-sphere to be considered as apolar. (3) \n") ;
-	fprintf(f, "\t-i (int)    : Minimum number of a-sphere per pocket. (3)\n") ;
-	fprintf(f, "\t-D (float)  : Maximum distance for first clustering algorithm. (1.2)\n") ;
-	fprintf(f, "\t-s (float)  : Maximum distance for single linkage clustering. (1.5)\n") ;
-	fprintf(f, "\t-n (integer): Minimum number of neighbor close from each other \n") ;
-	fprintf(f, "\t              for single linkage clustering. (4)\n") ;
-	fprintf(f, "\t-r (float)  : Maximum distance between two pocket barycenter for \n") ;
-	fprintf(f, "\t              refine algorithm. (4.0)\n") ;
-	fprintf(f, "\t-p (float)  : Minimum proportion of apolar sphere in a pocket to \n") ;
-	fprintf(f, "\t              keep it. (0.0)\n") ;
-	fprintf(f, "\t-v (integer): Number of Monte-Carlo iteration for the calculation \n") ;
-	fprintf(f, "\t              of each pocket volume. (2500)\n") ;
-	fprintf(f, "\t-b (integer): Space approximation for the basic method of the volume \n") ;
-	fprintf(f, "\t              calculation. (-1)\n") ;
-	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
-
-
-	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
-	fprintf(f, "-------------------\n") ;
+	fprintf(f, M_DP_USAGE) ;
 }
 
 /**-----------------------------------------------------------------------------

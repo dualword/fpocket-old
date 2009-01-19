@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	14-01-09	(v)  Added some normalized descriptors
 ##  28-11-08	(v)  Scoring and sorting moved out of this file + minor 
 ##					 restructuration + comments almost UTD
 ##  02-09-08	(p)  Added druggability score, curvature and surfaces for 
@@ -503,15 +504,22 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
 
-	float max_flex = 0.0 ;
+	/* Some boundaries to help normalisation */
+	float flex_M = 0.0, flex_m = 1.0,
+		  nas_apolp_M = 0.0, nas_apolp_m = 1.0,
+		  mlhd_M = 1000.0, mlhd_m = 0.0;
+	
+	int nas_M = 0, nas_m = 1000 ;
+	
 	int natms = 0, i ;
 
 	if(pockets && pockets->n_pockets > 0) {
 		cur = pockets->first ;
+		/* Perform a first loop to calculate atom and vertice based descriptors */
 		while(cur) {
 			pcur = cur->pocket ;
 
-		/* Getting a list of vertices in a tab of pointer */
+			/* Get a list of vertices in a tab of pointer */
 			s_vvertice **tab_vert = (s_vvertice **)
 					my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
 			i = 0 ;
@@ -522,11 +530,37 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 				i++ ;
 			}
 
-		/* Getting atoms contacted by vertices */
+			/* Get atoms contacted by vertices, and calculate descriptors */
 			s_atm **pocket_atoms = get_pocket_contacted_atms(pcur, &natms) ;
+			set_descriptors(pocket_atoms, natms, tab_vert,
+							pcur->v_lst->n_vertices, pcur->pdesc) ;
 
-			set_descriptors(pocket_atoms, natms, tab_vert, pcur->v_lst->n_vertices, pcur->pdesc) ;
-			if(pcur->pdesc->flex > max_flex) max_flex = pcur->pdesc->flex ;
+
+			/* Initialize boundaries if it's the first turn */
+			if(cur == pockets->first) {
+				flex_M = flex_m = pcur->pdesc->flex ;
+				nas_apolp_M = nas_apolp_m = pcur->pdesc->apolar_asphere_prop ;
+				mlhd_M = mlhd_m = pcur->pdesc->mean_loc_hyd_dens ;
+				nas_M = nas_m = pcur->pdesc->nb_asph ;
+			}
+			else {
+			/* Update several boundaries */
+				if(pcur->pdesc->mean_loc_hyd_dens > mlhd_M)
+					mlhd_M =pcur->pdesc->mean_loc_hyd_dens ;
+				else if(pcur->pdesc->mean_loc_hyd_dens < mlhd_m)
+					mlhd_m =pcur->pdesc->mean_loc_hyd_dens ;
+
+				if(pcur->pdesc->flex > flex_M) flex_M = pcur->pdesc->flex ;
+				else if(pcur->pdesc->flex < flex_m) flex_m = pcur->pdesc->flex ;
+
+				if(pcur->pdesc->nb_asph > nas_M) nas_M = pcur->pdesc->nb_asph ;
+				else if(pcur->pdesc->nb_asph < nas_m) nas_m = pcur->pdesc->nb_asph ;
+				
+				if(pcur->pdesc->apolar_asphere_prop > nas_apolp_M)
+					nas_apolp_M = pcur->pdesc->apolar_asphere_prop ;
+				else if(pcur->pdesc->apolar_asphere_prop < nas_apolp_m)
+					nas_apolp_m = pcur->pdesc->apolar_asphere_prop;
+			}
 
 			my_free(pocket_atoms) ;
 			my_free(tab_vert) ;
@@ -534,14 +568,30 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 			cur = cur->next ;
 		}
 
-		/** Normalisation of flexibility between pockets, with the most flexible
-		    pocket as reference... Remember, flexibility is very abusive, as we 
-			just sum the b-factor of all atoms... */
+		/** Perform normalisation, so that the maximum value of a given
+			descriptor become 1 and the minimum value 0. This way, each
+			descriptor is normalized and take into account relative differences
+			between pockets. To do so, we use the simple formula:
+			Dnorm = (D - Dmin) / (Dmax - Dmin)
+			with Dmin (resp. dmax) being the minimum (resp. maximum) value of
+			the descriptor D observed in all detected pockets.
+
+			Once done, we can score the pocket. */
 		cur = pockets->first ;
 		while(cur) {
 			pcur = cur->pocket ;
-			pcur->pdesc->flex /= max_flex ;
+			/* Calculate normalized descriptors */
+			pcur->pdesc->mean_loc_hyd_dens_norm =
+				(pcur->pdesc->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
 
+			pcur->pdesc->flex = (pcur->pdesc->flex - flex_m) / (flex_M - flex_m) ;
+			pcur->pdesc->nas_norm = (float) (pcur->pdesc->nb_asph - nas_m) /
+									(float) (nas_M - nas_m) ;
+			pcur->pdesc->prop_asapol_norm = 
+				(pcur->pdesc->apolar_asphere_prop - nas_apolp_m)
+				/ (nas_apolp_M - nas_apolp_m);
+
+			/* Score the pocket */
 			pcur->score = score_pocket2(pcur->pdesc) ;
 
 			cur = cur->next ;

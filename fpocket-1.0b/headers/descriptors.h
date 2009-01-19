@@ -51,20 +51,31 @@
 
 typedef struct s_desc 
 {
-	float hydrophobicity_score,		/* Hydropathie score - for each aa */
-		  volume_score,				/* Volume score - for each aa */
-		  volume,					/* Pocket volume */
-		  flex,						/* Flexibility - based on B factors */
-		  prop_polar_atm,			/* Proportion of polar atoms */
-		  mean_asph_ray,			/* Mean alpha sphere radius */
-		  masph_sacc,	/* Mean alpha sphere solvent accessibility */
-		  apolar_asphere_prop,		/* Proportion of apolar alpha spheres */
-		  mean_loc_hyd_dens ;		/* Mean local hydrophobic density (from alpha spheres) */
+	float hydrophobicity_score, /* Hydropathie score - for each aa */
+              volume_score,         /* Volume score - for each aa */
+              volume,               /* Pocket volume */
+              prop_polar_atm,       /* Proportion of polar atoms */
+              mean_asph_ray,        /* Mean alpha sphere radius */
+              masph_sacc,           /* Mean alpha sphere solvent accessibility */
+              apolar_asphere_prop,  /* Proportion of apolar alpha spheres */
+              mean_loc_hyd_dens,    /* Mean local hydrophobic density (from alpha spheres) */
+                
+              /* The following descriptors are all normalized using observed
+                 values among all pocket found by the algorithm. These
+                 are not set in descriptor.c, but in pocket.c as we have to check
+                 all pocket first to store boundaries of the descriptor to
+                 normalize. */
+
+              flex,                  /* Normalized flexibility - based on B factors - ABUSIVE */
+              mean_loc_hyd_dens_norm,/* Normalized mean local hydrophobic density */
+              prop_asapol_norm,      /* Normalized proportion of apolar alphasphere */
+              nas_norm               /* Normalized number of alpha sphere */
+        ;
 	
-	int aa_compo[20] ;				/* Absolute amino acid composition */
-	int nb_asph,					/* Number of alpha spheres */
-		polarity_score,				/* Polarity score (based on amino acids properties ; see aa.c & aa.h) */
-		charge_score ;				/* Sum of all net charges at pH = 7 (see aa.c & aa.h) */
+	int aa_compo[20] ;	/* Absolute amino acid composition */
+	int nb_asph,		/* Number of alpha spheres */
+            polarity_score,	/* Polarity score (based on amino acids properties ; see aa.c & aa.h) */
+            charge_score ;	/* Sum of all net charges at pH = 7 (see aa.c & aa.h) */
 
 } s_desc ;
 

@@ -58,15 +58,21 @@
 #define M_DP_POCKET   2
 #define M_DP_POCETLIG 3
 
-#define M_DP_OUTP_HEADER "pdb ligand overlap lig_vol pocket_vol nb_alpha_spheres mean_asph_ray mean_asph_solv_acc apolar_asphere_prop mean_loc_hyd_dens hydrophobicity_score volume_score polarity_score charge_score flex prop_polar_atm"
+#define M_DP_OUTP_HEADER "pdb lig overlap PP-crit PP-dst lig_vol pock_vol nb_AS nb_AS_norm mean_as_ray mean_as_solv_acc apol_as_prop apol_as_prop_norm mean_loc_hyd_dens mean_loc_hyd_dens_norm hydrophobicity_score volume_score polarity_score charge_score flex prop_polar_atm"
 
-#define M_DP_OUTP_FORMAT "%s %s %6.2f %8.2f %8.2f %5d %5.2f %5.2f %4.2f %6.2f %8.2f %6.2f %4d %4d %5.2f %6.2f"
-#define M_DP_OUTP_VAR(fc, l, ovlp, lv, d) fc, l, ovlp, lv, d->volume, d->nb_asph, \
-									 d->mean_asph_ray, \
-									 d->masph_sacc, d->apolar_asphere_prop, \
-									 d->mean_loc_hyd_dens, d->hydrophobicity_score, \
-									 d->volume_score, d->polarity_score, d->charge_score, \
-									 d->flex, d->prop_polar_atm
+#define M_DP_OUTP_FORMAT "%s %s %6.2f %2d %3.2f %8.2f %8.2f %5d %3.2f %5.2f %5.2f %4.2f %3.2f %6.2f %3.2f %8.2f %6.2f %4d %4d %5.2f %6.2f"
+#define M_DP_OUTP_VAR(fc, l, ovlp, status, dst, lv, d) fc, l, ovlp, status, dst, lv, \
+                                          d->volume, \
+                                          d->nb_asph, d->nas_norm,\
+					  d->mean_asph_ray, \
+					  d->masph_sacc, \
+                                          d->apolar_asphere_prop, \
+                                          d->prop_asapol_norm, \
+					  d->mean_loc_hyd_dens, \
+                                          d->mean_loc_hyd_dens_norm, \
+                                          d->hydrophobicity_score, \
+					  d->volume_score, d->polarity_score, d->charge_score, \
+					  d->flex, d->prop_polar_atm
 
 /* ------------------------------PROTOTYPES-----------------------------------*/
 
@@ -78,6 +84,6 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 						  int nal, s_dparams *par, int *nai, s_desc *desc) ;
 
 void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, 
-					   float ovlp, FILE *f) ;
+                       float ovlp, float dst, FILE *f) ;
 
 #endif

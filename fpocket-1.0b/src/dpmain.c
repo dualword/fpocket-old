@@ -67,7 +67,7 @@
 int main(int argc, char *argv[])
 {
 	s_dparams *par = get_dpocket_args(argc, argv) ;
-	print_dparams(par, stdout) ;
+	//print_dparams(par, stdout) ;
 
 	dpocket(par) ;
 

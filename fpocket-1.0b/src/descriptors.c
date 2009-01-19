@@ -18,6 +18,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	14-01-09	(v)  Added some normalized descriptors
 ##	28-11-08	(v)  Comments UTD + relooking + mean_asph_ray set to float -_-'
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -30,7 +31,6 @@
 ##		might not be relevant at all anyway...)
 ##	(v) Possible improvement:
 ##		Use the sorted structure to calculate the apolar density.
-##	(v) Check and update if necessary comments of each function!!
 
 */
 
@@ -106,12 +106,17 @@ void reset_s_desc(s_desc *desc)
     desc->hydrophobicity_score = 0.0 ;
 	desc->volume_score = 0.0 ;
 	desc->volume = 0.0 ;
-	desc->flex = 0.0 ;
 	desc->prop_polar_atm = 0.0 ;
 	desc->mean_asph_ray = 0.0 ;
 	desc->masph_sacc = 0.0 ;
 	desc->apolar_asphere_prop = 0.0 ;
 	desc->mean_loc_hyd_dens = 0.0 ;
+
+
+	desc->flex = 0.0 ;
+	desc->nas_norm = 0 ;
+	desc->prop_asapol_norm = 0.0 ;
+	desc->mean_loc_hyd_dens_norm = -1.0 ;
 
 	desc->nb_asph = 0 ;
 	desc->polarity_score  = 0 ;

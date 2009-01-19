@@ -63,7 +63,7 @@
 #define M_MAX_FILE_NAME_LENGTH 300
 /* #define M_PAR_P_STATS_OUT 'o' */
 /* in order to get the atom set of the pocket, detect around x A of the ligand*/
-#define M_LIG_NEIG_DIST 4.0
+#define M_LIG_NEIG_DIST 3.0
 
 
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/

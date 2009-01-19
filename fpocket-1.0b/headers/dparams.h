@@ -75,6 +75,32 @@
 #define M_MIN_ASPH_RAY 2.8
 #define M_MAX_ASPH_RAY 10.0
 
+#define M_DP_USAGE "\
+\n-------------------\n\
+USAGE (dpocket):\n\
+\n\
+The program needs as input a file containing at each \n\
+line a pdb file name and a ligand code (3 letters).\n\
+The format of each line must be: {PATH/}2fej.pdb  LIG.\n\n\
+The ligand code is the resname of the ligand atoms in \n\
+the pdb file and has to separated by a tab from the \n\
+pdb structure in the input file.\n\n\
+See the manual for more information.\n\n\
+Example of command using default parameters:\n\
+\t./bin/dpocket -f file_path\n\n\
+Options: \n\
+\t-o string  : Prefix of the output file. (dpout) \n\
+\t             by default).\n\
+\t-e         : Use the first protein-ligand explicit \n\
+\t             interface definition (default). \n\
+\t-E         : Use the second protein-ligand explicit \n\
+\t             interface definition. \n\
+\t-d float   : Distance criteria for the choosen interface \n\
+               definition.\n\n\
+Options specific to fpocket are usable too.\n\
+See the manual/tutorial for mor information.\n\
+-------------------\n"
+
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 
 
