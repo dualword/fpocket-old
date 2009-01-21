@@ -77,7 +77,7 @@
 /* ------------------------------PROTOTYPES-----------------------------------*/
 
 void dpocket(s_dparams *par) ;
-void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par, 
+void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par, 
 				 FILE *f[3]) ;
 
 s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig, 

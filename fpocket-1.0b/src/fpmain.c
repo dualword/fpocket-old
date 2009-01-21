@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	19-01-09	(v)  Minor modif (print on the same line)
 ##	28-11-08	(v)  process_pdb added, list of pdb taken into account as input
 ##					 Comments UTD.
 ##	27-11-08	(v)  PDB file check moved here instead of fparams
@@ -81,8 +82,11 @@ int main(int argc, char *argv[])
 			int i ;
             for (i = 0 ; i < params->npdb ; i++) {
 				
-				printf("> Processing file %d / %d : %s\n", i, params->npdb, 
-														   params->pdb_lst[i]) ;
+				printf("> Protein %d / %d : %s", i, params->npdb,
+												   params->pdb_lst[i]) ;
+				if(i == params->npdb - 1) fprintf(stdout, "\n") ;
+				else fprintf(stdout, "\r") ;
+				fflush(stdout) ;
                 process_pdb(params->pdb_lst[i], params) ;
             }
 		}

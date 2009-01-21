@@ -105,55 +105,49 @@ float score_pocket(s_desc *pdesc)
 */
 float score_pocket2(s_desc *pdesc) 
 {
+	/*
+	Using m 3.0 M 6.0 D 2.0 i 40 we have for the training set this model
+	*/
 /*
- *	
-	double e_tmp = -14.835 + 0.29*(float)pdesc->nb_asph +
-							 0.52*(float)pdesc->mean_loc_hyd_dens-
-							 51.77*(float)pdesc->masph_sacc+
-							 10.678*(float)pdesc->mean_asph_ray;
-*/
-
-/*	
-	double e_tmp = -14.835 + 0.56*(float)pdesc->nb_asph +
-							 0.72*(float)pdesc->mean_loc_hyd_dens-
-							 59.77*(float)pdesc->masph_sacc+
-							 6.678*(float)pdesc->mean_asph_ray;
-*/
-	
 	double e_tmp = -14.835 + 0.56  *(float)pdesc->nb_asph +
 							 0.72  *(float)pdesc->mean_loc_hyd_dens-
 							 59.77 *(float)pdesc->masph_sacc+
 							 6.678 *(float)pdesc->mean_asph_ray;
-
-	/* Using m 3.0 M 5.0 D 1.9 i 30 we have the folliwing PLS model:*/
-/*
-	e_tmp =
-       -13.70752
-        +0.18241 * (float)pdesc->nb_asph
-        +0.86396 * (float)pdesc->nas_norm
-        +0.01992 * (float)pdesc->masph_sacc
-        -0.09540 * (float)pdesc->apolar_asphere_prop
-        +0.01710 * (float)pdesc->prop_asapol_norm
-        +0.33585 * (float)pdesc->mean_loc_hyd_dens
-        +0.37411 * (float)pdesc->mean_loc_hyd_dens_norm
-        -0.01719 * (float)pdesc->hydrophobicity_score
-        +1.71497 * (float)pdesc->polarity_score
-        -1.34576 * (float)pdesc->charge_score ;
 */
-
-
-	/* Using m 3.0 M 5.0 D 1.8 i 25 we have a PLS model of 4 component: */
-
 /*
-	e_tmp =
-       -26.96804
-       +21.50432 * (float)pdesc->nas_norm
-        +3.78199 * (float)pdesc->mean_loc_hyd_dens_norm
-        -3.85659 * (float)pdesc->prop_asapol_norm
-        +0.15392 * (float)pdesc->nb_asph
-        +0.45634 * (float)pdesc->mean_loc_hyd_dens
-        -7.88556 * (float)pdesc->apolar_asphere_prop ;
+	Perf:
+				  CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 60/83 - 63/88
+	PP holo : 77/90 - 77/88
+	PP apo  : 67/88
+	Cheng   : 70/80 - 65/95
+	Gold    : 66/91 - 68/89
 */
-		
+/*
+	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this model
+*/
+	e_tmp =
+        -7.09022
+       +23.31100 * (float)pdesc->nas_norm
+        -2.31088 * (float)pdesc->prop_asapol_norm
+        +9.12903 * (float)pdesc->mean_loc_hyd_dens_norm
+        +0.84644 * (float)pdesc->polarity_score
+        -0.63831 * (float)pdesc->charge_score ;
+/*
+	Perf:
+	Scoring function 1:
+
+			  CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 62/84 - 65/87
+	PP holo : 77/92 - 77/90
+	PP apo  : 65/90
+	Cheng   : 70/85 - 70/100
+	Gold    : 68/90 - 70/89
+*/
+	
 	return e_tmp ;
 }

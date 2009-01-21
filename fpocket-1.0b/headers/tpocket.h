@@ -49,7 +49,7 @@
 
 /* --------------------------------MACROS-------------------------------------*/
 
-#define M_DST_CRIT 4.0
+#define M_DST_CRIT 3.0
 
 /* A set of index, giving the position of each value in the tab used to
  * store them. In the src file, those statistics values are stored in a tab

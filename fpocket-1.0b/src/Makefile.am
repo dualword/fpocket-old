@@ -1,6 +1,6 @@
 
 # Compiler and linkers:
-CFLAGS = --pedantic -Wall -O2 -Wextra -Wwrite-strings -Wstrict-prototypes
+CFLAGS = -Wall -O2 -Wextra -Wwrite-strings -Wstrict-prototypes
 LDFLAGS = -fno-underscoring -lm
 
 # Targets: bin means that programs will be installed in /usr/local/bin

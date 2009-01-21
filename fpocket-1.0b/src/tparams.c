@@ -259,6 +259,12 @@ int add_list_data(char *str_list_file, s_tparams *par)
 			n = par->nfiles ;
 			status = sscanf(buf, "%s\t%s\t%s", apobuf, complexbuf, ligbuf) ;
 
+			if(strlen(ligbuf) == 1) {
+				ligbuf [2] = ligbuf[0] ;
+				ligbuf [0] = ' ' ;
+				ligbuf [1] = ' ' ;
+			}
+
 			if(status < 3) {
 				fprintf(stderr, "! Skipping row '%s' with bad format (status %d).\n", buf, status) ;
 			}
@@ -306,7 +312,8 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 		f = fopen_pdb_check_case(complex, "r") ;
 		if(f) {
 			l = strlen(ligan) ;
-			if(ligan && l >= 2) {
+			if(ligan && l >= 1) {
+
 				for(i = 0 ; i < l ; i++) ligan[i] = toupper(ligan[i]) ;
 
 				nm1 = par->nfiles ;

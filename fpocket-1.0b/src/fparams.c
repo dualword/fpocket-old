@@ -145,7 +145,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 	if(pdb_lst != NULL) {
 		FILE *f = fopen(pdb_lst, "r") ;
 		if(f != NULL) {
-		/* Count the number of lines */
+			/* Count the number of lines */
 			int n = 0 ;
 			char cline [M_MAX_PDB_NAME_LEN + 1] ;
 			
@@ -155,12 +155,11 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 				}
 			}
 			fclose(f) ;
-			printf("%d\n", n) ;
 			if(n == 0) {
 				return par ;
 			}
 			
-		/* Allocate memory and store each line */
+			/* Allocate memory and store each line */
 			par->pdb_lst = (char **)my_malloc(n*sizeof(char*)) ;
 
 			f = fopen (pdb_lst, "r") ; 

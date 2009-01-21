@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	19-01-09	(v)  Minor modif (print on the same line)
 ##	28-11-08	(v)  Relooking + comments UTD
 ##	27-11-08	(v)  Write fpocket output if asked + relooking
 ##	15-10-08	(v)  Fixed bad count when PDB file not found.
@@ -94,8 +95,12 @@ void test_fpocket(s_tparams *par)
 		for(i = 0 ; i < par->nfiles ; i++) {
 			strcpy(par->fpar->pdb_path, par->fapo[i]) ;
 			status [i] = test_set(par, i, ddata, idata) ;
-			fprintf(stdout, "> %3d : %s output code %d\n", i+1, par->fapo[i],
+			fprintf(stdout, "> %3d : %s output code %d", i+1, par->fapo[i],
 														   status [i]) ;
+			if(i == par->nfiles - 1) fprintf(stdout, "\n") ;
+			else fprintf(stdout, "\r") ;
+			fflush(stdout) ;
+			
 			if(status[i] == M_OK) N++ ;
 		}
 
@@ -296,8 +301,8 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	  * atoms contacted by voronoi vertices detected by fpocket on the complexe 
 	  * form and then detect which atoms are involved in the interaction.
 	 **/
-	s_pdb *apdb = rpdb_open(fa, lig, M_DONT_KEEP_LIG) ;	
-	s_pdb *cpdb = rpdb_open(fc, lig, M_KEEP_LIG) ;
+	s_pdb *apdb = rpdb_open(fa, lig, M_DONT_KEEP_LIG) ;
+	s_pdb *cpdb = rpdb_open(fc, lig, M_KEEP_LIG);
 	s_pdb *cpdb_nolig = rpdb_open(fc, lig, M_DONT_KEEP_LIG) ;
 	
 	/* Check that both pdb files are opened */
@@ -313,8 +318,8 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	/* Check now if the ligand have been found */
 	if(cpdb->natm_lig <= 0) {
 		
-		fprintf(stderr, "! Ligand %s not found in the complex %s (apo %s)...\n", 
-						lig, fc, fa) ;
+		fprintf(stderr, "! Ligand '%s' not found in the complex %s...\n",
+						lig, fc) ;
 		
 		return M_LIGNOTFOUND ;
 	}
@@ -345,11 +350,11 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 											 par->fpar->nb_mcv_iter);
 
 	/* Get atoms involved in the actual pocket */
-	accpck = get_actual_pocket_DEPRECATED(cpdb, M_DST_CRIT, &naccpck) ;
+	accpck = get_actual_pocket_DEPRECATED(cpdb, 4.0, &naccpck) ;
 	accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
-	if (naccpck <= 0 || naccpck2 <= 0) {
-		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %d %d\n", naccpck, 
-						naccpck2) ; 
+	if (naccpck2 <= 0) {
+		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %s %d\n", fa,
+						naccpck2) ;
 	}
 
 	/* Calculate evaluation criterias */
@@ -440,9 +445,11 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
 	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
 										lig_dist_crit, nb_atm) ;
 	if(*nb_atm <= 0) {
+/*
 		fprintf(stderr, 
 				"! No neighbor found for the ligand at %fA, trying with %fA\n", 
 				lig_dist_crit, lig_dist_crit+0.5) ;
+*/
 		
 		if(alneigh) my_free(alneigh) ;
 
@@ -451,18 +458,22 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
 									lig_dist_crit+0.5, nb_atm) ;
 
 		if(*nb_atm <= 0) {
+/*
 			fprintf(stderr, 
 					"! No neighbor found for the ligand at %fA, trying with %fA\n", 
 					lig_dist_crit+0.5, lig_dist_crit+1.0) ;
+*/
 			
 			if(alneigh) my_free(alneigh) ;
 
 			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
 										lig_dist_crit+2.0, nb_atm) ;
 			if(*nb_atm <= 0) {
+/*
 				fprintf(stderr, 
 						"! No neighbor found for the ligand at %fA !!!?!\n", 
 						lig_dist_crit+2.0) ;
+*/
 				if(alneigh) my_free(alneigh) ;
 				alneigh = NULL ;
 			}

@@ -51,6 +51,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	19-01-09	(v)  Minor change (input file name no longer const)
 ##	14-01-09	(v)  Added some normalized descriptors and pockerpicker criteria
 ##	01-04-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
@@ -137,6 +138,10 @@ void dpocket(s_dparams *par)
 						i+1, par->nfiles, par->fcomplex[i]) ;
 
 				desc_pocket(par->fcomplex[i], par->ligs[i], par, fout) ;
+				if(i == par->nfiles - 1) fprintf(stdout,"\n") ;
+				else fprintf(stdout,"\r") ;
+
+				fflush(stdout) ;
 			}
 
 			for( i = 0 ; i < 3 ; i++ ) fclose(fout[i]) ;
@@ -173,7 +178,7 @@ void dpocket(s_dparams *par)
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par, 
+void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par, 
 				 FILE *f[3]) 
 {
 	c_lst_pockets *pockets = NULL ;
@@ -192,7 +197,7 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 /*
 	fprintf(stdout, "dpocket: Loading pdb... ") ; fflush(stdout) ;
 */
-	s_pdb *pdb_cplx_l = rpdb_open(fcomplexe, ligname, M_KEEP_LIG) ;
+	s_pdb *pdb_cplx_l = rpdb_open(fcomplexe, ligname, M_KEEP_LIG);
 	s_pdb *pdb_cplx_nl = rpdb_open(fcomplexe, ligname, M_DONT_KEEP_LIG) ;
 	
 	if(pdb_cplx_l && pdb_cplx_nl && pdb_cplx_l->natm_lig > 0) {
@@ -227,8 +232,7 @@ void desc_pocket(const char fcomplexe[], const char ligname[], s_dparams *par,
 			dropSmallNpolarPockets(pockets, par->fpar);
 			set_pockets_descriptors(pockets);
 
-			fprintf(stdout, " %d pockets.\r", pockets->n_pockets) ;
-			fflush(stdout);
+			fprintf(stdout, " %d pockets.", pockets->n_pockets) ;
 			/* Writing output */
 			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 
 			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, 0.0, f[0]) ;

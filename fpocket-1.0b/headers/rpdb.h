@@ -87,8 +87,10 @@ typedef struct s_pdb
 
 /* ------------------------------ PUBLIC FUNCTIONS ---------------------------*/
 
-s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig) ;
+s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig) ;
 void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) ;
+
+void rpdb_extract_atm_resname(char *pdb_line, char *res_name) ;
 
 void rpdb_extract_cryst1(char *rstr, float *alpha, float *beta, float *gamma, 
 						 float *a, float *b, float *c) ;

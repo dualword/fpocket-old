@@ -31,6 +31,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	19-01-09	(v)  Open pdb file checking the case
 ##  28-11-08    (v)  Comments UTD + minor corrections
 ##  20-11-08    (p)  Adding support of reading PDB multiple occupancies (only 
 ##					 the first is read) & MSE added to kept HETATM list
@@ -193,9 +194,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	*alt_loc = pdb_line[16] ;
 	
 	/* Residue name */
-	strncpy(res_name, pdb_line + 17, 4);
-	res_name[4] = '\0';
-	str_trim(res_name); /* remove spaces from the resname */
+	rpdb_extract_atm_resname(pdb_line, res_name) ;
 
 	/* Chain name */
 	chain[0] = pdb_line[21];
@@ -268,9 +267,10 @@ void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 /* Position: 012345678901234567890 */
 /* Record:   0 11.92           N   */
 	
-/* Residue name */	strncpy(res_name, pdb_line + 17, 4);
+/* Residue name */
+	strncpy(res_name, pdb_line + 17, 4);
 	res_name[4] = '\0';
-	str_trim(res_name); /* remove spaces from the resname */
+	/*str_trim(res_name); */
 }
 
 /**-----------------------------------------------------------------------------
@@ -403,7 +403,7 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 	s_pdb: data containing PDB info.
    -----------------------------------------------------------------------------
 */
-s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
+s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 {
 	s_pdb *pdb = NULL ;
 
@@ -418,7 +418,7 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 	pdb = (s_pdb *) my_malloc(sizeof(s_pdb)) ; ;
 	
 	/* Open the PDB file in read-only mode */
-	pdb->fpdb = fopen(fpath, "r");
+	pdb->fpdb = fopen_pdb_check_case(fpath, "r");
 	if (!pdb->fpdb) {
 		my_free(pdb) ;
 		fprintf(stderr, "! File %s does not exist\n", fpath) ;
@@ -490,7 +490,6 @@ s_pdb* rpdb_open(const char *fpath, const char *ligan, const int keep_lig)
 	pdb->natoms = natoms ;
 	pdb->nhetatm = nhetatm ;
 	pdb->natm_lig = natm_lig ;
-
 	rewind(pdb->fpdb) ;
 
 	return pdb ;
