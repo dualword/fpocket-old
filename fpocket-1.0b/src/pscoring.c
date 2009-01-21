@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	21-01-09	(v) Added new scoring function
 ##	28-11-08	(v) Created + Comments UTD
 ##	
 ## ----- TODO or SUGGESTIONS
@@ -108,12 +109,7 @@ float score_pocket2(s_desc *pdesc)
 	/*
 	Using m 3.0 M 6.0 D 2.0 i 40 we have for the training set this model
 	*/
-/*
-	double e_tmp = -14.835 + 0.56  *(float)pdesc->nb_asph +
-							 0.72  *(float)pdesc->mean_loc_hyd_dens-
-							 59.77 *(float)pdesc->masph_sacc+
-							 6.678 *(float)pdesc->mean_asph_ray;
-*/
+
 /*
 	Perf:
 				  CPP     OVL
@@ -125,20 +121,17 @@ float score_pocket2(s_desc *pdesc)
 	Cheng   : 70/80 - 65/95
 	Gold    : 66/91 - 68/89
 */
+	double e_tmp = -14.835 + 0.56  *(float)pdesc->nb_asph +
+							 0.72  *(float)pdesc->mean_loc_hyd_dens-
+							 59.77 *(float)pdesc->masph_sacc+
+							 6.678 *(float)pdesc->mean_asph_ray;
+
 /*
 	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this model
 */
-	e_tmp =
-        -7.09022
-       +23.31100 * (float)pdesc->nas_norm
-        -2.31088 * (float)pdesc->prop_asapol_norm
-        +9.12903 * (float)pdesc->mean_loc_hyd_dens_norm
-        +0.84644 * (float)pdesc->polarity_score
-        -0.63831 * (float)pdesc->charge_score ;
 /*
 	Perf:
 	Scoring function 1:
-
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
 	------------------------
@@ -148,6 +141,89 @@ float score_pocket2(s_desc *pdesc)
 	Cheng   : 70/85 - 70/100
 	Gold    : 68/90 - 70/89
 */
+
+	e_tmp =
+        -7.09022
+       +23.31100 * (float)pdesc->nas_norm
+        -2.31088 * (float)pdesc->prop_asapol_norm
+        +9.12903 * (float)pdesc->mean_loc_hyd_dens_norm
+        +0.84644 * (float)pdesc->polarity_score
+        -0.63831 * (float)pdesc->charge_score ;
+/*
+	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this PLS model
+	having 5 components
+*/
+
+/*
+	Perf:
+	Scoring function 1:
+			  CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 62/86 - 65/89
+	PP holo : 79/92 - 79/90
+	PP apo  : 69/90
+	Cheng   : 70/85 - 70/100
+	Gold    : 69/91 - 71/90
+*/
+	e_tmp =
+        -0.61113
+       +30.14723 * (float)pdesc->nas_norm
+        -1.70018 * (float)pdesc->masph_sacc
+        -3.42098 * (float)pdesc->prop_asapol_norm
+       +10.97269 * (float)pdesc->mean_loc_hyd_dens_norm
+        -0.00041 * (float)pdesc->hydrophobicity_score
+        +1.17414 * (float)pdesc->polarity_score
+        -1.97004 * (float)pdesc->as_density ;
+/*
+	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this PLS model
+	having 4 components
+*/
+/*
+	Perf:
+	Scoring function 1:
+			  CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 62/86 - 65/89
+	PP holo : 79/92 - 79/90
+	PP apo  : 69/90
+	Cheng   : 70/85 - 70/100
+	Gold    : 69/90 - 71/90
+*/
+
+	e_tmp =
+        -1.50335
+       +30.27950 * (float)pdesc->nas_norm
+        -3.40435 * (float)pdesc->prop_asapol_norm
+       +11.04704 * (float)pdesc->mean_loc_hyd_dens_norm
+        +1.18610 * (float)pdesc->polarity_score
+        -2.01214 * (float)pdesc->as_density ;
 	
+/*
+	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this PLS model
+	having 3 components
+*/
+
+/*
+	Perf:
+	Scoring function 1:
+			  CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 60/86 - 64/89
+	PP holo : 81/92 - 81/90
+	PP apo  : 67/90
+	Cheng   : 65/85 - 70/100
+	Gold    : 68/90 - 69/89
+*/
+	e_tmp =
+       -10.94643
+       +12.43332 * (float)pdesc->nas_norm
+        +6.26295 * (float)pdesc->prop_asapol_norm
+       +11.48185 * (float)pdesc->mean_loc_hyd_dens_norm
+        +1.74043 * (float)pdesc->polarity_score
+        -1.01603 * (float)pdesc->as_density ;
+
 	return e_tmp ;
 }

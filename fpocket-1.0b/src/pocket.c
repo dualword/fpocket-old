@@ -15,6 +15,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	21-01-09	(v)  Normalized descriptors calculation moved in a single fct
+##					 Some variable renamed (refractored)
 ##	14-01-09	(v)  Added some normalized descriptors
 ##  28-11-08	(v)  Scoring and sorting moved out of this file + minor 
 ##					 restructuration + comments almost UTD
@@ -503,13 +505,6 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 {
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
-
-	/* Some boundaries to help normalisation */
-	float flex_M = 0.0, flex_m = 1.0,
-		  nas_apolp_M = 0.0, nas_apolp_m = 1.0,
-		  mlhd_M = 1000.0, mlhd_m = 0.0;
-	
-	int nas_M = 0, nas_m = 1000 ;
 	
 	int natms = 0, i ;
 
@@ -532,10 +527,71 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 
 			/* Get atoms contacted by vertices, and calculate descriptors */
 			s_atm **pocket_atoms = get_pocket_contacted_atms(pcur, &natms) ;
+
+			/* Calculate descriptors*/
 			set_descriptors(pocket_atoms, natms, tab_vert,
 							pcur->v_lst->n_vertices, pcur->pdesc) ;
 
+			my_free(pocket_atoms) ;
+			my_free(tab_vert) ;
 
+			cur = cur->next ;
+		}
+
+		/* Set normalized descriptors */
+		set_normalized_descriptors(pockets) ;
+
+		/* Score all pockets */
+		cur = pockets->first ;
+		while(cur) {
+			cur->pocket->score = score_pocket2(cur->pocket->pdesc) ;
+
+			cur = cur->next ;
+		}
+	}
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	set_normalized_descriptors
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	 Perform normalisation for some descriptors, so that the maximum value of a
+	 given descriptor become 1 and the minimum value 0. This way, each descriptor
+	 is normalized and take into account relative differences between pockets.
+	 To do so, we use the simple formula:
+		Dnorm = (D - Dmin) / (Dmax - Dmin)
+	 with Dmin (resp. dmax) being the minimum (resp. maximum) value of the
+ 	 descriptor D observed in all detected pockets.
+
+     WARNING: It is assumed that basic descriptors have been normalized before
+	 calling this function!
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ c_lst_pockets *pockets : The list of pockets
+   -----------------------------------------------------------------------------
+   ## RETURN:
+    void: s_desc is filled
+   -----------------------------------------------------------------------------
+*/
+void set_normalized_descriptors(c_lst_pockets *pockets)
+{
+	node_pocket *cur = NULL ;
+	s_pocket *pcur = NULL ;
+
+	/* Some boundaries to help normalisation */
+	float flex_M = 0.0, flex_m = 1.0,
+		  nas_apolp_M = 0.0, nas_apolp_m = 1.0,
+		  mlhd_M = 1000.0, mlhd_m = 0.0;
+
+	int nas_M = 0, nas_m = 1000 ;
+
+	if(pockets && pockets->n_pockets > 0) {
+		cur = pockets->first ;
+		/* Perform a first loop to calculate atom and vertice based descriptors */
+		while(cur) {
+			pcur = cur->pocket ;
 			/* Initialize boundaries if it's the first turn */
 			if(cur == pockets->first) {
 				flex_M = flex_m = pcur->pdesc->flex ;
@@ -555,28 +611,17 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 
 				if(pcur->pdesc->nb_asph > nas_M) nas_M = pcur->pdesc->nb_asph ;
 				else if(pcur->pdesc->nb_asph < nas_m) nas_m = pcur->pdesc->nb_asph ;
-				
+
 				if(pcur->pdesc->apolar_asphere_prop > nas_apolp_M)
 					nas_apolp_M = pcur->pdesc->apolar_asphere_prop ;
 				else if(pcur->pdesc->apolar_asphere_prop < nas_apolp_m)
 					nas_apolp_m = pcur->pdesc->apolar_asphere_prop;
 			}
 
-			my_free(pocket_atoms) ;
-			my_free(tab_vert) ;
-
 			cur = cur->next ;
 		}
 
-		/** Perform normalisation, so that the maximum value of a given
-			descriptor become 1 and the minimum value 0. This way, each
-			descriptor is normalized and take into account relative differences
-			between pockets. To do so, we use the simple formula:
-			Dnorm = (D - Dmin) / (Dmax - Dmin)
-			with Dmin (resp. dmax) being the minimum (resp. maximum) value of
-			the descriptor D observed in all detected pockets.
-
-			Once done, we can score the pocket. */
+		/* Perform normalisation */
 		cur = pockets->first ;
 		while(cur) {
 			pcur = cur->pocket ;
@@ -587,17 +632,15 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 			pcur->pdesc->flex = (pcur->pdesc->flex - flex_m) / (flex_M - flex_m) ;
 			pcur->pdesc->nas_norm = (float) (pcur->pdesc->nb_asph - nas_m) /
 									(float) (nas_M - nas_m) ;
-			pcur->pdesc->prop_asapol_norm = 
+			pcur->pdesc->prop_asapol_norm =
 				(pcur->pdesc->apolar_asphere_prop - nas_apolp_m)
 				/ (nas_apolp_M - nas_apolp_m);
-
-			/* Score the pocket */
-			pcur->score = score_pocket2(pcur->pdesc) ;
 
 			cur = cur->next ;
 		}
 	}
 }
+
 
 /**
  ================================================================================
@@ -1111,15 +1154,9 @@ void reset_pocket(s_pocket *pocket)
 	pocket->rank = -1 ;
 
 	pocket->score = 0.0 ;
-	pocket->corresp = -2.0 ;
-	pocket->corresp2 = -2.0 ;
+	pocket->ovlp = -2.0 ;
+	pocket->ovlp2 = -2.0 ;
 	pocket->vol_corresp = -2.0 ;
-	pocket->nbv_nbl = -2.0 ;
-	pocket->nbv_nbl2 = -2.0 ;
-	pocket->apol_surface = 0.0;
-	pocket->total_surface = 0.0;
-	pocket->curvature = 0.0;
-	pocket->drug_score = 0.0;
 
 	pocket->nAlphaPol = 0 ;
 	pocket->nAlphaApol = 0 ;
@@ -1209,7 +1246,7 @@ void print_pocket(FILE *f, s_pocket *pocket)
 	if(pocket) {
 		fprintf(f, "\n## POCKET %d ##\n",pocket->v_lst->first->vertice->resid);
 		
-		if(pocket->corresp > -1.0) fprintf(f, "\t Correspondance: %f\n", pocket->corresp) ;
+		if(pocket->ovlp > -1.0) fprintf(f, "\t Correspondance: %f\n", pocket->ovlp) ;
 		if(pocket->vol_corresp > -1.0) fprintf(f, "\t Volume Correspondance: %f\n", pocket->vol_corresp) ;
 		fprintf(f, "\t 0  - Pocket Score:                %.4f\n", pocket->score) ;
 		fprintf(f, "\t 1  - Number of Voronoi vertices:  %d\n", pocket->pdesc->nb_asph) ;

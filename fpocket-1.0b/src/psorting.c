@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	28-11-08	(v) Corresp renamed to ovlp
 ##	28-11-08	(v) Created + Comments UTD
 ##	
 ## ----- TODO or SUGGESTIONS
@@ -271,7 +272,7 @@ int compare_pockets_score(const node_pocket *p1, const node_pocket *p2)
 */
 int compare_pockets_corresp(const node_pocket *p1, const node_pocket *p2) 
 {
-	if(p1->pocket->corresp < p2->pocket->corresp) return 1 ;
+	if(p1->pocket->ovlp < p2->pocket->ovlp) return 1 ;
 	else return -1 ;
 }
 

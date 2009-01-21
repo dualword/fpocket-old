@@ -18,7 +18,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##	14-01-09	(v)  Added some normalized descriptors
+##	21-01-09	(v)  Density descriptor Added
+##	14-01-09	(v)  Some normalized descriptors added
 ##	28-11-08	(v)  Comments UTD + relooking + mean_asph_ray set to float -_-'
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -111,7 +112,7 @@ void reset_s_desc(s_desc *desc)
 	desc->masph_sacc = 0.0 ;
 	desc->apolar_asphere_prop = 0.0 ;
 	desc->mean_loc_hyd_dens = 0.0 ;
-
+	desc->as_density = 0.0 ;
 
 	desc->flex = 0.0 ;
 	desc->nas_norm = 0 ;
@@ -160,43 +161,71 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	set_atom_based_descriptors(atoms, natoms, desc) ;
 
 	/* Setting vertice-based descriptors */
-	if(tab_vert) {
+	if(! tab_vert) return ;
 
-		float d = 0.0,
-			  masph_sacc = 0.0, /* Mean alpha sphere solvent accessibility */
-			  mean_ashape_radius = 0.0 ;
+	float d = 0.0, vx, vy, vz, vrad,
+		  masph_sacc = 0.0, /* Mean alpha sphere solvent accessibility */
+		  mean_ashape_radius = 0.0,
+		  as_density = 0.0 ;
 
-		int i,
-			nAlphaApol = 0 ;
+	int i, j,
+		napol_neigh = 0,
+		nAlphaApol = 0 ;
 
-		s_vvertice *vcur = NULL ;
-		desc->mean_loc_hyd_dens = 0.0 ;
+	s_vvertice *vcur = NULL,
+			   *vc = NULL ;
+	desc->mean_loc_hyd_dens = 0.0 ;
 
-		for(i = 0 ; i < nvert ; i++) {
-			vcur = tab_vert[i] ;
+	for(i = 0 ; i < nvert ; i++) {
+		vcur = tab_vert[i] ;
+		vx = vcur->x ; vy = vcur->y ; vz = vcur->z ; vrad = vcur->ray ;
 
-			if(vcur->type == M_APOLAR_AS) {
-				desc->mean_loc_hyd_dens += (float) get_vert_apolar_density(
-														tab_vert, nvert, vcur);
-				nAlphaApol += 1 ;
+		/* Calculate apolar density if necessary, and pocket density */
+		j = 0 ;
+		if(vcur->type == M_APOLAR_AS) {
+			napol_neigh = 0 ;
+			for(j = 0 ; j < nvert ; j++) {
+				vc = tab_vert[j] ;
+
+				/* Increment the number of apolar neighbor */
+				if(vc != vcur && vc->type == M_APOLAR_AS &&
+				   dist(vx, vy, vz, vc->x, vc->y, vc->z)-(vc->ray + vrad) <= 0.) {
+					napol_neigh += 1 ;
+				}
+
+				/* Update density by the way... */
+				if(j > i) {
+					as_density += dist(vcur->x, vcur->y, vcur->z,
+											vc->x, vc->y, vc->z) ;
+				}
 			}
-			mean_ashape_radius += vcur->ray ;
-
-			/* Estimating solvent accessibility of the sphere */
-			d = dist(vcur->x, vcur->y, vcur->z, 
-					 vcur->bary[0], vcur->bary[1], vcur->bary[2]) ;
-			masph_sacc += d/vcur->ray ;
+			desc->mean_loc_hyd_dens += (float) napol_neigh ;
+			nAlphaApol += 1 ;
+		}
+		else {
+			/* Update density */
+			for(j = i+1 ; j < nvert ; j++) {
+				as_density += dist(vcur->x, vcur->y, vcur->z,
+								   tab_vert[j]->x, tab_vert[j]->y, tab_vert[j]->z) ;
+			}
 		}
 
-		if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
-		else desc->mean_loc_hyd_dens= 0.0;
-		
-		desc->apolar_asphere_prop = (float)nAlphaApol / (float)nvert ;
-		desc->masph_sacc =  masph_sacc / nvert ;
-		desc->mean_asph_ray = mean_ashape_radius / (float)nvert ;
-		desc->nb_asph = nvert ;
+		mean_ashape_radius += vcur->ray ;
+		/* Estimating solvent accessibility of the sphere */
+		d = dist(vcur->x, vcur->y, vcur->z,
+				 vcur->bary[0], vcur->bary[1], vcur->bary[2]) ;
+		masph_sacc += d/vcur->ray ;
 	}
 
+	if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
+	else desc->mean_loc_hyd_dens= 0.0;
+
+	desc->apolar_asphere_prop = (float)nAlphaApol / (float)nvert ;
+	desc->masph_sacc =  masph_sacc / nvert ;
+	desc->mean_asph_ray = mean_ashape_radius / (float)nvert ;
+	desc->nb_asph = nvert ;
+	desc->as_density = as_density / ((nvert*nvert - nvert) * 0.5) ;
+		
 	desc->volume = get_verts_volume_ptr(tab_vert, nvert, 3000) ;
 }
 

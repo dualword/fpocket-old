@@ -56,26 +56,19 @@
 
 typedef struct s_pocket
 {
-	s_desc *pdesc ;
+    s_desc *pdesc ;
 
-	c_lst_vertices *v_lst ;
-
-	float score,			/* Discretize different parts of the score */
-		  corresp,			/* Atomic overlap	*/
-		  corresp2,
-		  vol_corresp,		/* Volume overlap */
-		  nbv_nbl,			/* Nb atom neighbours of the pocket / nb atoms neighbor of ligans */
-		  nbv_nbl2,			
-		  apol_surface,
-		  total_surface,
-		  curvature,
-		  drug_score,
-		  bary[3] ;			/* Barycenter of the pocket */
-
-	int rank,				/* Rank of the pocket */
-		size,
-		nAlphaApol,			/* Number of apolar alpha spheres*/
-		nAlphaPol ;			/* Number of polar alpha spheres */
+    c_lst_vertices *v_lst ;
+    float score,	/* Discretize different parts of the score */
+	  ovlp,         /* Atomic overlap	*/
+	  ovlp2,
+	  vol_corresp,	/* Volume overlap */
+	  bary[3] ;			/* Barycenter of the pocket */
+    
+    int rank,				/* Rank of the pocket */
+	size,
+	nAlphaApol,			/* Number of apolar alpha spheres*/
+	nAlphaPol ;			/* Number of polar alpha spheres */
 
 } s_pocket ; 
 
@@ -110,6 +103,7 @@ void addStats(int resid, int size, int **stats,int *lenStats);
 
 /* DESCRIPTOR FUNCTIONS */
 void set_pockets_descriptors(c_lst_pockets *pockets) ;
+void set_normalized_descriptors(c_lst_pockets *pockets) ;
 void set_pockets_bary(c_lst_pockets *pockets) ;
 s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms) ;
 

@@ -247,6 +247,7 @@ void test_fpocket(s_tparams *par)
 						nok ++ ;
 					}
 				}
+				//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
 				fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i], 
 						((float)nok) / ((float) N)) ;
 			}

@@ -59,7 +59,8 @@ typedef struct s_desc
               masph_sacc,           /* Mean alpha sphere solvent accessibility */
               apolar_asphere_prop,  /* Proportion of apolar alpha spheres */
               mean_loc_hyd_dens,    /* Mean local hydrophobic density (from alpha spheres) */
-                
+              as_density,           /* Pocket density, defined as mean distance between alpha spheres*/
+              
               /* The following descriptors are all normalized using observed
                  values among all pocket found by the algorithm. These
                  are not set in descriptor.c, but in pocket.c as we have to check
