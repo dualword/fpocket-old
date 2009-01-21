@@ -9,6 +9,9 @@ more convenient way for you, just drop us a line.
 Code
     high            > Adapt dpocket and tpocket to be able to design correct  
 					  statistics if the ligand appears multiple times
+		    > Correct Usage printing (with the def. parameters printed using the params defined in the fparams.h file). 
+		    > Explicit in usage what the explite pocket def 1 and 2 are.
+		    > rpdb.c does not work on proteins with no element name in the end of an atom line....-> debug this
 					 
 	low				> Satisfy g++ compilation requirement
 					> Performance issues : implement the index neighbour lists 
@@ -37,6 +40,8 @@ qhull
 input
     high            > Test parameters options of fpocket, dpocket, tpocket in
                       each files to avoid warning message "unknown option"
+		    > Test ranges of parameters on input. For instance -m < -M, or -A between 0 and 4 etc....
+
     medium          > Enable input of "to keep" HETATM tags by command line
 
 output
@@ -49,3 +54,6 @@ visualization
     low             > Write a tcl based gui frontend for viewing and navigating 
 					  through results using VMD
     medium          > Enhance PYMOL vizualisation output
+
+debugging
+    high            > Create a template bugreport.txt file for eventual bug reports from users.
