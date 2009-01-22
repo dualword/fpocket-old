@@ -31,6 +31,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##      22-01-09        (p)  Eliminate double entries in the cofactor list
 ##	19-01-09	(v)  Open pdb file checking the case
 ##  28-11-08    (v)  Comments UTD + minor corrections
 ##  20-11-08    (p)  Adding support of reading PDB multiple occupancies (only 
@@ -94,16 +95,15 @@ static const char *ST_keep_hetatm[] = {
 	"HBL", "THB", "DDH", "DHE", "HAS", "HDD", "HDM", "HEB", "HEC", "HEO",
 	"HES", "HEV", "MHM", "SRM", "VER", "1FH", "2FH", "HC0", "HC1", "HF3",
 	"HF5", "NFS", "OMO", "PHF", "SF3", "SF4", "CFM", "CFN", "CLF", "CLP",
-	"CN1", "CNB", "CNF", "CUB", "CUM", "CUN", "CUO", "F3S", "FES", "FS2",
-	"FS3", "FS4", "FSO", "FSX", "PHO", "BH1", "CHL", "CL1", "CL2", "CLA",
-	"CCH", "CFO", "FE2", "FCI", "FCO", "FDC", "FEA", "FEO", "FNE", "HIF",
-	"OFO", "PFC", "HE5", "BAZ", "BOZ", "FE", "HEM", "HCO", "1CP", "CLN",
-	"COH", "CP3", "DEU", "FDD", "FDE", "FEC", "FMI", "HE5", "HEG", "HIF",
-	"HNI", "MMP", "MNH", "MNR", "MP1", "PC3", "PCU", "PNI", "POR", "PP9",
-	"MSE"
+	"CN1", "CNB", "CNF", "CUB", "CUM", "CUN", "CUO",  "FS2","FSO", "FSX",
+        "PHO", "BH1", "CHL", "CL1", "CL2", "CLA", "CCH", "CFO", "FE2", "FCI", 
+        "FCO", "FDC", "FEA", "FEO", "FNE", "HIF", "OFO", "PFC", "HE5", "BAZ", 
+        "BOZ", "FE", "HEM", "HCO", "1CP", "CLN", "COH", "CP3", "DEU", "FDD", 
+        "FDE", "FEC", "FMI", "HEG", "HNI", "MMP", "MNH", "MNR", "MP1", "PC3",
+        "PCU", "PNI", "POR", "PP9", "MSE"
 } ;
 
-static const int ST_nb_keep_hetatm = 111 ;
+static const int ST_nb_keep_hetatm = 105 ;
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
