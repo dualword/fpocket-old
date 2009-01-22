@@ -77,6 +77,8 @@
 */
 void test_fpocket(s_tparams *par)
 {
+	if(! par || par->nfiles <= 0)  return ;
+	
 	int nranks = 10, novlp = 8, 
 		i, j, k, nok = 0  ;
 	int ranks [] = {1,2, 3, 4, 5, 6,7,8,9, 10} ;
@@ -84,182 +86,181 @@ void test_fpocket(s_tparams *par)
 	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0,
 		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0 ;
 	int n1, n2, n3, N = 0 ;
-	int status[par->nfiles] ;
 
-	if(par) {
 	/* Store statistics for each files: */
-		float ddata [par->nfiles][M_NDDATA];
-		int idata [par->nfiles][M_NIDATA];
+	int status[par->nfiles] ;
+	float ddata [par->nfiles][M_NDDATA];
+	int idata [par->nfiles][M_NIDATA];
 
 	/* Test all files */
-		for(i = 0 ; i < par->nfiles ; i++) {
-			strcpy(par->fpar->pdb_path, par->fapo[i]) ;
-			status [i] = test_set(par, i, ddata, idata) ;
-			fprintf(stdout, "> %3d : %s output code %d", i+1, par->fapo[i],
-														   status [i]) ;
-			if(i == par->nfiles - 1) fprintf(stdout, "\n") ;
-			else fprintf(stdout, "\r") ;
-			fflush(stdout) ;
-			
-			if(status[i] == M_OK) N++ ;
-		}
+	for(i = 0 ; i < par->nfiles ; i++) {
+		strcpy(par->fpar->pdb_path, par->fapo[i]) ;
+		status [i] = test_set(par, i, ddata, idata) ;
+		fprintf(stdout, "> %3d : %s output code %d", i+1, par->fapo[i],
+													   status [i]) ;
+		if(i == par->nfiles - 1) fprintf(stdout, "\n") ;
+		else fprintf(stdout, "\r") ;
+		fflush(stdout) ;
+
+		if(status[i] == M_OK) N++ ;
+	}
 
 	/* Printing each complexe statistics */
-		FILE *fp = fopen(par->p_output, "w") ;
-		if(fp) {	
-			n1 = 0, n2 = 0, n3 = 0 ;
-			fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | OVLP1 | OVLP2 | DIST_CM | POS1 | POS2 | POS3 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | LIGMASS | LIGVOL\n") ;
-			for(i = 0 ; i < par->nfiles ; i++) {
-				remove_path(par->fcomplex[i]) ;
-				remove_path(par->fapo[i]) ;
-				if(status[i] == M_OK) {
-					fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n", 
-							par->fligan[i], par->fcomplex[i], par->fapo[i], idata[i][M_NPOCKET],
-							ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST],
-							idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3],
-							ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3],
-							ddata[i][M_LIGMASS], ddata[i][M_LIGVOL]) ;
-					
-					if(idata[i][M_POS1] > 0) {
-						mean_ov1 += ddata[i][M_MAXPCT1] ;
-						mean_ovr1 += ddata[i][M_OREL1];
-						n1++ ;
-					}
-					
-					if(idata[i][M_POS2] > 0) {
-						mean_ov2 += ddata[i][M_MAXPCT2] ; 
-						mean_ovr2 += ddata[i][M_OREL2];
-						n2++ ;
-					}
-					
-					if(idata[i][M_POS3] > 0) {
-						mean_dst += ddata[i][M_MINDST];   
-						mean_ovr3 += ddata[i][M_OREL3];
-						n3 ++ ;
-					}
-					
-				}
-				else {
-					fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n", 
-							par->fligan[i], par->fcomplex[i], par->fapo[i], -1, -1.0, -1.0,
-							-1.0, -1, -1, -1, -1.0, -1.0, -1.0, -1.0, -1.0) ;
-				}
-			}
-				
-			mean_ov1 /= (float) n1 ; mean_ovr1 /= (float) n1 ;
-			mean_ov2 /= (float) n2 ; mean_ovr2 /= (float) n2 ;
-			mean_dst /= (float) n3 ; mean_ovr3 /= (float) n3 ;
+	FILE *fp = fopen(par->p_output, "w") ;
+	if(fp) {
+		n1 = 0, n2 = 0, n3 = 0 ;
+		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | OVLP1 | OVLP2 | DIST_CM | POS1 | POS2 | POS3 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | LIGMASS | LIGVOL\n") ;
+		for(i = 0 ; i < par->nfiles ; i++) {
+			remove_path(par->fcomplex[i]) ;
+			remove_path(par->fapo[i]) ;
+			if(status[i] == M_OK) {
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+						par->fligan[i], par->fcomplex[i], par->fapo[i], idata[i][M_NPOCKET],
+						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST],
+						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3],
+						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3],
+						ddata[i][M_LIGMASS], ddata[i][M_LIGVOL]) ;
 
-			fclose(fp) ;
+				if(idata[i][M_POS1] > 0) {
+					mean_ov1 += ddata[i][M_MAXPCT1] ;
+					mean_ovr1 += ddata[i][M_OREL1];
+					n1++ ;
+				}
+
+				if(idata[i][M_POS2] > 0) {
+					mean_ov2 += ddata[i][M_MAXPCT2] ;
+					mean_ovr2 += ddata[i][M_OREL2];
+					n2++ ;
+				}
+
+				if(idata[i][M_POS3] > 0) {
+					mean_dst += ddata[i][M_MINDST];
+					mean_ovr3 += ddata[i][M_OREL3];
+					n3 ++ ;
+				}
+
+			}
+			else {
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+						par->fligan[i], par->fcomplex[i], par->fapo[i], -1, -1.0, -1.0,
+						-1.0, -1, -1, -1, -1.0, -1.0, -1.0, -1.0, -1.0) ;
+			}
 		}
-		else fprintf(stdout, "The file %s could not be opened\n", par->p_output) ;
+
+		mean_ov1 /= (float) n1 ; mean_ovr1 /= (float) n1 ;
+		mean_ov2 /= (float) n2 ; mean_ovr2 /= (float) n2 ;
+		mean_dst /= (float) n3 ; mean_ovr3 /= (float) n3 ;
+
+		fclose(fp) ;
+	}
+	else fprintf(stdout, "The file %s could not be opened\n", par->p_output) ;
 
 	/* Printing global statistics */
-		FILE *fg = fopen(par->g_output, "w") ;
-		if(fg) {
+	FILE *fg = fopen(par->g_output, "w") ;
+	if(fg) {
 	/* Write the first overlap statistics */
-			fprintf(fg, "===================== General statistics on all complexes =======================\n") ;
-			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
-			fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
-			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			fprintf(fg,"           :");
-                        for( j = 0 ; j < novlp ; j++) {
-                            	fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
-                        }
-                        fprintf(fg,"\n");
-                	fprintf(fg,"------------");
-                        for( j = 0 ; j < novlp ; j++) {
-                            fprintf(fg, "-------------") ;
-                        }
-                        fprintf(fg,"\n");
-			for(i = 0 ; i < nranks ; i++) {
-				fprintf(fg, "Rank <= %2d :", ranks[i]) ;
-				for( j = 0 ; j < novlp ; j++) {
-					nok = 0 ;
-					for(k = 0 ; k < par->nfiles ; k++) {
-						if( status[k] == M_OK && 
-							ddata[k][M_MAXPCT2] >= ovlp[j] &&
-							idata[k][M_POS2] <= ranks[i] &&
-							idata[k][M_POS2] > 0) {
-							nok ++ ;
-						}
-					}
-					fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
-				}
-				fprintf(fg, "\n") ;
-			}
-			fprintf(fg, "-------------------------------------\n") ;
-			fprintf(fg, "Mean overlap          : %f\n", mean_ov2) ;
-			fprintf(fg, "Mean relative overlap : %f\n", mean_ovr2) ;
-
-		/* Write the second overlap statistics */
-
-			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
-			fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
-			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			fprintf(fg,"           :");
-			
+		fprintf(fg, "===================== General statistics on all complexes =======================\n") ;
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,"           :");
+		for( j = 0 ; j < novlp ; j++) {
+				fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
+		}
+		fprintf(fg,"\n");
+		fprintf(fg,"------------");
+		for( j = 0 ; j < novlp ; j++) {
+			fprintf(fg, "-------------") ;
+		}
+		fprintf(fg,"\n");
+		
+		for(i = 0 ; i < nranks ; i++) {
+			fprintf(fg, "Rank <= %2d :", ranks[i]) ;
 			for( j = 0 ; j < novlp ; j++) {
-					fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
-			}
-			
-			fprintf(fg,"\n");
-			fprintf(fg,"------------");
-			
-			for( j = 0 ; j < novlp ; j++) {
-				fprintf(fg, "-------------") ;
-			}
-			fprintf(fg,"\n");
-			
-			for(i = 0 ; i < nranks ; i++) {
-				fprintf(fg, "Rank <= %2d :", ranks[i]) ;
-				for( j = 0 ; j < novlp ; j++) {
-					nok = 0 ;
-					for(k = 0 ; k < par->nfiles ; k++) {
-						if( status[k] == M_OK 
-							&& ddata[k][M_MAXPCT1] >= ovlp[j]
-							&& idata[k][M_POS1] <= ranks[i]
-							&& idata[k][M_POS1] > 0) {
-							nok ++ ;
-						}
-					}
-					fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
-				}
-				fprintf(fg, "\n") ;
-			}
-			fprintf(fg, "-------------------------------------\n") ;
-			fprintf(fg, "Mean overlap          : %f\n", mean_ov1) ;
-			fprintf(fg, "Mean relative overlap : %f\n", mean_ovr1) ;
-
-		/* Write the third overlap statistics */
-
-			fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
-			fprintf(fg,   "\t-                       _ Distance criteria _                      -\n") ;
-			fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-			fprintf(fg, "   Ratio of good predictions (dist = 4A) \n") ;
-			fprintf(fg, "------------------------------------------\n") ;
-				
-			for(i = 0 ; i < nranks ; i++) {
 				nok = 0 ;
 				for(k = 0 ; k < par->nfiles ; k++) {
-					if(status[k] == M_OK && idata[k][M_POS3] <= ranks[i]
-					&& idata[k][M_POS3] > 0) {
+					if( status[k] == M_OK &&
+						ddata[k][M_MAXPCT2] >= ovlp[j] &&
+						idata[k][M_POS2] <= ranks[i] &&
+						idata[k][M_POS2] > 0) {
 						nok ++ ;
 					}
 				}
-				//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
-				fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i], 
-						((float)nok) / ((float) N)) ;
+				fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
 			}
-
-			fprintf(fg, "-------------------------------------\n") ;
-			fprintf(fg, "Mean distance          : %f\n", mean_dst) ;
-			fprintf(fg, "Mean relative overlap : %f\n", mean_ovr3) ;
-
-			fclose(fg) ;
+			fprintf(fg, "\n") ;
 		}
-		else fprintf(stdout, "The file %s could not be opened\n", par->g_output) ;
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean overlap          : %f\n", mean_ov2) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr2) ;
+
+	/* Write the second overlap statistics */
+
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,"           :");
+
+		for( j = 0 ; j < novlp ; j++) {
+				fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
+		}
+
+		fprintf(fg,"\n");
+		fprintf(fg,"------------");
+
+		for( j = 0 ; j < novlp ; j++) {
+			fprintf(fg, "-------------") ;
+		}
+		fprintf(fg,"\n");
+
+		for(i = 0 ; i < nranks ; i++) {
+			fprintf(fg, "Rank <= %2d :", ranks[i]) ;
+			for( j = 0 ; j < novlp ; j++) {
+				nok = 0 ;
+				for(k = 0 ; k < par->nfiles ; k++) {
+					if( status[k] == M_OK
+						&& ddata[k][M_MAXPCT1] >= ovlp[j]
+						&& idata[k][M_POS1] <= ranks[i]
+						&& idata[k][M_POS1] > 0) {
+						nok ++ ;
+					}
+				}
+				fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
+			}
+			fprintf(fg, "\n") ;
+		}
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean overlap          : %f\n", mean_ov1) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr1) ;
+
+	/* Write the third overlap statistics */
+
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t-                       _ Distance criteria _                      -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg, "   Ratio of good predictions (dist = 4A) \n") ;
+		fprintf(fg, "------------------------------------------\n") ;
+
+		for(i = 0 ; i < nranks ; i++) {
+			nok = 0 ;
+			for(k = 0 ; k < par->nfiles ; k++) {
+				if(status[k] == M_OK && idata[k][M_POS3] <= ranks[i]
+				&& idata[k][M_POS3] > 0) {
+					nok ++ ;
+				}
+			}
+			//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
+			fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i],
+					((float)nok) / ((float) N)) ;
+		}
+
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean distance          : %f\n", mean_dst) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr3) ;
+
+		fclose(fg) ;
 	}
+	else fprintf(stdout, "The file %s could not be opened\n", par->g_output) ;
 }
 
 /**-----------------------------------------------------------------------------

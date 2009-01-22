@@ -32,7 +32,10 @@
 int main(int argc, char *argv[])
 {
 	s_tparams *par = get_tpocket_args(argc, argv) ;
-	test_fpocket(par) ;
+	if(par && par->nfiles > 0) {
+		test_fpocket(par) ;
+	}
+
 	free_tparams(par) ;
   	free_all() ;
 
