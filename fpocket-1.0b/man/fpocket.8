@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii foo.1
 .\"
-.TH FPOCKET 1 "DECEMBER 2008" Linux "User Manuals"
+.TH FPOCKET 1 "JANUARY 2009" Linux "User Manuals"
 .SH NAME
 fpocket \- find pockets in proteins
 .SH SYNOPSIS
@@ -36,7 +36,7 @@ instead of a single one.
 .B [float]
 
 Minimum radius criteria for alpha sphere selection. The qhull program
-returns a large set opf alpha sphere calculated on the protein. Not all
+returns a large set of alpha sphere calculated on the protein. Not all
 of them are necessary to perform the cavity detection. Besides, taking
 all of them would dramatically decrease algorithm's speed.
 
@@ -59,7 +59,7 @@ done, all pockets containing N <=
 .I nmin 
 alpha sphere will be removed.
 
-.B DEFAULT: 35
+.B DEFAULT: 30
 
 .IP -D 
 .I mina 
@@ -70,7 +70,7 @@ separated by a distance lower or equal than
 .I cdist 
 to each others will be regrouped during this first clustering step.
 
-.B DEFAULT: 2
+.B DEFAULT: 1.73
 
 .IP -r
 .I bdist 
@@ -171,5 +171,3 @@ Pierre Tuffery
 .SH "SEE ALSO"
 .BR dpocket (1),
 .BR tpocket (1),
-
-

@@ -217,6 +217,7 @@ float score_pocket2(s_desc *pdesc)
 	Cheng   : 65/85 - 70/100
 	Gold    : 68/90 - 69/89
 */
+/*
 	e_tmp =
        -10.94643
        +12.43332 * (float)pdesc->nas_norm
@@ -224,6 +225,7 @@ float score_pocket2(s_desc *pdesc)
        +11.48185 * (float)pdesc->mean_loc_hyd_dens_norm
         +1.74043 * (float)pdesc->polarity_score
         -1.01603 * (float)pdesc->as_density ;
+*/
 
 	return e_tmp ;
 }

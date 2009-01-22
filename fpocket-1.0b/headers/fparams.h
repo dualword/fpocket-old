@@ -59,7 +59,7 @@
 #define M_MAX_ASHAPE_SIZE_DEFAULT 6.0
 
 /* Use first connection distance (see report) : 2.0 */
-#define M_CLUST_MAX_DIST 2.0
+#define M_CLUST_MAX_DIST 1.73
 
 /*use second connection distance (see report) : 4.5 */
 #define M_REFINE_DIST 4.5
@@ -81,7 +81,7 @@
 #define M_BASIC_VOL_DIVISION -1
 
 /* Minimum number of alpha spheres for a pocket to be kept 5 */
-#define M_MIN_POCK_NB_ASPH 40
+#define M_MIN_POCK_NB_ASPH 30
 
 /* Minimum number of atoms having a low electronegativity in order to declare 
  * an alpha sphere to be apolar 3 */

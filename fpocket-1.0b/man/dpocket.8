@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii foo.1
 .\"
-.TH DPOCKET 1 "DECEMBER 2008" Linux "User Manuals"
+.TH DPOCKET 1 "JANUARY 2009" Linux "User Manuals"
 .SH NAME
 dpocket \- calculate descriptors on protein pockets.
 .SH SYNOPSIS
@@ -10,63 +10,62 @@ dpocket \- calculate descriptors on protein pockets.
 .B [OPTIONS]
 .SH DESCRIPTION
 .B dpocket 
-is a program written to calculate descriptors on protein pocket.
+is a program written to calculate descriptors on protein pockets.
+It takes as basic input a file containing a list pf pdb file
+name/path, with an associated ligand represented by its resname
+in the pdb ( 3letter code). Both should be separated by a tabulation.
 
-.I PATH/complexe1.pdb GTD
-.I PATH/complexe2.pdb GTE
+.I PATH/1BXO.pdb    GTD
+
+.I PATH/1BBC.pdb    GTE
+
 .I ...
 
+Three file are created as output. One contains all pockets explicitely
+defined using one of the two methods available for this explicit definition.
+The two others contains all pockets as found by fpocket algorithm. One contain
+all pockets that match either the overlap or the distance criteria, and the
+other contains all pockets that does not match any of these criteria.
 
-.SH OPTIONS SPECIFIC TO TPOCKET
+See the documentation for more details on output, methods, and on descriprots
+currently availables.
 
-.IP -d
-.I idist
-.B [float]
-
-Distance criteria used for one of the 3 definition of a pocket:
-All atoms situated at a distance lower of equal that 
-.I idist 
-will be considerd as part of the actual pocket. We will then 
-compare those atoms (using resname, atom type... in the pdb file) 
-with atoms contacted by alpha spheres of each pocket found by 
-fpocket.
-
-This method is quite inacurate. The two others are much betters.
-See the documentation for more information.
-
-DEFAULT: 4.0
-
-.B DEFAULT: The output of fpocket is not conserved.
+.SH OPTIONS SPECIFIC TO DPOCKET
 
 .IP -o
-.I pout_file
+.I dout_file
 .B [string]
 
-Path for the pockets statistics outputs file. This file will give 
-information on the actual pocket found by fpocket for each set
-of complexe/apo/ligand (eg. if she was found, her rank...).
-Thus, each line of this file corresponds to one set of 
-complexe/apo/ligand.
+Prefix of the output files. Otherwise, output files are writen
+in the current directory, having the default prefix.
 
-.B DEFAULT: stats_p.txt
+.B DEFAULT: dpout
 
 .IP -e
-.I gout_file
-.B [string]
-
-Path for the general statistics outputs file. This file will give the
-percentage of good prediction using all criteria available and including
-ranking informations.
-
-.B DEFAULT: stats_g.txt
-
-.IP -k
 .B [no value needed]
 
-Keep fpocket output information for each apo form.
+Use the first explicit interface definition (default): we define the
+explicit pocket as being all atoms contacted by alpha spheres situated
+at a distance of d A° from any ligand atom.
 
-.B DEFAULT: The output of fpocket is not conserved.
+.B DEFAULT: used
 
+.IP -E
+.B [no value needed]
+
+Use the second explicit interface definition: we define the
+explicit pocket as being all atoms situated
+at a distance of d A° from any ligand atom.
+
+.B DEFAULT: not used
+
+.IP -d
+.I dist
+.B [float]
+
+Distance used by the explicit pocket definition.
+
+.B DEFAULT: 4.0
 
 .SH OPTIONS SPECIFIC TO FPOCKET
 
@@ -85,7 +84,7 @@ Vincent Le Guilloux <vincent.le-guilloux@univ-orleans.fr>
 Pierre Tuffery
 
 .SH "SEE ALSO"
-.BR dpocket (1),
+.BR fpocket (1),
 .BR tpocket (1),
 
 

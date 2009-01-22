@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii foo.1
 .\"
-.TH TPOCKET 1 "DECEMBER 2008" Linux "User Manuals"
+.TH TPOCKET 1 "JANUARY 2009" Linux "User Manuals"
 .SH NAME
 tpocket \- test performance of fpocket algorithm
 .SH SYNOPSIS
@@ -11,7 +11,7 @@ tpocket \- test performance of fpocket algorithm
 .SH DESCRIPTION
 .B tpocket 
 is a program written to test the performance of fpocket. It takes in
-argument a list of pdb file given by a simple text file with the
+argument a list of pdb file given by a simple text file having the
 following format:
 
 .I PATH/complexe1.pdb PATH/apo1.pdb GTD
@@ -38,9 +38,8 @@ fpocket.
 This method is quite inacurate. The two others are much betters.
 See the documentation for more information.
 
-DEFAULT: 4.0
+.B DEFAULT: 4.0
 
-.B DEFAULT: The output of fpocket is not conserved.
 
 .IP -o
 .I pout_file
@@ -74,7 +73,7 @@ Keep fpocket output information for each apo form.
 
 .SH OPTIONS SPECIFIC TO FPOCKET
 
-.B Use man fpocket.
+.B Use man fpocket or see the documentation.
 
 .SH BUGS
 .SH AUTHOR
@@ -89,7 +88,7 @@ Vincent Le Guilloux <vincent.le-guilloux@univ-orleans.fr>
 Pierre Tuffery
 
 .SH "SEE ALSO"
+.BR fpocket (1),
 .BR dpocket (1),
-.BR tpocket (1),
 
 
