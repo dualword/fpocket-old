@@ -24,8 +24,8 @@ AC_PROG_MAKE_SET
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
         Makefile
-	man/Makefile
-        src/Makefile
+        man/Makefile
+        bin/Makefile
         ])
 
 # Launch the tool

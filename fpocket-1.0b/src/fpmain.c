@@ -70,7 +70,7 @@
 */
 int main(int argc, char *argv[])
 {
-	fprintf(stdout, "=========== Pocket hunting begins ========== \n") ;
+	fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
 
 	s_fparams *params = get_fpocket_args(argc, argv) ;
 	
@@ -100,14 +100,13 @@ int main(int argc, char *argv[])
 			}
 		}
 	
-		fprintf(stdout, "> Freeing remainnig memory...\n");
 		free_fparams(params) ;
 	}
 	else {
 		print_pocket_usage(stdout) ;
 	}
-	
-	fprintf(stdout, "=========== Pocket hunting ends ========== \n") ;
+
+	fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
 	free_all() ;
 
 	return 0;
