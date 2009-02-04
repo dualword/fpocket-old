@@ -1,0 +1,10 @@
+Finding intermodel H-bonds
+Constraints relaxed by 0.4 angstroms and 20 degrees
+Models used:
+	#0 ligand.mol2
+	#1 protein.mol2
+
+H-bonds (donor, acceptor, D..A dist, D-H..A dist):
+#0 UNK 1 N3  #1 ASP189 232 OD1  2.700  1.866
+#0 UNK 1 N4  #1 ASP189 232 OD2  2.566  1.622
+#0 UNK 1 N4  #1 GLY219 261 O    3.086  2.082

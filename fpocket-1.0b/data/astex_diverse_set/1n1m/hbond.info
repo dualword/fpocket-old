@@ -1,0 +1,12 @@
+Finding intermodel H-bonds
+Constraints relaxed by 0.4 angstroms and 20 degrees
+Models used:
+	#0 ligand.mol2
+	#1 protein.mol2
+
+H-bonds (donor, acceptor, D..A dist, D-H..A dist):
+#0 UNK 1 N2        #1 GLU205 167 OE2  3.020  2.019
+#0 UNK 1 N2        #1 GLU206 168 OE2  2.824  1.984
+#0 UNK 1 O1        #1 GLU205 167 OE2  3.366  no hydrogen
+#0 UNK 1 O1        #1 TYR662 624 OH   2.822  no hydrogen
+#1 ASN710 672 ND2  #0 UNK 1 O1        2.797  1.840
