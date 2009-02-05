@@ -1,0 +1,23 @@
+With N = 3, the scoring function number 4 gives:
+
+		       CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 61/84 - 64/89
+	PP holo : 81/90 - 81/88
+	PP apo  : 69/90
+	Cheng   : 70/85 - 70/100
+	CCDC    : 70/91 - 72/90
+	Diverse : 64/81 - 73/93
+
+With N = 2, the scoring function number 4 gives:
+
+		       CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 59/84 - 64/89
+	PP holo : 79/94 - 81/94
+	PP apo  : 71/90
+	Cheng   : 70/85 - 75/100
+	CCDC    : 72/91 - 72/89
+	Diverse : 63/81 - 76/95

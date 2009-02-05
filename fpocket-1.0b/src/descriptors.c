@@ -18,6 +18,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	29-01-09	(v)  Normalized density and polarity score added
 ##	21-01-09	(v)  Density descriptor Added
 ##	14-01-09	(v)  Some normalized descriptors added
 ##	28-11-08	(v)  Comments UTD + relooking + mean_asph_ray set to float -_-'
@@ -115,9 +116,11 @@ void reset_s_desc(s_desc *desc)
 	desc->as_density = 0.0 ;
 
 	desc->flex = 0.0 ;
-	desc->nas_norm = 0 ;
+	desc->nas_norm = 0.0 ;
 	desc->prop_asapol_norm = 0.0 ;
-	desc->mean_loc_hyd_dens_norm = -1.0 ;
+	desc->mean_loc_hyd_dens_norm = 0.0 ;
+	desc->as_density_norm = 0.0 ;
+    desc->polarity_score_norm = 0.0 ;
 
 	desc->nb_asph = 0 ;
 	desc->polarity_score  = 0 ;

@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	29-01-09	(v)  Normalized density and polarity score added
 ##	21-01-09	(v)  Normalized descriptors calculation moved in a single fct
 ##					 Some variable renamed (refractored)
 ##	14-01-09	(v)  Added some normalized descriptors
@@ -583,9 +584,11 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 	/* Some boundaries to help normalisation */
 	float flex_M = 0.0, flex_m = 1.0,
 		  nas_apolp_M = 0.0, nas_apolp_m = 1.0,
-		  mlhd_M = 1000.0, mlhd_m = 0.0;
+		  density_M = 0.0, density_m = 100.0,
+		  mlhd_M = 0.0, mlhd_m = 1000.0;
 
-	int nas_M = 0, nas_m = 1000 ;
+	int nas_M = 0, nas_m = 1000,
+		polarity_M = -1, polarity_m = 10000 ;
 
 	if(pockets && pockets->n_pockets > 0) {
 		cur = pockets->first ;
@@ -594,6 +597,8 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 			pcur = cur->pocket ;
 			/* Initialize boundaries if it's the first turn */
 			if(cur == pockets->first) {
+				density_M = density_m = pcur->pdesc->as_density ;
+				polarity_M = polarity_m = pcur->pdesc->polarity_score ;
 				flex_M = flex_m = pcur->pdesc->flex ;
 				nas_apolp_M = nas_apolp_m = pcur->pdesc->apolar_asphere_prop ;
 				mlhd_M = mlhd_m = pcur->pdesc->mean_loc_hyd_dens ;
@@ -601,6 +606,16 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 			}
 			else {
 			/* Update several boundaries */
+				if(pcur->pdesc->as_density > density_M)
+					density_M = pcur->pdesc->as_density ;
+				else if(pcur->pdesc->as_density < density_m)
+					density_m = pcur->pdesc->as_density ;
+				
+				if(pcur->pdesc->polarity_score > polarity_M)
+					polarity_M = pcur->pdesc->polarity_score ;
+				else if(pcur->pdesc->polarity_score < polarity_m)
+					polarity_m = pcur->pdesc->polarity_score ;
+				
 				if(pcur->pdesc->mean_loc_hyd_dens > mlhd_M)
 					mlhd_M =pcur->pdesc->mean_loc_hyd_dens ;
 				else if(pcur->pdesc->mean_loc_hyd_dens < mlhd_m)
@@ -626,6 +641,13 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 		while(cur) {
 			pcur = cur->pocket ;
 			/* Calculate normalized descriptors */
+			pcur->pdesc->as_density_norm = 
+				(pcur->pdesc->as_density - density_m) / (density_M - density_m) ;
+			
+			pcur->pdesc->polarity_score_norm =
+				(float)(pcur->pdesc->polarity_score - polarity_m) /
+				(float)(polarity_M - polarity_m) ;
+			
 			pcur->pdesc->mean_loc_hyd_dens_norm =
 				(pcur->pdesc->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
 

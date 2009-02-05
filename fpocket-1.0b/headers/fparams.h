@@ -72,7 +72,7 @@
 #define M_SLCLUST_MAX_DIST 2.5
 
 /* Minimum number of common neighbours for single linkage clustering 5 */
-#define M_SLCLUST_MIN_NUM_NEIGH 3
+#define M_SLCLUST_MIN_NUM_NEIGH 2
 
 /* Number of iterations for the Monte Carlo volume calculation 3000 */
 #define M_MC_ITER 3000
@@ -102,9 +102,38 @@
 #define M_PAR_REFINE_DIST 'r'
 #define M_PAR_REFINE_MIN_NAPOL_AS 'p'
 
+#define M_FP_USAGE "\n\
+***** USAGE (fpocket) *****\n\
+\n\
+Pocket finding on a pdb - list of pdb - file(s):             \n\
+\t./bin/fpocket -f pdb                                       \n\
+\t./bin/fpocket -F pdb_list                                  \n\
+\nOPTIONS (find standard parameters in brackets)           \n\n\
+\t-m (float)  : Minimum radius of an alpha-sphere.      (3.0)\n\
+\t-M (float)  : Maximum radius of an alpha-sphere.      (6.0)\n\
+\t-A (int)    : Minimum number of apolar neighbor for        \n\
+\t              an a-sphere to be considered as apolar.   (3)\n\
+\t-i (int)    : Minimum number of a-sphere per pocket.   (30)\n\
+\t-D (float)  : Maximum distance for first clustering        \n\
+\t              algorithm.                             (1.73)\n\
+\t-s (float)  : Maximum distance for single linkage          \n\
+\t              clustering                              (2.5)\n\
+\t-n (integer): Minimum number of neighbor close from        \n\
+\t              each other (not merged otherwise).        (3)\n\
+\t-r (float)  : Maximum distance between two pockets         \n\
+\t              barycenter (merged otherwise).          (4.5)\n\
+\t-p (float)  : Minimum proportion of apolar sphere in       \n\
+\t              a pocket (remove otherwise)             (0.0)\n\
+\t-v (integer): Number of Monte-Carlo iteration for the      \n\
+\t              calculation of each pocket volume.     (2500)\n\
+\t-b (integer): Space approximation for the basic method     \n\
+\t              of the volume calculation. Not used by       \n\
+\t              default (Monte Carlo approximation is)       \n\
+\nSee the manual (man fpocket), or the full documentation for\n\
+more information.\n\
+***************************\n"
 
 /* --------------------------- PUBLIC STRUCTURES ---------------------------- */
-
 /**
 	Structure containing all necessary parameters that can be changed by the user.
 	This structure is commun to both programs (validation and pocket finding), 

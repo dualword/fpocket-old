@@ -31,7 +31,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##      22-01-09        (p)  Eliminate double entries in the cofactor list
+##  22-01-09    (p)  Eliminate double entries in the cofactor list
 ##	19-01-09	(v)  Open pdb file checking the case
 ##  28-11-08    (v)  Comments UTD + minor corrections
 ##  20-11-08    (p)  Adding support of reading PDB multiple occupancies (only 
@@ -465,8 +465,10 @@ s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 				}
 			}
 		}
+/*
 		else if (!strncmp(buf, "HEADER", 6)) 
 			strncpy(pdb->header, buf, M_PDB_BUF_LEN) ;
+*/
 		
 		else if (!strncmp(buf, "END", 3)) break ;
 	}

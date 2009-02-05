@@ -438,36 +438,7 @@ void free_tparams(s_tparams *p)
 void print_test_usage(FILE *f)
 {
 	f = (f == NULL) ? stdout:f ;
-
-	fprintf(f, "\n-------------------\nUSAGE (tpocket):\n") ;
-	fprintf(f, "1 - To launch a test with a list of proteins to test:\n") ;
-	fprintf(f, "\t./bin/tpocket -L file_list\n\n") ;
-	fprintf(f, "2 - To launch a test on one single protein:\n") ;
-	fprintf(f, "\t./bin/tpocket -a apo_pdb -c complex_pdb -l ligan_pdb_name\n\n") ;
-	fprintf(f, "Options: \n") ;
-	fprintf(f, "\t-o string   : Write pocket detailed statistics to this file. (stats_p.txt \n") ;
-	fprintf(f, "\t              by default).\n") ;
-	fprintf(f, "\t-e string   : Write global pocket statistics to this file. (stats_g.txt \n") ;
-	fprintf(f, "\t              by default).\n") ;
-	fprintf(f, "\t-d (float)  : Radius to use for searching ligand's neighbours in the test. (3.5) \n") ;
-	fprintf(f, "\t-k (no val) : Keep fpocket output on apo files.  \n") ;
-
-	fprintf(f, "\nOptions specific to fpocket: (find standard parameters in brackets)\n") ;
-	fprintf(f, "\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;
-	fprintf(f, "\t-M (float)  : Maximum radius of an alpha-sphere. (6.5)\n") ;
-	fprintf(f, "\t-A (int)    : Minimum number of apolar neighbor for an a-sphere to be considered as apolar. (3) \n") ;
-	fprintf(f, "\t-i (int)    : Minimum number of a-sphere per pocket. (3)\n") ;
-	fprintf(f, "\t-D (float)  : Maximum distance for first clustering algorithm. (1.2)\n") ;
-	fprintf(f, "\t-s (float)  : Maximum distance for single linkage clustering. (1.5)\n") ;
-	fprintf(f, "\t-n (integer): Minimum number of neighbor close from each other for single linkage clustering. (4)\n") ;
-	fprintf(f, "\t-r (float)  : Maximum distance between two pocket barycenter for refine algorithm. (4.0)\n") ;
-	fprintf(f, "\t-p (float)  : Minimum proportion of apolar sphere in a pocket to keep it. (0.0)\n") ;
-	fprintf(f, "\t-v (integer): Number of Monte-Carlo iteration for the calculation of each pocket volume. (2500)\n") ;
-	fprintf(f, "\t-b (integer): Space approximation for the basic method of the volume calculation. (-1)\n") ;
-	fprintf(f, "\t              If this option is used, the programm will use this method instead \n") ;
-	fprintf(f, "\t              of Monte-Carlo. \n") ;
-	fprintf(f, "\nSee the manual for mor information on those parameters.\n") ;
-	fprintf(f, "-------------------\n") ;
+	fprintf(f, M_TP_USAGE) ;
 }
 
 /**-----------------------------------------------------------------------------

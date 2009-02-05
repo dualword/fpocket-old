@@ -1,4 +1,4 @@
- 
+
 #include "../headers/voronoi.h"
 
 /**
@@ -22,7 +22,7 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	21-02-08	(p)	 Adding support for proteins with hydrogens
 ##	01-01-08	(vp) Created (random date...)
-##	
+##
 ## ----- TODO or SUGGESTIONS
 ##
 ##  (v) Improve the reading of vertices. Better: include qhull algorithm in our
@@ -62,23 +62,23 @@
 
 **/
 
-static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms, 
+static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
 						   int min_apol_neigh, float asph_min_size, float asph_max_size) ;
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	s_lst_vvertice
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Calculate voronoi vertices using an ensemble of atoms, and then load resulting
-	vertices into a s_lst_vvertice structure. The function call an external 
+	vertices into a s_lst_vvertice structure. The function call an external
 	programm qvoronoi, part of qhull programme which can be download at:
 		http://www.qhull.org/download/
 	or installed with apt-get install qhull-bin
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_pdb *pdb          : PDB informations
-	@ int min_apol_neigh  : Number of apolar neighbor of a vertice to be 
+	@ int min_apol_neigh  : Number of apolar neighbor of a vertice to be
 							considered as apolar
 	@ float asph_min_size : Minimum size of voronoi vertices to retain
 	@ float asph_max_size : Maximum size of voronoi vertices to retain
@@ -95,10 +95,10 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 
 	FILE *fvoro = fopen("voro_tmp.dat", "w");
 /* 	lvvert->h_tr=(int *)my_malloc(sizeof(int));*/
-	
-	
-	
-	if(fvoro != NULL) { 
+
+
+
+	if(fvoro != NULL) {
 		lvvert = (s_lst_vvertice *)my_malloc(sizeof(s_lst_vvertice)) ;
 		lvvert->h_tr=NULL;
 		/* Loop a first time to get out how many heavy atoms are in the file */
@@ -111,27 +111,27 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 			else nb_h++;
 		}
 		lvvert->n_h_tr=i-nb_h;
-		
+
 		/* Write the header for qvoronoi */
 		fprintf(fvoro,"3 rbox D3\n%d\n", lvvert->n_h_tr);
 		/* Loop a second time for the qvoronoi input coordinates */
 		for(i = 0; i <  pdb->natoms ; i++){
 			ca = (pdb->latoms)+i ;
 			if(strcmp(ca->symbol,"H")) {
-			/* Only if this is a heavy atom export it for voronoi tesselation, 
+			/* Only if this is a heavy atom export it for voronoi tesselation,
 			 * else discard it */
-				fprintf(fvoro,"%f %f %f \n", ca->x, ca->y, ca->z);	
+				fprintf(fvoro,"%f %f %f \n", ca->x, ca->y, ca->z);
 			}
 		}
 
 		fflush(fvoro) ;
 		fclose(fvoro) ;
 
-		int status = system("cat voro_tmp.dat | qvoronoi p i Pp Fn > voro.tmp") ;
+		int status = system("qvoronoi p i Pp Fn < voro_tmp.dat > voro.tmp") ;
 
 		if(status == M_VORONOI_SUCCESS) {
-			
-			fill_vvertices(lvvert, "voro.tmp", pdb->latoms, pdb->natoms, 
+
+			fill_vvertices(lvvert, "voro.tmp", pdb->latoms, pdb->natoms,
 							min_apol_neigh, asph_min_size, asph_max_size);
 		}
 		else {
@@ -148,7 +148,7 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	fill_vertices
    -----------------------------------------------------------------------------
    ## PARAMETRES:
@@ -156,12 +156,12 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	@ const char fpath[]     : File containing vertices
 	@ s_atm *atoms           : List of atoms
 	@ int natoms             : Number of atoms
-	@ int min_apol_neigh  : Number of apolar neighbor of a vertice to be 
+	@ int min_apol_neigh  : Number of apolar neighbor of a vertice to be
 							considered as apolar
 	@ float asph_min_size : Minimum size of voronoi vertices to retain
 	@ float asph_max_size : Maximum size of voronoi vertices to retain
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Fill structure given in argument (must have been allocated) using a file
 	containing vertice coordinates and neighbours using p i options of qhull.
    -----------------------------------------------------------------------------
@@ -169,15 +169,15 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	void
    -----------------------------------------------------------------------------
 */
-static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms, 
-						   int min_apol_neigh, float asph_min_size, float asph_max_size) 
+static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
+						   int min_apol_neigh, float asph_min_size, float asph_max_size)
 {
 	FILE *f = NULL ;	/* File handler for vertices coordinates */
 	FILE *fNb = NULL ;	/* File handler for vertices atomic neighbours */
 	FILE *fvNb = NULL;	/* File handler for vertices vertice neighbours */
-	
+
 	s_vvertice *v = NULL ;
-	
+
 	float tmpRay;	/* Temporary Ray of voronoi vertice (ray of alpha sphere) */
 	float xyz[3] = {0,0,0};
 
@@ -193,9 +193,9 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 		 nbline[nchar_max],
 		 vNbline[nchar_max],
 		 *s_nvert = (char *) my_malloc(sizeof(char)*nchar_max) ;
-	
+
 /* Once we have the number of lines, lets allocate memory and get the lines */
-	
+
 	f = fopen(fpath,"r") ;
 	fNb = fopen(fpath,"r") ;
 	fvNb = fopen(fpath,"r") ;
@@ -212,63 +212,63 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
  	sscanf(cline,"%d",&(lvvert->nvert)) ;
 	lvvert->qhullSize = lvvert->nvert ;
 	lvvert->tr = (int *) my_malloc(lvvert->nvert*sizeof(int));
-	for(i = 0 ; i < lvvert->nvert ; i++) lvvert->tr[i] = -1; 
-	
+	for(i = 0 ; i < lvvert->nvert ; i++) lvvert->tr[i] = -1;
+
  	lvvert->vertices = (s_vvertice *) my_calloc(lvvert->nvert, sizeof(s_vvertice)) ;
-	
-	/* Get the string of number of vertices to read, to look up the neighbour 
+
+	/* Get the string of number of vertices to read, to look up the neighbour
 	 * list from qhull */
 	sprintf(s_nvert,"%d",lvvert->nvert);
 	strcat(s_nvert,"\n");
-	
+
 	/* Advance cursor to neighbour list */
-	while(fgets(nbline, nchar_max, fNb) != NULL && strcmp(s_nvert, nbline) != 0) ;	
+	while(fgets(nbline, nchar_max, fNb) != NULL && strcmp(s_nvert, nbline) != 0) ;
 	/* Advance cursor to the vertice neighbour list */
 	while(fgets(vNbline,nchar_max,fvNb) != NULL && curLineNb++ < lvvert->nvert*2+1) ;
 
 	i = 0 ;
 	while(fgets(cline, nchar_max, f) != NULL) {
 	/* Read vertice positions */
- 		if(fgets(nbline, nchar_max,fNb)!=NULL){		
+ 		if(fgets(nbline, nchar_max,fNb)!=NULL){
 		/* Read neighbours */
 			if(fgets(vNbline, nchar_max,fvNb)!=NULL){
 			/* Read vertice neighbour vertices */
-				if(strcmp("\n", cline) != 0 && strcmp("\n", nbline) != 0 
+				if(strcmp("\n", cline) != 0 && strcmp("\n", nbline) != 0
 				   && strcmp("\n", vNbline) != 0) {
-					
+
 					sscanf(cline,"%f %f %f",&xyz[0], &xyz[1], &xyz[2]);
 					sscanf(nbline,"%d %d %d %d",&curNbIdx[0],&curNbIdx[1],
 												&curNbIdx[2],&curNbIdx[3]);
- 					sscanf(vNbline,"%d %d %d %d %d", &trash, &curVnbIdx[0], 
-													 &curVnbIdx[1], 
+ 					sscanf(vNbline,"%d %d %d %d %d", &trash, &curVnbIdx[0],
+													 &curVnbIdx[1],
 													 &curVnbIdx[2], &curVnbIdx[3]);
-				/* Test voro. vert. for alpha sphere cond. and returns ray if 
-				 * cond. are ok, -1 else */					
-					tmpRay = testVvertice(xyz, curNbIdx, atoms, asph_min_size, 
-										  asph_max_size,lvvert);	
+				/* Test voro. vert. for alpha sphere cond. and returns ray if
+				 * cond. are ok, -1 else */
+					tmpRay = testVvertice(xyz, curNbIdx, atoms, asph_min_size,
+										  asph_max_size,lvvert);
 					if(tmpRay > 0){
 						v = (lvvert->vertices + vInMem) ;
 						v->x = xyz[0]; v->y = xyz[1]; v->z = xyz[2];
 						v->ray = tmpRay;
 						v->sort_x = -1 ;
 						tmpApolar=0;
-						
+
 						for(j = 0 ; j < 4 ; j++) {
 							v->neigh[j] = &(atoms[lvvert->h_tr[curNbIdx[j]]]);
-							
+
 							if(atoms[lvvert->h_tr[curNbIdx[j]]].electroneg<2.8) tmpApolar++ ;
 							if(curVnbIdx[j]>0) v->vneigh[j] = curVnbIdx[j];
 						}
-						
+
 						v->apol_neighbours=0;
 						lvvert->tr[i] = vInMem ;
-						
+
 						vInMem++ ;		/* Vertices actually read */
 						v->id = natoms+i+1-vInMem ;
-						
+
 						if(tmpApolar >= min_apol_neigh) v->type = M_APOLAR_AS;
 						else v->type = M_POLAR_AS;
-						
+
 						v->qhullId = i;		/* Set index in the qhull file */
 						v->resid = -1;		/* Initialize internal index */
 						set_barycenter(v) ;	/* Set barycentre */
@@ -286,10 +286,10 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	set_barycenter
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Set barycenter of a vertice using it's 4 contacting atoms.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
@@ -298,10 +298,10 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
    ## RETURN: void
    -----------------------------------------------------------------------------
 */
-void set_barycenter(s_vvertice *v) 
+void set_barycenter(s_vvertice *v)
 {
 	int i ;
-	float xsum = 0.0, 
+	float xsum = 0.0,
 		  ysum = 0.0,
 		  zsum = 0.0 ;
 
@@ -314,14 +314,14 @@ void set_barycenter(s_vvertice *v)
 	v->bary[0] = xsum*0.25 ;
 	v->bary[1] = ysum*0.25 ;
 	v->bary[2] = zsum*0.25 ;
-	
+
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	testVvertice
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Test if alpha sphere conditions are fulfilled for current vertice
    -----------------------------------------------------------------------------
    ## PARAMETERS:
@@ -331,13 +331,13 @@ void set_barycenter(s_vvertice *v)
 	@ float min_asph_size : Minimum size of alpha spheres.
 	@ float max_asph_size : Maximum size of alpha spheres.
    -----------------------------------------------------------------------------
-   ## RETURN: 
+   ## RETURN:
 	float : -1 if conditions are not fulfilled, else the alpha sphere radius
 		    is returned.
    -----------------------------------------------------------------------------
 */
-float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms, 
-				   float min_asph_size, float max_asph_size, 
+float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
+				   float min_asph_size, float max_asph_size,
 				   s_lst_vvertice *lvvert)
 {
 	float x = xyz[0],
@@ -347,11 +347,11 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 	s_atm *cura = &(atoms[lvvert->h_tr[curNbIdx[0]]]) ;
 
 	float distVatom1 = dist(x, y, z, cura->x, cura->y, cura->z) ;
-	float distVatom2, 
+	float distVatom2,
 		  distVatom3,
 		  distVatom4;
 
-	if(min_asph_size <= distVatom1  && distVatom1 <= max_asph_size){	
+	if(min_asph_size <= distVatom1  && distVatom1 <= max_asph_size){
 		cura = &(atoms[lvvert->h_tr[curNbIdx[1]]]) ;
 		distVatom2 = dist(x, y, z, cura->x, cura->y, cura->z);
 
@@ -361,24 +361,24 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 		cura = &(atoms[lvvert->h_tr[curNbIdx[3]]]) ;
   		distVatom4=dist(x, y, z, cura->x, cura->y, cura->z);
 
-		/* Test if all 4 neighbours are on the alpha sphere surface 
+		/* Test if all 4 neighbours are on the alpha sphere surface
 		 * (approximate test) */
 		if(fabs(distVatom1-distVatom2) < M_PREC_TOLERANCE &&
 		   fabs(distVatom1-distVatom3)  < M_PREC_TOLERANCE &&
 		   fabs(distVatom1-distVatom4) < M_PREC_TOLERANCE){
-			
+
 			return distVatom1;
 		}
-		
+
 	}
 	return -1.0;
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	print_vvertices
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Print function.
    -----------------------------------------------------------------------------
    ## PARAMETERS:
@@ -388,7 +388,7 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
    ## RETURN: void
    -----------------------------------------------------------------------------
 */
-void print_vvertices(FILE *f, s_lst_vvertice *lvvert) 
+void print_vvertices(FILE *f, s_lst_vvertice *lvvert)
 {
 	if(lvvert) {
 		if(lvvert->vertices) {
@@ -413,10 +413,10 @@ void print_vvertices(FILE *f, s_lst_vvertice *lvvert)
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	get_verts_volume_ptr
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Get an monte carlo approximation of the volume occupied by the alpha spheres
 	given in argument (list of pointers)
    -----------------------------------------------------------------------------
@@ -456,10 +456,10 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
 		/* Update the minimum and maximum extreme point */
 			if(xmin > (xtmp = vcur->x - vcur->ray)) xmin = xtmp ;
 			else if(xmax < (xtmp = vcur->x + vcur->ray)) xmax = xtmp ;
-	
+
 			if(ymin > (ytmp = vcur->y - vcur->ray)) ymin = ytmp ;
 			else if(ymax < (ytmp = vcur->y + vcur->ray)) ymax = ytmp ;
-	
+
 			if(zmin > (ztmp = vcur->z - vcur->ray)) zmin = ztmp ;
 			else if(zmax < (ztmp = vcur->z + vcur->ray)) zmax = ztmp ;
 		}
@@ -493,10 +493,10 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	free_vert_lst
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Free memory
    -----------------------------------------------------------------------------
    ## PARAMETERS:
@@ -505,12 +505,12 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
    ## RETURN: void
    -----------------------------------------------------------------------------
 */
-void free_vert_lst(s_lst_vvertice *lvvert) 
+void free_vert_lst(s_lst_vvertice *lvvert)
 {
 	if(lvvert) {
 		if(lvvert->vertices) {
 			my_free(lvvert->vertices) ;
-			lvvert->vertices = NULL ;		
+			lvvert->vertices = NULL ;
 		}
 		if(lvvert->tr) {
 			my_free(lvvert->tr) ;
@@ -525,11 +525,11 @@ void free_vert_lst(s_lst_vvertice *lvvert)
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	is_in_lst_vert
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
-	Says wether a vertice of id v_id is in a list of vertices or not 
+   ## SPECIFICATION:
+	Says wether a vertice of id v_id is in a list of vertices or not
    -----------------------------------------------------------------------------
    ## PARAMETRES:
    -----------------------------------------------------------------------------
@@ -537,7 +537,7 @@ void free_vert_lst(s_lst_vvertice *lvvert)
 	1 if the vertice is in the tab, 0 if not
    -----------------------------------------------------------------------------
 */
-int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id) 
+int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 {
 	int i ;
 	for(i = 0 ; i < nb_vert ; i++) {
@@ -552,7 +552,7 @@ int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 	-----------------------------------------------------------------------------
 
 	OUTPUT FUNCTIONS
-	
+
 	-----------------------------------------------------------------------------
 	-----------------------------------------------------------------------------
 	-----------------------------------------------------------------------------
@@ -560,7 +560,7 @@ int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
-	void write_pdb_vertice(FILE *f, s_vvertice *v) 
+	void write_pdb_vertice(FILE *f, s_vvertice *v)
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
 	Write a voronoi vertice in pdb format.
@@ -572,23 +572,23 @@ int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-void write_pdb_vert(FILE *f, s_vvertice *v) 
+void write_pdb_vert(FILE *f, s_vvertice *v)
 {
-	if(v->type==M_APOLAR_AS) write_pdb_atom_line(f, "HETATM", v->id, "APOL", 
+	if(v->type==M_APOLAR_AS) write_pdb_atom_line(f, "HETATM", v->id, "APOL",
 												 ' ', "STP", "C", v->resid, ' ',
-												 v->x, v->y, v->z, 0.0, 0.0, 
+												 v->x, v->y, v->z, 0.0, 0.0,
 												 "Ve", -1);
-	
-	else write_pdb_atom_line(f, "HETATM", v->id, " POL", ' ', "STP", "C", 
-								v->resid, ' ',v->x, v->y, v->z,0.0, 0.0, 
+
+	else write_pdb_atom_line(f, "HETATM", v->id, " POL", ' ', "STP", "C",
+								v->resid, ' ',v->x, v->y, v->z,0.0, 0.0,
 								"Ve", -1);
 }
 
 /**-----------------------------------------------------------------------------
-   ## FUNCTION: 
+   ## FUNCTION:
 	write_pqr_vertice
    -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
+   ## SPECIFICATION:
 	Write a voronoi vertice in pqr format.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
@@ -599,13 +599,13 @@ void write_pdb_vert(FILE *f, s_vvertice *v)
 	void
    -----------------------------------------------------------------------------
 */
-void write_pqr_vert(FILE *f, s_vvertice *v) 
+void write_pqr_vert(FILE *f, s_vvertice *v)
 {
-	if(v->type==M_APOLAR_AS) write_pqr_atom_line(f, "ATOM", v->id, "APOL", ' ', 
+	if(v->type==M_APOLAR_AS) write_pqr_atom_line(f, "ATOM", v->id, "APOL", ' ',
 												 "STP", " ", v->resid, ' ',
 												  v->x, v->y, v->z, 0.0, v->ray);
-	
-	else write_pqr_atom_line(f, "ATOM", v->id, " POL", ' ', "STP", " ", 
+
+	else write_pqr_atom_line(f, "ATOM", v->id, " POL", ' ', "STP", " ",
 							 v->resid, ' ',v->x, v->y, v->z,0.0, v->ray);
 }
 

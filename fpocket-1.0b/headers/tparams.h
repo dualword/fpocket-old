@@ -63,8 +63,31 @@
 #define M_MAX_FILE_NAME_LENGTH 300
 /* #define M_PAR_P_STATS_OUT 'o' */
 /* in order to get the atom set of the pocket, detect around x A of the ligand*/
-#define M_LIG_NEIG_DIST 3.0
+#define M_LIG_NEIG_DIST 4.0
 
+#define M_TP_USAGE "\
+\n***** USAGE (tpocket) *****\n\
+\n\
+The program needs as input a file containing at each                 \n\
+line a pdb file name (apo + complexe), a ligand code                 \n\
+(3 letters), all separeted by a tabulation.                          \n\
+The format of each line must therefore be:                           \n\n\
+{PATH/}APO.pdb  {PATH/}HOLO.pdb  LIG.                                \n\n\
+The ligand code is the resname of the ligand atoms in                \n\
+the pdb file of the HOLO form of the protein.                        \n\n\
+See the manual for more information.                                 \n\n\
+Example of command using default parameters:                         \n\
+\t./bin/tpocket -L file_path                                         \n\n\
+Options:                                                             \n\
+\t-e string  : Write global performance to this file                 \n\
+\t             Default name: ./stats_g.txt.           (./stats_g.txt)\n\
+\t-o string  : Write pocket detailed statistics to .                 \n\
+\t             this file Default name: ./stats_p.txt  (./stats_p.txt)\n\
+\t-d float   : Distance criteria for the 2 ways to                   \n\
+\t             define the actual pocket               (4.0)          \n\n\
+Options specific to fpocket are usable too.\n\
+See the manual/documentation for mor information.\n\
+***************************\n"
 
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 

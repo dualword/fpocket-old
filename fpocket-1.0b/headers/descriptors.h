@@ -70,6 +70,8 @@ typedef struct s_desc
               flex,                  /* Normalized flexibility - based on B factors - ABUSIVE */
               mean_loc_hyd_dens_norm,/* Normalized mean local hydrophobic density */
               prop_asapol_norm,      /* Normalized proportion of apolar alphasphere */
+              as_density_norm,
+              polarity_score_norm,
               nas_norm               /* Normalized number of alpha sphere */
         ;
 	

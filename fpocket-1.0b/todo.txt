@@ -7,53 +7,47 @@ more convenient way for you, just drop us a line.
     --------------------
 
 Code
-    high            > Adapt dpocket and tpocket to be able to design correct  
-					  statistics if the ligand appears multiple times
-		    > Correct Usage printing (with the def. parameters printed using the params defined in the fparams.h file). 
-		    > Explicit in usage what the explite pocket def 1 and 2 are.
+    high    > Adapt dpocket and tpocket to be able to design correct
+			  statistics if the ligand appears multiple times 
 		    > rpdb.c does not work on proteins with no element name in the end of an atom line....-> debug this
-					 
-	low				> Satisfy g++ compilation requirement
-					> Performance issues : implement the index neighbour lists 
-					  everywhere we can
-					> Performance issues : Remove the memory handler, find another
-					  solution.
+            > Don't take into account hydrogens when defining the pocket using
+              the simple distance criteria (ligand's neighbor)
+
+	low		> Performance issues : implement the index neighbour lists 
+			  everywhere we can
+			> Performance issues : Remove the memory handler, find another
+			  solution.
 				
 documentation
-	high			> Retrieve and complete manuals.
-					> Propose a full PDF documentation giving installation
-					  instructions and examples of usage.
+	high	> Check GNU manuals (namely default parameters)
+			> Propose a full PDF documentation giving installation
+			  instructions, examples of usage, descriptor definition and scoring
+              function modification.
 
-	medium			> Include in the documentation an example showing how to
-					  modify the scoring function & the way fpocket sort pockets
-
-    medium          > Include in the documentation an example showing how to add a new descriptor
 
 qhull    
-    high            > Erase voronoi tmp files after use, or don't even use it.
+    high    > Erase voronoi tmp files after use, or don't even use it.
 
-    medium          > Assess limits of qhull (maximum number of points) -> enhance 
-					  error management
-					> Use qhull as static library object in order to provide 
-					  bigger portability of fpocket (contact the qhull team)
+    medium  > Assess limits of qhull (maximum number of points) -> enhance 
+			  error management
+			> Use qhull as static library object in order to provide 
+			  bigger portability of fpocket (contact the qhull team)
 
 input
-    high            > Test parameters options of fpocket, dpocket, tpocket in
-                      each files to avoid warning message "unknown option"
-		    > Test ranges of parameters on input. For instance -m < -M, or -A between 0 and 4 etc....
+    high    > Test ranges of parameters on input. For instance -m < -M, or
+              A between 0 and 4 etc....
 
-    medium          > Enable input of "to keep" HETATM tags by command line
+    low     > Enable input of "to keep" HETATM tags by command line
 
 output
-    high            > Handle error when the input file of fpocket is in the
-                      current directory.
-    medium          > Give the possibility to define the output path through 
-					  command line, keeping the current behaviour as default
+    high    > Handle error when the input file of fpocket is in the
+              current directory.
+    medium  > Give the possibility to define the output path through 
+			  command line, keeping the current behaviour as default
 
 visualization
-    low             > Write a tcl based gui frontend for viewing and navigating 
-					  through results using VMD
-    medium          > Enhance PYMOL vizualisation output
+    low     > Write a tcl based gui frontend for viewing and navigating 
+			  through results using VMD
 
 debugging
-    high            > Create a template bugreport.txt file for eventual bug reports from users.
+    high    > Create a template bugreport.txt file for eventual bug reports from users.

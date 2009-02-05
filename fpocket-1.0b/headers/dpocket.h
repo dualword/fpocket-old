@@ -58,9 +58,9 @@
 #define M_DP_POCKET   2
 #define M_DP_POCETLIG 3
 
-#define M_DP_OUTP_HEADER "pdb lig overlap PP-crit PP-dst lig_vol pock_vol nb_AS nb_AS_norm mean_as_ray mean_as_solv_acc apol_as_prop apol_as_prop_norm mean_loc_hyd_dens mean_loc_hyd_dens_norm hydrophobicity_score volume_score polarity_score charge_score flex prop_polar_atm as_density"
+#define M_DP_OUTP_HEADER "pdb lig overlap PP-crit PP-dst lig_vol pock_vol nb_AS nb_AS_norm mean_as_ray mean_as_solv_acc apol_as_prop apol_as_prop_norm mean_loc_hyd_dens mean_loc_hyd_dens_norm hydrophobicity_score volume_score polarity_score polarity_score_norm charge_score flex prop_polar_atm as_density as_density_norm"
 
-#define M_DP_OUTP_FORMAT "%s %s %6.2f %2d %3.2f %8.2f %8.2f %5d %3.2f %5.2f %5.2f %4.2f %3.2f %6.2f %3.2f %8.2f %6.2f %4d %4d %5.2f %6.2f %3.2f"
+#define M_DP_OUTP_FORMAT "%s %s %6.2f %2d %3.2f %8.2f %8.2f %5d %3.2f %5.2f %5.2f %4.2f %3.2f %6.2f %3.2f %8.2f %6.2f %4d %3.2f %4d %5.2f %6.2f %3.2f %3.2f"
 #define M_DP_OUTP_VAR(fc, l, ovlp, status, dst, lv, d) fc, l, ovlp, status, dst, lv, \
                                           d->volume, \
                                           d->nb_asph, d->nas_norm,\
@@ -71,9 +71,14 @@
 					  d->mean_loc_hyd_dens, \
                                           d->mean_loc_hyd_dens_norm, \
                                           d->hydrophobicity_score, \
-					  d->volume_score, d->polarity_score, d->charge_score, \
-					  d->flex, d->prop_polar_atm, \
-                                          d->as_density
+					  d->volume_score, \
+                                          d->polarity_score, \
+                                          d->polarity_score_norm, \
+                                          d->charge_score, \
+					  d->flex, \
+                                          d->prop_polar_atm, \
+                                          d->as_density, \
+                                          d->as_density_norm
 
 /* ------------------------------PROTOTYPES-----------------------------------*/
 

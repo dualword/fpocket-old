@@ -581,58 +581,7 @@ void print_pocket_usage(FILE *f)
 {
 	f = (f == NULL) ? stdout:f ;
 
-	fprintf(f,
-	"\n\n-------------------\nUSAGE: \n") ;
-	fprintf(f,
-	"Pocket finding on a pdb/list of pdb files: \n") ;
-	fprintf(f,
-	"\t./bin/fpocket -f pdb\n\n") ;
-	fprintf(f,
-	"\t./bin/fpocket -F pdb_list\n\n") ;
-	fprintf(f,
-	"Options: (find standard parameters in brackets)\n") ;
-	fprintf(f,
-	"\t-m (float)  : Minimum radius of an alpha-sphere. (2.8) \n") ;
-	fprintf(f,
-	"\t-M (float)  : Maximum radius of an alpha-sphere. (6.5)\n") ;
-	fprintf(f,
-	"\t-A (int)    : Minimum number of apolar neighbor for an a-sphere  ") ;
-	fprintf(f,
-	"\t              to be considered as apolar. (3) \n") ;
-	fprintf(f,
-	"\t-i (int)    : Minimum number of a-sphere per pocket. (3)\n") ;
-	fprintf(f,
-	"\t-D (float)  : Maximum distance for first clustering algorithm. (1.2)\n") ;
-	fprintf(f,
-	"\t-s (float)  : Maximum distance for single linkage clustering. (1.5)\n") ;
-	fprintf(f,
-	"\t-n (integer): Minimum number of neighbor close from each other");
-	fprintf(f,
-	"\t              for single linkage clustering. (4)\n") ;
-	fprintf(f,
-	"\t-r (float)  : Maximum distance between two pocket barycenter for");
-	fprintf(f,
-	"\t              refine algorithm. (4.0)\n") ;
-	fprintf(f,
-	"\t-p (float)  : Minimum proportion of apolar sphere in a pocket to  ");
-	fprintf(f,
-	"\t              keep it. (0.0)\n") ;
-	fprintf(f,
-	"\t-v (integer): Number of Monte-Carlo iteration for the calculation ");
-	fprintf(f,
-	"\t              of each pocket volume. (2500)\n") ;
-	fprintf(f,
-	"\t-b (integer): Space approximation for the basic method of the volume ");
-	fprintf(f,
-	"\t              calculation. (-1)\n") ;
-	fprintf(f,
-	"\t              If this option is used, the programm will use this method");
-	fprintf(f,
-	"\t              instead \n") ;
-	fprintf(f,
-	"\t              of Monte-Carlo. \n") ;
-	fprintf(f,
-	"\nSee the manual (man fpocket) for mor information on those parameters.\n") ;
+	fprintf(f, M_FP_USAGE) ;
 }
 
 /**-----------------------------------------------------------------------------

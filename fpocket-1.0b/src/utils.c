@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	22-01-09	(v)  Added function to split a string using a given separator
 ##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -672,4 +673,103 @@ FILE* fopen_pdb_check_case(char *name, const char *mode)
 
 	return f ;
 	
+}
+
+/**-----------------------------------------------------------------------------
+   ## FONCTION:
+	tab_str* str_split_memopt(const char *str, const char sep)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Split the string given using a char separator. Every token will be stored in
+	a tab_str structure which will be returned by the function.
+	Empty tokens (two consecutives separator) will be stored as an empty string
+	containing only the NULL caractere.
+
+	We optimise here the memory, and allocate the exact memory for each token.
+
+	!! MEMORY OF THE RETURNED ARGUMENT MUST BE FREED BY CALLING free_tab_str() !!
+
+	COULD BE OPTIMISED.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ const char *str: The string to deal with
+	@ const char sep: The separator
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	tab_str*: A pointer to a structure tab_str which will contain all elements of
+	the string.
+   -----------------------------------------------------------------------------
+*/
+tab_str* str_split(const char *str, const int sep)
+{
+	tab_str *ts = my_calloc(1, sizeof(tab_str)) ;
+
+	const char *pstr = str ;	// A temp pointer to str
+	int n = 1 ;					// At least one token (no separator in the string)
+
+	// --- Count the number of token
+
+	while(*pstr) {
+		if(*pstr == sep) {
+			n++ ;
+		}
+		pstr ++ ;
+	}
+
+	ts->nb_str = n ;
+	ts->t_str = my_calloc(n, sizeof(char*)) ;
+
+	// --- If there is more than one token, split the string
+
+	if(n > 1) {
+		char **ptab_str = ts->t_str ;
+		char *s_pctok = NULL ;			// A pointer to the current created token
+		const char *s_beg = str ;		// A pointer used to copy each token from s_beg to next separator
+
+		size_t tok_i = 0,
+			   size_tok = 1 ;
+
+		pstr = str ;
+
+		// --- Allocate exact memory and copy each tokens
+
+		while(*pstr) {
+			if(*pstr == sep) {
+				ptab_str[tok_i] = my_calloc(size_tok, sizeof(char)) ;
+				s_pctok = ptab_str[tok_i] ;
+
+				while(*s_beg != *pstr) {
+					*s_pctok = *s_beg ;
+					s_pctok ++ ;
+					s_beg ++ ;
+				}
+				*s_pctok = '\0' ;
+
+				size_tok = 0 ;
+				tok_i ++ ;
+				s_beg ++ ;		// Skip the separator for next token
+			}
+			size_tok ++ ;
+			pstr ++ ;
+		}
+
+	// --- Copy the last token
+
+		ptab_str[tok_i] = my_calloc(size_tok, sizeof(char)) ;
+		s_pctok = ptab_str[tok_i] ;
+		while(*s_beg) {
+			*s_pctok = *s_beg ;
+			s_pctok ++ ;
+			s_beg ++ ;
+		}
+		*s_pctok = '\0' ;
+	}
+	else {
+	// --- One token only, just copy the original string
+		ts->t_str[0] = my_calloc(strlen(str), sizeof(char));
+		strcpy(ts->t_str[0], str);
+	}
+
+	return ts ;
+
 }

@@ -1,0 +1,23 @@
+With N = 3, the scoring function number 3 gives:    GOOD
+
+		       CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 62/86 - 65/89
+	PP holo : 79/92 - 79/90
+	PP apo  : 69/90
+	Cheng   : 70/85 - 70/100
+	CCDC    : 69/90 - 71/90
+	Diverse : 64/81 - 71/92
+
+With N = 2, the scoring function number 3 gives:
+
+		       CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 59/84 - 65/89
+	PP holo : 79/94 - 81/94
+	PP apo  : 69/90
+	Cheng   : 70/85 - 75/100
+	CCDC    : 71/91 - 72/89
+	Diverse : 59/80 - 72/94

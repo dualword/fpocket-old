@@ -16,7 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##	19-01-09	(v)  Minor modif (print on the same line)
+##	19-01-09	(v)  Minor modif (status output printed on the same line)
 ##	28-11-08	(v)  Relooking + comments UTD
 ##	27-11-08	(v)  Write fpocket output if asked + relooking
 ##	15-10-08	(v)  Fixed bad count when PDB file not found.
@@ -354,6 +354,8 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	/* Get atoms involved in the actual pocket */
 	accpck = get_actual_pocket_DEPRECATED(cpdb, 4.0, &naccpck) ;
 	accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
+
+	fflush(stdout) ;
 	if (naccpck2 <= 0) {
 		fprintf(stdout, "! Warning: actual pocket has 0 atoms!! %s %d\n", fa,
 						naccpck2) ;
@@ -547,6 +549,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 
 		ov1 = atm_corsp(alneigh, nlneigh, pneigh, npneigh) ;
 		ov2 = atm_corsp(accpck, naccpck, pneigh, npneigh) ;
+		
 		/* ovol =  set_overlap_volumes(pcur, lig, nalig, ligvol, params) ; */
 		
 		/* printf ("%f\n", ovol) ; */
@@ -609,6 +612,9 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		ddata[i][M_OREL2] = 0.0 ;
 		idata[i][M_POS2] = 0 ;
 	}
+/*
+	fprintf(stdout, "STATUS: %d %d %d\n", found[0], found [1], found[2]);
+*/
 }
 
 /** -----------------------------------------------------------------------------

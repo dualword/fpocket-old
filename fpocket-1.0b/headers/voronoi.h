@@ -44,6 +44,7 @@
 #include "rpdb.h"
 #include "writepdb.h"
 #include "calc.h"
+#include "utils.h"
 
 #include "memhandler.h"
 
@@ -57,6 +58,7 @@
 /*tolerance for coordinate imprecion during alpha sphere search	 */
 #define M_PREC_TOLERANCE 1e-4
 
+#define M_BUFSIZE 1e7
 /* --------------------------------STRUCTURES-------------------------------- */
 
 typedef struct s_vvertice 

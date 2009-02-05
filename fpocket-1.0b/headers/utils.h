@@ -85,6 +85,7 @@ typedef struct tab_str
 int str_is_number(const char *str, const int sign) ;
 int str_is_float(const char *str, const int sign) ;
 void str_trim(char *str) ;
+tab_str* str_split(const char *str, const int sep) ;
 
 tab_str* f_readl(const char *fpath, int nchar_max) ;
 void free_tab_str(tab_str *tstr) ;
