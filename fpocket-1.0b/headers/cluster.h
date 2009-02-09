@@ -43,12 +43,6 @@
 #include "calc.h"
 #include "pocket.h"
 
-/* Single linkage clustering at 1 A distance */
-#define MAX_SINGLE_CLUST_DIST 2.75
-
-/* Cluster only if more than MIN_NUM_NEIGHBOURS vertices are neighbours */
-#define MIN_NUM_NEIGHBOURS 4
-
 /* ------------------------------PROTOTYPES---------------------------------- */
 
 void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params);

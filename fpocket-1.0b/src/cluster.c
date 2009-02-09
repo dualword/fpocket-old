@@ -103,51 +103,151 @@ void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 	
 	/* Flag to know if two clusters are next to each other by single linkage 
 	 * clustering...or not */
-	int distFlag;
-	if(pockets) {
-		/* Set the first pocket */
-		pcur = pockets->first ;				
-		while(pcur) {
-			/* Set the second pocket */
-			curMobilePocket = pcur->next ;	
-			while(curMobilePocket) {
-				distFlag = 0 ;
-				/* Set the first vertice/alpha sphere center of the first pocket */
-				vcur = pcur->pocket->v_lst->first ;	
-				while(vcur && distFlag <= params->sl_clust_min_nneigh){
-					/* Set the first vertice/alpha sphere center of the second pocket */
-					curMobileVertice = curMobilePocket->pocket->v_lst->first ;
-					vvcur = vcur->vertice ;
-					vcurx = vvcur->x ;
-					vcury = vvcur->y ;
-					vcurz = vvcur->z ;
-					
-					/* Double loop for vertices -> if not near */
-					while(curMobileVertice && (distFlag <= params->sl_clust_min_nneigh)){					
-						mvvcur = curMobileVertice->vertice ;
-						if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z) 
-							< params->sl_clust_max_dist) {
-                                                        /*if beneath the clustering max distance, increment the distance flag*/
-							distFlag++; 
-						}
-						curMobileVertice = curMobileVertice->next;
+	int nflag ;
+	
+	if(!pockets) {
+		fprintf(stderr, "! Incorrect argument during Single Linkage Clustering.\n") ;
+		return ;
+	}
+
+	/* Set the first pocket */
+	pcur = pockets->first ;
+	while(pcur) {
+		/* Set the second pocket */
+		curMobilePocket = pcur->next ;
+		while(curMobilePocket) {
+			nflag = 0 ;
+			/* Set the first vertice/alpha sphere center of the first pocket */
+			vcur = pcur->pocket->v_lst->first ;
+			while(vcur && nflag <= params->sl_clust_min_nneigh){
+				/* Set the first vertice/alpha sphere center of the second pocket */
+				curMobileVertice = curMobilePocket->pocket->v_lst->first ;
+				vvcur = vcur->vertice ;
+				vcurx = vvcur->x ;
+				vcury = vvcur->y ;
+				vcurz = vvcur->z ;
+
+				/* Double loop for vertices -> if not near */
+				while(curMobileVertice && nflag <= params->sl_clust_min_nneigh){
+					mvvcur = curMobileVertice->vertice ;
+					if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z)
+						< params->sl_clust_max_dist) {
+													/*if beneath the clustering max distance, increment the distance flag*/
+						nflag++;
 					}
-					vcur = vcur->next ;
+					curMobileVertice = curMobileVertice->next;
 				}
-				
-				pnext =  curMobilePocket->next ;
-                                /*if the distance flag has counted enough occurences of near neighbours, merge pockets*/
-				if(distFlag >= params->sl_clust_min_nneigh) {
-					/* If they are next to each other, merge them */
-					mergePockets(pcur,curMobilePocket,pockets);
-				}
-				curMobilePocket = pnext ;
+				vcur = vcur->next ;
 			}
 
-			pcur = pcur->next ;
+			pnext =  curMobilePocket->next ;
+			/* If the distance flag has counted enough occurences of near neighbours, merge pockets*/
+			if(nflag >= params->sl_clust_min_nneigh) {
+				/* If they are next to each other, merge them */
+				mergePockets(pcur,curMobilePocket,pockets);
+			}
+			curMobilePocket = pnext ;
 		}
+
+		pcur = pcur->next ;
 	}
-	else {
+}
+
+/**-----------------------------------------------------------------------------
+   ## FONCTION:
+	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	This function will apply a mutliple linkage clustering algorithm on the given
+	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
+	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
+	then merge the two pockets.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ c_lst_pockets *pockets  : The list of pockets
+	@ s_fparams *params       : Parameters of the program, including single
+								linkage parameters
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void
+   -----------------------------------------------------------------------------
+*/
+void pck_ml_clust_test(c_lst_pockets *pockets, s_fparams *params)
+{
+	node_pocket *pcur = NULL,
+				*pnext = NULL ,
+				*curMobilePocket = NULL ;
+
+	node_vertice *vcur = NULL ;
+	node_vertice *curMobileVertice = NULL ;
+
+	s_vvertice *vvcur = NULL,
+			   *mvvcur = NULL ;
+	float vcurx,
+		  vcury,
+		  vcurz ;
+
+	/* Flag to know if two clusters are next to each other by single linkage
+	 * clustering...or not */
+	int nflag,
+		restart = 0;
+
+	if(!pockets) {
 		fprintf(stderr, "! Incorrect argument during Single Linkage Clustering.\n") ;
+		return ;
 	}
+	printf("ML starting\n") ;
+	/* Set the first pocket */
+	pcur = pockets->first ;
+	while(pcur) {
+		/* Set the second pocket */
+		curMobilePocket = pcur->next ;
+		while(curMobilePocket) {
+			nflag = 0 ;
+			/* Set the first vertice/alpha sphere center of the first pocket */
+			vcur = pcur->pocket->v_lst->first ;
+			while(vcur && nflag <= params->sl_clust_min_nneigh){
+				/* Set the first vertice/alpha sphere center of the second pocket */
+				curMobileVertice = curMobilePocket->pocket->v_lst->first ;
+				vvcur = vcur->vertice ;
+				vcurx = vvcur->x ;
+				vcury = vvcur->y ;
+				vcurz = vvcur->z ;
+
+				/* Double loop for vertices -> if not near */
+				while(curMobileVertice && nflag <= params->sl_clust_min_nneigh){
+					mvvcur = curMobileVertice->vertice ;
+					if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z)
+						< params->sl_clust_max_dist) {
+													/*if beneath the clustering max distance, increment the distance flag*/
+						nflag++;
+						break ; /* Ensure that at least N vertice in one of the
+								   two pockets have N vertice at a distance
+								   <= SL_MAX_DST */
+					}
+					curMobileVertice = curMobileVertice->next;
+				}
+				vcur = vcur->next ;
+			}
+
+			pnext =  curMobilePocket->next ;
+			/* If the distance flag has counted enough occurences of near neighbours, merge pockets*/
+			if(nflag >= params->sl_clust_min_nneigh) {
+				/* If they are next to each other, merge them */
+				mergePockets(pcur,curMobilePocket,pockets);
+				printf("Nopw: %ld\n",pockets->n_pockets) ;
+				restart = 1 ; printf("Merging\n") ;
+				break ;
+			}
+			curMobilePocket = pnext ;
+		}
+
+		/* Restart the algorithm if two pockets have been merged */
+		if(restart == 1) {
+			restart = 0 ;
+			pcur = pockets->first ;
+		}
+		else pcur = pcur->next ;
+	}
+	printf("ML ending\n") ;
 }

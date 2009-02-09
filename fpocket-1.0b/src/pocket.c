@@ -15,14 +15,13 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	09-02-09	(v)  Normalized maximum distance between two alpha sphere added
 ##	29-01-09	(v)  Normalized density and polarity score added
 ##	21-01-09	(v)  Normalized descriptors calculation moved in a single fct
 ##					 Some variable renamed (refractored)
 ##	14-01-09	(v)  Added some normalized descriptors
 ##  28-11-08	(v)  Scoring and sorting moved out of this file + minor 
 ##					 restructuration + comments almost UTD
-##  02-09-08	(p)  Added druggability score, curvature and surfaces for 
-##					 each pocket structure.
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
@@ -585,7 +584,8 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 	float flex_M = 0.0, flex_m = 1.0,
 		  nas_apolp_M = 0.0, nas_apolp_m = 1.0,
 		  density_M = 0.0, density_m = 100.0,
-		  mlhd_M = 0.0, mlhd_m = 1000.0;
+		  mlhd_M = 0.0, mlhd_m = 1000.0,
+		  as_max_dst_M = 0.0, as_max_dst_m = 1000.0 ;
 
 	int nas_M = 0, nas_m = 1000,
 		polarity_M = -1, polarity_m = 10000 ;
@@ -597,6 +597,7 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 			pcur = cur->pocket ;
 			/* Initialize boundaries if it's the first turn */
 			if(cur == pockets->first) {
+				as_max_dst_M = as_max_dst_m = pcur->pdesc->as_max_dst ;
 				density_M = density_m = pcur->pdesc->as_density ;
 				polarity_M = polarity_m = pcur->pdesc->polarity_score ;
 				flex_M = flex_m = pcur->pdesc->flex ;
@@ -606,6 +607,11 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 			}
 			else {
 			/* Update several boundaries */
+				if(pcur->pdesc->as_max_dst > as_max_dst_M)
+					as_max_dst_M = pcur->pdesc->as_max_dst ;
+				else if(pcur->pdesc->as_max_dst < as_max_dst_m)
+					as_max_dst_m = pcur->pdesc->as_max_dst ;
+				
 				if(pcur->pdesc->as_density > density_M)
 					density_M = pcur->pdesc->as_density ;
 				else if(pcur->pdesc->as_density < density_m)
@@ -641,6 +647,9 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 		while(cur) {
 			pcur = cur->pocket ;
 			/* Calculate normalized descriptors */
+			pcur->pdesc->as_max_dst_norm =
+				(pcur->pdesc->as_max_dst - as_max_dst_m) / (as_max_dst_M - as_max_dst_m) ;
+
 			pcur->pdesc->as_density_norm = 
 				(pcur->pdesc->as_density - density_m) / (density_M - density_m) ;
 			

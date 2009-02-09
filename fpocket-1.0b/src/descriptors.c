@@ -18,6 +18,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	09-02-09	(v)  Maximum distance between two alpha sphere added
 ##	29-01-09	(v)  Normalized density and polarity score added
 ##	21-01-09	(v)  Density descriptor Added
 ##	14-01-09	(v)  Some normalized descriptors added
@@ -114,6 +115,7 @@ void reset_s_desc(s_desc *desc)
 	desc->apolar_asphere_prop = 0.0 ;
 	desc->mean_loc_hyd_dens = 0.0 ;
 	desc->as_density = 0.0 ;
+	desc->as_max_dst = 0.0 ;
 
 	desc->flex = 0.0 ;
 	desc->nas_norm = 0.0 ;
@@ -121,6 +123,7 @@ void reset_s_desc(s_desc *desc)
 	desc->mean_loc_hyd_dens_norm = 0.0 ;
 	desc->as_density_norm = 0.0 ;
     desc->polarity_score_norm = 0.0 ;
+	desc->as_max_dst_norm = 0.0 ;
 
 	desc->nb_asph = 0 ;
 	desc->polarity_score  = 0 ;
@@ -169,7 +172,8 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	float d = 0.0, vx, vy, vz, vrad,
 		  masph_sacc = 0.0, /* Mean alpha sphere solvent accessibility */
 		  mean_ashape_radius = 0.0,
-		  as_density = 0.0 ;
+		  as_density = 0.0, as_max_dst = -1.0,
+		  dtmp = 0.0 ;
 
 	int i, j,
 		napol_neigh = 0,
@@ -198,8 +202,11 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 
 				/* Update density by the way... */
 				if(j > i) {
-					as_density += dist(vcur->x, vcur->y, vcur->z,
-											vc->x, vc->y, vc->z) ;
+					dtmp = dist(vcur->x, vcur->y, vcur->z,
+								vc->x, vc->y, vc->z);
+					
+					if(dtmp > as_max_dst) as_max_dst = dtmp ;
+					as_density += dtmp ;
 				}
 			}
 			desc->mean_loc_hyd_dens += (float) napol_neigh ;
@@ -208,8 +215,11 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 		else {
 			/* Update density */
 			for(j = i+1 ; j < nvert ; j++) {
-				as_density += dist(vcur->x, vcur->y, vcur->z,
-								   tab_vert[j]->x, tab_vert[j]->y, tab_vert[j]->z) ;
+				dtmp = dist(vcur->x, vcur->y, vcur->z,
+							tab_vert[j]->x, tab_vert[j]->y, tab_vert[j]->z) ;
+				
+				if(dtmp > as_max_dst) as_max_dst = dtmp ;
+				as_density += dtmp ;
 			}
 		}
 
@@ -223,6 +233,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
 	else desc->mean_loc_hyd_dens= 0.0;
 
+	desc->as_max_dst = as_max_dst ;
 	desc->apolar_asphere_prop = (float)nAlphaApol / (float)nvert ;
 	desc->masph_sacc =  masph_sacc / nvert ;
 	desc->mean_asph_ray = mean_ashape_radius / (float)nvert ;

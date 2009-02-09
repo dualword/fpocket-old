@@ -21,3 +21,16 @@ With N = 2, the scoring function number 5 gives:   GOOD
 	Cheng   : 70/85 - 75/100
 	CCDC    : 72/91 - 72/89
 	Diverse : 63/81 - 76/95
+
+
+Using Scoring function 1 and N = 2, and with the new clustering step removing tiny pockets (1 alpha sphere) before the other steps, we have:
+
+		       CPP     OVL
+	Data      T1/T3 | T1/T3
+	------------------------
+	Train   : 65/87 - 70/91
+	PP holo : 83/92 - 88/94
+	PP apo  : 69/94
+	Cheng   : 75/95 - 80/100
+	CCDC    : 72/91 - 73/91
+	Diverse : 66/82 - 76/93

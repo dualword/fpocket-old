@@ -19,6 +19,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	09-02-09	(v)  Drop tiny pocket step added
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -125,6 +126,8 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 			b = clock() ;
  			fprintf(stdout,"> Cluster refinment steps: \n");
 */
+			reIndexPockets(pockets) ;/* Create index and calculate statistics */
+			drop_tiny(pockets) ;/* Create index and calculate statistics */
 			reIndexPockets(pockets) ;/* Create index and calculate statistics */
 
 /*

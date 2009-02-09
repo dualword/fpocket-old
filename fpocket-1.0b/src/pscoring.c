@@ -237,6 +237,7 @@ float score_pocket2(s_desc *pdesc)
 	Gold    : 69/90 - 71/90
 */
 
+
 	score =
         -1.50335
        +30.27950 * (float)pdesc->nas_norm
@@ -244,6 +245,14 @@ float score_pocket2(s_desc *pdesc)
        +11.04704 * (float)pdesc->mean_loc_hyd_dens_norm
         +1.18610 * (float)pdesc->polarity_score
         -2.01214 * (float)pdesc->as_density ;
+
+	score =
+        -0.65784
+       +29.78270 * (float)pdesc->nas_norm
+        -4.06632 * (float)pdesc->prop_asapol_norm
+       +11.72346 * (float)pdesc->mean_loc_hyd_dens_norm
+        +1.16349 * (float)pdesc->polarity_score
+        -2.06835 * (float)pdesc->as_density ;
 
 
 /*
@@ -265,6 +274,7 @@ float score_pocket2(s_desc *pdesc)
 	Gold    : 69/91 - 71/90
 */
 
+/*
 	score =
         -0.65784
        +29.78270 * (float)pdesc->nas_norm
@@ -272,6 +282,7 @@ float score_pocket2(s_desc *pdesc)
        +11.72346 * (float)pdesc->mean_loc_hyd_dens_norm
         +1.16349 * (float)pdesc->polarity_score
         -2.06835 * (float)pdesc->as_density ;
+*/
 /*
 	Using m 3.0 M 6.0 D 1mean_loc_hyd_dens_norm.73 i 25 n 3 we have for the training set this PLS model
 	having 4 components
@@ -291,6 +302,7 @@ float score_pocket2(s_desc *pdesc)
 	Gold    : 71/91 - 72/89
 */
 
+/*
 	score =
         -1.48906
        +29.54059 * (float)pdesc->nas_norm
@@ -298,6 +310,7 @@ float score_pocket2(s_desc *pdesc)
         -3.30562 * (float)pdesc->prop_asapol_norm
         +1.15711 * (float)pdesc->polarity_score
         -1.94912 * (float)pdesc->as_density ;
+*/
 
 /*	ON GOLD
 	Using m 3.0 M 6.0 D 1mean_loc_hyd_dens_norm.73 i 25 n 2 we have for the training set this PLS model
@@ -318,6 +331,7 @@ float score_pocket2(s_desc *pdesc)
 	Gold    : 69/91 - 71/90
 */
 
+/*
 	score =
         -1.29456
        +33.45117 * (float)pdesc->nas_norm
@@ -325,6 +339,7 @@ float score_pocket2(s_desc *pdesc)
         -5.23046 * (float)pdesc->prop_asapol_norm
         +1.07977 * (float)pdesc->polarity_score
         -2.00073 * (float)pdesc->as_density ;
+*/
 
 /*	ON GOLD
 	Using m 3.0 M 6.0 D 1mean_loc_hyd_dens_norm.73 i 25 n 3 we have for the training set this PLS model
@@ -345,6 +360,7 @@ float score_pocket2(s_desc *pdesc)
 	Cheng   : 70/85 - 70/100
 	Gold    : 70/91 - 71/90
 */
+/*
 
 	score =
          -2.29256
@@ -353,6 +369,20 @@ float score_pocket2(s_desc *pdesc)
         -4.90910 * (float)pdesc->prop_asapol_norm
         +1.11252 * (float)pdesc->polarity_score
         -1.88681 * (float)pdesc->as_density;
-	
+*/
+
+/*
+	score =
+        -0.04719
+       +27.28918 * (float)pdesc->nas_norm
+        -3.28306 * (float)pdesc->prop_asapol_norm
+       +11.24130 * (float)pdesc->mean_loc_hyd_dens_norm
+        +1.24804 * (float)pdesc->polarity_score
+        -2.63044 * (float)pdesc->as_density
+        +5.42051 * (float)pdesc->as_max_dst_norm ;
+*/
+
+
+
 	return score ;
 }

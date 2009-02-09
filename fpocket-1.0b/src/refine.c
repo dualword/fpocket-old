@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	09-02-09	(v)  Drop tiny pocket routine added
 ##	28-11-08	(v)  Comments UTD 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -143,7 +144,8 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 
 			if(pcur->v_lst->n_vertices < (size_t) params->min_pock_nb_asph 
 				||  pasph <  (params->refine_min_apolar_asphere_prop)){
-			// If the pocket is too small or has not enough apolar alpha spheres, drop it
+			/* If the pocket is too small or has not enough apolar alpha
+			 * spheres, drop it */
 				dropPocket(pockets, npcur);		
 			}
 
@@ -155,6 +157,37 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 		fprintf(stderr, "! No pockets to drop from (argument NULL: %p).\n", pockets) ;
 	}
 
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	drop_tiny
+	-----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Drop really tiny pockets (< 5 alpha spheres)
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ c_lst_pockets *pockets : The list of pockets.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void
+   -----------------------------------------------------------------------------
+*/
+void drop_tiny(c_lst_pockets *pockets)
+{
+	node_pocket *npcur = pockets->first,
+				*npnext = NULL ;
+	while(npcur) {
+		npnext = npcur->next ;
+
+		if(npcur->pocket->v_lst->n_vertices < 2){
+		/* If the pocket is really small, drop it */
+			dropPocket(pockets, npcur);
+		}
+
+		if(pockets->n_pockets <= 0) fprintf(stderr, "! No Pockets Found while refining\n");
+		npcur = npnext ;
+	}
 }
 
 /**-----------------------------------------------------------------------------

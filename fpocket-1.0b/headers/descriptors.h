@@ -60,7 +60,7 @@ typedef struct s_desc
               apolar_asphere_prop,  /* Proportion of apolar alpha spheres */
               mean_loc_hyd_dens,    /* Mean local hydrophobic density (from alpha spheres) */
               as_density,           /* Pocket density, defined as mean distance between alpha spheres*/
-              
+              as_max_dst,           /* Maximum distance between two alpha spheres */
               /* The following descriptors are all normalized using observed
                  values among all pocket found by the algorithm. These
                  are not set in descriptor.c, but in pocket.c as we have to check
@@ -68,11 +68,12 @@ typedef struct s_desc
                  normalize. */
 
               flex,                  /* Normalized flexibility - based on B factors - ABUSIVE */
+              nas_norm,              /* Normalized number of alpha sphere */
+              polarity_score_norm,
               mean_loc_hyd_dens_norm,/* Normalized mean local hydrophobic density */
               prop_asapol_norm,      /* Normalized proportion of apolar alphasphere */
               as_density_norm,
-              polarity_score_norm,
-              nas_norm               /* Normalized number of alpha sphere */
+              as_max_dst_norm
         ;
 	
 	int aa_compo[20] ;	/* Absolute amino acid composition */

@@ -51,6 +51,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	09-02-09	(v)  Maximum distance between two alpha sphere added
 ##	21-01-09	(v)  Density descriptor added
 ##	19-01-09	(v)  Minor change (input file name no longer const)
 ##	14-01-09	(v)  Added some normalized descriptors and pockerpicker criteria
