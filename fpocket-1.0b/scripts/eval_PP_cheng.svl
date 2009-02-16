@@ -2,18 +2,33 @@
 global function eval_pdb [pdbname, ligname]
 
 	// Get coords of the ligand
-	local cpdb =  ReadPDB pdbname ;
+	local [cpdb, return_code] = task_call ['ReadPDB', [token pdbname],
+						[errmsg:'ignore']] ;
+	if return_code === 'error' then
+		print 'PDB not found' ;
+		return -2 ;
+	endif
+
+	//local cpdb =  ReadPDB pdbname ;
 	local atoms = Atoms[] ;
 	local latoms = atoms | (app token rName aResidue atoms) == ligname ;
 	local lcoord = aPos latoms ;
-	
+
 	oDestroy cpdb ;
-	
+
 	// Now load pocketpicker output
-	local ppname = token cat [first wordsplit [string pdbname, "."], 
+	local ppname = token cat [first wordsplit [string pdbname, "."],
 			    	  "-PPicker.pdb"] ;
-	cpdb =  ReadPDB ppname ;
-	
+
+
+	[cpdb, return_code] = task_call ['ReadPDB', [token ppname],
+						[errmsg:'ignore']] ;
+	if return_code === 'error' then
+		print 'PDB from PP not found' ;
+		return -2 ;
+	endif
+	//cpdb =  ReadPDB ppname ;
+
 	// Store each pocket detected by PP using resname
 	local resids =  uniq aResidue (Atoms[] |
 			m_findmatch ['PC#', app token rName aResidue Atoms[]]) ;
@@ -26,8 +41,8 @@ global function eval_pdb [pdbname, ligname]
 	local r, rok ;
 	for r in resids loop
 		local coords = aPos cat rAtoms r ;
-		print 'Number of spheres:' ;
-		print length first coords ;
+		//print 'Number of spheres:' ;
+		//print length first coords ;
 		if length first coords < 10 then
 		// A weired bug I dont understand... Some pockets are splitted
 		// in two resids (but with the same resname), with 1 sphere
@@ -42,7 +57,7 @@ global function eval_pdb [pdbname, ligname]
 			rok = cat [rok, r] ;
 		endif
 	endloop
-	
+
 	if length rok <= 0 then print '-1' ;
 	else  print cat rName rok ;
 	endif
@@ -50,12 +65,12 @@ global function eval_pdb [pdbname, ligname]
 	// Return -1 if no pocket was found to be OK
 	if length rok <= 0 then return -1 ; endif
 
-	// Otherwise, check which pockets are OK and return the 
+	// Otherwise, check which pockets are OK and return the
 	// smaller ID
 
 	local n = rName rok ;
 	local ids = atoi totok app second apt wordsplit [app string n, "C"] ;
-	
+
 	oDestroy cpdb ;
 
 	return min ids ;
@@ -70,12 +85,19 @@ global function eval_pp tp_input
 		local v = app token fieldsplit [string L, "\t"] ;
 		print v ;
 		oDestroy Atoms[] ;
+
 		res = cat [res, eval_pdb [v[2], v[3]]] ;
 	endloop
 
 	fclose f ;
+	print'*************' ;
+	print 'Results:' ;
 	print res ;
-	print length (res | res == 1)/ length res ;
-	print length (res | res >= 1)/ length res ;
+	res = res | res > -2 ;
+	print tok_cat [ 'On ', totok length res, ' proteins available:'] ;
+	print tok_cat [ 'Top 1/3: ', totok (length (res | res == 1)/ length res),
+			'/',
+			totok (length (res | (res >= 1 and res <=3))/length res)];
+
 
 endfunction
