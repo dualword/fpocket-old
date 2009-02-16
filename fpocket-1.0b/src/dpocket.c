@@ -325,22 +325,21 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 	
 	if(par->interface_method == M_INTERFACE_METHOD2) {
 	/* Use the distance-based method to define the interface */
-		interface = get_mol_atm_neigh(lig, nal, pdb_cplx_l, 
-									  par->interface_dist_crit, nai) ;
+		interface = get_mol_atm_neigh(	lig, nal, pdb_cplx_l->latoms_p,
+										pdb_cplx_l->natoms,
+										par->interface_dist_crit, nai) ;
 	}
 	else {
 	/* Use the voronoi vertices-based method to define the interface */
-		interface = get_mol_ctd_atm_neigh(lig, nal, pdb_cplx_l, verts, 
-										  par->interface_dist_crit, 
-										  M_INTERFACE_SEARCH, nai) ; 
+		
+		interface = get_mol_ctd_atm_neigh(lig, nal, verts->pvertices, verts->nvert,
+										  par->interface_dist_crit,
+										  M_INTERFACE_SEARCH, nai) ;
 	}
-/*
-	fprintf(stdout, " OK\n") ;
-*/
 
 	/* Get a tab of pointer for interface's vertices to send a correct argument 
 	 * type to set_descriptors */
-	s_vvertice **tpverts = get_mol_vert_neigh(lig, nal, verts, pdb_cplx_l, 
+	s_vvertice **tpverts = get_mol_vert_neigh(lig, nal, verts->pvertices, verts->nvert,
 											  par->interface_dist_crit, &nvn) ;
 	
 	/* Ok we have the interface and the correct vertices list, now calculate 

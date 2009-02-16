@@ -22,3 +22,10 @@ awk -F '\t' '{print $2}' cheng-t.txt > cheng-f.txt
 awk -F '\t' '{print $1, $3}' gold-t.txt > gold-d.txt
 awk -F '\t' '{print $2}' gold-t.txt > gold-f.txt
 
+# CCDC Clean dataset
+awk -F '\t' '{print $1, $3}' ccdc-clean-t.txt > ccdc-clean-d.txt
+awk -F '\t' '{print $2}' ccdc-clean-t.txt > ccdc-clean-f.txt
+
+# Astex diverse set
+awk -F '\t' '{print $1, $3}' astex-diverse-t.txt > astex-diverse-d.txt
+awk -F '\t' '{print $2}' astex-diverse-t.txt > astex-diverse-f.txt

@@ -79,13 +79,16 @@ void test_fpocket(s_tparams *par)
 {
 	if(! par || par->nfiles <= 0)  return ;
 	
-	int nranks = 10, novlp = 8, 
+	int nranks = 13,  novlp = 5, novlp2 = 9,novlp3 = 8,
 		i, j, k, nok = 0  ;
-	int ranks [] = {1,2, 3, 4, 5, 6,7,8,9, 10} ;
-	float ovlp[] = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0,90.0} ;
-	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0,
-		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0 ;
-	int n1, n2, n3, N = 0 ;
+	int ranks [] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 50} ;
+	float ovlp[] = {50.0, 60.0, 70.0, 80.0,90.0} ;
+	float ovlp2[] = {0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0} ;
+	float ovlp3[] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7} ;
+	
+	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0, mean_ov4 = 0.0, mean_ov5 = 0.0,
+		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0, mean_ovr4 = 0.0, mean_ovr5 = 0.0  ;
+	int n1, n2, n3, n4, n5, N = 0 ;
 
 	/* Store statistics for each files: */
 	int status[par->nfiles] ;
@@ -108,17 +111,17 @@ void test_fpocket(s_tparams *par)
 	/* Printing each complexe statistics */
 	FILE *fp = fopen(par->p_output, "w") ;
 	if(fp) {
-		n1 = 0, n2 = 0, n3 = 0 ;
-		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | OVLP1 | OVLP2 | DIST_CM | POS1 | POS2 | POS3 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | LIGMASS | LIGVOL\n") ;
+		n1 = 0, n2 = 0, n3 = 0, n4 = 0, n5 = 0 ;
+		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | CRIT1 | CRIT2 | CRIT3 | CRIT4 | CRIT5 | POS1 | POS2 | POS3 | POS4 | POS5  | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | REL_OVLP4 | REL_OVLP5 | LIGMASS | LIGVOL\n") ;
 		for(i = 0 ; i < par->nfiles ; i++) {
 			remove_path(par->fcomplex[i]) ;
 			remove_path(par->fapo[i]) ;
 			if(status[i] == M_OK) {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
 						par->fligan[i], par->fcomplex[i], par->fapo[i], idata[i][M_NPOCKET],
-						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST],
-						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3],
-						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3],
+						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST], ddata[i][M_CRIT4], ddata[i][M_CRIT5],
+						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3], idata[i][M_POS4], idata[i][M_POS5],
+						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3], ddata[i][M_OREL4], ddata[i][M_OREL5],
 						ddata[i][M_LIGMASS], ddata[i][M_LIGVOL]) ;
 
 				if(idata[i][M_POS1] > 0) {
@@ -139,17 +142,34 @@ void test_fpocket(s_tparams *par)
 					n3 ++ ;
 				}
 
+				if(idata[i][M_POS4] > 0) {
+					mean_ov4 += ddata[i][M_CRIT4];
+					mean_ovr4 += ddata[i][M_OREL4];
+					n4 ++ ;
+				}
+
+				if(idata[i][M_POS5] > 0) {
+					mean_ov5 += ddata[i][M_CRIT5];
+					mean_ovr5 += ddata[i][M_OREL5];
+					n5 ++ ;
+				}
+
 			}
 			else {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %4d %4d %4d %8.2f %8.2f %8.2f %9.2f %9.2f\n",
-						par->fligan[i], par->fcomplex[i], par->fapo[i], -1, -1.0, -1.0,
-						-1.0, -1, -1, -1, -1.0, -1.0, -1.0, -1.0, -1.0) ;
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+						par->fligan[i], par->fcomplex[i], par->fapo[i], -1, 
+						-1.0, -1.0, -1.0, -1.0, -1.0,
+						-1, -1, -1, -1, -1,
+						-1.0, -1.0, -1.0, -1.0, -1.0,
+						-1.0, -1.0) ;
 			}
 		}
 
 		mean_ov1 /= (float) n1 ; mean_ovr1 /= (float) n1 ;
 		mean_ov2 /= (float) n2 ; mean_ovr2 /= (float) n2 ;
 		mean_dst /= (float) n3 ; mean_ovr3 /= (float) n3 ;
+		mean_ov4 /= (float) n4 ; mean_ovr4 /= (float) n4 ;
+		mean_ov5 /= (float) n5 ; mean_ovr5 /= (float) n5 ;
 
 		fclose(fp) ;
 	}
@@ -158,8 +178,36 @@ void test_fpocket(s_tparams *par)
 	/* Printing global statistics */
 	FILE *fg = fopen(par->g_output, "w") ;
 	if(fg) {
-	/* Write the first overlap statistics */
+		/* Write the first criteria statistics */
 		fprintf(fg, "===================== General statistics on all complexes =======================\n") ;
+
+
+		/* Write the first criteria statistics */
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t-                       _ Distance criteria _                      -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg, "   Ratio of good predictions (dist = 4A) \n") ;
+		fprintf(fg, "------------------------------------------\n") ;
+
+		for(i = 0 ; i < nranks ; i++) {
+			nok = 0 ;
+			for(k = 0 ; k < par->nfiles ; k++) {
+				if(status[k] == M_OK && idata[k][M_POS3] <= ranks[i]
+				&& idata[k][M_POS3] > 0) {
+					nok ++ ;
+				}
+			}
+			//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
+			fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i],
+					((float)nok) / ((float) N)) ;
+		}
+
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean distance          : %f\n", mean_dst) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr3) ;
+
+
+		/* Write the 2nd criteria statistics */
 		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 		fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
 		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
@@ -194,8 +242,8 @@ void test_fpocket(s_tparams *par)
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov2) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr2) ;
 
-	/* Write the second overlap statistics */
-
+		/* Write the 3rd criteria statistics */
+		
 		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
 		fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
 		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
@@ -233,30 +281,77 @@ void test_fpocket(s_tparams *par)
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov1) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr1) ;
 
-	/* Write the third overlap statistics */
-
+		/* Write the 4th criteria statistics */
+		
 		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
-		fprintf(fg,   "\t-                       _ Distance criteria _                      -\n") ;
+		fprintf(fg,   "\t-          _ 4th overlap criteria (alpha sphere overlap) _         -\n") ;
 		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
-		fprintf(fg, "   Ratio of good predictions (dist = 4A) \n") ;
-		fprintf(fg, "------------------------------------------\n") ;
+		fprintf(fg,"           :");
+		for( j = 0 ; j < novlp2 ; j++) {
+				fprintf(fg, "  >%5.2f  :", ovlp2[j]) ;
+		}
+		fprintf(fg,"\n");
+		fprintf(fg,"------------");
+		for( j = 0 ; j < novlp2 ; j++) {
+			fprintf(fg, "-------------") ;
+		}
+		fprintf(fg,"\n");
 
 		for(i = 0 ; i < nranks ; i++) {
-			nok = 0 ;
-			for(k = 0 ; k < par->nfiles ; k++) {
-				if(status[k] == M_OK && idata[k][M_POS3] <= ranks[i]
-				&& idata[k][M_POS3] > 0) {
-					nok ++ ;
+			fprintf(fg, "Rank <= %2d :", ranks[i]) ;
+			for( j = 0 ; j < novlp2 ; j++) {
+				nok = 0 ;
+				for(k = 0 ; k < par->nfiles ; k++) {
+					if( status[k] == M_OK &&
+						ddata[k][M_CRIT4] >= ovlp2[j] &&
+						idata[k][M_POS4] <= ranks[i] &&
+						idata[k][M_POS4] > 0) {
+						nok ++ ;
+					}
 				}
+				fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
 			}
-			//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
-			fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i],
-					((float)nok) / ((float) N)) ;
+			fprintf(fg, "\n") ;
 		}
-
 		fprintf(fg, "-------------------------------------\n") ;
-		fprintf(fg, "Mean distance          : %f\n", mean_dst) ;
-		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr3) ;
+		fprintf(fg, "Mean overlap          : %f\n", mean_ov4) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr4) ;
+
+		/* Write the 4th criteria statistics */
+		
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t-          _ 5th overlap criteria (alpha sphere overlap) _         -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,"           :");
+		for( j = 0 ; j < novlp3 ; j++) {
+				fprintf(fg, "  >%5.2f  :", ovlp3[j]) ;
+		}
+		fprintf(fg,"\n");
+		fprintf(fg,"------------");
+		for( j = 0 ; j < novlp3 ; j++) {
+			fprintf(fg, "-------------") ;
+		}
+		fprintf(fg,"\n");
+
+		for(i = 0 ; i < nranks ; i++) {
+			fprintf(fg, "Rank <= %2d :", ranks[i]) ;
+			for( j = 0 ; j < novlp3 ; j++) {
+				nok = 0 ;
+				for(k = 0 ; k < par->nfiles ; k++) {
+					if( status[k] == M_OK &&
+						ddata[k][M_CRIT5] >= ovlp3[j] &&
+						idata[k][M_POS5] <= ranks[i] &&
+						idata[k][M_POS5] > 0) {
+						nok ++ ;
+					}
+				}
+				fprintf(fg, "  %6.2f  :", ((float)nok) / ((float) N)) ;
+			}
+			fprintf(fg, "\n") ;
+		}
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean overlap          : %f\n", mean_ov5) ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr5) ;
 
 		fclose(fg) ;
 	}
@@ -352,7 +447,7 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 											 par->fpar->nb_mcv_iter);
 
 	/* Get atoms involved in the actual pocket */
-	accpck = get_actual_pocket_DEPRECATED(cpdb, 4.0, &naccpck) ;
+	accpck = get_actual_pocket_DEPRECATED(cpdb, M_CRIT2_D, &naccpck) ;
 	accpck2 = get_actual_pocket(cpdb, cpdb_nolig, i, par, &naccpck2) ;
 
 	fflush(stdout) ;
@@ -408,9 +503,13 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
 
 	c_lst_pockets *pockets = search_pocket(cpdb_nolig, par->fpar);
 	if(pockets && pockets->n_pockets > 0) {
-	/* Get the list of atoms contacted by the vertices near the ligand. */
-		neigh = get_mol_ctd_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, 
-				cpdb, pockets->vertices, M_DST_CRIT, M_INTERFACE_SEARCH, nb_atm) ;
+		/* */
+		/* Get the list of atoms contacted by the vertices near the ligand. */
+		
+		neigh = get_mol_ctd_atm_neigh(cpdb->latm_lig, cpdb->natm_lig,
+									  pockets->vertices->pvertices,
+									  pockets->vertices->nvert, M_CRIT1_D,
+									  M_INTERFACE_SEARCH, nb_atm) ;
 
 		c_lst_pocket_free(pockets) ;
 	}
@@ -444,46 +543,29 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
    -----------------------------------------------------------------------------
 */
 s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_atm) 
-{	
+{
 	/* Getting the ligan's neighbors. */
-	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
+	s_atm **alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig,
+										cpdb->latoms_p, cpdb->natoms,
 										lig_dist_crit, nb_atm) ;
 	if(*nb_atm <= 0) {
-/*
-		fprintf(stderr, 
-				"! No neighbor found for the ligand at %fA, trying with %fA\n", 
-				lig_dist_crit, lig_dist_crit+0.5) ;
-*/
-		
 		if(alneigh) my_free(alneigh) ;
-
-
-		alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
-									lig_dist_crit+0.5, nb_atm) ;
+		alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig,
+									cpdb->latoms_p, cpdb->natoms,
+									lig_dist_crit+1.0, nb_atm) ;
 
 		if(*nb_atm <= 0) {
-/*
-			fprintf(stderr, 
-					"! No neighbor found for the ligand at %fA, trying with %fA\n", 
-					lig_dist_crit+0.5, lig_dist_crit+1.0) ;
-*/
-			
 			if(alneigh) my_free(alneigh) ;
-
-			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig, cpdb, 
+			alneigh = get_mol_atm_neigh(cpdb->latm_lig, cpdb->natm_lig,
+										cpdb->latoms_p, cpdb->natoms,
 										lig_dist_crit+2.0, nb_atm) ;
 			if(*nb_atm <= 0) {
-/*
-				fprintf(stderr, 
-						"! No neighbor found for the ligand at %fA !!!?!\n", 
-						lig_dist_crit+2.0) ;
-*/
 				if(alneigh) my_free(alneigh) ;
 				alneigh = NULL ;
 			}
 		}
 	}
-
+	
 	return alneigh ;
 }
 
@@ -524,13 +606,14 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 				   int nalig, s_atm **alneigh, int nlneigh, 
 				   float ddata [][M_NDDATA], int idata [][M_NIDATA], int i)
 {
-	int found [] = {0, 0, 0} ;
+	int found [] = {0, 0, 0, 0, 0} ;
 	int npneigh = 0, pos, j ;
-	float ov1, ov2, dst ;
+	float ov1, ov2, ov3, ov4, dst = 0.0 ;
 	/* float ovol ; */
 	
 	s_atm **pneigh = NULL ;
-
+	s_vvertice **pvert = NULL ;
+	
 	node_pocket *ncur = NULL ;
 	s_pocket *pcur = NULL ;
 	
@@ -541,25 +624,15 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 	while(ncur) {
 		pos ++ ;
 		pcur = ncur->pocket ;
-	
-	/* Getting the pocket's vertices neighbors, and then calculate the pocket 
-	 * properties */
-		/* pneigh = get_vert_contacted_atms(pcur->v_lst, &npneigh) ; */
-		pneigh = get_pocket_contacted_atms(pcur, &npneigh) ;
 
-		ov1 = atm_corsp(alneigh, nlneigh, pneigh, npneigh) ;
-		ov2 = atm_corsp(accpck, naccpck, pneigh, npneigh) ;
-		
-		/* ovol =  set_overlap_volumes(pcur, lig, nalig, ligvol, params) ; */
-		
-		/* printf ("%f\n", ovol) ; */
-		fflush(stdout) ;
-		
+		/*
+			TEST THE FIRST CRITERIA (DISTANCE TO BARYCENTER)
+		 */
 		if(! found[0]) {
 			for (j = 0 ; j < nalig ; j++) {
 				dst = dist(lig[j]->x, lig[j]->y, lig[j]->z, 
 							pcur->bary[0], pcur->bary[1], pcur->bary[2]) ;
-				if(dst < 4.0) {
+				if(dst < M_CRIT3_VAL) {
 				/* Criteria 3 OK  */
 					ddata[i][M_MINDST] = dst ;
 					ddata[i][M_OREL3] = (naccpck <= 0.0)?-1.0 :(float)npneigh/(float)naccpck*100.0 ;
@@ -569,29 +642,66 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 			}
 		}
 
-		if(! found[1]) {
-			if(ov1 > 50.0) {
-				idata[i][M_POS1] = pos ;
-				ddata[i][M_MAXPCT1] = ov1 ;
-				ddata[i][M_OREL1] = (nlneigh <= 0.0)? -1.0 : (float)npneigh/(float)nlneigh*100.0 ;
-				found[1] = 1 ;
+		/*
+			TEST THE 2nd and 3rd CRITERIA (ATOMIC OVERLAP)
+		 */
+		if(!found[1] || !found[2]) {
+			pneigh = get_pocket_contacted_atms(pcur, &npneigh) ;
+			if(! found[1]) {
+				ov1 = atm_corsp(alneigh, nlneigh, pneigh, npneigh) ;
+				if(ov1 > M_CRIT1_VAL) {
+					idata[i][M_POS1] = pos ;
+					ddata[i][M_MAXPCT1] = ov1 ;
+					ddata[i][M_OREL1] = (nlneigh <= 0.0)? -1.0 : (float)npneigh/(float)nlneigh*100.0 ;
+					found[1] = 1 ;
+				}
 			}
-		}
-	
-		if(! found[2]) {
-			if(ov2 > 50.0) {
-				idata[i][M_POS2] = pos ;
-				ddata[i][M_MAXPCT2] = ov2 ;
-				ddata[i][M_OREL2] = (naccpck <= 0.0)?-1.0 : (float)npneigh/(float)naccpck*100.0 ;
-				found[2] = 1 ;
+
+			if(! found[2]) {
+				ov2 = atm_corsp(accpck, naccpck, pneigh, npneigh) ;
+				if(ov2 > M_CRIT2_VAL) {
+					idata[i][M_POS2] = pos ;
+					ddata[i][M_MAXPCT2] = ov2 ;
+					ddata[i][M_OREL2] = (naccpck <= 0.0)?-1.0 : (float)npneigh/(float)naccpck*100.0 ;
+					found[2] = 1 ;
+				}
 			}
+			my_free(pneigh) ;
 		}
 
-		my_free(pneigh) ;
+		/*
+			TEST THE 4th and 5th CRITERIA (VERTICE OVERLAPS)
+		 */
+		if(!found[3] || !found[4]) {
+			pvert = get_pocket_pvertices(pcur) ;
+			if(!found[3]){
+				ov3 = count_atm_prop_vert_neigh( lig, nalig,
+											 pvert, pcur->size, M_CRIT4_D) ;
+				if(ov3 > M_CRIT4_VAL) {
+					idata[i][M_POS4] = pos ;
+					ddata[i][M_CRIT4] = ov3 ;
+					ddata[i][M_OREL4] = ov3*100 ;
+					found[3] = 1 ;
+				}
+			}
+
+			if(!found[4]){
+				ov4 = count_pocket_lig_vert_ovlp(lig, nalig,
+												 pvert, pcur->size, M_CRIT5_D) ;
+				if(ov4 > M_CRIT5_VAL) {
+					idata[i][M_POS5] = pos ;
+					ddata[i][M_CRIT5] = ov4 ;
+					ddata[i][M_OREL5] = ov4*100 ;
+					found[4] = 1 ;
+				}
+			}
+			my_free(pvert) ;
+		}
+		
 		ncur = ncur->next ;
 
 		/* Break the loop if all criteria are OK */
-		if(found[0] && found[1] && found[2]) break ;
+		if(found[0] && found[1] && found[2] && found[3] && found[4]) break ;
 		
 	}
 
@@ -612,9 +722,18 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		ddata[i][M_OREL2] = 0.0 ;
 		idata[i][M_POS2] = 0 ;
 	}
-/*
-	fprintf(stdout, "STATUS: %d %d %d\n", found[0], found [1], found[2]);
-*/
+
+	if (! found[3]) {
+		ddata[i][M_CRIT4] = 0.0 ;
+		ddata[i][M_OREL4] = 0.0 ;
+		idata[i][M_POS4] = 0 ;
+	}
+
+	if (! found[4]) {
+		ddata[i][M_CRIT5] = 0.0 ;
+		ddata[i][M_OREL5] = 0.0 ;
+		idata[i][M_POS5] = 0 ;
+	}
 }
 
 /** -----------------------------------------------------------------------------

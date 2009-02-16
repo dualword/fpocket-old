@@ -235,7 +235,6 @@ void pck_ml_clust_test(c_lst_pockets *pockets, s_fparams *params)
 			if(nflag >= params->sl_clust_min_nneigh) {
 				/* If they are next to each other, merge them */
 				mergePockets(pcur,curMobilePocket,pockets);
-				printf("Nopw: %ld\n",pockets->n_pockets) ;
 				restart = 1 ; printf("Merging\n") ;
 				break ;
 			}

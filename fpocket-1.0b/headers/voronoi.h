@@ -65,27 +65,30 @@ typedef struct s_vvertice
 {
 	int resid ;
 	int id,
-		qhullId,
-		type ;				/* 0 if apolar contacts, 1 if polar */
+            seen,       /* Say if we have seen this vertice during a neighbor search */
+            qhullId,
+            type ;	/* 0 if apolar contacts, 1 if polar */
 
-	float ray ;				/* Ray of voronoi vertice */
-	float x,				/* X coord */
-		  y,				/* Y coord */
-		  z ;				/* Z coord */
+	float ray ;	/* Ray of voronoi vertice */
+	float x,	/* X coord */
+              y,	/* Y coord */
+	      z ;	/* Z coord */
 	
-	int sort_x;				/* Index in the sorted tab by X coord */
+	int sort_x;		/* Index in the sorted tab by X coord */
 	int apol_neighbours;	/* number of neighbouring apolar alpha spheres */
 
 	int vneigh[4] ;
- 	s_atm *neigh[4] ;		/* The theorical 4 neighbor atoms */
+ 	s_atm *neigh[4] ;	/* The theorical 4 contacted atoms */
 	
-	float bary[3] ;
+	float bary[3] ;         /* Barycenter of the pocket */
 
 } s_vvertice ;
 
 typedef struct s_lst_vvertice
 {
 	s_vvertice *vertices ;			/* List of voronoi vertices */
+        s_vvertice **pvertices ;
+        
 	int *h_tr;
 	int n_h_tr;
 	int *tr,
@@ -97,13 +100,14 @@ typedef struct s_lst_vvertice
 /* -----------------------------PROTOTYPES----------------------------------- */
 
 s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, 
-							   float ashape_min_size, float ashape_max_size) ;
+				float ashape_min_size, float ashape_max_size) ;
 float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms, 
 				   float min_asph_size, float max_asph_size, 
 				   s_lst_vvertice *lvvert);
 
 void set_barycenter(s_vvertice *v) ;
 int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id) ;
+int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert);
 
 void write_pqr_vert(FILE *f, s_vvertice *v) ;
 void write_pdb_vert(FILE *f, s_vvertice *v) ;

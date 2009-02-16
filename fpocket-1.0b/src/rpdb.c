@@ -31,6 +31,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  11-02-09    (p)  Added list of pointer on all atoms (usefull for sorting)
 ##  22-01-09    (p)  Eliminate double entries in the cofactor list
 ##	19-01-09	(v)  Open pdb file checking the case
 ##  28-11-08    (v)  Comments UTD + minor corrections
@@ -482,6 +483,7 @@ s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 
 	/* Alloc needed memory */
 	pdb->latoms = (s_atm*) my_calloc(natoms, sizeof(s_atm)) ;
+	pdb->latoms_p = (s_atm**) my_calloc(natoms, sizeof(s_atm*)) ;
 
 	if(nhetatm > 0) pdb->lhetatm = (s_atm**) my_calloc(nhetatm, sizeof(s_atm*)) ;
 	else pdb->lhetatm = NULL ;
@@ -531,6 +533,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 
 	s_atm *atom = NULL ;
 	s_atm *atoms = pdb->latoms ;
+	s_atm **atoms_p = pdb->latoms_p ;
 	s_atm **atm_lig = pdb->latm_lig ;
 
 	iatoms = 0 ;
@@ -540,7 +543,6 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 
 	/* Loop over the pdb file */ 
 	while(fgets(pdb_line, M_PDB_LINE_LEN + 2, pdb->fpdb)) {
-		
 		if (strncmp(pdb_line, "ATOM ",  5) == 0) {
 			if(pdb_line[16]==' ' || pdb_line[16]=='A'){ /*if within first occurence*/
 				/* Store ATOM entry */
@@ -550,6 +552,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 					&& ligan[2] == resb[2]){
 					if(keep_lig) {
 						atom = atoms + iatoms ;
+						
 						/* Read atom information */
 						rpdb_extract_pdb_atom(pdb_line, atom->type, &(atom->id), 
 								atom->name, &(atom->pdb_aloc), atom->res_name, 
@@ -563,6 +566,8 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 						atom->radius = pte_get_vdw_ray(atom->symbol) ;
 						atom->electroneg = pte_get_enegativity(atom->symbol) ;
 						atom->sort_x = -1 ;
+						
+						atoms_p[iatoms] = atom ;
 						iatoms++ ;
 
 						atm_lig[iatm_lig] = atom ;
@@ -584,6 +589,8 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 					atom->radius = pte_get_vdw_ray(atom->symbol) ;
 					atom->electroneg = pte_get_enegativity(atom->symbol) ;
 					atom->sort_x = -1 ;
+
+					atoms_p[iatoms] = atom ;
 					iatoms++ ;
 				}
 			}
@@ -609,7 +616,9 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 					atom->electroneg = pte_get_enegativity(atom->symbol) ;
 					atom->sort_x = -1 ;
 
+					atoms_p[iatoms] = atom ;
 					atm_lig[iatm_lig] = atom ;
+					
 					iatm_lig ++ ; iatoms++ ;
 					ligfound = 1 ;
 				}
@@ -631,7 +640,8 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 							atom->radius = pte_get_vdw_ray(atom->symbol) ;
 							atom->electroneg = pte_get_enegativity(atom->symbol) ;
 							atom->sort_x = -1 ;
-
+							
+							atoms_p[iatoms] = atom ;
 							pdb->lhetatm[ihetatm] = atom ;
 							ihetatm ++ ; iatoms++ ;
 							break ;
@@ -696,6 +706,10 @@ void free_pdb_atoms(s_pdb *pdb)
 		if(pdb->fpdb) {
 			fclose(pdb->fpdb) ;
 			pdb->fpdb = NULL ;	
+		}
+		if(pdb->latoms_p) {
+			my_free(pdb->latoms_p) ;
+			pdb->latoms_p = NULL ;
 		}
 
 		my_free(pdb) ;

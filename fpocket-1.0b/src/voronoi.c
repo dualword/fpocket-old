@@ -130,7 +130,6 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 		int status = system("qvoronoi p i Pp Fn < voro_tmp.dat > voro.tmp") ;
 
 		if(status == M_VORONOI_SUCCESS) {
-
 			fill_vvertices(lvvert, "voro.tmp", pdb->latoms, pdb->natoms,
 							min_apol_neigh, asph_min_size, asph_max_size);
 		}
@@ -215,7 +214,8 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 	for(i = 0 ; i < lvvert->nvert ; i++) lvvert->tr[i] = -1;
 
  	lvvert->vertices = (s_vvertice *) my_calloc(lvvert->nvert, sizeof(s_vvertice)) ;
-
+	lvvert->pvertices= (s_vvertice **) my_calloc(lvvert->nvert, sizeof(s_vvertice*)) ;
+	
 	/* Get the string of number of vertices to read, to look up the neighbour
 	 * list from qhull */
 	sprintf(s_nvert,"%d",lvvert->nvert);
@@ -251,6 +251,8 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 						v->x = xyz[0]; v->y = xyz[1]; v->z = xyz[2];
 						v->ray = tmpRay;
 						v->sort_x = -1 ;
+						v->seen = 0 ;
+						
 						tmpApolar=0;
 
 						for(j = 0 ; j < 4 ; j++) {
@@ -260,8 +262,10 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 							if(curVnbIdx[j]>0) v->vneigh[j] = curVnbIdx[j];
 						}
 
-						v->apol_neighbours=0;
+						v->apol_neighbours = 0 ;
 						lvvert->tr[i] = vInMem ;
+
+						lvvert->pvertices[vInMem] = v ;
 
 						vInMem++ ;		/* Vertices actually read */
 						v->id = natoms+i+1-vInMem ;
@@ -512,6 +516,10 @@ void free_vert_lst(s_lst_vvertice *lvvert)
 			my_free(lvvert->vertices) ;
 			lvvert->vertices = NULL ;
 		}
+		if(lvvert->pvertices) {
+			my_free(lvvert->pvertices) ;
+			lvvert->pvertices = NULL ;
+		}
 		if(lvvert->tr) {
 			my_free(lvvert->tr) ;
 			lvvert->tr = NULL ;
@@ -547,6 +555,28 @@ int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 	return 0 ;
 }
 
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	is_in_lst_vert
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Says wether a vertice of id v_id is in a list of vertices or not
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	1 if the vertice is in the tab, 0 if not
+   -----------------------------------------------------------------------------
+*/
+int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert)
+{
+	int i ;
+	for(i = 0 ; i < nb_vert ; i++) {
+		if(vert == lst_vert[i]) return 1 ;
+	}
+
+	return 0 ;
+}
 /** -----------------------------------------------------------------------------
 	-----------------------------------------------------------------------------
 	-----------------------------------------------------------------------------

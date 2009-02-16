@@ -65,22 +65,24 @@
 
 typedef struct s_pdb
 {
-	FILE *fpdb ;
+    FILE *fpdb ;
 
-	s_atm *latoms ;		/* The list of atoms: contains all atoms! */
-	s_atm **lhetatm ;	/* List of hetatm. Contains pointers to atoms in the  */
-						/* latoms list! */
-	s_atm **latm_lig ;	/* List of ligand atoms. Contains pointers to atoms  */
-						/* in the latoms list! */
+    s_atm *latoms ;		/* The list of atoms: contains all atoms! */
 
-	int natoms,			/* Number of atoms */
-		nhetatm,		/* Number of HETATM */
-		natm_lig ;		/* Number of ligand atoms */
+    s_atm **latoms_p ;
+    s_atm **lhetatm ;	/* List of hetatm. Contains pointers to atoms in the  */
+                            /* latoms list! */
+    s_atm **latm_lig ;	/* List of ligand atoms. Contains pointers to atoms  */
+                            /* in the latoms list! */
 
-	float A, B, C, 				/* Side lengths of the unit cell */
-		  alpha, beta, gamma ;	/* Angle between B and C, A and C, A and C */
+    int natoms,			/* Number of atoms */
+            nhetatm,		/* Number of HETATM */
+            natm_lig ;		/* Number of ligand atoms */
 
-	char header[M_PDB_BUF_LEN] ;
+    float A, B, C, 			/* Side lengths of the unit cell */
+          alpha, beta, gamma ;	/* Angle between B and C, A and C, A and C */
+
+    char header[M_PDB_BUF_LEN] ;
 
 } s_pdb ;
 

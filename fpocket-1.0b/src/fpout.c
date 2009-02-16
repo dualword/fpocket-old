@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	12-02-09	(v)  No more pocket.info output (useless...)
 ##	15-12-08	(v)  Minor bug corrected (output dir in the current dir...)
 ##	28-11-08	(v)  Last argument of write_out_fpocket changed to char *
 ##					 Comments UTD
@@ -110,12 +111,14 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		sprintf(fout, "%s_out.pdb", pdb_code) ;
 		write_visualization(out_path, fout);	
 	/* Print the whole pockets information in a single file */
+/*
 		sprintf(fout, "%s_pockets.info", out_path) ;
 		FILE *f = fopen(fout, "w") ;
 		if(f) {
 			print_pockets(f, pockets) ;
 			fclose(f) ;
 		}
+*/
 
 	/* Writing full pdb */
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;

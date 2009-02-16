@@ -72,7 +72,7 @@
 #define M_SLCLUST_MAX_DIST 2.5
 
 /* Minimum number of common neighbours for single linkage clustering 5 */
-#define M_SLCLUST_MIN_NUM_NEIGH 2
+#define M_SLCLUST_MIN_NUM_NEIGH 1
 
 /* Number of iterations for the Monte Carlo volume calculation 3000 */
 #define M_MC_ITER 3000
@@ -80,8 +80,8 @@
 /* Precision for "exact" volume integration, set to -1 if not used -1 */
 #define M_BASIC_VOL_DIVISION -1
 
-/* Minimum number of alpha spheres for a pocket to be kept 5 */
-#define M_MIN_POCK_NB_ASPH 30
+/* Minimum number of alpha spheres for a pocket to be kept */
+#define M_MIN_POCK_NB_ASPH 35
 
 /* Minimum number of atoms having a low electronegativity in order to declare 
  * an alpha sphere to be apolar 3 */

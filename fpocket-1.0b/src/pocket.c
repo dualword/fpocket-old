@@ -114,6 +114,12 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 		curPocketId=updateIds(lvvert,i,vNb,vcur->resid, curPocketId,pockets, params);
 	}
 
+	node_pocket *p = pockets->first ;
+	while(p) {
+		p->pocket->size = p->pocket->v_lst->n_vertices ;
+		p = p->next ;
+	}
+
 	if(pockets->n_pockets > 0) return pockets ;
 	else {
 		my_free(pockets) ;
@@ -943,6 +949,8 @@ void mergePockets(node_pocket *pocket,node_pocket *pocket2,c_lst_pockets *pocket
 	pock->nAlphaApol += pock2->nAlphaApol;
 	pock->nAlphaPol += pock2->nAlphaPol;
 	pock->v_lst->n_vertices += pock2->v_lst->n_vertices;
+	pock->size = pock->v_lst->n_vertices ;
+	
 	pock->v_lst->last->next = pock2->v_lst->first;
 	pock->v_lst->last = pock2->v_lst->last;
 	pocket2->pocket->v_lst = NULL;
@@ -1144,6 +1152,7 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 		nvcur = pocket->v_lst->first ;
 		while(nvcur) {
 			vcur = nvcur->vertice ;
+			/*printf("ID in the pocket: %d (%.3f %.3f %.3f\n", vcur->id, vcur->x, vcur->y, vcur->z) ;*/
 			for(i = 0 ; i < 4 ; i++) {
 				if(in_tab(atm_ids,  nb_atoms, vcur->neigh[i]->id) == 0) {
 					if(nb_atoms >= actual_size) {
@@ -1163,6 +1172,34 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 	*natoms = nb_atoms ;
 	
 	return catoms ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	get_pocket_contacted_atms
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Get pocket vertices under the form of an array of pointer.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_pocket *pocket : The pocket
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	s_vvertice**: All pointers to vertices
+   -----------------------------------------------------------------------------
+*/
+s_vvertice** get_pocket_pvertices(s_pocket *pocket)
+{
+	s_vvertice **pverts = my_calloc(pocket->size, sizeof(s_vvertice*)) ;
+	int i = 0 ;
+	node_vertice *nvcur = pocket->v_lst->first ;
+	while(nvcur) {
+		pverts[i] = nvcur->vertice ;
+		nvcur = nvcur->next ;
+		i++ ;
+	}
+
+	return pverts ;
 }
 
 /**-----------------------------------------------------------------------------

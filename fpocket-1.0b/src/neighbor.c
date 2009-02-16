@@ -20,6 +20,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	11-02-09	(v)  Modified argument type for sorting function
 ##	28-11-08	(v)  Comments UTD + relooking.
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -68,7 +69,7 @@
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return a list of pointer to the atoms situated a distance lower or equal
-	to dist_crit from a molecule represented by a list of atoms.
+	to dcrit from a molecule represented by a list of atoms.
 
 	This functon use a list of atoms that is sorted on the X dimension to accelerate
 	the research.
@@ -77,7 +78,7 @@
 	@ s_atm **atoms        : The molecule atoms.
 	@ int natoms		   : Number of atoms in the molecule
 	@ s_pdb *pdb           : The pdb structure containing all atoms of the system
-	@ float dist_crit  	   : The distance criteria.
+	@ float dcrit  	   : The distance criteria.
 	@ int *nneigh          : OUTPUT A pointer to the number of neighbour found,
 							 will be modified in the function...
    -----------------------------------------------------------------------------
@@ -86,11 +87,11 @@
 	nneigh
    -----------------------------------------------------------------------------
 */
-s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit, 
-						  int *nneigh) 
+s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_atm **all, int nall,
+						  float dcrit, int *nneigh)
 {	
 	/* No vertices, we only search atoms... */
-	s_vsort *lsort =  get_sorted_list(pdb, NULL) ;	
+	s_vsort *lsort =  get_sorted_list(all, nall, NULL, 0) ;
 	s_vect_elem *xsort = lsort->xsort ;
 
 	int ip, im,
@@ -128,11 +129,11 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 			if(stopp == 0) {
 				curap = (s_atm*) xsort[ip].data ;
 
-				if(curap->x - vvalx > dist_crit) stopp = 1 ;
+				if(curap->x - vvalx > dcrit) stopp = 1 ;
 				else {
 				/* OK we have an atom which is near our vertice on X, so 
 				 * calculate real distance */
-					if(dist(curap->x, curap->y, curap->z, vvalx, vvaly, vvalz) < dist_crit) {
+					if(dist(curap->x, curap->y, curap->z, vvalx, vvaly, vvalz) < dcrit) {
 					/* Distance OK, see if the molecule is not one part of the 
 						input, and if we have not already seen it. */
 						seen = is_in_lst_atm(atoms, natoms, curap->id) 
@@ -155,11 +156,11 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 			if(stopm == 0) {
 				curam = (s_atm*) xsort[im].data ;
 	
-				if(vvalx - curam->x > dist_crit) stopm = 1 ;
+				if(vvalx - curam->x > dcrit) stopm = 1 ;
 				else {
 				/* OK we have an atom which is near our vertice on X, so 
 				 * calculate real distance */
-					if(dist(curam->x, curam->y, curam->z, vvalx, vvaly, vvalz) < dist_crit){
+					if(dist(curam->x, curam->y, curam->z, vvalx, vvaly, vvalz) < dcrit){
 					/* Distance OK, see if the molecule is not one part of the 
 						input, and if we have not already seen it. */
 						seen = is_in_lst_atm(atoms, natoms, curam->id) 
@@ -192,7 +193,7 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Return a list of pointer to the vertices situated a distance lower or equal
-	to dist_crit of a molecule represented by it's list of atoms.
+	to dcrit of a molecule represented by it's list of atoms.
 
 	This functon use a list of atoms that is sorted on the X dimension to accelerate
 	the research.
@@ -201,8 +202,7 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 	@ s_atm **atoms         : The molecule.
 	@ int natoms		    : Number of atoms in the molecule
     @ s_lst_vvertice *lvert : Full list of vertices present in the system 
-	@ s_pdb *pdb            : The pdb structure containing all atoms of the system
-	@ float dist_crit       : The distance criteria.
+	@ float dcrit       : The distance criteria.
 	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found,
 							  will be modified in the function...
    -----------------------------------------------------------------------------
@@ -210,10 +210,11 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit
 	A tab of pointers to the neighbours.
    -----------------------------------------------------------------------------
 */
-s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert, 
-								s_pdb *pdb, float dist_crit, int *nneigh) 
+s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms,
+								s_vvertice **pvert, int nvert,
+								float dcrit, int *nneigh)
 {	
-	s_vsort *lsort =  get_sorted_list(pdb, lvert) ;	
+	s_vsort *lsort =  get_sorted_list(atoms, natoms, pvert, nvert) ;
 	s_vect_elem *xsort = lsort->xsort ;
 
 	int ip, im,
@@ -251,11 +252,11 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 			if(stopp == 0 && xsort[ip].type == M_VERTICE_TYPE) {
 				curvp = (s_vvertice*) xsort[ip].data ;
 
-				if(curvp->x - vvalx > dist_crit) stopp = 1 ;
+				if(curvp->x - vvalx > dcrit) stopp = 1 ;
 				else {
 				/* OK we have an atom which is near our vertice on X, so 
 				 * calculate real distance */
-					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dist_crit) {
+					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dcrit) {
 					/* Distance OK, see if the molecule have not been already seen. */
 						seen = is_in_lst_vert(neigh, nb_neigh, curvp->id) ;
 						if(!seen) {
@@ -277,11 +278,11 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 			if(stopm == 0 && xsort[im].type == M_VERTICE_TYPE) {
 				curvm = (s_vvertice*) xsort[im].data ;
 	
-				if(vvalx - curvm->x > dist_crit) stopm = 1 ;
+				if(vvalx - curvm->x > dcrit) stopm = 1 ;
 				else {
 				/* OK we have an atom which is near our vertice on X, so 
 				 * calculate real distance */
-					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dist_crit){
+					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dcrit){
 					/* Distance OK, see if the molecule is not one part of the 
 					 * input, and if we have not already seen it. */
 						seen = is_in_lst_vert(neigh, nb_neigh, curvm->id) ;
@@ -312,15 +313,14 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 	get_mol_ctd_atm_neigh
    -----------------------------------------------------------------------------
    ## SPECIFICATION:
-	Return a list of atoms contacted by voronoi vertices situated at dist_crit
+	Return a list of atoms contacted by voronoi vertices situated at dcrit
 	of a given molecule represented by a list of its atoms.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_atm **atoms         : The molecule.
 	@ int natoms		    : Number of atoms in the molecule
     @ s_lst_vvertice *lvert : Full list of vertices present in the system 
-	@ s_pdb *pdb            : The pdb structure containing all atoms of the system
-	@ float dist_crit       : The distance criteria.
+	@ float dcrit       : The distance criteria.
     @ int interface_search  : Perform an interface-type search ?
 	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found,
 							  will be modified in the function...
@@ -329,11 +329,11 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert
 	A tab of pointers to atoms describing the pocket.
    -----------------------------------------------------------------------------
 */
-s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, 
-							  s_lst_vvertice *lvert, float vdist_crit, 
-							  int interface_search, int *nneigh) 
+s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms,
+							  s_vvertice **pvert, int nvert,
+							  float vdcrit, int interface_search, int *nneigh)
 {
-	s_vsort *lsort =  get_sorted_list(pdb, lvert) ;
+	s_vsort *lsort =  get_sorted_list(atoms, natoms, pvert, nvert) ;
 	s_vect_elem *xsort = lsort->xsort ;
 
 	int ip, im,			/* Current indexes in the tab (start at the current 
@@ -352,6 +352,12 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 	s_vvertice *curvp = NULL, *curvm = NULL ;
 	s_atm *curatm = NULL ;
 	s_atm **neigh = (s_atm**)my_malloc(sizeof(s_atm*)*real_size) ;
+
+	for(i = 0 ; i < nvert ; i++) {
+		for(j = 0 ; j < 4 ; j++) {
+			pvert[i]->neigh[j]->seen = 0 ;
+		}
+	}
 
 	for(i = 0 ; i < natoms ; i++) {
 		s_atm *cur = atoms[i] ;
@@ -378,15 +384,15 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 				curvp = (s_vvertice*) xsort[ip].data ;
 				
 				/* Stop when the distance reaches the criteria */
-				if(curvp->x - lx > vdist_crit) stopp = 1 ; 
+				if(curvp->x - lx > vdcrit) stopp = 1 ;
 				else {
 				/*OK we have a vertice which is near our atom on the X axe, 
 				  so calculate real distance */
-					if(dist(curvp->x, curvp->y, curvp->z, lx, ly, lz) < vdist_crit) {
+					if(dist(curvp->x, curvp->y, curvp->z, lx, ly, lz) < vdcrit) {
 					/* If the distance from the atom to the vertice is small enough*/
 						for(j = 0 ; j < 4 ; j++) {
 							curatm = curvp->neigh[j] ;
-							if(! is_in_lst_atm(neigh, nb_neigh, curatm->id)) {
+							if(! curatm->seen) {
 								if(interface_search && 
 								dist(curatm->x, curatm->y, curatm->z, lx, ly, lz) 
 										< M_INTERFACE_SEARCH_DIST) {
@@ -397,6 +403,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
 									neigh[nb_neigh] = curatm ;
+									curatm->seen = 1 ;
 									nb_neigh ++ ;
 								}
 								else if(!interface_search) {
@@ -406,6 +413,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 										real_size *= 2 ;
 										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
+									curatm->seen = 1 ;
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
 								}
@@ -422,15 +430,15 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 			if(stopm == 0 && xsort[im].type == M_VERTICE_TYPE) {
 				curvm = (s_vvertice*) xsort[im].data ;
 	
-				if(lx - curvm->x > vdist_crit) stopm = 1 ;
+				if(lx - curvm->x > vdcrit) stopm = 1 ;
 				else {
 				/* OK we have a vertice which is near our atom on the X axe, 
 				 * so calculate real distance*/
-					if(dist(curvm->x, curvm->y, curvm->z, lx, ly, lz) < vdist_crit) {
+					if(dist(curvm->x, curvm->y, curvm->z, lx, ly, lz) < vdcrit) {
 					/* If the distance from the atom to the vertice is small enough */
 						for(j = 0 ; j < 4 ; j++) {
 							curatm = curvm->neigh[j] ;
-							if(! is_in_lst_atm(neigh, nb_neigh, curatm->id)) {
+							if(! curatm->seen) {
 								if(interface_search && 
 								dist(curatm->x, curatm->y, curatm->z, lx, ly, lz) 
 										< M_INTERFACE_SEARCH_DIST) { 
@@ -441,6 +449,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 										neigh = (s_atm**)
 										my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
+									curatm->seen = 1 ;
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
 								}
@@ -451,6 +460,7 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 										real_size *= 2 ;
 										neigh = (s_atm**)my_realloc(neigh, sizeof(s_atm)*real_size) ;
 									}
+									curatm->seen = 1 ;
 									neigh[nb_neigh] = curatm ;
 									nb_neigh ++ ;
 								}
@@ -468,4 +478,345 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb,
 	free_s_vsort(lsort) ;
 
 	return neigh ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	count_pocket_lig_vert_ovlp
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Return the proportion of alpha sphere given in parameter that lies within
+	dcrit A of the ligand -> we loop on each ligand atom and we count the
+	number of unique vertices next to each atoms using dist-crit.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_atm **lig         : The molecule.
+	@ int nlig		      : Number of atoms in the molecule
+    @ s_vvertice *pvert   : List of vertices to check.
+	@ int nvert		      : Number of verties (tipically in a given pocket)
+	@ float dcrit     : The distance criteria.s
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	A tab of pointers to the neighbours.
+   -----------------------------------------------------------------------------
+*/
+float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
+								 s_vvertice **pvert, int nvert,
+								 float dcrit)
+{
+	s_vsort *lsort =  get_sorted_list(lig, nlig, pvert, nvert) ;
+	s_vect_elem *xsort = lsort->xsort ;
+
+	int ip, im, i,
+		stopm, stopp,
+		nb_neigh,
+		sort_x,
+		ntest_x,
+		dim = lsort->nelem ;
+
+	float vvalx, vvaly, vvalz ;
+	
+	s_vvertice *ids[nvert] ;
+	for(i = 0 ; i < nvert ; i++) {
+		pvert[i]->seen = 0 ;
+		ids[i] = NULL ;
+	}
+
+	s_vvertice *curvp = NULL, *curvm = NULL ;
+
+	nb_neigh = 0 ;
+	for(i = 0 ; i < nlig ; i++) {
+		s_atm *cur = lig[i] ;
+
+	/* Reinitialize variables */
+		stopm = 0; stopp = 0;
+		sort_x = cur->sort_x ;
+		ntest_x = 1 ;
+		vvalx = cur->x ; vvaly = cur->y ; vvalz = cur->z ;
+
+	/* Search neighbors */
+		while(!stopm || !stopp) {
+		/* Do the neighbor search while wa are in tab and we dont reach a
+		 * distance up to our criteria */
+			ip = ntest_x + sort_x ;
+			if(ip >= dim) stopp = 1 ;
+
+			if(stopp == 0 && xsort[ip].type == M_VERTICE_TYPE) {
+				curvp = (s_vvertice*) xsort[ip].data ;
+
+				if(curvp->x - vvalx > dcrit) stopp = 1 ;
+				else {
+				/* OK we have an atom which is near our vertice on X, so
+				 * calculate real distance */
+					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dcrit) {
+					/* Distance OK, see if the molecule have not been already seen. */
+						if(! curvp->seen) {
+							ids[nb_neigh] = curvp ;
+							curvp->seen = 1 ;
+							nb_neigh ++ ;
+						}
+					}
+				}
+			}
+
+			im = sort_x - ntest_x ;
+			if(im < 0) stopm = 1 ;
+
+			if(stopm == 0 && xsort[im].type == M_VERTICE_TYPE) {
+				curvm = (s_vvertice*) xsort[im].data ;
+
+				if(vvalx - curvm->x > dcrit) stopm = 1 ;
+				else {
+				/* OK we have an atom which is near our vertice on X, so
+				 * calculate real distance */
+					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dcrit){
+					/* Distance OK, see if the molecule is not one part of the
+					 * input, and if we have not already seen it. */
+						if(!curvm->seen) {
+							ids[nb_neigh] = curvm ;
+							curvm->seen = 1 ;
+							nb_neigh ++ ;
+						}
+					}
+				}
+			}
+
+			ntest_x += 1 ;
+		}
+	}
+
+	free_s_vsort(lsort) ;
+	return (float)nb_neigh/(float)nvert ;
+}
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	count_pocket_lig_vert_ovlp
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Return the proportion of atoms given in parameter that have at least one
+	vertice that lies within dcrit A
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_atm **lig         : The molecule.
+	@ int nlig		      : Number of atoms in the molecule
+    @ s_vvertice *pvert   : List of vertices to check.
+	@ int nvert		      : Number of verties (tipically in a given pocket)
+	@ float dcrit     : The distance criteria.s
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	A tab of pointers to the neighbours.
+   -----------------------------------------------------------------------------
+*/
+float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
+								 s_vvertice **pvert, int nvert,
+								 float dcrit)
+{
+	s_vsort *lsort =  get_sorted_list(lig, nlig, pvert, nvert) ;
+	s_vect_elem *xsort = lsort->xsort ;
+
+	int ip, im, i,
+		stopm, stopp,
+		nb_neigh,
+		sort_x,
+		ntest_x,
+		dim = lsort->nelem ;
+
+	float vvalx, vvaly, vvalz ;
+	s_vvertice *curvp = NULL, *curvm = NULL ;
+
+	nb_neigh = 0 ;
+	for(i = 0 ; i < nlig ; i++) {
+		s_atm *cur = lig[i] ;
+
+	/* Reinitialize variables */
+		stopm = 0; stopp = 0;
+		sort_x = cur->sort_x ;
+		ntest_x = 1 ;
+		vvalx = cur->x ; vvaly = cur->y ; vvalz = cur->z ;
+
+	/* Search neighbors */
+		while(!stopm || !stopp) {
+		/* Do the neighbor search while we are in tab and we dont reach a
+		 * distance up to our criteria */
+			ip = ntest_x + sort_x ;
+			if(ip >= dim) stopp = 1 ;
+
+			if(stopp == 0 && xsort[ip].type == M_VERTICE_TYPE) {
+				curvp = (s_vvertice*) xsort[ip].data ;
+
+				if(curvp->x - vvalx > dcrit) stopp = 1 ;
+				else {
+				/* OK we have an atom which is near our vertice on X, so
+				 * calculate real distance */
+					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dcrit) {
+					/* Distance OK, break the loop */
+						nb_neigh ++ ; break ;
+					}
+				}
+			}
+
+			im = sort_x - ntest_x ;
+			if(im < 0) stopm = 1 ;
+
+			if(stopm == 0 && xsort[im].type == M_VERTICE_TYPE) {
+				curvm = (s_vvertice*) xsort[im].data ;
+
+				if(vvalx - curvm->x > dcrit) stopm = 1 ;
+				else {
+				/* OK we have an atom which is near our vertice on X, so
+				 * calculate real distance */
+					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dcrit){
+					/* Distance OK, see if the molecule is not one part of the
+					 * input, and if we have not already seen it. */
+						nb_neigh++ ; break ;
+					}
+				}
+			}
+
+			ntest_x += 1 ;
+		}
+	}
+
+	free_s_vsort(lsort) ;
+	return (float)nb_neigh/(float)nlig ;
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	count_vert_neigh_P
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Count the number of vertices that lies within a distance <= dist_crit from
+	a list of query vertices.
+	The user must provide the query vertices, the full list of vertices to
+	consider, and the distance criteria.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+    @ s_vvertice *pvert     : List of pointer to query vertices
+    @ int nvert				: Number of query vertices
+    @ s_vvertice *pvert_all : List of pointer to all vertice to consider
+    @ int nvert_all			: Total number of vertices to consider
+	@ float dcrit			: The distance criteria.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: The total number of vertices lying within dist_crit A of the query vertices
+   -----------------------------------------------------------------------------
+*/
+int count_vert_neigh_P(s_vvertice **pvert, int nvert,
+					 s_vvertice **pvert_all, int nvert_all,
+					 float dcrit)
+{
+	s_vsort *lsort =  get_sorted_list(NULL, 0, pvert_all, nvert_all) ;
+	int res = count_vert_neigh(lsort, pvert, nvert, dcrit) ;
+
+	free_s_vsort(lsort) ;
+	
+	return res ;
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	count_vert_neigh
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Count the number of vertices that lies within a distance <= dist_crit from
+	a list of query vertices.
+	The user must provide the list of sorted vertices (that should include the
+  	query vertices and all other vertices to consider), the query vertices and
+	the distance criteria.
+
+	Note that if the query vertices are not present in the list of ordered
+	vertices, the function will return 0.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+    @ s_vsort *lsort	    : List of sorted vertices.
+    @ s_vvertice **pvert    : List of pointer to query vertices
+    @ int nvert				: Number of query vertices
+	@ float dcrit			: The distance criteria.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: The total number of vertices lying within dist_crit A of the query vertices
+   -----------------------------------------------------------------------------
+*/
+int count_vert_neigh(s_vsort *lsort, s_vvertice **pvert, int nvert, float dcrit)
+{
+	s_vect_elem *xsort = lsort->xsort ;
+
+	s_vvertice *vcur = NULL ;
+
+	int ip, im, i,
+		stopm, stopp,
+		nb_neigh,
+		sort_x,
+		ntest_x,
+		dim = lsort->nelem ;
+
+	float vvalx, vvaly, vvalz;
+
+	/* Set all vertices to NOT SEEN, except the query vertices */
+	for(i = 0 ; i < dim ; i++) ((s_vvertice*) lsort->xsort[i].data)->seen = 0 ;
+	for(i = 0 ; i < nvert ; i++) pvert[i]->seen = 2 ;
+
+	s_vvertice *curvp = NULL, *curvm = NULL ;
+	nb_neigh = 0 ;
+	for(i = 0 ; i < nvert ; i++) {
+		vcur = pvert[i] ;
+
+		/* Reinitialize variables */
+		stopm = 0; stopp = 0;
+		sort_x = vcur->sort_x ;
+		ntest_x = 1 ;
+		vvalx = vcur->x ; vvaly = vcur->y ; vvalz = vcur->z ;
+
+		/* Search neighbors */
+		while(!stopm || !stopp) {
+			/* Do the neighbor search while wa are in tab and we dont reach a
+			 * distance up to our criteria */
+			ip = ntest_x + sort_x ;
+
+			/* Stop the search if we reach dim*/
+			if(ip >= dim) stopp = 1 ;
+
+			if(stopp == 0) {
+				curvp = (s_vvertice*) xsort[ip].data ;
+
+				/* Stop the search the distance on X is > dcrit*/
+				if(curvp->x - vvalx > dcrit) stopp = 1 ;
+				/* Check if the current vertice has not already been counted */
+				else if(curvp->seen == 0) {
+					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dcrit) {
+						/* Distance OK, count and mark the vertice */
+						curvp->seen = 1 ;
+						nb_neigh ++ ;
+					}
+				}
+			}
+
+			im = sort_x - ntest_x ;
+			if(im < 0) stopm = 1 ;
+
+			if(stopm == 0) {
+				curvm = (s_vvertice*) xsort[im].data ;
+
+				/* Stop the search the distance on X is > dcrit*/
+				if(vvalx - curvm->x > dcrit) stopm = 1 ;
+				/* Check if the current vertice has not already been counted */
+				else if(curvp->seen == 0) {
+				/* OK we have an atom which is near our vertice on X, so
+				 * calculate real distance */
+					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dcrit){
+						/* Distance OK, count and mark the vertice */
+						curvm->seen = 1 ;
+						nb_neigh ++ ;
+					}
+				}
+			}
+
+			ntest_x += 1 ;
+		}
+	}
+
+	return nb_neigh ;
 }

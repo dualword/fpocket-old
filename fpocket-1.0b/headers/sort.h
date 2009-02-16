@@ -58,7 +58,7 @@
 
 /* ------------------------------------STRUCTURES-----------------------------*/
 /**
-	A vector (basicly here will be  either atoms or vertices)
+	A vector (here it will be  either atoms or vertices)
 */
 typedef struct s_vect_elem 
 {
@@ -80,7 +80,7 @@ typedef struct s_vsort
 
 /* --------------------------------PROTOTYPES---------------------------------*/
 
-s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert) ;
+s_vsort* get_sorted_list(s_atm **atoms, int natms, s_vvertice **pvert, int nvert) ;
 void print_sorted_lst(s_vsort *lsort, FILE *buf) ;
 void free_s_vsort(s_vsort *lsort) ;
 

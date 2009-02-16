@@ -48,28 +48,42 @@
 #include "memhandler.h"
 
 /* --------------------------------MACROS-------------------------------------*/
+#define M_CRIT1_D 3.0
+#define M_CRIT2_D 3.0
+#define M_CRIT4_D 3.0
+#define M_CRIT5_D 3.0
 
-#define M_DST_CRIT 3.0
+#define M_CRIT1_VAL 50.0
+#define M_CRIT2_VAL 50.0
+#define M_CRIT3_VAL 4.0
+#define M_CRIT4_VAL 0.5
+#define M_CRIT5_VAL 0.2
 
 /* A set of index, giving the position of each value in the tab used to
  * store them. In the src file, those statistics values are stored in a tab
  * using indices given here.
  **/
-#define M_NDDATA 8		/* Number of floating values */
+#define M_NDDATA 12		/* Number of floating values */
 #define M_MAXPCT1 0		/* Maximum observed overlap for the criteria 1 */
 #define M_MAXPCT2 1		/* Maximum observed overlap for the criteria 2 */
 #define M_MINDST 2		/* Minimum distance observed (barycenter/ligand), crit 3 */
-#define M_OREL1 3		/* Relative overlap of the pocket found for criteria 1 */
-#define M_OREL2 4		/* Relative overlap of the pocket found for criteria 2 */
-#define M_OREL3 5		/* Relative overlap of the pocket found for criteria 3 */
-#define M_LIGMASS 6		/* Mass of the ligand */
-#define M_LIGVOL 7		/* Volume of the ligand */
+#define M_CRIT4 3		/* Minimum distance observed (barycenter/ligand), crit 4 */
+#define M_CRIT5 4		/* Minimum distance observed (barycenter/ligand), crit 5 */
+#define M_OREL1 5		/* Relative overlap of the pocket found for criteria 1 */
+#define M_OREL2 6		/* Relative overlap of the pocket found for criteria 2 */
+#define M_OREL3 7		/* Relative overlap of the pocket found for criteria 3 */
+#define M_OREL4 8		/* Relative overlap of the pocket found for criteria 3 */
+#define M_OREL5 9		/* Relative overlap of the pocket found for criteria 3 */
+#define M_LIGMASS 10		/* Mass of the ligand */
+#define M_LIGVOL 11		/* Volume of the ligand */
 
-#define M_NIDATA 4		/* Number of interger values */
+#define M_NIDATA 6		/* Number of interger values */
 #define M_NPOCKET 0		/* Total number of pocket found */
 #define M_POS1 1		/* Rank of the right pocket for the first criteria */
 #define M_POS2 2		/* Rank of the right pocket for the second criteria */
 #define M_POS3 3		/* Rank of the right pocket for the third criteria */
+#define M_POS4 4		/* Rank of the right pocket for the third criteria */
+#define M_POS5 5		/* Rank of the right pocket for the third criteria */
 
 /* Flags used for the pocket detection */
 #define M_LIGNOTFOUND -2

@@ -17,6 +17,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	11-02-09	(v)  Modified argument type for sorting function
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -58,7 +59,7 @@
 
 **/
 
-static void merge_atom_vert(s_vsort *lsort, s_pdb *pdb, s_lst_vvertice *lvert)  ;
+static void merge_atom_vert(s_vsort *lsort, s_atm **atoms, int natms, s_vvertice **pvert, int nvert) ;
 static void qsort_dim(s_vect_elem *lst, int len) ;
 static void qsort_rec(s_vect_elem *lst, int start, int end) ;
 static int partition_x(s_vect_elem *lst, int start, int end) ;
@@ -76,21 +77,27 @@ static int partition_x(s_vect_elem *lst, int start, int end) ;
    -----------------------------------------------------------------------------
    ## PARAMETRES:
 	@ s_pdb *pdb			: PDB structure, basically containing atoms
-	@ s_lst_vvertice *lvert : List of vertices (if NULL, only atoms will be sorted)
+	@ s_vvertice **pvert, int nvert : List of vertices (if NULL, only atoms will be sorted)
    -----------------------------------------------------------------------------
    ## RETURN:
 	  s_vsort*: pointer to the structure containing all sorted data (see .h)
    -----------------------------------------------------------------------------
 */
-s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert) 
+s_vsort* get_sorted_list(s_atm **atoms, int natms, s_vvertice **pvert, int nvert)
 {
 	s_vsort *lsort = (s_vsort *) my_malloc(sizeof(s_vsort)) ;
 	
-	lsort->nelem = pdb->natoms ;
-	if(lvert) lsort->nelem += lvert->nvert ;
+	lsort->nelem = 0 ;
 
+	if(atoms) lsort->nelem += natms ;
+	if(pvert) lsort->nelem += nvert ;
+
+	if(lsort->nelem == 0) return NULL ;
+
+	/* Allocate memory */
 	lsort->xsort = (s_vect_elem*) my_malloc((lsort->nelem)*sizeof(s_vect_elem)) ;
-	merge_atom_vert(lsort, pdb, lvert) ;
+	
+	merge_atom_vert(lsort, atoms, natms, pvert, nvert) ;
 	qsort_dim(lsort->xsort, lsort->nelem) ;
 	
 	return lsort ;
@@ -108,34 +115,34 @@ s_vsort* get_sorted_list(s_pdb *pdb, s_lst_vvertice *lvert)
    ## PARAMETRES:
 	@ s_vsort *lsort        : Structure that should contains the 3 lists
 	@ s_pdb *pdb            : pdb structure containing atoms
-	@ s_lst_vvertice *lvert : List of v ertices
+	@ s_vvertice **pvert, int nvert : List of v ertices
    -----------------------------------------------------------------------------
    ## RETURN:
    -----------------------------------------------------------------------------
 */
-static void merge_atom_vert(s_vsort *lsort, s_pdb *pdb, s_lst_vvertice *lvert) 
+static void merge_atom_vert(s_vsort *lsort, s_atm **atoms, int natms, s_vvertice **pvert, int nvert)
 {
 	s_vect_elem *cur = NULL ;
-	int i,
+	
+	int i = 0, j = 0,
 		pos ;
-	int natoms = pdb->natoms ;
 
-	s_atm *atoms = pdb->latoms ;
-
-	for(i = 0 ; i < natoms ; i++) {
-		atoms[i].sort_x = i ;
-		cur = &(lsort->xsort[i]) ;
-		cur->data = &(atoms[i]) ;
-		cur->type = M_ATOM_TYPE ;
+	if(atoms) {
+		for(i = 0 ; i < natms ; i++) {
+			atoms[i]->sort_x = i ;
+			cur = &(lsort->xsort[i]) ;
+			cur->data = atoms[i] ;
+			cur->type = M_ATOM_TYPE ;
+		}
 	}
-
-	if(lvert) {
-		for(i = 0 ; i < lvert->nvert ; i++) {
-			pos = natoms + i ;
+	
+	if(pvert) {
+		for(j = 0 ; j < nvert ; j++) {
+			pos = i + j ;
 			
-			lvert->vertices[i].sort_x = pos ;
+			pvert[j]->sort_x = pos ;
 			cur = &(lsort->xsort[pos]) ;
-			cur->data = &(lvert->vertices[i]) ;
+			cur->data = pvert[j] ;
 			cur->type = M_VERTICE_TYPE ;
 		}
 	}

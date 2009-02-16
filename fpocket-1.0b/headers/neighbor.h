@@ -57,9 +57,30 @@
 
 /* -------------------------------PROTOTYPES--------------------------------- */
 
-s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, float dist_crit, int *nneigh)  ;
-s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms, s_pdb *pdb, s_lst_vvertice *lvert, float vdist_crit, 
-							   int interface_search, int *nneigh) ;
-s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms, s_lst_vvertice *lvert, s_pdb *pdb, float dist_crit, int *nneigh) ;
+s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_atm **all, int nall,
+			  float dist_crit, int *nneigh) ;
+
+s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms,
+                              s_vvertice **pvert, int nvert,
+                              float vdist_crit, int interface_search, int *nneigh) ;
+
+s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms,
+				s_vvertice **pvert, int nvert,
+				float dist_crit, int *nneigh) ;
+
+float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
+				 s_vvertice **pvert, int nvert,
+				 float dist_crit) ;
+
+float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
+				 s_vvertice **pvert, int nvert,
+				 float dist_crit) ;
+
+
+int count_vert_neigh_P(s_vvertice **pvert, int nvert,
+                       s_vvertice **pvert_all, int nvert_all,
+                       float dcrit) ;
+
+int count_vert_neigh(s_vsort *lsort, s_vvertice **pvert, int nvert,float dcrit);
 
 #endif

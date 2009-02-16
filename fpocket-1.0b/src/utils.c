@@ -702,7 +702,7 @@ FILE* fopen_pdb_check_case(char *name, const char *mode)
 */
 tab_str* str_split(const char *str, const int sep)
 {
-	tab_str *ts = my_calloc(1, sizeof(tab_str)) ;
+	tab_str *ts = (tab_str*) my_calloc(1, sizeof(tab_str)) ;
 
 	const char *pstr = str ;	// A temp pointer to str
 	int n = 1 ;					// At least one token (no separator in the string)
@@ -717,7 +717,7 @@ tab_str* str_split(const char *str, const int sep)
 	}
 
 	ts->nb_str = n ;
-	ts->t_str = my_calloc(n, sizeof(char*)) ;
+	ts->t_str = (char**)my_calloc(n, sizeof(char*)) ;
 
 	// --- If there is more than one token, split the string
 
@@ -735,7 +735,7 @@ tab_str* str_split(const char *str, const int sep)
 
 		while(*pstr) {
 			if(*pstr == sep) {
-				ptab_str[tok_i] = my_calloc(size_tok, sizeof(char)) ;
+				ptab_str[tok_i] = (char*)my_calloc(size_tok, sizeof(char)) ;
 				s_pctok = ptab_str[tok_i] ;
 
 				while(*s_beg != *pstr) {
@@ -755,7 +755,7 @@ tab_str* str_split(const char *str, const int sep)
 
 	// --- Copy the last token
 
-		ptab_str[tok_i] = my_calloc(size_tok, sizeof(char)) ;
+		ptab_str[tok_i] =  (char*)my_calloc(size_tok, sizeof(char)) ;
 		s_pctok = ptab_str[tok_i] ;
 		while(*s_beg) {
 			*s_pctok = *s_beg ;
@@ -766,7 +766,7 @@ tab_str* str_split(const char *str, const int sep)
 	}
 	else {
 	// --- One token only, just copy the original string
-		ts->t_str[0] = my_calloc(strlen(str), sizeof(char));
+		ts->t_str[0] =  (char*)my_calloc(strlen(str), sizeof(char));
 		strcpy(ts->t_str[0], str);
 	}
 
