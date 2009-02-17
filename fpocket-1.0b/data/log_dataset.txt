@@ -1,4 +1,10 @@
-21-01-09 Gold
+03-02-09 CCDC
+CCDC cleaned results in 224 complexes.
+
+01-02-09 Astex diverse set
+Added 85 complexes manually checked
+
+21-01-09 CCDC
 Added 305 complexes.
 
 09-01-09 Cheng

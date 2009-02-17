@@ -1,0 +1,23 @@
+########## 1a28-noHet- PARAMETER AND SETTINGS INFOMATION ##########
+
+NR OF CENTROIDS USED FOR CALCULATION: 125.0
+LENGTH OF SEARCH-RAY (RADIUS)       : 10.0
+WIDTH OF SEARCH-RAY (SEARCH_SPHERE) : 0.9
+
+minX                                : 15.7189998627
+minY                                : 1.7460000515
+minZ                                : 9.76900005341
+
+maxX                                : 74.9160003662
+maxY                                : 56.422000885
+maxZ                                : 58.611000061
+
+SURFACE_RADIUS                      : 1.45      #point is excluded from calculation if it falls below this value
+OUTER_CUTOFF                        : 4.5      #point is excluded from calculation if it exceeds this value
+UNDER_SURFACE_COVER_FACTOR          : 6        #point is considered 'under_suface' if has more than 6 under_surface neighbors
+CLUSTER_CUTOFF                      : 10        #point is excluded from second clustering if it falls below this value
+
+ELEMENTS IN CLUSTERLIST (1st run)   : 93       #number of clusters before seperating of neighboring clusters
+ELEMENTS IN CLUSTERLIST2 (2nd run)  : 28       #number of clusters before seperating of neighboring clusters
+
+NR OF CLUSTERS 2 BE DISPLAYED       : 5

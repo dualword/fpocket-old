@@ -18,9 +18,9 @@ awk -F '\t' '{print $2}' pp-apo-t.txt > pp-apo-f.txt
 awk -F '\t' '{print $1, $3}' cheng-t.txt > cheng-d.txt
 awk -F '\t' '{print $2}' cheng-t.txt > cheng-f.txt
 
-# Gold dataset
-awk -F '\t' '{print $1, $3}' gold-t.txt > gold-d.txt
-awk -F '\t' '{print $2}' gold-t.txt > gold-f.txt
+# Full CCDC dataset
+awk -F '\t' '{print $1, $3}' ccdc-t.txt > ccdc-d.txt
+awk -F '\t' '{print $2}' ccdc-t.txt > ccdc-f.txt
 
 # CCDC Clean dataset
 awk -F '\t' '{print $1, $3}' ccdc-clean-t.txt > ccdc-clean-d.txt
