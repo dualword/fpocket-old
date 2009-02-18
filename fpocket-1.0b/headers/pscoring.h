@@ -47,6 +47,5 @@
 /* ----------------------------PROTOTYPES-------------------------------------*/
 
 float score_pocket(s_desc *pdesc) ;
-float score_pocket2(s_desc *pdesc) ;
 
 #endif

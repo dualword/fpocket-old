@@ -550,7 +550,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 		/* Score all pockets */
 		cur = pockets->first ;
 		while(cur) {
-			cur->pocket->score = score_pocket2(cur->pocket->pdesc) ;
+			cur->pocket->score = score_pocket(cur->pocket->pdesc) ;
 
 			cur = cur->next ;
 		}
@@ -583,8 +583,11 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 */
 void set_normalized_descriptors(c_lst_pockets *pockets)
 {
+	
+	if(!pockets || pockets->n_pockets > 0) return ;
+
 	node_pocket *cur = NULL ;
-	s_pocket *pcur = NULL ;
+	s_desc *dcur = NULL ;
 
 	/* Some boundaries to help normalisation */
 	float flex_M = 0.0, flex_m = 1.0,
@@ -596,85 +599,83 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 	int nas_M = 0, nas_m = 1000,
 		polarity_M = -1, polarity_m = 10000 ;
 
-	if(pockets && pockets->n_pockets > 0) {
-		cur = pockets->first ;
-		/* Perform a first loop to calculate atom and vertice based descriptors */
-		while(cur) {
-			pcur = cur->pocket ;
-			/* Initialize boundaries if it's the first turn */
-			if(cur == pockets->first) {
-				as_max_dst_M = as_max_dst_m = pcur->pdesc->as_max_dst ;
-				density_M = density_m = pcur->pdesc->as_density ;
-				polarity_M = polarity_m = pcur->pdesc->polarity_score ;
-				flex_M = flex_m = pcur->pdesc->flex ;
-				nas_apolp_M = nas_apolp_m = pcur->pdesc->apolar_asphere_prop ;
-				mlhd_M = mlhd_m = pcur->pdesc->mean_loc_hyd_dens ;
-				nas_M = nas_m = pcur->pdesc->nb_asph ;
-			}
-			else {
-			/* Update several boundaries */
-				if(pcur->pdesc->as_max_dst > as_max_dst_M)
-					as_max_dst_M = pcur->pdesc->as_max_dst ;
-				else if(pcur->pdesc->as_max_dst < as_max_dst_m)
-					as_max_dst_m = pcur->pdesc->as_max_dst ;
-				
-				if(pcur->pdesc->as_density > density_M)
-					density_M = pcur->pdesc->as_density ;
-				else if(pcur->pdesc->as_density < density_m)
-					density_m = pcur->pdesc->as_density ;
-				
-				if(pcur->pdesc->polarity_score > polarity_M)
-					polarity_M = pcur->pdesc->polarity_score ;
-				else if(pcur->pdesc->polarity_score < polarity_m)
-					polarity_m = pcur->pdesc->polarity_score ;
-				
-				if(pcur->pdesc->mean_loc_hyd_dens > mlhd_M)
-					mlhd_M =pcur->pdesc->mean_loc_hyd_dens ;
-				else if(pcur->pdesc->mean_loc_hyd_dens < mlhd_m)
-					mlhd_m =pcur->pdesc->mean_loc_hyd_dens ;
+	cur = pockets->first ;
+	/* Perform a first processing step, to set min and max for example */
+	while(cur) {
+		dcur = cur->pocket->pdesc ;
+		/* Initialize boundaries if it's the first turn */
+		if(cur == pockets->first) {
+			as_max_dst_M = as_max_dst_m = dcur->as_max_dst ;
+			density_M = density_m = dcur->as_density ;
+			polarity_M = polarity_m = dcur->polarity_score ;
+			flex_M = flex_m = dcur->flex ;
+			nas_apolp_M = nas_apolp_m = dcur->apolar_asphere_prop ;
+			mlhd_M = mlhd_m = dcur->mean_loc_hyd_dens ;
+			nas_M = nas_m = dcur->nb_asph ;
+		}
+		else {
+		/* Update several boundaries */
+			if(dcur->as_max_dst > as_max_dst_M)
+				as_max_dst_M = dcur->as_max_dst ;
+			else if(dcur->as_max_dst < as_max_dst_m)
+				as_max_dst_m = dcur->as_max_dst ;
 
-				if(pcur->pdesc->flex > flex_M) flex_M = pcur->pdesc->flex ;
-				else if(pcur->pdesc->flex < flex_m) flex_m = pcur->pdesc->flex ;
+			if(dcur->as_density > density_M)
+				density_M = dcur->as_density ;
+			else if(dcur->as_density < density_m)
+				density_m = dcur->as_density ;
 
-				if(pcur->pdesc->nb_asph > nas_M) nas_M = pcur->pdesc->nb_asph ;
-				else if(pcur->pdesc->nb_asph < nas_m) nas_m = pcur->pdesc->nb_asph ;
+			if(dcur->polarity_score > polarity_M)
+				polarity_M = dcur->polarity_score ;
+			else if(dcur->polarity_score < polarity_m)
+				polarity_m = dcur->polarity_score ;
 
-				if(pcur->pdesc->apolar_asphere_prop > nas_apolp_M)
-					nas_apolp_M = pcur->pdesc->apolar_asphere_prop ;
-				else if(pcur->pdesc->apolar_asphere_prop < nas_apolp_m)
-					nas_apolp_m = pcur->pdesc->apolar_asphere_prop;
-			}
+			if(dcur->mean_loc_hyd_dens > mlhd_M)
+				mlhd_M =dcur->mean_loc_hyd_dens ;
+			else if(dcur->mean_loc_hyd_dens < mlhd_m)
+				mlhd_m =dcur->mean_loc_hyd_dens ;
 
-			cur = cur->next ;
+			if(dcur->flex > flex_M) flex_M = dcur->flex ;
+			else if(dcur->flex < flex_m) flex_m = dcur->flex ;
+
+			if(dcur->nb_asph > nas_M) nas_M = dcur->nb_asph ;
+			else if(dcur->nb_asph < nas_m) nas_m = dcur->nb_asph ;
+
+			if(dcur->apolar_asphere_prop > nas_apolp_M)
+				nas_apolp_M = dcur->apolar_asphere_prop ;
+			else if(dcur->apolar_asphere_prop < nas_apolp_m)
+				nas_apolp_m = dcur->apolar_asphere_prop;
 		}
 
-		/* Perform normalisation */
-		cur = pockets->first ;
-		while(cur) {
-			pcur = cur->pocket ;
-			/* Calculate normalized descriptors */
-			pcur->pdesc->as_max_dst_norm =
-				(pcur->pdesc->as_max_dst - as_max_dst_m) / (as_max_dst_M - as_max_dst_m) ;
+		cur = cur->next ;
+	}
 
-			pcur->pdesc->as_density_norm = 
-				(pcur->pdesc->as_density - density_m) / (density_M - density_m) ;
-			
-			pcur->pdesc->polarity_score_norm =
-				(float)(pcur->pdesc->polarity_score - polarity_m) /
-				(float)(polarity_M - polarity_m) ;
-			
-			pcur->pdesc->mean_loc_hyd_dens_norm =
-				(pcur->pdesc->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
+	/* Perform a second loop to do the actual normalisation */
+	cur = pockets->first ;
+	while(cur) {
+		dcur = cur->pocket->pdesc ;
+		/* Calculate normalized descriptors */
+		dcur->as_max_dst_norm =
+			(dcur->as_max_dst - as_max_dst_m) / (as_max_dst_M - as_max_dst_m) ;
 
-			pcur->pdesc->flex = (pcur->pdesc->flex - flex_m) / (flex_M - flex_m) ;
-			pcur->pdesc->nas_norm = (float) (pcur->pdesc->nb_asph - nas_m) /
-									(float) (nas_M - nas_m) ;
-			pcur->pdesc->prop_asapol_norm =
-				(pcur->pdesc->apolar_asphere_prop - nas_apolp_m)
-				/ (nas_apolp_M - nas_apolp_m);
+		dcur->as_density_norm =
+			(dcur->as_density - density_m) / (density_M - density_m) ;
 
-			cur = cur->next ;
-		}
+		dcur->polarity_score_norm =
+			(float)(dcur->polarity_score - polarity_m) /
+			(float)(polarity_M - polarity_m) ;
+
+		dcur->mean_loc_hyd_dens_norm =
+			(dcur->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
+
+		dcur->flex = (dcur->flex - flex_m) / (flex_M - flex_m) ;
+		dcur->nas_norm = (float) (dcur->nb_asph - nas_m) /
+								(float) (nas_M - nas_m) ;
+		dcur->prop_asapol_norm =
+			(dcur->apolar_asphere_prop - nas_apolp_m)
+			/ (nas_apolp_M - nas_apolp_m);
+
+		cur = cur->next ;
 	}
 }
 
@@ -1229,7 +1230,7 @@ void reset_pocket(s_pocket *pocket)
 	pocket->nAlphaPol = 0 ;
 	pocket->nAlphaApol = 0 ;
 
-	reset_s_desc(pocket->pdesc) ;
+	reset_desc(pocket->pdesc) ;
 }
 
 /**-----------------------------------------------------------------------------

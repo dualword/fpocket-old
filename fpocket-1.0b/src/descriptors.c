@@ -86,7 +86,7 @@ s_desc* allocate_s_desc(void)
 {
 	s_desc *desc = (s_desc*)my_malloc(sizeof(s_desc)) ;
 	
-	reset_s_desc(desc) ;
+	reset_desc(desc) ;
 
 	return desc ;
 }
@@ -104,7 +104,7 @@ s_desc* allocate_s_desc(void)
 	void
    -----------------------------------------------------------------------------
 */
-void reset_s_desc(s_desc *desc) 
+void reset_desc(s_desc *desc)
 {
     desc->hydrophobicity_score = 0.0 ;
 	desc->volume_score = 0.0 ;
@@ -152,7 +152,7 @@ void reset_s_desc(s_desc *desc)
    ## PARAMETRES:
 	@ s_atm **atoms         : The list of atoms
 	@ int natoms            : The number of atoms
-	@ s_vvertice **tab_vert : The list of vertices 
+	@ s_vvertice **tvert : The list of vertices
 	@ int nvert             : The number of vertices
 	@ s_desc *desc          : OUTPUT: The descriptor structure to fill
    -----------------------------------------------------------------------------
@@ -160,14 +160,14 @@ void reset_s_desc(s_desc *desc)
     void: s_desc is filled
    -----------------------------------------------------------------------------
 */
-void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert, 
-					 s_desc *desc) 
+void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
+					 s_desc *desc)
 {
 	/* Setting atom-based descriptors */
 	set_atom_based_descriptors(atoms, natoms, desc) ;
 
 	/* Setting vertice-based descriptors */
-	if(! tab_vert) return ;
+	if(! tvert) return ;
 
 	float d = 0.0, vx, vy, vz, vrad,
 		  masph_sacc = 0.0, /* Mean alpha sphere solvent accessibility */
@@ -178,13 +178,17 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	int i, j,
 		napol_neigh = 0,
 		nAlphaApol = 0 ;
+	
+	float as_max_r = -1.0 ;
 
 	s_vvertice *vcur = NULL,
 			   *vc = NULL ;
-	desc->mean_loc_hyd_dens = 0.0 ;
 
+	desc->mean_loc_hyd_dens = 0.0 ;
 	for(i = 0 ; i < nvert ; i++) {
-		vcur = tab_vert[i] ;
+		vcur = tvert[i] ;
+		if(vcur->ray > as_max_r) as_max_r = vcur->ray ;
+
 		vx = vcur->x ; vy = vcur->y ; vz = vcur->z ; vrad = vcur->ray ;
 
 		/* Calculate apolar density if necessary, and pocket density */
@@ -192,7 +196,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 		if(vcur->type == M_APOLAR_AS) {
 			napol_neigh = 0 ;
 			for(j = 0 ; j < nvert ; j++) {
-				vc = tab_vert[j] ;
+				vc = tvert[j] ;
 
 				/* Increment the number of apolar neighbor */
 				if(vc != vcur && vc->type == M_APOLAR_AS &&
@@ -216,7 +220,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 			/* Update density */
 			for(j = i+1 ; j < nvert ; j++) {
 				dtmp = dist(vcur->x, vcur->y, vcur->z,
-							tab_vert[j]->x, tab_vert[j]->y, tab_vert[j]->z) ;
+							tvert[j]->x, tvert[j]->y, tvert[j]->z) ;
 				
 				if(dtmp > as_max_dst) as_max_dst = dtmp ;
 				as_density += dtmp ;
@@ -240,7 +244,9 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	desc->nb_asph = nvert ;
 	desc->as_density = as_density / ((nvert*nvert - nvert) * 0.5) ;
 		
-	desc->volume = get_verts_volume_ptr(tab_vert, nvert, 3000) ;
+	desc->volume = get_verts_volume_ptr(tvert, nvert, 3000) ;
+	desc->as_max_r = as_max_r ;
+
 }
 
 /**-----------------------------------------------------------------------------
@@ -257,7 +263,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	mean value of it.
    -----------------------------------------------------------------------------
    ## PARAMETRES:
-	@ s_vvertice **tab_vert : The list of vertices 
+	@ s_vvertice **tvert : The list of vertices
 	@ int nvert             : The number of vertices
 	@ s_vvertice *vert      : The reference vertice.
    -----------------------------------------------------------------------------
@@ -265,7 +271,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tab_vert, int nvert
 	int: The apolar density as defined previously.
    -----------------------------------------------------------------------------
 */
-int get_vert_apolar_density(s_vvertice **tab_vert, int nvert, s_vvertice *vert)
+int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert)
 {
 	int apol_neighbours = 0,
 		i = 0 ;
@@ -278,7 +284,7 @@ int get_vert_apolar_density(s_vvertice **tab_vert, int nvert, s_vvertice *vert)
 		  vray = vert->ray ;
 	
 	for(i = 0 ; i < nvert ; i++) {
-		vc = tab_vert[i] ;
+		vc = tvert[i] ;
 		if(vc != vert && vc->type == M_APOLAR_AS){
 			if(dist(vx, vy, vz, vc->x, vc->y, vc->z)-(vc->ray + vray) <= 0.) {
 				apol_neighbours += 1 ;

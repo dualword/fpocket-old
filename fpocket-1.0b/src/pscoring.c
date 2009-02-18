@@ -57,137 +57,7 @@
 
 /**-----------------------------------------------------------------------------
    ## FUNCTION: 
-	void set_pocket_score(s_desc *pdesc) 
-   -----------------------------------------------------------------------------
-   ## SPECIFICATION: 
-	Set a score to a given pocket. The current scoring function has been determined
-	using a logistic regression based on an analysis of pocket descriptors.
-
-   -----------------------------------------------------------------------------
-   ## PARAMETRES:
-	@ s_desc *pdesc: The pocket
-   -----------------------------------------------------------------------------
-   ## RETURN:
-	float: The score
-   -----------------------------------------------------------------------------
-*/
-float score_pocket(s_desc *pdesc) 
-{
-
-	double score = -1.0;
-	
-		/*
-	Using m 3.0 M 6.0 D 2.0 i 40 we have for the training set this model
-	*/
-
-/*
-	Perf:
-				  CPP     OVL
-	Data      T1/T3 | T1/T3
-	------------------------
-	Train   : 60/83 - 63/88
-	PP holo : 77/90 - 77/88
-	PP apo  : 67/88
-	Cheng   : 70/80 - 65/95
-	Gold    : 66/91 - 68/89
-*/
-/*
-	score = -14.835 + 0.56  *(float)pdesc->nb_asph +
-							 0.72  *(float)pdesc->mean_loc_hyd_dens-
-							 59.77 *(float)pdesc->masph_sacc+
-							 6.678 *(float)pdesc->mean_asph_ray;
-*/
-
-/*
-	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this model
-*/
-/*
-	Perf:
-	Scoring function 1:
-			  CPP     OVL
-	Data      T1/T3 | T1/T3
-	------------------------
-	Train   : 62/84 - 65/87
-	PP holo : 77/92 - 77/90
-	PP apo  : 65/90
-	Cheng   : 70/85 - 70/100
-	Gold    : 68/90 - 70/89
-*/
-
-/*
-	score =
-        -7.09022
-       +23.31100 * (float)pdesc->nas_norm
-        -2.31088 * (float)pdesc->prop_asapol_norm
-        +9.12903 * (float)pdesc->mean_loc_hyd_dens_norm
-        +0.84644 * (float)pdesc->polarity_score
-        -0.63831 * (float)pdesc->charge_score ;
-*/
-/*
-	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this PLS model
-	having 5 components
-*/
-
-/*
-	Perf:
-	Scoring function 1:
-			  CPP     OVL
-	Data      T1/T3 | T1/T3
-	------------------------
-	Train   : 62/86 - 65/89
-	PP holo : 79/92 - 79/90
-	PP apo  : 69/90
-	Cheng   : 70/85 - 70/100
-	Gold    : 69/91 - 71/90
-*/
-/*
-	score =
-        -0.61113
-       +30.14723 * (float)pdesc->nas_norm
-        -1.70018 * (float)pdesc->masph_sacc
-        -3.42098 * (float)pdesc->prop_asapol_norm
-       +10.97269 * (float)pdesc->mean_loc_hyd_dens_norm
-        -0.00041 * (float)pdesc->hydrophobicity_score
-        +1.17414 * (float)pdesc->polarity_score
-        -1.97004 * (float)pdesc->as_density ;
-*/
-
-
-/*
-	Using m 3.0 M 6.0 D 1.73 i 25 we have for the training set this PLS model
-	having 3 components
-*/
-
-/*
-	Perf:
-	Scoring function 1:
-			  CPP     OVL
-	Data      T1/T3 | T1/T3
-	------------------------
-	Train   : 60/86 - 64/89
-	PP holo : 81/92 - 81/90
-	PP apo  : 67/90
-	Cheng   : 65/85 - 70/100
-	Gold    : 68/90 - 69/89
-*/
-/*
-	score =
-       -10.94643
-       +12.43332 * (float)pdesc->nas_norm
-        +6.26295 * (float)pdesc->prop_asapol_norm
-       +11.48185 * (float)pdesc->mean_loc_hyd_dens_norm
-        +1.74043 * (float)pdesc->polarity_score
-        -1.01603 * (float)pdesc->as_density ;
-*/
-
-	
-	return score ;
-}
-
-
-/**-----------------------------------------------------------------------------
-   ## FUNCTION: 
-	set_pocket_score2
+	score_pocket2
    -----------------------------------------------------------------------------
    ## SPECIFICATION: 
 	Set a score to a given pocket. The current scoring function has been determined
@@ -201,9 +71,9 @@ float score_pocket(s_desc *pdesc)
 	float: The score
    -----------------------------------------------------------------------------
 */
-float score_pocket2(s_desc *pdesc) 
+float score_pocket(s_desc *pdesc)
 {
-	double score ;
+	float score ;
 
 	/**
 	 * Data to use for mean-center normalization step: N = 2

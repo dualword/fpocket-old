@@ -37,5 +37,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "fpocket.h"
+#include "fpout.h"
+#include "rpdb.h"
+#include "fparams.h"
+
+int check_qhull(void) ;
+int check_fparams(void) ;
+int check_fpocket (void );
+
 #endif	/* _CHECK_H */
 

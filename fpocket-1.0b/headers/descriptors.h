@@ -80,17 +80,18 @@ typedef struct s_desc
 	int nb_asph,		/* Number of alpha spheres */
             polarity_score,	/* Polarity score (based on amino acids properties ; see aa.c & aa.h) */
             charge_score ;	/* Sum of all net charges at pH = 7 (see aa.c & aa.h) */
+        float as_max_r ;
 
 } s_desc ;
 
 /* ------------------------------PROTOTYPES---------------------------------- */
 
 s_desc* allocate_s_desc(void) ;
-void reset_s_desc(s_desc *desc) ;
+void reset_desc(s_desc *desc) ;
 
-void set_descriptors(s_atm **atoms, int natoms, s_vvertice **lst_vert, int nvert, s_desc *desc) ;
+void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc) ;
 
-int get_vert_apolar_density(s_vvertice **lst_vert, int nvert, s_vvertice *vert) ;
+int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert) ;
 void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc) ;
 void set_aa_desc(s_desc *desc, const char *aa_name) ;
 

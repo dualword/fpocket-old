@@ -6,12 +6,30 @@ global function eval_pdb [pdbname, ligname]
 						[errmsg:'ignore']] ;
 	if return_code === 'error' then
 		print 'PDB not found' ;
-		return -2 ;
+		// Go to upper case, just in case...
+		pdbname = token cat [string toupper token get [string pdbname, 
+								igen 4], ".pdb"] ;
+		[cpdb, return_code] = task_call ['ReadPDB', [token pdbname],
+						[errmsg:'ignore']] ;
+		if return_code === 'error' then
+		// Well its not here obviously...
+			return -2 ;
+		endif
 	endif
 
 	//local cpdb =  ReadPDB pdbname ;
 	local atoms = Atoms[] ;
 	local latoms = atoms | (app token rName aResidue atoms) == ligname ;
+	if isnull latoms then
+		// Go to upoper case just in case...
+		ligname = toupper ligname ;
+		latoms = atoms | (app token rName aResidue atoms) == ligname ;
+		if isnull latoms then
+		print 'Ligand not found...' ;
+			return -3 ;
+		endif
+		 
+	endif
 	local lcoord = aPos latoms ;
 
 	oDestroy cpdb ;
@@ -25,7 +43,7 @@ global function eval_pdb [pdbname, ligname]
 						[errmsg:'ignore']] ;
 	if return_code === 'error' then
 		print 'PDB from PP not found' ;
-		return -2 ;
+		return -4 ;
 	endif
 	//cpdb =  ReadPDB ppname ;
 
@@ -43,7 +61,7 @@ global function eval_pdb [pdbname, ligname]
 		local coords = aPos cat rAtoms r ;
 		//print 'Number of spheres:' ;
 		//print length first coords ;
-		if length first coords < 10 then
+		if length first coords < 5 then
 		// A weired bug I dont understand... Some pockets are splitted
 		// in two resids (but with the same resname), with 1 sphere
 		// in the first and N in the second... So skip the small one.
@@ -79,25 +97,30 @@ endfunction
 global function eval_pp tp_input
 
 	local f = fopenr tp_input ;
-	local L, res ;
+	local L, res, data ;
 	oDestroy Atoms[] ;
 	while not isnull (L = first freadb [f, 'line', 1]) loop
 		local v = app token fieldsplit [string L, "\t"] ;
 		print v ;
-		oDestroy Atoms[] ;
-
+		data = cat [data, nest v] ;
+		Close[force:1] ;
 		res = cat [res, eval_pdb [v[2], v[3]]] ;
 	endloop
 
 	fclose f ;
+	Close[force:1] ;
+
 	print'*************' ;
 	print 'Results:' ;
 	print res ;
+	print data ;
 	res = res | res > -2 ;
+	
 	print tok_cat [ 'On ', totok length res, ' proteins available:'] ;
 	print tok_cat [ 'Top 1/3: ', totok (length (res | res == 1)/ length res),
 			'/',
 			totok (length (res | (res >= 1 and res <=3))/length res)];
 
+	oDestroy Atoms[] ;
 
 endfunction

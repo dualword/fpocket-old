@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
 	
 	/* If parameters parsing is ok */
 	if(params) {
-	
 		if(params->pdb_lst != NULL) {
 		/* Handle a list of pdb */
 			int i ;
@@ -106,7 +105,7 @@ int main(int argc, char *argv[])
 		print_pocket_usage(stdout) ;
 	}
 
-	fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
+	fprintf(stdout, "***** POCKET HUNTING ENDS ***** \n") ;
 	free_all() ;
 
 	return 0;
