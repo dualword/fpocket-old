@@ -584,7 +584,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 void set_normalized_descriptors(c_lst_pockets *pockets)
 {
 	
-	if(!pockets || pockets->n_pockets > 0) return ;
+	if(!pockets || pockets->n_pockets <= 0) return ;
 
 	node_pocket *cur = NULL ;
 	s_desc *dcur = NULL ;

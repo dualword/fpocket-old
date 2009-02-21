@@ -52,62 +52,38 @@ global function eval_pdb [pdbname, ligname]
 
 	oDestroy cpdb ;
 
-	// Now load pocketpicker output
-	local ppname = token cat [first wordsplit [string pdbname, "."],
-			    	  "-PPicker.pdb"] ;
+	// Now load fpocket output
+	local fpname = tok_cat totok cat [ string pdbcode, "_out/",
+					  		   pdbcode, "_out.pdb"] ;
 
 
-	[cpdb, return_code] = task_call ['ReadPDB', [token ppname, [center:1]],
+	[cpdb, return_code] = task_call ['ReadPDB', [token fpname, [center:1]],
 						[errmsg:'ignore']] ;
+
 	if return_code === 'error' then
-		print 'PDB from PP not found' ;
+		print 'PDB from fpocket not found' ;
 		return [pdbcode, ligname, -4, -1.0] ;
 	endif
-	//cpdb =  ReadPDB ppname ;
 
-	// Store each pocket detected by PP using resname
-	local resids =  uniq aResidue (Atoms[] |
-			m_findmatch ['PC#', app token rName aResidue Atoms[]]) ;
-	local resnames = cat rName resids ;
+	// Store each pocket detected by fpocket using resname
+	local resids =  uniq aResidue (Atoms[] | (app token rName aResidue Atoms[]) == 'STP') ;
 
 	local r, rok, dok, bary, dists, coords, nb_res, mindists, pockets ;
-	local lastrname = '';
 	for r in resids loop
-		nb_res = length (resnames | resnames == cat rName r) ;
-
-		if lastrname===rName r or nb_res === 1 then
-		// If this residue has already been seen, or if this residue
-		// is not splitted (typically the first pocket)
-			if not isnull coords then
-				coords = apt cat [coords, aPos cat rAtoms r] ;
-			else
-				coords = aPos cat rAtoms r ;
-			endif
-
-			bary = (app add coords) / length first coords ;
-			dists = apt my_distE [nest bary, tr lcoord] ;
+		
+		coords = aPos cat rAtoms r ;
+		bary = (app add coords) / length first coords ;
+		dists = apt my_distE [nest bary, tr lcoord] ;
 	
-			// Store all min distance associated with pocket resname
-			mindists = cat [mindists, min dists] ;
-			pockets = cat [pockets, rName r] ;
+		// Store all min distance associated with pocket resname
+		mindists = cat [mindists, min dists] ;
+		pockets = cat [pockets, rNumber r] ;
 
-			print [cat rName r, min dists];
-			if anytrue (dists <= 4.0) then
-				rok = cat [rok, r] ;
-				dok = cat [dok, min dists] ;
-				print ["OK", pdbcode, cat rName rok, 
-					min mget [dists,dists <= 4.0]];
-			endif
-			coords = [] ;
-
-			lastrname = rName r;
-		else
-		// If it's the first time we test a residue that appears 2 times
-		// save coordinates for the next pocket to have the complete
-		// pocket.
-			coords = cat aPos cat rAtoms r ;
-			lastrname = rName r;
-			continue ;
+		print [tok_cat ['STP', totok rNumber r], min dists];
+		if anytrue (dists <= 4.0) then
+			rok = cat [rok, r] ;
+			print ["OK", pdbcode, cat rName rok, 
+				min mget [dists,dists <= 4.0]];
 		endif
 	endloop
 
@@ -116,24 +92,27 @@ global function eval_pdb [pdbname, ligname]
 		return [pdbcode, ligname, -1, -1.0] ;
 	endif
 	
-	local id ;
+	local ID ;
+
+	pockets = 1+ pockets - min pockets;
 
 	// Do their way to evaluate
 	local minid = x_min mindists ;
 	local minpocket = first get [pockets, minid] ;
 
-	id = atoi totok second wordsplit [string minpocket, "C"]; 
+	ID = minpocket ; 
 
 	// Do ours
-	//local n = rName rok ;
-	//id = min atoi totok app second apt wordsplit [app string n, "C"] ;
+	local xok = x_id mindists | mindists <= 4.0 ;
+	ID = min get[pockets, xok];
+	minid = cat x_id pockets | pockets == ID ;
 	
 	oDestroy cpdb ;
 
-	return [pdbcode, ligname, id, min mindists] ;
+	return [pdbcode, ligname, ID, cat get[mindists, minid]] ;
 endfunction
 
-global function eval_pp tp_input
+global function eval_fp tp_input
 
 	local f = fopenr tp_input ;
 	local L, res, data ;

@@ -72,7 +72,7 @@
 #define M_SLCLUST_MAX_DIST 2.5
 
 /* Minimum number of common neighbours for single linkage clustering 5 */
-#define M_SLCLUST_MIN_NUM_NEIGH 1
+#define M_SLCLUST_MIN_NUM_NEIGH 2
 
 /* Number of iterations for the Monte Carlo volume calculation 3000 */
 #define M_MC_ITER 3000
