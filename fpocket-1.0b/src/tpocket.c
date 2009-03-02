@@ -87,8 +87,8 @@ void test_fpocket(s_tparams *par)
 	float ovlp3[] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7} ;
 	
 	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0, mean_ov4 = 0.0, mean_ov5 = 0.0,
-		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0, mean_ovr4 = 0.0, mean_ovr5 = 0.0  ;
-	int n1, n2, n3, n4, n5, N = 0 ;
+		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0, mean_ovr4 = 0.0, mean_ovr5 = 0.0, mean_ovr6 = 0.0  ;
+	int n1, n2, n3, n4, n5, n6, N = 0 ;
 
 	/* Store statistics for each files: */
 	int status[par->nfiles] ;
@@ -111,17 +111,17 @@ void test_fpocket(s_tparams *par)
 	/* Printing each complexe statistics */
 	FILE *fp = fopen(par->p_output, "w") ;
 	if(fp) {
-		n1 = 0, n2 = 0, n3 = 0, n4 = 0, n5 = 0 ;
-		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | CRIT1 | CRIT2 | CRIT3 | CRIT4 | CRIT5 | POS1 | POS2 | POS3 | POS4 | POS5  | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | REL_OVLP4 | REL_OVLP5 | LIGMASS | LIGVOL\n") ;
+		n1 = 0, n2 = 0, n3 = 0, n4 = 0, n5 = 0, n6 = 0 ;
+		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | CRIT1 | CRIT2 | CRIT3 | CRIT4 | CRIT5 | CRIT6 | POS1 | POS2 | POS3 | POS4 | POS5 | POS6 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | REL_OVLP4 | REL_OVLP5 | REL_OVLP5 | LIGMASS | LIGVOL\n") ;
 		for(i = 0 ; i < par->nfiles ; i++) {
 			remove_path(par->fcomplex[i]) ;
 			remove_path(par->fapo[i]) ;
 			if(status[i] == M_OK) {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
 						par->fligan[i], par->fcomplex[i], par->fapo[i], idata[i][M_NPOCKET],
-						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST], ddata[i][M_CRIT4], ddata[i][M_CRIT5],
-						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3], idata[i][M_POS4], idata[i][M_POS5],
-						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3], ddata[i][M_OREL4], ddata[i][M_OREL5],
+						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST], ddata[i][M_CRIT4], ddata[i][M_CRIT5], ddata[i][M_CRIT6],
+						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3], idata[i][M_POS4], idata[i][M_POS5], idata[i][M_POS6],
+						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3], ddata[i][M_OREL4], ddata[i][M_OREL5], ddata[i][M_OREL6],
 						ddata[i][M_LIGMASS], ddata[i][M_LIGVOL]) ;
 
 				if(idata[i][M_POS1] > 0) {
@@ -154,13 +154,18 @@ void test_fpocket(s_tparams *par)
 					n5 ++ ;
 				}
 
+				if(idata[i][M_POS6] > 0) {
+					mean_ovr6 += ddata[i][M_OREL5];
+					n6 ++ ;
+				}
+
 			}
 			else {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f\n",
 						par->fligan[i], par->fcomplex[i], par->fapo[i], -1, 
-						-1.0, -1.0, -1.0, -1.0, -1.0,
-						-1, -1, -1, -1, -1,
-						-1.0, -1.0, -1.0, -1.0, -1.0,
+						-1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+						-1, -1, -1, -1, -1, -1,
+						-1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
 						-1.0, -1.0) ;
 			}
 		}
@@ -170,6 +175,7 @@ void test_fpocket(s_tparams *par)
 		mean_dst /= (float) n3 ; mean_ovr3 /= (float) n3 ;
 		mean_ov4 /= (float) n4 ; mean_ovr4 /= (float) n4 ;
 		mean_ov5 /= (float) n5 ; mean_ovr5 /= (float) n5 ;
+		mean_ovr6 /= (float) n6 ;
 
 		fclose(fp) ;
 	}
@@ -352,6 +358,29 @@ void test_fpocket(s_tparams *par)
 		fprintf(fg, "-------------------------------------\n") ;
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov5) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr5) ;
+
+
+		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg,   "\t-      _ Concensus overlap criteria (alpha sphere overlap) _       -\n") ;
+		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg, "   Ratio of good predictions (dist = 3A) \n") ;
+		fprintf(fg, "------------------------------------------\n") ;
+
+		for(i = 0 ; i < nranks ; i++) {
+			nok = 0 ;
+			for(k = 0 ; k < par->nfiles ; k++) {
+				if(status[k] == M_OK && idata[k][M_POS6] <= ranks[i]
+				&& idata[k][M_POS6] > 0) {
+					nok ++ ;
+				}
+			}
+			//printf("%d NOK: %d, %d, %f\n", ranks[i], nok, N, ((float)nok) / ((float) N)) ;
+			fprintf(fg, "Rank <= %2d  :\t\t%6.2f\n", ranks[i],
+					((float)nok) / ((float) N)) ;
+		}
+
+		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr6) ;
 
 		fclose(fg) ;
 	}
@@ -606,7 +635,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 				   int nalig, s_atm **alneigh, int nlneigh, 
 				   float ddata [][M_NDDATA], int idata [][M_NIDATA], int i)
 {
-	int found [] = {0, 0, 0, 0, 0} ;
+	int found [] = {0, 0, 0, 0, 0, 0} ;
 	int npneigh = 0, pos, j ;
 	float ov1, ov2, ov3, ov4, dst = 0.0 ;
 	/* float ovol ; */
@@ -672,7 +701,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		/*
 			TEST THE 4th and 5th CRITERIA (VERTICE OVERLAPS)
 		 */
-		if(!found[3] || !found[4]) {
+		if(!found[3] || !found[4] || !found[5]) {
 			pvert = get_pocket_pvertices(pcur) ;
 			if(!found[3]){
 				ov3 = count_atm_prop_vert_neigh( lig, nalig,
@@ -695,13 +724,26 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 					found[4] = 1 ;
 				}
 			}
+
+			if(!found[5]){
+				ov3 = count_atm_prop_vert_neigh( lig, nalig,
+											 pvert, pcur->size, M_CRIT4_D) ;
+				ov4 = count_pocket_lig_vert_ovlp(lig, nalig,
+												 pvert, pcur->size, M_CRIT5_D) ;
+				if(ov4 > M_CRIT5_VAL && ov3 > M_CRIT4_VAL) {
+					idata[i][M_POS6] = pos ;
+					ddata[i][M_CRIT6] = 1.0 ;
+					ddata[i][M_OREL6] = ov4*100 ;
+					found[5] = 1 ;
+				}
+			}
 			my_free(pvert) ;
 		}
 		
 		ncur = ncur->next ;
 
 		/* Break the loop if all criteria are OK */
-		if(found[0] && found[1] && found[2] && found[3] && found[4]) break ;
+		if(found[0] && found[1] && found[2] && found[3] && found[4] && found[5]) break ;
 		
 	}
 
@@ -733,6 +775,12 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		ddata[i][M_CRIT5] = 0.0 ;
 		ddata[i][M_OREL5] = 0.0 ;
 		idata[i][M_POS5] = 0 ;
+	}
+	
+	if (! found[5]) {
+		ddata[i][M_CRIT6] = 0.0 ;
+		ddata[i][M_OREL6] = 0.0 ;
+		idata[i][M_POS6] = 0 ;
 	}
 }
 

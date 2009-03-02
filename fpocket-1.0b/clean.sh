@@ -23,5 +23,7 @@ rm config.h
 rm config.h.in
 rm missing
 rm stamp-h1
+rm bin/Makefile.in
+rm bin/Makefile
 rm *~
 rm */*~

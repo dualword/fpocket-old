@@ -81,7 +81,7 @@
 #define M_BASIC_VOL_DIVISION -1
 
 /* Minimum number of alpha spheres for a pocket to be kept */
-#define M_MIN_POCK_NB_ASPH 35
+#define M_MIN_POCK_NB_ASPH 36
 
 /* Minimum number of atoms having a low electronegativity in order to declare 
  * an alpha sphere to be apolar 3 */

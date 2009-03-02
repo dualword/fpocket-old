@@ -3,7 +3,7 @@
 D=1.73
 m=3.0
 M=6.0
-i=35
+i=36
 n=2
 
 out="perf_all_D"$D"_m"$m"_M"$M"_i"$i"_n"$n

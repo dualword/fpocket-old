@@ -78,6 +78,5 @@ data/astex-diverse/1yv3.pdb	data/astex-diverse/1yv3.pdb	BIT
 data/astex-diverse/1yvf.pdb	data/astex-diverse/1yvf.pdb	PH7
 data/astex-diverse/1ywr.pdb	data/astex-diverse/1ywr.pdb	LI9
 data/astex-diverse/1z95.pdb	data/astex-diverse/1z95.pdb	198
-data/astex-diverse/2bm2.pdb	data/astex-diverse/2bm2.pdb	PM2
 data/astex-diverse/2br1.pdb	data/astex-diverse/2br1.pdb	PFP
 data/astex-diverse/2bsm.pdb	data/astex-diverse/2bsm.pdb	BSM
