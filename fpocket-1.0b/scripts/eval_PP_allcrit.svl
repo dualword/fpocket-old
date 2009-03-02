@@ -25,7 +25,7 @@ global function eval_pdb [pdbname, ligname]
 		if return_code === 'error' then
 		// Well its not here obviously...
 			print 'PDB not found' ;
-			return [pdbcode, ligname, -2, -1.0] ;
+			return [pdbcode, ligname, -2, -1.0, -1.0] ;
 		endif
 	endif
 
@@ -44,7 +44,7 @@ global function eval_pdb [pdbname, ligname]
 		latoms = atoms | (app token rName aResidue atoms) == ligname ;
 		if isnull latoms then
 			print 'Ligand not found...' ;
-			return [pdbcode, ligname, -3, -1.0] ;
+			return [pdbcode, ligname, -3, -1.0, -1.0] ;
 		endif
 		 
 	endif
@@ -61,7 +61,7 @@ global function eval_pdb [pdbname, ligname]
 						[errmsg:'ignore']] ;
 	if return_code === 'error' then
 		print 'PDB from PP not found' ;
-		return [pdbcode, ligname, -4, -1.0] ;
+		return [pdbcode, ligname, -4, -1.0, -1.0] ;
 	endif
 	//cpdb =  ReadPDB ppname ;
 
@@ -70,7 +70,8 @@ global function eval_pdb [pdbname, ligname]
 			m_findmatch ['PC#', app token rName aResidue Atoms[]]) ;
 	local resnames = cat rName resids ;
 
-	local r, rok, dok, bary, dists, coords, nb_res, mindists, pockets ;
+	local r, rok, dok, bary, dists, coords, nb_res, pockets ;
+	local mindists, crit6, c4, c5, c6 ;
 	local lastrname = '';
 	for r in resids loop
 		nb_res = length (resnames | resnames == cat rName r) ;
@@ -91,15 +92,46 @@ global function eval_pdb [pdbname, ligname]
 			mindists = cat [mindists, min dists] ;
 			pockets = cat [pockets, rName r] ;
 
-			print [cat rName r, min dists];
+			//print [cat rName r, min dists];
 			if anytrue (dists <= 4.0) then
 				rok = cat [rok, r] ;
 				dok = cat [dok, min dists] ;
 				print ["OK", pdbcode, cat rName rok, 
 					min mget [dists,dists <= 4.0]];
 			endif
-			coords = [] ;
 
+			// Now calculates proportion of ligand atoms within 3A 
+			// of pocket:
+			local ppoints = tr coords ;
+			local lpoints = tr lcoord ;
+			local pdists = [] ;
+			local l, nbp = 0, nbl = 0 ;
+			for l in lpoints loop
+				dists = apt my_distE[nest l, ppoints] ;
+
+				if anytrue (dists <= 3.0) then
+					nbp = nbp + 1 ;
+				endif
+
+				pdists = cat [pdists, nest dists] ;
+			endloop
+
+			// Proportion of pocket within  3A of ligand
+			local alld = tr pdists ;
+			local tmp = app anytrue apt leE [alld, 3.0] ;
+
+			// Calculate criterias:
+			c4 = (length (tmp | tmp == 1)) / length tmp ;
+			c5 = nbp / length lpoints ;
+
+			if c5 > 0.5 and c4 > 0.20 then
+				c6 = 1 ;
+			else
+				c6 = 0 ;
+			endif
+			crit6 = cat [crit6, c6] ;
+
+			coords = [] ;
 			lastrname = rName r;
 		else
 		// If it's the first time we test a residue that appears 2 times
@@ -111,26 +143,35 @@ global function eval_pdb [pdbname, ligname]
 		endif
 	endloop
 
-	// Return -1 if no pocket was found to be OK
+	local id3, c3, id6 ;
+
+	// Return -1 if no pocket was found to be OK for the 3rd criteria
 	if length rok <= 0 then 
-		return [pdbcode, ligname, -1, -1.0] ;
+		id3 = -1 ; c3 = -1 ;
+	else
+		// Do their way to evaluate
+		//local minid = x_min mindists ;
+		//local minpocket = first get [pockets, minid] ;
+
+		//id = atoi totok second wordsplit [string minpocket, "C"] ;
+	
+		// Do ours
+		local n = rName rok ;
+		id3 = min atoi totok app second apt wordsplit [app string n, "C"] ;
+		c3 =  min mindists ;
 	endif
-	
-	local id ;
 
-	// Do their way to evaluate
-	local minid = x_min mindists ;
-	local minpocket = first get [pockets, minid] ;
+	// Do the same for the consensus criteria
+	id6 = first (x_id crit6 | crit6 == 1) ;
 
-	id = atoi totok second wordsplit [string minpocket, "C"]; 
+	if isnull id6 then
+		id6 = -1 ;
+	endif
 
-	// Do ours
-	//local n = rName rok ;
-	//id = min atoi totok app second apt wordsplit [app string n, "C"] ;
-	
 	oDestroy cpdb ;
 
-	return [pdbcode, ligname, id, min mindists] ;
+	// return data
+	return [pdbcode, ligname, id3,c3, id6] ;
 endfunction
 
 global function eval_pp tp_input
@@ -151,15 +192,24 @@ global function eval_pp tp_input
 	print'\n*************' ;
 	print tok_cat ['-> Results: ', totok length res, ' complexes:\n'] ;
 	print res ;
+	print app length res ;
 	res = res | ((cat get [tr res, 3]) >= -1) ;
 	print'\n*************' ;
 	print tok_cat ['-> Stats: ', totok length res, ' valid complexes:\n'] ;
 
-	res = third tr res ;
-	res = res | res > -2 ;
-	print tok_cat [ 'Top 1/3: ', totok (length (res | res == 1)/ length res),
+	local crit_PP = third tr res ;
+	crit_PP = crit_PP | crit_PP > -2 ;
+	print 'Pocket picker criteria:' ;
+	print tok_cat [ 'Top 1/3: ', totok (length (crit_PP | crit_PP == 1)/ length crit_PP),
 			'/',
-			totok (length (res | (res >= 1 and res <=3))/length res)];
+			totok (length (crit_PP | (crit_PP >= 1 and crit_PP <=3))/length crit_PP)];
+
+	local res6 = first get[tr res, 5]  ;
+	print 'Pocket overlap consensus:' ;
+	print tok_cat [ 'Top 1/3: ', totok (length (res6 | res6 == 1)/ length res6),
+			'/',
+			totok (length (res6 | (res6 >= 1 and res6 <=3))/length res6)] ;
+	
 
 	oDestroy Atoms[] ;
 
