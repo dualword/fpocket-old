@@ -669,6 +669,14 @@ FILE* fopen_pdb_check_case(char *name, const char *mode)
 		name[len-8] = toupper(name[len-8]);
 
 		f = fopen(name, mode) ;
+		if(!f) {
+			name[len-5] = tolower(name[len-5]);
+			name[len-6] = tolower(name[len-6]);
+			name[len-7] = tolower(name[len-7]);
+			name[len-8] = tolower(name[len-8]);
+			f = fopen(name, mode) ;
+			
+		}
 	}
 
 	return f ;

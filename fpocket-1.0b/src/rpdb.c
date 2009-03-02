@@ -212,16 +212,28 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	/* x, y, and z coordinates, occupancy and b-factor */
 	rpdb_extract_atom_values(pdb_line, x, y, z, occ, bfactor);
 
-	/* Atomic element symbol */
+	/* Atomic element symbol (if does not exists, take the first caractere of
+	 * atom name) */
 	if (rlen >= 77) {
 		strncpy(symbol, pdb_line + 76, 2);
 		symbol[2] = '\0';
-		str_trim(symbol); /* remove spaces from the resname */
+		str_trim(symbol); /* remove spaces */
+		
+		if(strlen(symbol) <= 1) {
+			symbol[0] = ' ';
+			symbol[1] = name[0] ;
+			symbol[2] = '\0';
+		}
 	}
-	else symbol[0] = '\0';
+	else {
+		symbol[0] = ' ';
+		symbol[1] = name[0] ;
+		symbol[2] = '\0';
+	}
+	str_trim(symbol); /* remove spaces */
 	
 	/* Charge */
-	if(rlen >= 80) {
+	if(rlen >= 79) {
             char buf[4] = "   " ;
 		if((pdb_line[78] == ' ' && pdb_line[79] == ' ') || pdb_line[78] == '\n'){
 			*charge = -1 ;
@@ -232,7 +244,6 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 			buf[2] = '\0' ;
 			*charge = (int) atoi(buf) ;
 		}
-	
 	}
 	
 }
