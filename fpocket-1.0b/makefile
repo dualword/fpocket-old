@@ -7,6 +7,7 @@ PATH_OBJ    = obj/
 PATH_SRC    = src/
 PATH_HEADER = headers/
 PATH_BIN    = bin/
+PATH_QHULL  = src/qhull/
 
 FPOCKET     = fpocket
 TPOCKET		= tpocket
@@ -15,7 +16,9 @@ CHECK		= pcheck
 MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET) $(PATH_BIN)$(CHECK)
 
 CC          = gcc
+CCQHULL	    = gcc
 LINKER		= gcc
+LINKERQHULL     = gcc
 
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
@@ -24,20 +27,20 @@ CWARN       = -Wall -Wextra -Wwrite-strings
 
 CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -pg -g -O2 #$(CGSL)
 
-LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas
-LFLAGS	    = -fno-underscoring -lm  #$(LGSL)
+LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas 
+LFLAGS	    = -fno-underscoring -lm -L$(PATH_QHULL) -lqhull #$(LGSL)
 
 #------------------------------------------------------------
 # BINARIES OBJECTS 
 #------------------------------------------------------------
 
-CHOBJ = $(PATH_OBJ)check.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o
+CHOBJ = $(PATH_OBJ)check.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o  $(PATH_QHULL)qvoronoi.o $(PATH_QHULL)qhull.o $(PATH_QHULL)user.o $(PATH_QHULL)mem.o $(PATH_QHULL)geom.o $(PATH_QHULL)io.o $(PATH_QHULL)merge.o $(PATH_QHULL)poly.o $(PATH_QHULL)qset.o $(PATH_QHULL)stat.o $(PATH_QHULL)libqhull.a
 
-FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o
+FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_QHULL)qvoronoi.o $(PATH_QHULL)qhull.o $(PATH_QHULL)user.o $(PATH_QHULL)mem.o $(PATH_QHULL)geom.o $(PATH_QHULL)io.o $(PATH_QHULL)merge.o $(PATH_QHULL)poly.o $(PATH_QHULL)qset.o $(PATH_QHULL)stat.o $(PATH_QHULL)libqhull.a
 
-TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)tpocket.o  $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o
+TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o $(PATH_OBJ)calc.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)rpdb.o $(PATH_OBJ)tparams.o $(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)tpocket.o  $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o $(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o  $(PATH_QHULL)qvoronoi.o $(PATH_QHULL)qhull.o $(PATH_QHULL)user.o $(PATH_QHULL)mem.o $(PATH_QHULL)geom.o $(PATH_QHULL)io.o $(PATH_QHULL)merge.o $(PATH_QHULL)poly.o $(PATH_QHULL)qset.o $(PATH_QHULL)stat.o $(PATH_QHULL)libqhull.a
 
-DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)dpocket.o $(PATH_OBJ)dparams.o  $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o $(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o $(PATH_OBJ)voronoi_lst.o
+DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o $(PATH_OBJ)dpocket.o $(PATH_OBJ)dparams.o  $(PATH_OBJ)voronoi.o $(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o $(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o $(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o $(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o $(PATH_OBJ)voronoi_lst.o  $(PATH_QHULL)qvoronoi.o $(PATH_QHULL)qhull.o $(PATH_QHULL)user.o $(PATH_QHULL)mem.o $(PATH_QHULL)geom.o $(PATH_QHULL)io.o $(PATH_QHULL)merge.o $(PATH_QHULL)poly.o $(PATH_QHULL)qset.o $(PATH_QHULL)stat.o $(PATH_QHULL)libqhull.a
 
 #------------------------------------------------------------
 # GENERAL RULES FOR COMPILATION
@@ -62,6 +65,23 @@ $(PATH_BIN)$(TPOCKET): $(TPOBJ)
 
 $(PATH_BIN)$(DPOCKET): $(DPOBJ)
 	$(LINKER) $(LFLAGS) $^ -o $@
+
+qhull:
+	rm -f $(PATH_QHULL)*.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qvoronoi.c -o $(PATH_QHULL)qvoronoi.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)user.c -o $(PATH_QHULL)user.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)global.c -o $(PATH_QHULL)global.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)stat.c -o $(PATH_QHULL)stat.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)io.c -o $(PATH_QHULL)io.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)geom2.c -o $(PATH_QHULL)geom2.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)poly2.c -o $(PATH_QHULL)poly2.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)merge.c -o $(PATH_QHULL)merge.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qhull.c -o $(PATH_QHULL)qhull.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)geom.c -o $(PATH_QHULL)geom.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)poly.c -o $(PATH_QHULL)poly.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qset.c -o $(PATH_QHULL)qset.o
+	$(CCQHULL) -c -O -ansi $(PATH_QHULL)mem.c -o $(PATH_QHULL)mem.o
+#	$(CCQHULL) -o $(PATH_QHULL)qvoronoi -O $(PATH_QHULL)qvoronoi.o -L$(PATH_QHULL) -lqhull -lm
 
 check: 
 	./$(PATH_BIN)$(CHECK)

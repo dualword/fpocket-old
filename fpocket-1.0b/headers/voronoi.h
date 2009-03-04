@@ -45,6 +45,7 @@
 #include "writepdb.h"
 #include "calc.h"
 #include "utils.h"
+#include "../src/qhull/qvoronoi.h"
 
 #include "memhandler.h"
 

@@ -92,8 +92,8 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	int i, nb_h=0;
 	s_atm *ca = NULL ;
 	s_lst_vvertice *lvvert = NULL ;
-
-	FILE *fvoro = fopen("voro_tmp.dat", "w");
+        FILE *ftmp=fopen("/tmp/fpocket_qvor.dat","w");
+	FILE *fvoro = fopen("/tmp/qvoro_tmp.dat", "w+");
 /* 	lvvert->h_tr=(int *)my_malloc(sizeof(int));*/
 
 
@@ -125,12 +125,16 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 		}
 
 		fflush(fvoro) ;
+
+                rewind(fvoro);
+		//int status = system("qvoronoi p i Pp Fn < voro_tmp.dat > voro.tmp") ;
+                run_qvoronoi(fvoro,ftmp);
+                int status=M_VORONOI_SUCCESS;
 		fclose(fvoro) ;
-
-		int status = system("qvoronoi p i Pp Fn < voro_tmp.dat > voro.tmp") ;
-
+                fclose(ftmp);
+                remove("/tmp/qvoro_tmp.dat");
 		if(status == M_VORONOI_SUCCESS) {
-			fill_vvertices(lvvert, "voro.tmp", pdb->latoms, pdb->natoms,
+			fill_vvertices(lvvert, "/tmp/fpocket_qvor.dat", pdb->latoms, pdb->natoms,
 							min_apol_neigh, asph_min_size, asph_max_size);
 		}
 		else {
@@ -142,7 +146,7 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	else {
 		fprintf(stderr, "! File for Voronoi vertices calculation couldn't be opened...\n") ;
 	}
-
+        
 	return lvvert ;
 }
 
@@ -194,7 +198,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 		 *s_nvert = (char *) my_malloc(sizeof(char)*nchar_max) ;
 
 /* Once we have the number of lines, lets allocate memory and get the lines */
-
+       
 	f = fopen(fpath,"r") ;
 	fNb = fopen(fpath,"r") ;
 	fvNb = fopen(fpath,"r") ;
@@ -287,6 +291,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 	fclose(f) ;
 	fclose(fNb) ;
 	fclose(fvNb);
+        remove("/tmp/fpocket_qvor.dat");
 }
 
 /**-----------------------------------------------------------------------------
