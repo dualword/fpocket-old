@@ -234,7 +234,6 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 			dropSmallNpolarPockets(pockets, par->fpar);
 			set_pockets_descriptors(pockets);
 
-			fprintf(stdout, " %d pockets.", pockets->n_pockets) ;
 			/* Writing output */
 			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 
 			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, 0.0, f[0]) ;
