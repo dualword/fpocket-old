@@ -253,7 +253,7 @@ Except for 'F.' and 'PG', upper_case options take an argument.\n\
     writes the output
     frees memory
 */
-int main(int argc, char *argv[]) {
+int launch_qhalf(int argc, char *argv[]) {
   int curlong, totlong; /* used !qh_NOmem */
   int exitcode, numpoints, dim;
   coordT *points;

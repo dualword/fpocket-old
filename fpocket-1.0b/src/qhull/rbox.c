@@ -89,7 +89,7 @@ void    qh_srand( int seed);
 /*--------------------------------------------
 -rbox-  main procedure of rbox application
 */
-int main(int argc, char **argv) {
+int run_rbox(int argc, char **argv) {
     int i,j,k;
     int gendim;
     int cubesize, diamondsize, seed=0, count, apex;

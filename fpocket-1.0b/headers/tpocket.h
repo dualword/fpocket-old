@@ -63,7 +63,7 @@
  * store them. In the src file, those statistics values are stored in a tab
  * using indices given here.
  **/
-#define M_NDDATA 14		/* Number of floating values */
+#define M_NDDATA 16		/* Number of floating values */
 #define M_MAXPCT1 0		/* Maximum observed overlap for the criteria 1 */
 #define M_MAXPCT2 1		/* Maximum observed overlap for the criteria 2 */
 #define M_MINDST 2		/* Minimum distance observed (barycenter/ligand), crit 3 */
@@ -78,6 +78,8 @@
 #define M_OREL6 11		/* Relative overlap of the pocket found for criteria 3 */
 #define M_LIGMASS 12		/* Mass of the ligand */
 #define M_LIGVOL 13		/* Volume of the ligand */
+#define M_POCKETVOL_C1 14       /* Volume of the pocket found by the 1st criteria*/
+#define M_POCKETVOL_C6 15       /* Volume of the pocket found by the 6th criteria*/
 
 #define M_NIDATA 7		/* Number of interger values */
 #define M_NPOCKET 0		/* Total number of pocket found */

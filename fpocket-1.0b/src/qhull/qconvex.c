@@ -270,7 +270,7 @@ Except for 'F.' and 'PG', upper-case options take an argument.\n\
     writes the output
     frees memory
 */
-int main(int argc, char *argv[]) {
+int launch_qconvex(int argc, char *argv[]) {
   int curlong, totlong; /* used !qh_NOmem */
   int exitcode, numpoints, dim;
   coordT *points;
