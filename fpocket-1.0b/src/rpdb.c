@@ -31,7 +31,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##  11-02-09    (p)  Added list of pointer on all atoms (usefull for sorting)
+##  10-03-09    (v)  Atom type guessed using resname when element symbol is missing
+##  11-02-09    (v)  Added list of pointer on all atoms (usefull for sorting)
 ##  22-01-09    (p)  Eliminate double entries in the cofactor list
 ##	19-01-09	(v)  Open pdb file checking the case
 ##  28-11-08    (v)  Comments UTD + minor corrections
@@ -92,16 +93,16 @@
 static const char *ST_keep_hetatm[] = {
 
 	"HEA", "HBI", "BIO", "CFM", "CLP", "FES", "F3S", "FS3", "FS4", "BPH",
-	"BPB", "BCL", "BCB", "COB", "ZN", "FEA", "FEO", "H4B", "BH4", "BHS",
+	"BPB", "BCL", "BCB", "COB",  "ZN", "FEA", "FEO", "H4B", "BH4", "BHS",
 	"HBL", "THB", "DDH", "DHE", "HAS", "HDD", "HDM", "HEB", "HEC", "HEO",
 	"HES", "HEV", "MHM", "SRM", "VER", "1FH", "2FH", "HC0", "HC1", "HF3",
 	"HF5", "NFS", "OMO", "PHF", "SF3", "SF4", "CFM", "CFN", "CLF", "CLP",
 	"CN1", "CNB", "CNF", "CUB", "CUM", "CUN", "CUO",  "FS2","FSO", "FSX",
-        "PHO", "BH1", "CHL", "CL1", "CL2", "CLA", "CCH", "CFO", "FE2", "FCI", 
-        "FCO", "FDC", "FEA", "FEO", "FNE", "HIF", "OFO", "PFC", "HE5", "BAZ", 
-        "BOZ", "FE", "HEM", "HCO", "1CP", "CLN", "COH", "CP3", "DEU", "FDD", 
-        "FDE", "FEC", "FMI", "HEG", "HNI", "MMP", "MNH", "MNR", "MP1", "PC3",
-        "PCU", "PNI", "POR", "PP9", "MSE"
+    "PHO", "BH1", "CHL", "CL1", "CL2", "CLA", "CCH", "CFO", "FE2", "FCI", 
+    "FCO", "FDC", "FEA", "FEO", "FNE", "HIF", "OFO", "PFC", "HE5", "BAZ", 
+    "BOZ",  "FE", "HEM", "HCO", "1CP", "CLN", "COH", "CP3", "DEU", "FDD",
+    "FDE", "FEC", "FMI", "HEG", "HNI", "MMP", "MNH", "MNR", "MP1", "PC3",
+    "PCU", "PNI", "POR", "PP9", "MSE"
 } ;
 
 static const int ST_nb_keep_hetatm = 105 ;
@@ -212,23 +213,19 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	/* x, y, and z coordinates, occupancy and b-factor */
 	rpdb_extract_atom_values(pdb_line, x, y, z, occ, bfactor);
 
-	/* Atomic element symbol (if does not exists, take the first caractere of
-	 * atom name) */
+	/* Atomic element symbol (if does not exists, guess it based on
+	 * atom name */
 	if (rlen >= 77) {
 		strncpy(symbol, pdb_line + 76, 2);
 		symbol[2] = '\0';
 		str_trim(symbol); /* remove spaces */
 		
 		if(strlen(symbol) <= 1) {
-			symbol[0] = ' ';
-			symbol[1] = name[0] ;
-			symbol[2] = '\0';
+			guess_element(name, symbol) ;
 		}
 	}
 	else {
-		symbol[0] = ' ';
-		symbol[1] = name[0] ;
-		symbol[2] = '\0';
+		guess_element(name, symbol) ;
 	}
 	str_trim(symbol); /* remove spaces */
 	
@@ -246,6 +243,82 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 		}
 	}
 	
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	guess_element
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Guess the element of the atom based on atom name. The pattern matched here
+	have been taken from the MOE PDB reader.
+
+ 	' CL#' => Chlorine (use El field if it matches ' @@?' && HETATAM)
+	CH2T from CT !!! => what not
+
+	const AtomPatterns = [
+	  N:'[A-G,I-L,N-Z]N#*',
+	  O:['[A-B,D-G,I-L,N-Z]O*','OP[A-C]#','CO[A-Z,0-9]*','OE##'],
+	  P:'[A-G,I-K,M-N,P-Z]P*',
+	  C:['[A-G,I-Z]C#*','C[B-G,I-K,M,P-T,V-Z]#*','#CH#', 'BC  '],
+	  H:['H[0-9,A-E,H-Z]*','#[0-9,A-Z]H*','?H[A-Z,0-9]*', 'HG##'],
+	  CL:'#CL#',        // check this
+	  S:'[P,N]S#*',
+	  SE:'NSE1'
+	];
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *atom_name	: The atom name
+	@ char *res_name	: OUTPUT the element guessed
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	void (element is the output)
+   -----------------------------------------------------------------------------
+*/
+void guess_element(char *aname, char *element)
+{
+	element[0] = ' ';
+	element[1] = aname[0] ;
+	element[2] = '\0';
+}
+
+int is_N(char *aname)
+{	/* N:'[A-G,I-L,N-Z]N#*' */
+
+	if(aname[0] == 'N' && isdigit(aname[1])) return 1 ;
+	if( aname[0] != 'H' && aname[0] != 'M' && aname[1] == 'N'
+			&& str_is_number(aname, 0)) return 1 ;
+
+	return 0 ;
+}
+
+int is_O(char *aname)
+{
+/*
+	  O:['[A-B,D-G,I-L,N-Z]O*','OP[A-C]#','CO[A-Z,0-9]*','OE##']
+*/
+	if(aname[0] == 'O') {
+		/* TESTING     'OP[A-C]#' */
+		if( aname[1] == 'P' && (aname[2] == 'A' || aname[2] == 'B' || aname[2] == 'C')
+			&& isdigit(aname[3])) {
+			return 1 ;
+		}
+
+		/* TESTING     'OE##' */
+		if(aname[1] == 'E' && isdigit(aname[2]) && isdigit(aname[3])) return 1 ;
+	}
+	else {
+		/* TESTING     '[A-B,D-G,I-L,N-Z]O*' */
+		if( aname[0] != 'C' && aname[0] != 'H' && aname[0] != 'M' && aname[1] == 'O')
+			return 1 ;
+
+		/* TESTING     'CO[A-Z,0-9]*' */
+		if(aname[0] == 'C' && aname[1] == 'O' && aname[2] != ' ' && aname[3] != ' ')
+			return 1 ;
+	}
+
+	return 0 ;
 }
 
 /**-----------------------------------------------------------------------------
@@ -718,6 +791,7 @@ void free_pdb_atoms(s_pdb *pdb)
 			fclose(pdb->fpdb) ;
 			pdb->fpdb = NULL ;	
 		}
+		
 		if(pdb->latoms_p) {
 			my_free(pdb->latoms_p) ;
 			pdb->latoms_p = NULL ;

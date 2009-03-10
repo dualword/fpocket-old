@@ -106,6 +106,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets) ;
 void set_normalized_descriptors(c_lst_pockets *pockets) ;
 void set_pockets_bary(c_lst_pockets *pockets) ;
 s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms) ;
+int count_pocket_contacted_atms(s_pocket *pocket) ;
 s_vvertice** get_pocket_pvertices(s_pocket *pocket) ;
 
 float set_pocket_mtvolume(s_pocket *pocket, int niter) ;

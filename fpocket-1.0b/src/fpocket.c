@@ -104,76 +104,77 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 					(float) (et-bt)) ;
 */
 	
-	if(lvert) {
+	if(lvert == NULL) {
+		fprintf(stderr, "! Vertice calculation failed!\n");
+		return NULL ;
+	}
 	/* First clustering */
 /* 		fprintf(stdout,"> Basic clustering ...\n");
 
 		b = clock() ;
 */
-		pockets = clusterPockets(lvert, params);
+	pockets = clusterPockets(lvert, params);
 
-		if(pockets) {
-			pockets->vertices = lvert ;
+	if(pockets) {
+		pockets->vertices = lvert ;
 /*
-			e = clock() ;
- 			fprintf(stdout, "> Clustering OK in %f sec.\n",
-							((double)e - b) / CLOCKS_PER_SEC) ;
-*/
-		
-		/* Clustering refinment */
-
-/*
-			b = clock() ;
- 			fprintf(stdout,"> Cluster refinment steps: \n");
-*/
-			reIndexPockets(pockets) ;/* Create index and calculate statistics */
-			drop_tiny(pockets) ;/* Create index and calculate statistics */
-			reIndexPockets(pockets) ;/* Create index and calculate statistics */
-
-/*
- 			fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
-*/
-			refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
-			reIndexPockets(pockets) ;
-
-/*
- 			fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
-*/
-			pck_ml_clust(pockets, params);	/* Single Linkage Clustering */
-			reIndexPockets(pockets) ;
-
-		/* Descriptors calculation */
-/*
- 			fprintf(stdout,"> Calculating descriptors and score...\n");
-			b = clock() ;
-*/
-			set_pockets_descriptors(pockets);		
-/*
-			e = clock() ;
- 			fprintf(stdout, "> Descriptors found in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;
-
- 			fprintf(stdout,"> 4th refinment step -> dropping small and polar pockets...\n");
+		e = clock() ;
+		fprintf(stdout, "> Clustering OK in %f sec.\n",
+						((double)e - b) / CLOCKS_PER_SEC) ;
 */
 
-		/* Drop small and too polar binding pockets */
-			dropSmallNpolarPockets(pockets, params);
-			reIndexPockets(pockets) ;
+	/* Clustering refinment */
+
 /*
-			e = clock() ;
- 			fprintf(stdout, "> Refinment OK in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;
+		b = clock() ;
+		fprintf(stdout,"> Cluster refinment steps: \n");
+*/
+		reIndexPockets(pockets) ;/* Create index and calculate statistics */
+		drop_tiny(pockets) ;	 /* Create index and calculate statistics */
+		reIndexPockets(pockets) ;/* Create index and calculate statistics */
+
+/*
+		fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
+*/
+		refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
+		reIndexPockets(pockets) ;
+
+/*
+		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
+*/
+		pck_ml_clust(pockets, params);	/* Single Linkage Clustering */
+		reIndexPockets(pockets) ;
+
+	/* Descriptors calculation */
+/*
+		fprintf(stdout,"> Calculating descriptors and score...\n");
+		b = clock() ;
+*/
+		set_pockets_descriptors(pockets);
+/*
+		e = clock() ;
+		fprintf(stdout, "> Descriptors found in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;
+
+		fprintf(stdout,"> 4th refinment step -> dropping small and polar pockets...\n");
 */
 
-		/* Sorting pockets */
-			sort_pockets(pockets, M_SCORE_SORT_FUNCT) ;
-			/*sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;*/
-			
-			reIndexPockets(pockets) ;
+	/* Drop small and too polar binding pockets */
+		dropSmallNpolarPockets(pockets, params);
+		reIndexPockets(pockets) ;
 /*
- 			fprintf(stdout,"===== fpocket algorithm ends =====\n");
+		e = clock() ;
+		fprintf(stdout, "> Refinment OK in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;
 */
-		}
+
+	/* Sorting pockets */
+		sort_pockets(pockets, M_SCORE_SORT_FUNCT) ;
+		/*sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;*/
+
+		reIndexPockets(pockets) ;
+/*
+		fprintf(stdout,"===== fpocket algorithm ends =====\n");
+*/
 	}
-	else fprintf(stderr, "! Vertice calculation failed!\n");
 	
 	return pockets ;
 }

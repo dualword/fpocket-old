@@ -94,6 +94,8 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) ;
 
 void rpdb_extract_atm_resname(char *pdb_line, char *res_name) ;
 
+void guess_element(char *aname, char *element) ;
+
 void rpdb_extract_cryst1(char *rstr, float *alpha, float *beta, float *gamma, 
 						 float *a, float *b, float *c) ;
 void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,

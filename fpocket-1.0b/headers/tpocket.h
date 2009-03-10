@@ -78,17 +78,19 @@
 #define M_OREL6 11		/* Relative overlap of the pocket found for criteria 3 */
 #define M_LIGMASS 12		/* Mass of the ligand */
 #define M_LIGVOL 13		/* Volume of the ligand */
-#define M_POCKETVOL_C1 14       /* Volume of the pocket found by the 1st criteria*/
+#define M_POCKETVOL_C3 14       /* Volume of the pocket found by the 1st criteria*/
 #define M_POCKETVOL_C6 15       /* Volume of the pocket found by the 6th criteria*/
 
-#define M_NIDATA 7		/* Number of interger values */
+#define M_NIDATA 9		/* Number of interger values */
 #define M_NPOCKET 0		/* Total number of pocket found */
-#define M_POS1 1		/* Rank of the right pocket for the first criteria */
-#define M_POS2 2		/* Rank of the right pocket for the second criteria */
-#define M_POS3 3		/* Rank of the right pocket for the third criteria */
-#define M_POS4 4		/* Rank of the right pocket for the third criteria */
-#define M_POS5 5		/* Rank of the right pocket for the third criteria */
-#define M_POS6 6		/* Rank of the right pocket for the third criteria */
+#define M_POS1 1		/* Rank of the right pocket for the 1st criteria */
+#define M_POS2 2		/* Rank of the right pocket for the 2nd criteria */
+#define M_POS3 3		/* Rank of the right pocket for the 3rd criteria */
+#define M_POS4 4		/* Rank of the right pocket for the 4th criteria */
+#define M_POS5 5		/* Rank of the right pocket for the 5th criteria */
+#define M_POS6 6		/* Rank of the right pocket for the 6th criteria */
+#define M_NATM3 7		/* Rank of the right pocket for the 5th criteria */
+#define M_NATM6 8		/* Rank of the right pocket for the 6th criteria */
 
 /* Flags used for the pocket detection */
 #define M_LIGNOTFOUND -2

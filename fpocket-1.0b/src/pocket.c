@@ -15,6 +15,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  10-03-09    (v)  Added a function that count the number of atoms in a pocket.
 ##	09-02-09	(v)  Normalized maximum distance between two alpha sphere added
 ##	29-01-09	(v)  Normalized density and polarity score added
 ##	21-01-09	(v)  Normalized descriptors calculation moved in a single fct
@@ -1173,6 +1174,50 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 	*natoms = nb_atoms ;
 	
 	return catoms ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	count_pocket_contacted_atms
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Count all uniq atoms contacted by the alpha spheres of a given pocket.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ s_pocket *pocket : The pocket
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: Number of atoms involed in the pocket
+   -----------------------------------------------------------------------------
+*/
+int count_pocket_contacted_atms(s_pocket *pocket)
+{
+	if(!pocket || !(pocket->v_lst) || pocket->v_lst->n_vertices <= 0) return -1 ;
+
+	int nb_atoms = 0,
+		i = 0 ;
+
+	node_vertice *nvcur = NULL ;
+	s_vvertice *vcur = NULL ;
+
+	/* Remember atoms already stored. */
+	int atm_ids[pocket->v_lst->n_vertices * 4] ;
+
+	/* Do the search  */
+	nvcur = pocket->v_lst->first ;
+	while(nvcur) {
+		vcur = nvcur->vertice ;
+		/*printf("ID in the pocket: %d (%.3f %.3f %.3f\n", vcur->id, vcur->x, vcur->y, vcur->z) ;*/
+		for(i = 0 ; i < 4 ; i++) {
+			if(in_tab(atm_ids,  nb_atoms, vcur->neigh[i]->id) == 0) {
+				atm_ids[nb_atoms] = vcur->neigh[i]->id ;
+				nb_atoms ++ ;
+			}
+		}
+		nvcur = nvcur->next ;
+	}
+
+	return nb_atoms ;
 }
 
 /**-----------------------------------------------------------------------------

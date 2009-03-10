@@ -51,6 +51,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	06-03-09	(v)  Criteria 4, 5, 6 added to dpocket output
 ##	09-02-09	(v)  Maximum distance between two alpha sphere added
 ##	21-01-09	(v)  Density descriptor added
 ##	19-01-09	(v)  Minor change (input file name no longer const)
@@ -184,13 +185,14 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 				 FILE *f[3]) 
 {
 	c_lst_pockets *pockets = NULL ;
-	s_lst_vvertice *verts = NULL ;	
+	s_lst_vvertice *verts = NULL ;
+	
 	s_atm **interface = NULL ;
 	s_desc *edesc ;
 	s_atm **lig = NULL,
 		  **patoms ;
 
-	float vol, ovlp, dst = 0.0, tmp ;
+	float vol, ovlp, dst = 0.0, tmp, c4, c5 ;
 	int nal = 0,
 		nai = 0,	/* Number of atoms in the interface */
 		nbpa ;
@@ -202,89 +204,94 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 	s_pdb *pdb_cplx_l = rpdb_open(fcomplexe, ligname, M_KEEP_LIG);
 	s_pdb *pdb_cplx_nl = rpdb_open(fcomplexe, ligname, M_DONT_KEEP_LIG) ;
 	
-	if(pdb_cplx_l && pdb_cplx_nl && pdb_cplx_l->natm_lig > 0) {
-		rpdb_read(pdb_cplx_l, ligname, M_KEEP_LIG) ;	
-		rpdb_read(pdb_cplx_nl, ligname, M_DONT_KEEP_LIG) ;
+	if(! pdb_cplx_l || !pdb_cplx_nl || pdb_cplx_l->natm_lig <= 0) {
+		if(pdb_cplx_l->natm_lig <= 0) {
+			fprintf(stdout, "ERROR - No ligand %s found in %s.\n", ligname, fcomplexe) ;
+
+		}
+		else fprintf(stdout, "ERROR - PDB file %s could not be opened\n", fcomplexe) ;
+		
+		return ;
+	}
+
+	rpdb_read(pdb_cplx_l, ligname, M_KEEP_LIG) ;
+	rpdb_read(pdb_cplx_nl, ligname, M_DONT_KEEP_LIG) ;
 /*
-		fprintf(stdout, " OK\n") ;
+	fprintf(stdout, " OK\n") ;
 */
 
-		lig = pdb_cplx_l->latm_lig ;
-		nal = pdb_cplx_l->natm_lig ;
+	lig = pdb_cplx_l->latm_lig ;
+	nal = pdb_cplx_l->natm_lig ;
 
 		/* Getting explicit interface using the known ligand */
 /*
 		fprintf(stdout, "dpocket: Explicit pocket definition... \n") ; 
 		fflush(stdout) ;
 */
-		verts = load_vvertices(pdb_cplx_nl, 3, par->fpar->asph_min_size, 
-							   par->fpar->asph_max_size) ;
+	pockets = search_pocket(pdb_cplx_nl, par->fpar) ;
+	if(pockets == NULL) {
+		fprintf(stdout, "ERROR - No pocket found for %s\n", fcomplexe) ;
+		return ;
+	}
+/*
+	verts = load_vvertices(pdb_cplx_nl, 3, par->fpar->asph_min_size,
+						   par->fpar->asph_max_size) ;
+*/
 
-		if(verts) {
-			edesc = allocate_s_desc() ;
-			interface = get_explicit_desc(pdb_cplx_l, verts, lig, nal, par,
-										   &nai, edesc) ;
-	
-			/* Getting fpocket pockets */
- 			pockets = clusterPockets(verts, par->fpar);
-			reIndexPockets(pockets) ;
-			refinePockets(pockets, par->fpar) ;
-			reIndexPockets(pockets) ;
-			pck_ml_clust(pockets, par->fpar);
-			dropSmallNpolarPockets(pockets, par->fpar);
-			set_pockets_descriptors(pockets);
+	verts = pockets->vertices ;
+	edesc = allocate_s_desc() ;
+	interface = get_explicit_desc(pdb_cplx_l, verts, lig, nal, par,
+								   &nai, edesc) ;
 
-			/* Writing output */
-			vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ; 
-			write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, 0.0, f[0]) ;
-			
-			node_pocket *cur = pockets->first ;
-			while(cur) {
-				/* Get the natomic overlap */
-				patoms = get_vert_contacted_atms(cur->pocket->v_lst, &nbpa) ;
-				ovlp = atm_corsp(interface, nai, patoms, nbpa) ;
+	/* Writing output */
+	vol = get_mol_volume_ptr(lig, nal, par->fpar->nb_mcv_iter) ;
+	write_pocket_desc(fcomplexe, ligname, edesc, vol, 100.0, 0.0, 1.0, 1.0, f[0]) ;
 
-				/* Get the smallest distance of the ligand to the pocket */
-				for (j = 0 ; j < nal ; j++) {
-					tmp = dist(lig[j]->x, lig[j]->y, lig[j]->z,
-							   cur->pocket->bary[0], cur->pocket->bary[1],
-							   cur->pocket->bary[2]) ;
-					if(j == 0) dst = tmp ;
-					else {
-						if(tmp < dst) dst = tmp ;
-					}
-				}
+	node_pocket *cur = pockets->first ;
+	s_vvertice **pvert = NULL ;
+	while(cur) {
+		/* Get the natomic overlap */
+		patoms = get_vert_contacted_atms(cur->pocket->v_lst, &nbpa) ;
+		ovlp = atm_corsp(interface, nai, patoms, nbpa) ;
 
-				/* */
-				if(ovlp > 40.0 || dst < 4.0) {
-					write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol, 
-									  ovlp, dst, f[1]) ;
-				}
-				else {
-					write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol, 
-									  ovlp, dst, f[2]) ;
-				}
-				my_free(patoms) ;
-				cur = cur->next ;
+		/* Get the smallest distance of the ligand to the pocket
+		   (PocketPicker criteria) */
+		for (j = 0 ; j < nal ; j++) {
+			tmp = dist(lig[j]->x, lig[j]->y, lig[j]->z,
+					   cur->pocket->bary[0], cur->pocket->bary[1],
+					   cur->pocket->bary[2]) ;
+			if(j == 0) dst = tmp ;
+			else {
+				if(tmp < dst) dst = tmp ;
 			}
-			c_lst_pocket_free(pockets) ;
-			my_free(interface) ;
 		}
 
-		/* Free memory */
-		free_pdb_atoms(pdb_cplx_l) ;
-		free_pdb_atoms(pdb_cplx_nl) ;
+		/* Get the consensus criteria too */
+		pvert = get_pocket_pvertices(cur->pocket) ;
+
+		c4 = count_atm_prop_vert_neigh( lig, pdb_cplx_l->natm_lig,
+									    pvert, cur->pocket->size, M_CRIT4_D) ;
+		c5 = count_pocket_lig_vert_ovlp(lig, pdb_cplx_l->natm_lig,
+										pvert, cur->pocket->size, M_CRIT5_D) ;
+
+		/* */
+		if(ovlp > 40.0 || dst < 4.0) {
+			write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol,
+							  ovlp, dst, c4, c5, f[1]) ;
+		}
+		else {
+			write_pocket_desc(fcomplexe, ligname, cur->pocket->pdesc, vol,
+							  ovlp, dst, c4, c5, f[2]) ;
+		}
+		my_free(patoms) ;
+		cur = cur->next ;
 	}
-	else {
-		if(!pdb_cplx_l) 
-			fprintf(stdout, "! Error occured while loading file %s...\n", 
-							fcomplexe) ;
-		else if(!pdb_cplx_nl) 
-			fprintf(stdout, "! Error occured while loading file %s...\n", 
-							fcomplexe) ;
-		else fprintf(stdout, "! No ligand %s found in the pdb file...\n", 
-							ligname) ;
-	}
+
+	/* Free memory */
+	c_lst_pocket_free(pockets) ;
+	my_free(interface) ;
+	free_pdb_atoms(pdb_cplx_l) ;
+	free_pdb_atoms(pdb_cplx_nl) ;
 	
 }
 
@@ -378,12 +385,15 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
    -----------------------------------------------------------------------------
 */
 void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, 
-					   float ovlp, float dst, FILE *f)
+					   float ovlp, float dst, float c4, float c5, FILE *f)
 {
 	int status = 0 ;
 	if(dst < 4.0) status = 1 ;
 
-	fprintf(f, M_DP_OUTP_FORMAT, M_DP_OUTP_VAR(fc, l, ovlp, status, dst, lv, d)) ;
+	int c6 = (c4 >= M_CRIT4_VAL && c5 >= M_CRIT5_VAL) ?1:0 ;
+	float c6_c = ((c4 - M_CRIT4_VAL)/ (1-M_CRIT4_VAL)) + ((c5 - M_CRIT5_VAL)/ (1-M_CRIT5_VAL)) ;
+
+	fprintf(f, M_DP_OUTP_FORMAT, M_DP_OUTP_VAR(fc, l, ovlp, status, dst, c4, c5, c6, c6_c, lv, d)) ;
 
 	int i ;
 	for(i = 0 ; i < 20 ; i++) fprintf(f, " %3d", d->aa_compo[i]) ;

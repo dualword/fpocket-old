@@ -16,6 +16,8 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	10-03-09	(v)  Mean number of atom per pocket + ligand volume added
+##	05-03-09	(v)  Mean pocket volume added to tpocket output
 ##	19-01-09	(v)  Minor modif (status output printed on the same line)
 ##	28-11-08	(v)  Relooking + comments UTD
 ##	27-11-08	(v)  Write fpocket output if asked + relooking
@@ -24,6 +26,8 @@
 ##	01-01-08	(vp) Created (random date...)
 ##	
 ## ----- TODO or SUGGESTIONS
+##
+##	(v) CLEAN THE CODE! It's such a mess here...
 ##
 
 */
@@ -88,7 +92,11 @@ void test_fpocket(s_tparams *par)
 	
 	float mean_ov1 = 0.0, mean_ov2 = 0.0, mean_dst = 0.0, mean_ov4 = 0.0, mean_ov5 = 0.0,
 		  mean_ovr1 = 0.0, mean_ovr2 = 0.0, mean_ovr3 = 0.0, mean_ovr4 = 0.0, mean_ovr5 = 0.0, mean_ovr6 = 0.0,
-		  mean_pvol1 = 0.0, mean_pvol6 = 0.0 ;
+		  mean_pvol3 = 0.0, mean_pvol6 = 0.0 ;
+
+	float mean_lvol = 0.0 ;
+	int mean_nbatm3 = 0, mean_nbatm6 = 0 ;
+	
 	int n1, n2, n3, n4, n5, n6, N = 0 ;
 
 	/* Store statistics for each files: */
@@ -113,22 +121,21 @@ void test_fpocket(s_tparams *par)
 	FILE *fp = fopen(par->p_output, "w") ;
 	if(fp) {
 		n1 = 0, n2 = 0, n3 = 0, n4 = 0, n5 = 0, n6 = 0 ;
-		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | CRIT1 | CRIT2 | CRIT3 | CRIT4 | CRIT5 | CRIT6 | POS1 | POS2 | POS3 | POS4 | POS5 | POS6 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | REL_OVLP4 | REL_OVLP5 | REL_OVLP5 | LIGMASS | LIGVOL\n") ;
+		fprintf(fp, "LIG | COMPLEXE | APO | NB_PCK | CRIT1 | CRIT2 | CRIT3 | CRIT4 | CRIT5 | CRIT6 | POS1 | POS2 | POS3 | POS4 | POS5 | POS6 | REL_OVLP1 | REL_OVLP2 | REL_OVLP3 | REL_OVLP4 | REL_OVLP5 | REL_OVLP6 | LIGMASS | LIGVOL | PVOL3 | NATM3 | PVOL6 | NATM6 \n") ;
 		for(i = 0 ; i < par->nfiles ; i++) {
 			remove_path(par->fcomplex[i]) ;
 			remove_path(par->fapo[i]) ;
 			if(status[i] == M_OK) {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f %12.2f %12.2f\n",
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f %12.2f %4d %12.2f %4d\n",
 						par->fligan[i], par->fcomplex[i], par->fapo[i], idata[i][M_NPOCKET],
 						ddata[i][M_MAXPCT1], ddata[i][M_MAXPCT2], ddata[i][M_MINDST], ddata[i][M_CRIT4], ddata[i][M_CRIT5], ddata[i][M_CRIT6],
 						idata[i][M_POS1], idata[i][M_POS2], idata[i][M_POS3], idata[i][M_POS4], idata[i][M_POS5], idata[i][M_POS6],
 						ddata[i][M_OREL1], ddata[i][M_OREL2], ddata[i][M_OREL3], ddata[i][M_OREL4], ddata[i][M_OREL5], ddata[i][M_OREL6],
-						ddata[i][M_LIGMASS], ddata[i][M_LIGVOL], ddata[i][M_POCKETVOL_C1], ddata[i][M_POCKETVOL_C6]) ;
+						ddata[i][M_LIGMASS], ddata[i][M_LIGVOL], ddata[i][M_POCKETVOL_C3], idata[i][M_NATM3], ddata[i][M_POCKETVOL_C6], idata[i][M_NATM6]) ;
 
 				if(idata[i][M_POS1] > 0) {
 					mean_ov1 += ddata[i][M_MAXPCT1] ;
 					mean_ovr1 += ddata[i][M_OREL1];
-					mean_pvol1 += ddata[i][M_POCKETVOL_C1] ;
 					n1++ ;
 				}
 
@@ -141,6 +148,8 @@ void test_fpocket(s_tparams *par)
 				if(idata[i][M_POS3] > 0) {
 					mean_dst += ddata[i][M_MINDST];
 					mean_ovr3 += ddata[i][M_OREL3];
+					mean_pvol3 += ddata[i][M_POCKETVOL_C3] ;
+					mean_nbatm3 += idata[i][M_NATM3] ;
 					n3 ++ ;
 				}
 
@@ -159,28 +168,36 @@ void test_fpocket(s_tparams *par)
 				if(idata[i][M_POS6] > 0) {
 					mean_ovr6 += ddata[i][M_OREL5];
 					mean_pvol6 += ddata[i][M_POCKETVOL_C6] ;
+					mean_nbatm6 += idata[i][M_NATM6] ;
 					n6 ++ ;
 				}
-
 			}
 			else {
-				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f %12.2f %12.2f\n",
+				fprintf(fp, "%s %s %s %5d %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %4d %4d %4d %4d %4d %4d %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %9.2f %9.2f %12.2f %4d %12.2f %4d \n",
 						par->fligan[i], par->fcomplex[i], par->fapo[i], -1, 
 						-1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
 						-1, -1, -1, -1, -1, -1,
 						-1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-						-1.0, -1.0, -1.0, -1.0) ;
+						-1.0, -1.0, -1.0, -1, -1.0, -1) ;
 			}
+			mean_lvol += ddata[i][M_LIGVOL] ;
 		}
 
 		mean_ov1 /= (float) n1 ; mean_ovr1 /= (float) n1 ;
-		mean_pvol1 /= (float) n1 ;
 		mean_ov2 /= (float) n2 ; mean_ovr2 /= (float) n2 ;
+
 		mean_dst /= (float) n3 ; mean_ovr3 /= (float) n3 ;
+		mean_pvol3 /= (float) n3 ;
+		mean_nbatm3 /= (float) n3 ;
+
 		mean_ov4 /= (float) n4 ; mean_ovr4 /= (float) n4 ;
 		mean_ov5 /= (float) n5 ; mean_ovr5 /= (float) n5 ;
+		
 		mean_ovr6 /= (float) n6 ;
 		mean_pvol6 /= (float) n6 ;
+		mean_nbatm6 /= (float) n6 ;
+
+		mean_lvol /= (float) par->nfiles ;
 
 		fclose(fp) ;
 	}
@@ -214,9 +231,11 @@ void test_fpocket(s_tparams *par)
 		}
 
 		fprintf(fg, "-------------------------------------\n") ;
-		fprintf(fg, "Mean distance                   : %5.2f\n", mean_dst) ;
-		fprintf(fg, "Mean relative overlap           : %7.2f\n", mean_ovr3) ;
-		fprintf(fg, "Mean pocket volume (estimation) : %10.2f\n", mean_pvol1) ;
+		fprintf(fg, "Mean distance                   : %8.2f\n", mean_dst) ;
+		fprintf(fg, "Mean relative overlap           : %8.2f\n", mean_ovr3) ;
+		fprintf(fg, "Mean pocket volume (estimation) : %8.2f\n", mean_pvol3) ;
+		fprintf(fg, "Mean ligand volume (estimation) : %8.2f\n", mean_lvol) ;
+		fprintf(fg, "Mean number of pocket atom      : %4d\n", mean_nbatm3) ;
 
 
 		/* Write the 2nd criteria statistics */
@@ -251,8 +270,8 @@ void test_fpocket(s_tparams *par)
 			fprintf(fg, "\n") ;
 		}
 		fprintf(fg, "-------------------------------------\n") ;
-		fprintf(fg, "Mean overlap          : %f\n", mean_ov2) ;
-		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr2) ;
+		fprintf(fg, "Mean overlap          : %8.2f\n", mean_ov2) ;
+		fprintf(fg, "Mean relative overlap : %8.2f\n", mean_ovr2) ;
 
 		/* Write the 3rd criteria statistics */
 		
@@ -388,6 +407,7 @@ void test_fpocket(s_tparams *par)
 		fprintf(fg, "-------------------------------------\n") ;
 		fprintf(fg, "Mean relative overlap           : %7.2f\n", mean_ovr6) ;
 		fprintf(fg, "Mean pocket volume (estimation) : %10.2f\n", mean_pvol6) ;
+		fprintf(fg, "Mean number of pocket atom      : %4d\n", mean_nbatm6) ;
 
 		fclose(fg) ;
 	}
@@ -461,9 +481,9 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	/* PDBs and ligand OK, now read PDB and launch fpocket */
 	
 	/* Get rid of HETATM in the apo structure*/
-	rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;	
-	rpdb_read(cpdb, lig, M_KEEP_LIG) ;	
-	rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;	
+	rpdb_read(apdb, lig, M_DONT_KEEP_LIG) ;
+	rpdb_read(cpdb, lig, M_KEEP_LIG) ;
+	rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;
 
 	c_lst_pockets *pockets = search_pocket(apdb, par->fpar);
 	set_pockets_bary(pockets) ;
@@ -672,8 +692,9 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 				/* Criteria 3 OK  */
 					ddata[i][M_MINDST] = dst ;
 					ddata[i][M_OREL3] = (naccpck <= 0.0)?-1.0 :(float)npneigh/(float)naccpck*100.0 ;
-					ddata[i][M_POCKETVOL_C1] = pcur->pdesc->volume ;
+					ddata[i][M_POCKETVOL_C3] = pcur->pdesc->volume ;
 					idata[i][M_POS3] = pos ;
+					idata[i][M_NATM3] = count_pocket_contacted_atms(pcur) ;
 					found[0] = 1 ; break ;
 				}
 			}
@@ -712,6 +733,8 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		if(!found[3] || !found[4] || !found[5]) {
 			pvert = get_pocket_pvertices(pcur) ;
 			if(!found[3]){
+				/* Calculate proportion of ligand atom that lies within 3A
+				   of at least one vertice */
 				ov3 = count_atm_prop_vert_neigh( lig, nalig,
 											 pvert, pcur->size, M_CRIT4_D) ;
 				if(ov3 > M_CRIT4_VAL) {
@@ -723,6 +746,8 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 			}
 
 			if(!found[4]){
+				/* Calculate proportion of pocket vertice that lies within 3A
+				   of at least one ligand atom */
 				ov4 = count_pocket_lig_vert_ovlp(lig, nalig,
 												 pvert, pcur->size, M_CRIT5_D) ;
 				if(ov4 > M_CRIT5_VAL) {
@@ -743,6 +768,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 					ddata[i][M_CRIT6] = 1.0 ;
 					ddata[i][M_POCKETVOL_C6] = pcur->pdesc->volume ;
 					ddata[i][M_OREL6] = ov4*100 ;
+					idata[i][M_NATM6] = count_pocket_contacted_atms(pcur) ;
 					found[5] = 1 ;
 				}
 			}
@@ -760,7 +786,8 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		ddata[i][M_MINDST] = 0.0 ;
 		ddata[i][M_OREL3] = 0.0 ;
 		idata[i][M_POS3] = 0 ;
-		ddata[i][M_POCKETVOL_C1] = 0.0 ;
+		idata[i][M_NATM3] = -1 ;
+		ddata[i][M_POCKETVOL_C3] = 0.0 ;
 	}
 
 	if (! found[1]) {
@@ -791,7 +818,8 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 		ddata[i][M_CRIT6] = 0.0 ;
 		ddata[i][M_OREL6] = 0.0 ;
 		idata[i][M_POS6] = 0 ;
-		ddata[i][M_POCKETVOL_C1] = 0.0 ;
+		idata[i][M_NATM6] = -1 ;
+		ddata[i][M_POCKETVOL_C6] = 0.0 ;
 	}
 }
 
