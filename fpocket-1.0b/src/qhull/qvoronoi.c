@@ -259,8 +259,8 @@ int run_qvoronoi(FILE *fin,FILE *fout) {
   int exitcode, numpoints, dim;
   coordT *points;
   boolT ismalloc;
-  int argc=5;
-  char *argv[5];
+  int argc=6;
+  char *argv[6];
   argv[0]=malloc(sizeof(char)*200);
   argv[0]="src/qhull/qvoronoi\0";
   argv[1]=malloc(sizeof(char)*2);
@@ -271,6 +271,8 @@ int run_qvoronoi(FILE *fin,FILE *fout) {
   argv[3]="Pp\0";
   argv[4]=malloc(sizeof(char)*3);
   argv[4]="Fn\0";
+  argv[5]=malloc(sizeof(char)*3);
+  argv[5]="Qt\0";
 #if __MWERKS__ && __POWERPC__
   char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
   SIOUXSettings.showstatusline= false;
