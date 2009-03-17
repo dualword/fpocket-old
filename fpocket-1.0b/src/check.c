@@ -13,12 +13,45 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
-##	22-01-09	(v) Created (random date...)
+##	17-03-09	(v) Additional test routines for pdb reading
+##	22-01-09	(v) Created
 ##
 ## ----- TODO or SUGGESTIONS
 ##
 
 */
+
+
+/**
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
 
 #include "../headers/check.h"
 
@@ -34,10 +67,14 @@ int main()
 {
 	fprintf(stdout, "\n*** TESTING FPOCKET PACKAGE ***\n") ;
 	int nfailure = check_fparams() ;
+
+	check_pdb_reader() ;
+	
 	if(check_qhull() == 0) {
 		nfailure += check_fpocket () ;
 	}
-
+	check_fpocket () ;
+	
 	fprintf(stdout, "\n*** TESTING ENDS WITH %d FAILURES ***\n", nfailure) ;
 	
 	return (EXIT_SUCCESS) ;
@@ -124,7 +161,7 @@ int check_fparams(void)
 	int N = 21 ;
 	int i ;
 	char targs[][100] = { "fpocket",
-						"-f", "sample/1EED.txt",
+						"-f", "sample/3LKF.pdb",
 						"-m", "3.1",
 						"-M", "6.1",
 						"-A", "2",
@@ -233,3 +270,169 @@ int check_fparams(void)
 	return nfails ;
 }
 
+int check_pdb_reader(void)
+{
+	int nfails = 0 ;
+
+	fprintf(stdout, "\n--> TESTING PDB READER  <--\n") ;
+
+	/* Test some routines used by the reader */
+	nfails += check_is_valid_element() ;
+
+	/* Test several single record cases: */
+/*
+			"ATOM      1  N  BALA A   1      11.104   6.134  -6.504  1.00  0.00           N  ",
+			"ATOM      2  CA  ALA A   1      11.639   6.071  -5.147  1.00  0.00           C-1",
+			"ATOM    293 1HG  GLU A   18    -14.861  -4.847   0.361  1.00  0.00           H  ",
+			"HETATM 3835 FE   HEM A   1      17.140   3.115  15.066  1.00 14.14          FE  ",
+			"HETATM 8238  S   SO4 A2001      10.885 -15.746 -14.404  1.00 47.47           S  ",
+			"HETATM 8239  O1  SO4 A2001      11.191 -14.833 -15.531  1.00 50.12           O  "
+*/
+
+	/*
+	 * FIRST TEST
+	 */
+
+	char test_case1[] = "ATOM      1  N  BALA A   1      11.104   6.134  -6.504  1.00  0.00           N  " ;
+	test_pdb_line(  test_case1, "ATOM", 1, "N", 'B', 'A', 1, ' ',
+					11.104, 6.134, -6.504, 1.0, 0.0, "N", 0, 1) ;
+	
+	char test_case2[] = "ATOM      2  CA  ALA A   1      11.639   6.071  -5.147  1.00  0.00           C-1" ;
+	test_pdb_line(  test_case2, "ATOM", 2, "CA", ' ', 'A', 1, ' ',
+					11.639, 6.071, -5.147, 1.0, 0.0, "C", -1, 2) ;
+
+	return nfails ;
+	
+}
+
+void test_pdb_line( char test_case[], const char entry[], int id, const char name[],
+					char aloc, char chain, int resid, char insert,
+					float x, float y, float z, float occ, float bfactor,
+				    const char symbol[], int charge, int N)
+{
+	/*
+	 * FIRST TEST
+	 */
+	s_atm *atom = my_calloc(1, sizeof(s_atm)) ;
+	load_pdb_line(atom, test_case) ;
+
+	fprintf(stdout, "\n    TEST PDB READER (%d) ............ \n", N) ;
+
+	fprintf(stdout, "      *TEST PDB READER (ENTRY) ..... ") ;
+	if(	strcmp(atom->type, entry) == 0) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%s VS %s)\n", atom->type, entry) ;
+
+
+	fprintf(stdout, "      *TEST PDB READER (ID) ........ ") ;
+	if(atom->id == id) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%d VS %d)\n", atom->id, id) ;
+
+	fprintf(stdout, "      *TEST PDB READER (NAME) ...... ") ;
+	if(strcmp(atom->name, name) == 0) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%s VS %s)\n", atom->name, name) ;
+
+	fprintf(stdout, "      *TEST PDB READER (ALTLOC) .... ") ;
+	if(atom->pdb_aloc == aloc) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%c VS %c)\n", atom->pdb_aloc, aloc) ;
+
+	fprintf(stdout, "      *TEST PDB READER (CHAIN) ..... ") ;
+	if(atom->chain[0] == chain) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%c VS %c)\n", atom->chain[0], chain) ;
+
+	fprintf(stdout, "      *TEST PDB READER (RESID) ..... ") ;
+	if(atom->res_id == resid) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%d VS %d)\n", atom->res_id , resid) ;
+
+	fprintf(stdout, "      *TEST PDB READER (INSERT) .... ") ;
+	if(atom->pdb_insert == insert) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%c VS %c)\n", atom->pdb_insert, insert) ;
+
+	fprintf(stdout, "      *TEST PDB READER (X) ......... ") ;
+	if((atom->x < x+0.001 && atom->x > x-0.001)) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%.2f VS %.2f)\n", atom->x, x) ;
+
+	fprintf(stdout, "      *TEST PDB READER (Y) ......... ") ;
+	if((atom->y < y+0.001 && atom->y > y-0.001)) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%.2f VS %.2f)\n", atom->y, y) ;
+
+	fprintf(stdout, "      *TEST PDB READER (Z) ......... ") ;
+	if((atom->z < z+0.001 && atom->z > z-0.001)) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%.2f VS %.2f)\n", atom->z, z) ;
+
+	fprintf(stdout, "      *TEST PDB READER (OCCUPANCY) . ") ;
+	if((atom->occupancy < occ+0.001 && atom->occupancy > occ-0.001)) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%.2f VS %.2f)\n", atom->occupancy, occ) ;
+
+	fprintf(stdout, "      *TEST PDB READER (BFACTOR) ... ") ;
+	if((atom->bfactor < bfactor+0.001 && atom->bfactor > bfactor-0.001)) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%.2f VS %.2f)\n", atom->bfactor, bfactor) ;
+
+	fprintf(stdout, "      *TEST PDB READER (SYMBOL) .... ") ;
+	if(strcmp(atom->symbol, symbol) == 0) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%s VS %s)\n", atom->symbol, symbol) ;
+
+	fprintf(stdout, "      *TEST PDB READER (CHARGE) .... ") ;
+	if(atom->charge == charge) fprintf(stdout, "OK \n") ;
+	else fprintf(stdout, "FAILED (%d VS %d)\n", atom->charge, charge) ;
+
+	my_free(atom) ;
+}
+
+
+void load_pdb_line(s_atm *atom, char *line)
+{
+	rpdb_extract_pdb_atom(line, atom->type, &(atom->id),
+						atom->name, &(atom->pdb_aloc), atom->res_name,
+						atom->chain, &(atom->res_id), &(atom->pdb_insert),
+						&(atom->x), &(atom->y), &(atom->z),
+						&(atom->occupancy), &(atom->bfactor), atom->symbol,
+						&(atom->charge)) ;
+
+	str_trim(atom->type) ;
+	str_trim(atom->name) ;
+	str_trim(atom->chain) ;
+	str_trim(atom->symbol) ;
+}
+
+int check_is_valid_element(void)
+{
+	int nfails = 0 ;
+
+	/* Testing if the ignore element is taken into account */
+	fprintf(stdout, "    TEST ELEMENT COMPARATOR (1) .... ") ;
+	int idx1 = is_valid_element("He", 1) ;
+	int idx2 = is_valid_element("He", 0) ;
+	int idx3 = is_valid_element("he", 1) ;
+	int idx4 = is_valid_element("he", 0) ;
+	
+	if(idx1 != 2 || idx2 != 2 || idx3 != 2 || idx4 != -1) {
+		nfails ++ ;
+		fprintf(stdout, "FAILED \n") ;
+	}
+	else fprintf(stdout, "OK \n") ;
+	
+	/* Testing thje automatic removal of space */
+	fprintf(stdout, "    TEST ELEMENT COMPARATOR (2) .... ") ;
+	int idx5 = is_valid_element("Fe  ", 1) ;
+	int idx6 = is_valid_element("   Fe  ", 1) ;
+	int idx7 = is_valid_element("  S", 1) ;
+	int idx8 = is_valid_element("  S ", 1) ;
+	if(idx5 == -1 || idx6 == -1 || idx7 == -1 || idx8 == -1) {
+		nfails ++ ;
+		fprintf(stdout, "FAILED \n") ;
+	}
+	else fprintf(stdout, "OK \n") ;
+	
+	/* Testing non valid elements */
+	fprintf(stdout, "    TEST ELEMENT COMPARATOR (3) .... ") ;
+	int idx9 = is_valid_element(" sdzqqs ", 1) ;
+	int idx10 = is_valid_element(" 92 ", 1) ;
+
+	if(idx9 != -1 || idx10 != -1) {
+		nfails ++ ;
+		fprintf(stdout, "FAILED \n") ;
+	}
+	else fprintf(stdout, "OK \n") ;
+	
+	return nfails ;
+}

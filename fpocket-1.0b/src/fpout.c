@@ -93,32 +93,21 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		remove_ext(pdb_code) ;
 		remove_path(pdb_code) ;
 
-		if(strlen(pdb_path) > 0) {
-			sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
-		}
-		else {
-			sprintf(out_path, "%s_out", pdb_code) ;
-		}
+		if(strlen(pdb_path) > 0) sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
+		else sprintf(out_path, "%s_out", pdb_code) ;
+		
 		sprintf(command, "mkdir %s", out_path) ;
 		status = system(command) ;
 		if(status != 0) {
 			return ;
 		}
 		
-		sprintf(out_path, "%s/%s_out/%s", pdb_path, pdb_code, pdb_code) ;
+		sprintf(out_path, "%s/%s", out_path, pdb_code) ;
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
+		
 	/* Write vmd and pymol scripts */
 		sprintf(fout, "%s_out.pdb", pdb_code) ;
-		write_visualization(out_path, fout);	
-	/* Print the whole pockets information in a single file */
-/*
-		sprintf(fout, "%s_pockets.info", out_path) ;
-		FILE *f = fopen(fout, "w") ;
-		if(f) {
-			print_pockets(f, pockets) ;
-			fclose(f) ;
-		}
-*/
+		write_visualization(out_path, fout);
 
 	/* Writing full pdb */
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
@@ -130,8 +119,10 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		write_pockets_single_pqr(fout, pockets) ;
 
 	/* Writing individual pockets pqr */
-
-		sprintf(out_path, "%s/%s_out/pockets", pdb_path, pdb_code) ;
+		if(strlen(pdb_path) > 0) sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
+		else sprintf(out_path, "%s_out", pdb_code) ;
+		
+		sprintf(out_path, "%s/pockets", out_path) ;
 		sprintf(command, "mkdir %s", out_path) ;
 		status = system(command) ;
 		if(status != 0) {

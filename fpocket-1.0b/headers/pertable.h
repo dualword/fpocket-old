@@ -42,11 +42,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "utils.h"
+
+
 /* ---------------------------PROTOTYPES--------------------------------------*/
 
 float pte_get_vdw_ray(const char *symbol) ;
 float pte_get_mass(const char *symbol) ;
 float pte_get_enegativity(const char *symbol) ;
+int is_valid_element(const char *str, int ignore_case) ;
 
 #endif
  

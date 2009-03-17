@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+-##	17-03-09	(v)  Segfault avoided when freeing pdb list
 ##	15-12-08	(v)  Added function to check if a single letter is a fpocket
 ##					 command line option (usefull for t/dpocket) + minor modifs
 ##	28-11-08	(v)  List of pdb taken into account as a single file input.
@@ -62,6 +63,7 @@ s_fparams* init_def_fparams(void)
 	par->refine_min_apolar_asphere_prop = M_REFINE_MIN_PROP_APOL_AS ;
 	par->clust_max_dist = M_CLUST_MAX_DIST ;
 	par->npdb = 0 ;
+	par->pdb_lst = NULL ;
 
 	return par ;
 }

@@ -16,6 +16,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  17-03-09    (v)  Added function testing if a string is a valid element symbol
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -236,5 +237,57 @@ float pte_get_enegativity(const char *symbol)
 		}
 	}
 
+	return -1 ;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	is_valid_element
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Check if a given string corresponds to an atom element.
+   -----------------------------------------------------------------------------
+   ## PARAMETERS:
+	@ const char *str : The string to test
+	@ int tcase       : If = 1, dont take into account the case.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: -1 if the strig is not an atom element, the index in the periodic table if so.
+   -----------------------------------------------------------------------------
+*/
+int is_valid_element(const char *str, int ignore_case)
+{
+	if(str == NULL) return -1 ;
+	if(strlen(str) <= 0) return -1 ;
+
+	/* Use temporary variable to work on the string */
+	int i ;
+	char str_tmp[strlen(str)+1] ;
+	strcpy(str_tmp, str) ;
+
+	/* Remove spaces and case if asked*/
+	str_trim(str_tmp) ;
+	if(ignore_case == 1) {
+		str_tmp[0] = tolower(str_tmp[0]) ;
+		str_tmp[1] = tolower(str_tmp[1]) ;
+	}
+
+	/* Loop over */
+	for (i = 0; i < ST_nelem ; i++) {
+		char tmp[3] ;
+		tmp[0] = ST_pte_symbol[i][0] ;
+		tmp[1] = ST_pte_symbol[i][1] ;
+
+		/* Remove case if asked */
+		if(ignore_case == 1) {
+			tmp[0] = tolower(tmp[0]) ;
+			tmp[1] = tolower(tmp[1]) ;
+		}
+		tmp[2] = '\0' ;
+
+		/* Do the comparison*/
+		if(strcmp(str_tmp, tmp) == 0) return i ;
+	}
+	
 	return -1 ;
 }

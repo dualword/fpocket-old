@@ -10,8 +10,8 @@ PATH_BIN    = bin/
 PATH_MAN    = man/
 PATH_QHULL  = src/qhull/
 
-BINDIR  = /usr/local/bin
-MANDIR  = /usr/local/man/man8
+BINDIR  = /usr/local/bin/
+MANDIR  = /usr/local/man/man8/
 
 
 FPOCKET     = fpocket
@@ -133,9 +133,9 @@ $(PATH_BIN)$(DPOCKET): $(DPOBJ)
 install:
 	mkdir -p $(BINDIR)
 	mkdir -p $(MANDIR)
-	cp $(PATH_BIN)$(FPOCKET) $(BINDIR)$(FPOCKET)
-	cp $(PATH_BIN)$(TPOCKET) $(BINDIR)$(TPOCKET)
-	cp $(PATH_BIN)$(DPOCKET) $(BINDIR)$(DPOCKET)
+	cp $(PATH_BIN)$(FPOCKET) $(BINDIR)
+	cp $(PATH_BIN)$(TPOCKET) $(BINDIR)
+	cp $(PATH_BIN)$(DPOCKET) $(BINDIR)
 	cp $(PATH_MAN)* $(MANDIR)
 
 check:

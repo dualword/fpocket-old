@@ -40,11 +40,19 @@
 #include "fpocket.h"
 #include "fpout.h"
 #include "rpdb.h"
+#include "atom.h"
 #include "fparams.h"
 
 int check_qhull(void) ;
 int check_fparams(void) ;
 int check_fpocket (void );
+int check_is_valid_element(void) ;
+int check_pdb_reader(void) ;
+void load_pdb_line(s_atm *atom, char *line) ;
+void test_pdb_line( char test_case[], const char entry[], int id, const char name[],
+                    char aloc, char chain, int resid, char insert,
+                    float x, float y, float z, float occ, float bfactor,
+                    const char symbol[], int charge, int N) ;
 
 #endif	/* _CHECK_H */
 

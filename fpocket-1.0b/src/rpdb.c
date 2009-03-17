@@ -31,6 +31,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##  17-03-09    (v)  Improved atom type guessing
 ##  10-03-09    (v)  Atom type guessed using resname when element symbol is missing
 ##  11-02-09    (v)  Added list of pointer on all atoms (usefull for sorting)
 ##  22-01-09    (p)  Eliminate double entries in the cofactor list
@@ -44,10 +45,7 @@
 ##	
 ## ----- TODO or SUGGESTIONS
 ##
-##	1 - Handle multiple occurence of a single residue
-##  2 - Store additionnal chains ? (currently, only the first chain is stored...)
-##	3 - Check other flags that END when stopping the reading process.
-##
+##	(v) Improve element guessing by checking resname.
 ##
 
 */
@@ -220,7 +218,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 		symbol[2] = '\0';
 		str_trim(symbol); /* remove spaces */
 		
-		if(strlen(symbol) <= 1) {
+		if(strlen(symbol) < 1) {
 			guess_element(name, symbol) ;
 		}
 	}
@@ -233,7 +231,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	if(rlen >= 79) {
             char buf[4] = "   " ;
 		if((pdb_line[78] == ' ' && pdb_line[79] == ' ') || pdb_line[78] == '\n'){
-			*charge = -1 ;
+			*charge = 0 ;
 		}
 		else {
 			buf[0] = pdb_line[78] ;
@@ -242,6 +240,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 			*charge = (int) atoi(buf) ;
 		}
 	}
+	else *charge = 0 ;
 	
 }
 
@@ -278,8 +277,27 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 */
 void guess_element(char *aname, char *element)
 {
+	/* Use a temporary variable for atomname, mainly to remove spaces */
+	char tmp[strlen(aname)+1] ;
+	strcpy(tmp, aname) ;
+	
+	str_trim(tmp) ;
+
+	char *ptmp = tmp ;
+
+	/* Move to the second caracter if we find a number */ 
+	if(isdigit(tmp[0])) ptmp = ptmp+1 ;
+
+	/* Check if its a valid element */
+	int index = is_valid_element(ptmp, 1) ;
+	if(index != -1) {
+		strcpy(element, ptmp) ;
+		return ;
+	}
+
+	/* Here we have a special case... So take the first and second */
 	element[0] = ' ';
-	element[1] = aname[0] ;
+	element[1] = ptmp[0] ;
 	element[2] = '\0';
 }
 
