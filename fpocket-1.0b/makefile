@@ -92,40 +92,28 @@ DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 # GENERAL RULES FOR COMPILATION
 #------------------------------------------------------------
 
-$(PATH_OBJ)%.o: $(PATH_SRC)%.c $(PATH_HEADER)%.h
+$(PATH_QHULL)%.o: $(PATH_QHULL)%.c
+	$(CCQHULL) $(QCFLAGS) -c $< -o $@
+
+$(PATH_OBJ)%.o: $(PATH_SRC)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 		
 #-----------------------------------------------------------
 # RULES FOR EXECUTABLES
 #-----------------------------------------------------------
 
-all: qhull $(MYPROGS) $(PATH_BIN)$(CHECK)
+all: $(MYPROGS) $(PATH_BIN)$(CHECK)
 		
-qhull:
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qvoronoi.c -o $(PATH_QHULL)qvoronoi.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)user.c -o $(PATH_QHULL)user.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)global.c -o $(PATH_QHULL)global.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)stat.c -o $(PATH_QHULL)stat.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)io.c -o $(PATH_QHULL)io.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)geom2.c -o $(PATH_QHULL)geom2.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)poly2.c -o $(PATH_QHULL)poly2.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)merge.c -o $(PATH_QHULL)merge.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qhull.c -o $(PATH_QHULL)qhull.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)geom.c -o $(PATH_QHULL)geom.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)poly.c -o $(PATH_QHULL)poly.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qset.c -o $(PATH_QHULL)qset.o
-	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)mem.c -o $(PATH_QHULL)mem.o
-		
-$(PATH_BIN)$(CHECK): $(CHOBJ)
+$(PATH_BIN)$(CHECK): $(CHOBJ) $(QOBJS)
 	$(LINKER) $(LFLAGS) $^ -o $@
 
-$(PATH_BIN)$(FPOCKET): $(FPOBJ)
+$(PATH_BIN)$(FPOCKET): $(FPOBJ) $(QOBJS)
 	$(LINKER) $(LFLAGS) $^ -o $@
 
-$(PATH_BIN)$(TPOCKET): $(TPOBJ)
+$(PATH_BIN)$(TPOCKET): $(TPOBJ) $(QOBJS)
 	$(LINKER) $(LFLAGS) $^ -o $@
 
-$(PATH_BIN)$(DPOCKET): $(DPOBJ)
+$(PATH_BIN)$(DPOCKET): $(DPOBJ) $(QOBJS)
 	$(LINKER) $(LFLAGS) $^ -o $@
 
 install:

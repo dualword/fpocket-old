@@ -13,6 +13,7 @@
 ##
 ## ----- MODIFICATIONS HISTORY
 ##
+##	23-03-09	(v) No more test for qhull installation
 ##	17-03-09	(v) Additional test routines for pdb reading
 ##	22-01-09	(v) Created
 ##
@@ -63,17 +64,13 @@
 	Main program for testing programm.
    -----------------------------------------------------------------------------
 */
-int main()
+int main(void)
 {
 	fprintf(stdout, "\n*** TESTING FPOCKET PACKAGE ***\n") ;
 	int nfailure = check_fparams() ;
 
-	check_pdb_reader() ;
-	
-	if(check_qhull() == 0) {
-		nfailure += check_fpocket () ;
-	}
-	check_fpocket () ;
+	nfailure += check_pdb_reader() ;
+	nfailure += check_fpocket () ;
 	
 	fprintf(stdout, "\n*** TESTING ENDS WITH %d FAILURES ***\n", nfailure) ;
 	
