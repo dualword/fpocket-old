@@ -28,7 +28,7 @@ LINKERQHULL = gcc
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
 CDEBUG		= -DMNO_MEM_DEBUG
-CWARN       = -Wall -Wextra -Wwrite-strings
+CWARN       = -Wall -O2 -Wextra -Wwrite-strings -Wstrict-prototypes
 
 CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -pg -g -O2 #$(CGSL)
 QCFLAGS     = -O -ansi 
@@ -91,8 +91,6 @@ DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 #------------------------------------------------------------
 # GENERAL RULES FOR COMPILATION
 #------------------------------------------------------------
-#$(PATH_QHULL)%.o: $(PATH_QHULL)%.c $(PATH_QHULL)%.h
-#	$(CCQHULL) -c $(QCFLAGS) $< -o $@
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c $(PATH_HEADER)%.h
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -104,19 +102,19 @@ $(PATH_OBJ)%.o: $(PATH_SRC)%.c $(PATH_HEADER)%.h
 all: qhull $(MYPROGS) $(PATH_BIN)$(CHECK)
 		
 qhull:
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qvoronoi.c -o $(PATH_QHULL)qvoronoi.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)user.c -o $(PATH_QHULL)user.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)global.c -o $(PATH_QHULL)global.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)stat.c -o $(PATH_QHULL)stat.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)io.c -o $(PATH_QHULL)io.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)geom2.c -o $(PATH_QHULL)geom2.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)poly2.c -o $(PATH_QHULL)poly2.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)merge.c -o $(PATH_QHULL)merge.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qhull.c -o $(PATH_QHULL)qhull.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)geom.c -o $(PATH_QHULL)geom.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)poly.c -o $(PATH_QHULL)poly.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)qset.c -o $(PATH_QHULL)qset.o
-	$(CCQHULL) -c -O -ansi $(PATH_QHULL)mem.c -o $(PATH_QHULL)mem.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qvoronoi.c -o $(PATH_QHULL)qvoronoi.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)user.c -o $(PATH_QHULL)user.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)global.c -o $(PATH_QHULL)global.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)stat.c -o $(PATH_QHULL)stat.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)io.c -o $(PATH_QHULL)io.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)geom2.c -o $(PATH_QHULL)geom2.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)poly2.c -o $(PATH_QHULL)poly2.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)merge.c -o $(PATH_QHULL)merge.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qhull.c -o $(PATH_QHULL)qhull.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)geom.c -o $(PATH_QHULL)geom.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)poly.c -o $(PATH_QHULL)poly.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)qset.c -o $(PATH_QHULL)qset.o
+	$(CCQHULL) -c $(QCFLAGS) $(PATH_QHULL)mem.c -o $(PATH_QHULL)mem.o
 		
 $(PATH_BIN)$(CHECK): $(CHOBJ)
 	$(LINKER) $(LFLAGS) $^ -o $@
