@@ -8,6 +8,13 @@
    see unix.c for full interface
 
    copyright (c) 1993-2003, The Geometry Center
+ *
+ * This file was modified by Vincent Le Guilloux and Peter Schmidtke on 
+ * 4/03/2009 in order to link it to the fpocket program. The former main function
+ * was replaced by run_qvoronoi(FILE *fin,FILE *fout). Else the file remains 
+ * unchanged as well the rest of the qhull distribution. A qvoronoi.h file was
+ * added.
+ * You can obtain the original source code of this file on www.qhull.org.
 */
 
 #include <stdio.h>

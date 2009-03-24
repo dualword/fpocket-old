@@ -50,4 +50,3 @@ visualization
 			  through results using VMD
 
 debugging
-    high    > Create a template bugreport.txt file for eventual bug reports from users.

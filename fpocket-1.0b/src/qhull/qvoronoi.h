@@ -3,6 +3,8 @@
  * Author: peter
  *
  * Created on 04 March 2009, 15:38
+
+ * This file is not part of the official qhull distribution.
  */
 
 #ifndef _QVORONOI_H
