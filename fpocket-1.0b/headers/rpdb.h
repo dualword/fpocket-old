@@ -103,7 +103,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 							char *alt_loc, char *res_name, char *chain, 
 							int *res_id, char *insert, 
 							float *x, float *y, float *z, float *occ, 
-							float *bfactor, char *symbol, int *charge) ;
+							float *bfactor, char *symbol, int *charge, int *guess_flag) ;
 
 void free_pdb_atoms(s_pdb *pdb) ;
 

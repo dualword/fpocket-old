@@ -152,6 +152,7 @@ static const int ST_nb_keep_hetatm = 105 ;
 	@ float *bfactor	: Pointer to b-factor
 	@ char *symbol		: Pointer to symbol
 	@ float *bfactor	: Pointer to charge
+ 	@ int guess_flag	: Flag if elements were guessed
    -----------------------------------------------------------------------------
    ## RETURN:
 	void
@@ -162,7 +163,7 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 							char *alt_loc, char *res_name, char *chain, 
 							int *res_id, char *insert, 
 							float *x, float *y, float *z, float *occ, 
-							float *bfactor, char *symbol, int *charge)
+							float *bfactor, char *symbol, int *charge, int *guess_flag)
 {
 /* Position:          1         2         3         4         5         6 */
 /* Position: 123456789012345678901234567890123456789012345678901234567890 */
@@ -217,13 +218,15 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 		strncpy(symbol, pdb_line + 76, 2);
 		symbol[2] = '\0';
 		str_trim(symbol); /* remove spaces */
-		
 		if(strlen(symbol) < 1) {
 			guess_element(name, symbol) ;
+                        *guess_flag+=1;
 		}
 	}
 	else {
 		guess_element(name, symbol) ;
+                *guess_flag+=1;
+                 printf("gues flag %d\n",*guess_flag);
 	}
 	str_trim(symbol); /* remove spaces */
 	
@@ -286,12 +289,19 @@ void guess_element(char *aname, char *element)
 	char *ptmp = tmp ;
 
 	/* Move to the second caracter if we find a number */ 
-	if(isdigit(tmp[0])) ptmp = ptmp+1 ;
-
+        if(isdigit(tmp[0])) {
+            ptmp = ptmp+1 ;
+        }
+        else {
+            element[0] = ' ';
+            element[1] = ptmp[0] ;
+            element[2] = '\0';
+            return;
+        }
 	/* Check if its a valid element */
 	int index = is_valid_element(ptmp, 1) ;
 	if(index != -1) {
-		strcpy(element, ptmp) ;
+		strcpy(element, ptmp );
 		return ;
 	}
 
@@ -637,7 +647,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 	s_atm *atoms = pdb->latoms ;
 	s_atm **atoms_p = pdb->latoms_p ;
 	s_atm **atm_lig = pdb->latm_lig ;
-
+        int guess_flag=0;
 	iatoms = 0 ;
 	ihetatm = 0 ;
 	iatm_lig = 0 ;
@@ -661,7 +671,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 								atom->chain, &(atom->res_id), &(atom->pdb_insert), 
 								&(atom->x), &(atom->y), &(atom->z), 
 								&(atom->occupancy), &(atom->bfactor), atom->symbol,
-								&(atom->charge));
+								&(atom->charge), &guess_flag);
 
 						/* Store additional information not given in the pdb */
 						atom->mass = pte_get_mass(atom->symbol) ;
@@ -684,7 +694,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 							atom->name, &(atom->pdb_aloc), atom->res_name, 
 							atom->chain, &(atom->res_id), &(atom->pdb_insert), 
 							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
-							&(atom->bfactor), atom->symbol, &(atom->charge));
+							&(atom->bfactor), atom->symbol, &(atom->charge), &guess_flag);
 
 					/* Store additional information not given in the pdb */
 					atom->mass = pte_get_mass(atom->symbol) ;
@@ -710,7 +720,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 							atom->name, &(atom->pdb_aloc), atom->res_name, 
 							atom->chain, &(atom->res_id), &(atom->pdb_insert), 
 							&(atom->x), &(atom->y), &(atom->z), &(atom->occupancy), 
-							&(atom->bfactor), atom->symbol, &(atom->charge));
+							&(atom->bfactor), atom->symbol, &(atom->charge), &guess_flag);
 
 					/* Store additional information not given in the pdb */
 					atom->mass = pte_get_mass(atom->symbol) ;
@@ -735,7 +745,7 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 									atom->chain, &(atom->res_id), &(atom->pdb_insert), 
 									&(atom->x), &(atom->y), &(atom->z), 
 									&(atom->occupancy), &(atom->bfactor), 
-									atom->symbol, &(atom->charge));
+									atom->symbol, &(atom->charge), &guess_flag);
 
 						/* Store additional information not given in the pdb */
 							atom->mass = pte_get_mass(atom->symbol) ;
@@ -759,6 +769,11 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 		else if (!strncmp(pdb_line, "END", 3)) break ;
 	}
 
+       
+        if(guess_flag>0) {
+            fprintf(stderr, ">! Warning: You did not provide a standard PDB file.\nElements were guessed by fpocket, because not provided in the PDB file. \nThere is no guarantee on the results!\n");
+        }
+        
 	if(ligan && keep_lig && (ligfound == 0 || pdb->natm_lig <= 0)) {
 		fprintf(stderr, ">! Warning: ligand '%s' not found in the pdb...\n", ligan) ;
 		if(pdb->latm_lig) fprintf(stderr, "! Ligand list is not NULL however...\n") ;

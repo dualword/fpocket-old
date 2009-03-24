@@ -378,12 +378,13 @@ void test_pdb_line( char test_case[], const char entry[], int id, const char nam
 
 void load_pdb_line(s_atm *atom, char *line)
 {
+    int trash;
 	rpdb_extract_pdb_atom(line, atom->type, &(atom->id),
 						atom->name, &(atom->pdb_aloc), atom->res_name,
 						atom->chain, &(atom->res_id), &(atom->pdb_insert),
 						&(atom->x), &(atom->y), &(atom->z),
 						&(atom->occupancy), &(atom->bfactor), atom->symbol,
-						&(atom->charge)) ;
+						&(atom->charge),&trash) ;
 
 	str_trim(atom->type) ;
 	str_trim(atom->name) ;
