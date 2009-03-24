@@ -1,0 +1,143 @@
+1 - 11GS - APPROVED - GGT -> EAA so the full molecule is considered as the ligand
+1 - 1bil - APPROVED - Ligand divided in 5 RESNAME merged.
+2 - 1B02 - APPROVED - c2f -> ufp
+1 - 1AIQ - APPROVED - cb3 -> ump
+1 - 1c2t - APPROVED - nhs or gar
+1 - 1A0T - APPROVED - Double ligand in the same pocket
+1 - 1dil - APPROVED - Double ligand in the same pocket
+1 - 1AAX - APPROVED - Double ligand in the same pocket
+1 - 1byd - APPROVED - Double ligand in the same pocket
+2 - 1ADO - APPROVED - Double ligand in the same pocket + Small ligand
+2 - 1AXZ - APPROVED - Double ligand in the same pocket + Small ligand
+2 - 1AUR - APPROVED - Small ligand 10
+2 - 1B57 - APPROVED - Small ligand 10
+1 - 1BAV - APPROVED - Small ligand 12
+0 - 1BD4 - APPROVED - Small ligand 8
+0 - 1bgg - APPROVED - Small ligand 13
+1 - 1bio - APPROVED - Small ligand 9
+1 - 1AHA - APPROVED - Small ligand 10
+1 - 1nfs - APPROVED - Small ligand 14
+1 - 1c22 - APPROVED - Small ligand 12
+2 - 1did - APPROVED - Small ligand 11
+1 - 1dqy - APPROVED - Small ligand 8
+4 - 1els - APPROVED - Small ligand 9
+1 - 1klt - APPROVED - Small ligand 10
+3 - 1lah - APPROVED - Small ligand 9
+0 - 1eg9 - APPROVED - Small ligand 9
+1 - 1ese - APPROVED - Small ligand 8
+3 - 1fo2 - APPROVED - Small ligand 11
+0 - 1flz - APPROVED - Small ligand 8
+1 - 1fs5 - APPROVED - Small ligand 10
+1 - 1ft7 - APPROVED - Small ligand 10
+1 - 1hyt - APPROVED - Small ligand 15
+2 - 1m7o - APPROVED - Small ligand 11
+1 - 1lh0 - APPROVED - Small ligand 11
+1 - 1i05 - APPROVED - Small ligand 10
+2 - 1iih - APPROVED - Small ligand 11
+1 - 1j21 - APPROVED - Small ligand 12
+12- 1jdj - APPROVED - Small ligand 11
+2 - 1k70 - APPROVED - Small ligand 8
+2 - 3jdw - APPROVED - Small ligand 15
+2 - 3lkf - APPROVED - Small ligand 11
+1 - 1oyo - APPROVED - Small ligand 11
+1 - 1xzk - APPROVED - Small ligand 10
+0 - 4thi - APPROVED - Small ligand 9
+1 - 5yas - APPROVED - Small ligand 5
+1 - 184l - APPROVED - Small ligand
+3 - 1cte - APPROVED - Small ligand *
+3 - 1dlt - APPROVED - Small ligand *
+1 - 1czs - APPROVED - Small ligand *
+1 - 1e5h - APPROVED - Small ligand *
+1 - 1mmy - APPROVED - Small ligand * 11
+1 - 1oss - APPROVED - Small ligand * 9
+2 - 1try - APPROVED - Small ligand * 7
+1 - 1gqg - APPROVED - Small ligand * 8
+3 - 1sli - APPROVED - Small ligand, huge protein 20
+1 - 1A8I - APPROVED - Small ligand, huge protein 17
+1 - 1AI5 - APPROVED - Small ligand, huge protein 13
+3 - 1djw - APPROVED - Small ligand, huge protein 15
+3 - 1e7a - APPROVED - Small ligand, huge protein 13
+1 - 1lcp - APPROVED - Small ligand, huge protein 10
+8 - 1p7t - APPROVED - Small ligand, huge protein 13
+1 - 1dgb - APPROVED - Strange protein (FORM) + Another ligand next to
+2 - 1bht - APPROVED - Strange protein (FORM)
+8 - 1bl5 - APPROVED - Strange protein (FORM)
+2 - 1bir - APPROVED - Strange protein (FORM)
+7 - 1efi - APPROVED - Strange protein (FORM)
+2 - 1bir - APPROVED - Strange protein (SMALL)
+8 - 1d0x - APPROVED - Strange protein (HUGE)
+1 - 1khb - APPROVED - Strange protein (HUGE)
+0 - 1nhu - APPROVED - Strange protein (HUGE)
+2 - 1qhg - APPROVED - Strange protein (HUGE)
+2 - 1e7u - APPROVED - Strange protein (VERY HUGE)
+1 - 1qbb - APPROVED - Strange protein (VERY HUGE)
+1 - 1ddt - APPROVED - Strange protein (VERY HUGE)
+2 - 1ded - APPROVED - Strange protein (VERY HUGE)
+0 - 1jwy - APPROVED - Strange protein (VERY HUGE)
+2 - 1jzs - APPROVED - Strange protein (VERY HUGE)
+1 - 1n75 - APPROVED - Strange protein (VERY HUGE)
+2 - 1eyn - APPROVED - Strange protein (ALMOST DIMERE)
+2 - 1f4x - APPROVED - Strange protein (ALMOST DIMERE)
+1 - 1pjc - APPROVED - Strange protein (ALMOST DIMERE)
+1 - 1g97 - APPROVED - Strange protein (COMPLEXED WITH DNA/RNA)
+3 - 1be6 - APPROVED - Small ligand with no heteroatom, bonded to a CN
+1 - 1cg0 - APPROVED - Another ligand next to
+1 - 1d1g - APPROVED - Another ligand next to
+4 - 1e7y - APPROVED - Another ligand next to
+1 - 1jay - APPROVED - Another ligand next to
+1 - 1llo - APPROVED - Another ligand next to
+2 - 1tdf - APPROVED - Another ligand next to
+4 - 2bif - APPROVED - Another ligand next to
+1 - 2min - APPROVED - Another ligand next to
+1 - 1gzf - APPROVED - Another ligand next to (ADP)
+1 - 1dy3 - APPROVED - Another ligand next to (ATP)
+1 - 1lc3 - APPROVED - Kind of lipid
+1 - 1lri - APPROVED - Lipid? Small prot?
+1 - 1oh0 - APPROVED - Lipid? Steroid?
+1 - 1ubw - APPROVED - Lipid? With two Phosphore? WTF? 
+3 - 5eau - APPROVED - Lipid? With two Phosphore? WTF? 
+1 - 1ueh - APPROVED - Lipid? Only C and O + double ligand in the same pocket with the second ligand having a longer side chain...
+7 - 1AIJ - APPROVED - Lipid, 2 other huge ligand
+1 - 1ADL - APPROVED - Lipid
+1 - 1brp - APPROVED - Lipid
+1 - 1B0O - APPROVED - Lipid
+1 - 1eh5 - APPROVED - Lipid
+1 - 1epb - APPROVED - Lipid
+1 - 1gt6 - APPROVED - Lipid
+0 - 1h9g - APPROVED - Lipid myr -> coa
+1 - 1icm - APPROVED - Lipid
+2 - 1jlu - APPROVED - Lipid
+1 - 1opb - APPROVED - Lipid
+2 - 1q61 - APPROVED - RIDICULUS Lipid
+5 - 1i6t - APPROVED - What the hell is this thing?
+4 - 1pyy - APPROVED - Lipid? WTF? Large prot
+1 - 1B14 - APPROVED - Inversed? Small ligand, another seems to be more suited...
+1 - 1AOG - ACCEPTED - mae -> fad
+1 - 1A27 - ACCEPTED - est -> nap
+1 - 1B8U - ACCEPTED - oaa -> nad
+? - 1CEL - ACCEPTED - GLC -> IBZ
+? - 1HVC - ACCEPTED - Peptide like ligand
+? - 1P7P - ACCEPTED - PG4 -> ACO
+1 - 1SES - ACCEPTED - AMP -> AHX
+2 - 1C82 - ACCEPTED - NAG / Double ligand at the almost same pocket
+
+1A5A.pdb - REJECTED - Same as 1A50
+1AI4.pdb - REJECTED - Same as 1AI5
+1I6T.pdb - REJECTED - Same as 1E6A
+1YDR.pdb - REJECTED - Same as 1YDT
+1YDS.pdb - REJECTED - Same as 1YDT
+1AIJ.pdb - REJECTED - Multiple pockets
+1CY1.pdb - REJECTED - Multiple pockets
+1B9Z.pdb - REJECTED - Multiple pockets
+1ECG.pdb - REJECTED - Multiple pockets
+1F0Y.pdb - REJECTED - Multiple pockets
+1F9O.pdb - REJECTED - Multiple pockets
+1GRA.pdb - REJECTED - Multiple pockets
+1LIN.pdb - REJECTED - Multiple pockets
+1GRA.pdb - REJECTED - Multiple pockets
+1GQT.PDB - REJECTED - Doublon (although the ligand tested is not the same)
+1I3A.pdb - REJECTED - Too exotic
+1E6A.pdb - REJECTED - Pyrophosphate? POP Too exotic?
+1JSH.pdb - REJECTED - Cant find ligand, doublon of 1jso/i, multiple pocket?
+1JSI.pdb - REJECTED - Cant find ligand, doublon of 1jso/h, multiple pocket?
+1JSO.pdb - REJECTED - Cant find ligand, doublon of 1jsi/h, multiple pocket? 
