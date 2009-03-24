@@ -226,7 +226,6 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	else {
 		guess_element(name, symbol) ;
                 *guess_flag+=1;
-                 printf("gues flag %d\n",*guess_flag);
 	}
 	str_trim(symbol); /* remove spaces */
 	
