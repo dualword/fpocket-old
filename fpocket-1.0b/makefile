@@ -97,6 +97,9 @@ $(PATH_QHULL)%.o: $(PATH_QHULL)%.c
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
+	
+$(PATH_OBJ)%.o: $(PATH_SRC)%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 		
 #-----------------------------------------------------------
 # RULES FOR EXECUTABLES

@@ -48,7 +48,7 @@ need root priveledges for this operation :
 >>> make test
 
 If no errors occur during the compilation and during the test, you
-can install fpocket in you distribution by typing the following line. 
+can install fpocket in your distribution by typing the following line. 
 Be careful, for this you might need root priveledges. 
 If you want to put the executables whereever you want, you can find 
 them in the fpocket-src-1.0/bin directory. Else, for final installation

@@ -676,6 +676,20 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 	/* Check the correspondance for each pocket found */
 	ncur = pockets->first ;
 
+        int n_lig_molecules=1;
+        char chain_tmp[2];
+        int resnumber_tmp;
+        strcpy(chain_tmp,lig[0]->chain);
+        resnumber_tmp = lig[0]->res_id;
+        
+        for (j = 1 ; j < nalig ; j++) {
+            if(strcmp(chain_tmp,lig[j]->chain) !=0 || resnumber_tmp!=lig[j]->res_id){
+                n_lig_molecules++;
+                strcpy(chain_tmp,lig[j]->chain);
+                resnumber_tmp =lig[j]->res_id;
+            }
+        }
+        
 	pos = 0 ;
 	while(ncur) {
 		pos ++ ;
@@ -735,8 +749,8 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 			if(!found[3]){
 				/* Calculate proportion of ligand atom that lies within 3A
 				   of at least one vertice */
-				ov3 = count_atm_prop_vert_neigh( lig, nalig,
-											 pvert, pcur->size, M_CRIT4_D) ;
+                            
+                                ov3 = count_atm_prop_vert_neigh( lig, nalig,pvert, pcur->size, M_CRIT4_D,n_lig_molecules) ;
 				if(ov3 > M_CRIT4_VAL) {
 					idata[i][M_POS4] = pos ;
 					ddata[i][M_CRIT4] = ov3 ;
@@ -760,7 +774,7 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 
 			if(!found[5]){
 				ov3 = count_atm_prop_vert_neigh( lig, nalig,
-											 pvert, pcur->size, M_CRIT4_D) ;
+											 pvert, pcur->size, M_CRIT4_D,n_lig_molecules );
 				ov4 = count_pocket_lig_vert_ovlp(lig, nalig,
 												 pvert, pcur->size, M_CRIT5_D) ;
 				if(ov4 > M_CRIT5_VAL && ov3 > M_CRIT4_VAL) {

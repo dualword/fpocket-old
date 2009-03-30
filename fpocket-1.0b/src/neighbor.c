@@ -604,12 +604,11 @@ float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
 	@ float dcrit     : The distance criteria.s
    -----------------------------------------------------------------------------
    ## RETURN:
-	A tab of pointers to the neighbours.
+	The proportion of atoms with dcrit A of at least 1 vertice.
    -----------------------------------------------------------------------------
 */
-float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
-								 s_vvertice **pvert, int nvert,
-								 float dcrit)
+float count_atm_prop_vert_neigh (s_atm **lig, int nlig,s_vvertice **pvert, int nvert,
+                                                        float dcrit, int n_lig_molecules)
 {
 	s_vsort *lsort =  get_sorted_list(lig, nlig, pvert, nvert) ;
 	s_vect_elem *xsort = lsort->xsort ;
@@ -622,10 +621,32 @@ float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
 		dim = lsort->nelem ;
 
 	float vvalx, vvaly, vvalz ;
+        int multi_nb_neigh[n_lig_molecules];
+        int multi_nb_lig_atoms[n_lig_molecules];
+        
+        int c_lig_mol=0;
+        float max_prop=0.0;
+        float tmp=0.0;
+        char chain_tmp[2];
+        int resnumber_tmp;
+        strcpy(chain_tmp,lig[0]->chain);
+        resnumber_tmp = lig[0]->res_id;
+        
 	s_vvertice *curvp = NULL, *curvm = NULL ;
 
 	nb_neigh = 0 ;
+        multi_nb_neigh[0]=0;
+        multi_nb_lig_atoms[0]=0;
 	for(i = 0 ; i < nlig ; i++) {
+                /*check if we are in a new ligand molecule*/
+                if(strcmp(chain_tmp,lig[i]->chain) !=0 || resnumber_tmp!=lig[i]->res_id){
+                    c_lig_mol++;
+                    strcpy(chain_tmp,lig[i]->chain);
+                    resnumber_tmp =lig[i]->res_id;
+                    multi_nb_neigh[c_lig_mol]=0;
+                    multi_nb_lig_atoms[c_lig_mol]=0;
+                }
+                multi_nb_lig_atoms[c_lig_mol]++;
 		s_atm *cur = lig[i] ;
 
 	/* Reinitialize variables */
@@ -650,6 +671,7 @@ float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
 				 * calculate real distance */
 					if(dist(curvp->x, curvp->y, curvp->z, vvalx, vvaly, vvalz) < dcrit) {
 					/* Distance OK, break the loop */
+                                                multi_nb_neigh[c_lig_mol]++;
 						nb_neigh ++ ; break ;
 					}
 				}
@@ -668,6 +690,7 @@ float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
 					if(dist(curvm->x, curvm->y, curvm->z, vvalx, vvaly, vvalz) < dcrit){
 					/* Distance OK, see if the molecule is not one part of the
 					 * input, and if we have not already seen it. */
+                                                multi_nb_neigh[c_lig_mol]++;
 						nb_neigh++ ; break ;
 					}
 				}
@@ -676,9 +699,13 @@ float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
 			ntest_x += 1 ;
 		}
 	}
-
-	free_s_vsort(lsort) ;
-	return (float)nb_neigh/(float)nlig ;
+        /*get only the max proportion between overlap for different lig mols*/
+        for(i=0;i<n_lig_molecules;i++){
+            tmp=(float)multi_nb_neigh[i]/(float)multi_nb_lig_atoms[i];
+            if(tmp>max_prop) max_prop=tmp;
+        }
+	free_s_vsort(lsort);
+        return max_prop;
 }
 
 

@@ -98,9 +98,9 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		
 		sprintf(command, "mkdir %s", out_path) ;
 		status = system(command) ;
-		if(status != 0) {
+		/*if(status != 0) {
 			return ;
-		}
+		}*/
 		
 		sprintf(out_path, "%s/%s", out_path, pdb_code) ;
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;

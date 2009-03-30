@@ -74,7 +74,7 @@ float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
 
 float count_atm_prop_vert_neigh (s_atm **lig, int nlig,
 				 s_vvertice **pvert, int nvert,
-				 float dist_crit) ;
+				 float dist_crit,int n_lig_molecules) ;
 
 
 int count_vert_neigh_P(s_vvertice **pvert, int nvert,
