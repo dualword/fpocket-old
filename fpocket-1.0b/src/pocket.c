@@ -508,7 +508,7 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	void
    -----------------------------------------------------------------------------
 */
-void set_pockets_descriptors(c_lst_pockets *pockets)
+void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
 {
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
@@ -537,7 +537,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets)
 
 			/* Calculate descriptors*/
 			set_descriptors(pocket_atoms, natms, tab_vert,
-							pcur->v_lst->n_vertices, pcur->pdesc) ;
+							pcur->v_lst->n_vertices, pcur->pdesc,niter) ;
 
 			my_free(pocket_atoms) ;
 			my_free(tab_vert) ;

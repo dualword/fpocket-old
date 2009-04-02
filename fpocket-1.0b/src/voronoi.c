@@ -436,12 +436,14 @@ void print_vvertices(FILE *f, s_lst_vvertice *lvvert)
 	@ s_vvertice **verts: List of pointer to alpha spheres
 	@ int nvert: Number of spheres
 	@ int niter: Number of monte carlo iteration to perform
+        @ float correct: radius for which the size of an alpha sphere should be 
+          corrected in order to calculate the volume
    -----------------------------------------------------------------------------
    ## RETURN:
 	float: volume.
    -----------------------------------------------------------------------------
 */
-float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
+float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter,float correct)
 {
 	int i = 0, j = 0,
 		nb_in = 0;
@@ -460,20 +462,20 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
 		vcur = verts[i] ;
 
 		if(i == 0) {
-			xmin = vcur->x - vcur->ray ; xmax = vcur->x + vcur->ray ;
-			ymin = vcur->y - vcur->ray ; ymax = vcur->y + vcur->ray ;
-			zmin = vcur->z - vcur->ray ; zmax = vcur->z + vcur->ray ;
+			xmin = vcur->x - vcur->ray + correct ; xmax = vcur->x + vcur->ray + correct ;
+			ymin = vcur->y - vcur->ray + correct ; ymax = vcur->y + vcur->ray + correct ;
+			zmin = vcur->z - vcur->ray + correct ; zmax = vcur->z + vcur->ray + correct ;
 		}
 		else {
 		/* Update the minimum and maximum extreme point */
-			if(xmin > (xtmp = vcur->x - vcur->ray)) xmin = xtmp ;
-			else if(xmax < (xtmp = vcur->x + vcur->ray)) xmax = xtmp ;
+			if(xmin > (xtmp = vcur->x - vcur->ray + correct)) xmin = xtmp ;
+			else if(xmax < (xtmp = vcur->x + vcur->ray + correct)) xmax = xtmp ;
 
-			if(ymin > (ytmp = vcur->y - vcur->ray)) ymin = ytmp ;
-			else if(ymax < (ytmp = vcur->y + vcur->ray)) ymax = ytmp ;
+			if(ymin > (ytmp = vcur->y - vcur->ray + correct)) ymin = ytmp ;
+			else if(ymax < (ytmp = vcur->y + vcur->ray + correct)) ymax = ytmp ;
 
-			if(zmin > (ztmp = vcur->z - vcur->ray)) zmin = ztmp ;
-			else if(zmax < (ztmp = vcur->z + vcur->ray)) zmax = ztmp ;
+			if(zmin > (ztmp = vcur->z - vcur->ray + correct)) zmin = ztmp ;
+			else if(zmax < (ztmp = vcur->z + vcur->ray + correct)) zmax = ztmp ;
 		}
 	}
 
@@ -493,7 +495,7 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter)
 			ztmp = vcur->z - zr ;
 
 		/* Compare r^2 and dist(center, random_point)^2 */
-			if((vcur->ray*vcur->ray) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
+			if(((correct+vcur->ray)*(vcur->ray + correct)) > (xtmp*xtmp + ytmp*ytmp + ztmp*ztmp)) {
 			/* The point is inside one of the vertice!! */
 				nb_in ++ ; break ;
 			}

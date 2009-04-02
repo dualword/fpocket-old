@@ -150,7 +150,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		fprintf(stdout,"> Calculating descriptors and score...\n");
 		b = clock() ;
 */
-		set_pockets_descriptors(pockets);
+		set_pockets_descriptors(pockets,params->nb_mcv_iter);
 /*
 		e = clock() ;
 		fprintf(stdout, "> Descriptors found in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;

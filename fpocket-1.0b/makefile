@@ -85,7 +85,8 @@ DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o \
 		$(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o \
 		$(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o \
-		$(PATH_OBJ)fpocket.o \
+		$(PATH_OBJ)fpocket.o $(PATH_OBJ)fpout.o $(PATH_OBJ)writepocket.o \
+		$(PATH_OBJ)write_visu.o \
 		$(PATH_OBJ)voronoi_lst.o $(QOBJS)
 
 #------------------------------------------------------------

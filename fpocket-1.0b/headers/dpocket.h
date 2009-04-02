@@ -42,6 +42,7 @@
 #include <ctype.h>
 
 #include "fpocket.h"
+#include "fpout.h"
 #include "tpocket.h"
 #include "dparams.h"
 #include "descriptors.h"

@@ -223,6 +223,21 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 	lig = pdb_cplx_l->latm_lig ;
 	nal = pdb_cplx_l->natm_lig ;
 
+        /*check if there are multiple ligand mols*/
+        int n_lig_molecules=1;
+        char chain_tmp[2];
+        int resnumber_tmp;
+        strcpy(chain_tmp,lig[0]->chain);
+        resnumber_tmp = lig[0]->res_id;
+        
+        for (j = 1 ; j < nal ; j++) {
+            if(strcmp(chain_tmp,lig[j]->chain) !=0 || resnumber_tmp!=lig[j]->res_id){
+                n_lig_molecules++;
+                strcpy(chain_tmp,lig[j]->chain);
+                resnumber_tmp =lig[j]->res_id;
+            }
+        }
+        
 		/* Getting explicit interface using the known ligand */
 /*
 		fprintf(stdout, "dpocket: Explicit pocket definition... \n") ; 
@@ -233,6 +248,7 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 		fprintf(stdout, "ERROR - No pocket found for %s\n", fcomplexe) ;
 		return ;
 	}
+        //else write_out_fpocket(pockets, pdb_cplx_nl, fcomplexe);
 /*
 	verts = load_vvertices(pdb_cplx_nl, 3, par->fpar->asph_min_size,
 						   par->fpar->asph_max_size) ;
@@ -270,7 +286,7 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 		pvert = get_pocket_pvertices(cur->pocket) ;
 
 		c4 = count_atm_prop_vert_neigh( lig, pdb_cplx_l->natm_lig,
-									    pvert, cur->pocket->size, M_CRIT4_D) ;
+									    pvert, cur->pocket->size, M_CRIT4_D,n_lig_molecules) ;
 		c5 = count_pocket_lig_vert_ovlp(lig, pdb_cplx_l->natm_lig,
 										pvert, cur->pocket->size, M_CRIT5_D) ;
 
@@ -354,7 +370,7 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 /*
 	fprintf(stdout, "dpocket: Calculating descriptors... ") ; fflush(stdout) ;
 */
-	set_descriptors(interface, *nai, tpverts, nvn, desc) ;
+	set_descriptors(interface, *nai, tpverts, nvn, desc, par->fpar->nb_mcv_iter);
 /*
 	fprintf(stdout, " OK\n") ;
 */

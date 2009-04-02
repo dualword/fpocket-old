@@ -30,8 +30,6 @@ qhull
 
     medium  > Assess limits of qhull (maximum number of points) -> enhance 
 			  error management
-			> Use qhull as static library object in order to provide 
-			  bigger portability of fpocket (contact the qhull team)
 
 input
     high    > Test ranges of parameters on input. For instance -m < -M, or

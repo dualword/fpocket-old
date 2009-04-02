@@ -102,7 +102,7 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid,int curPocket,c
 void addStats(int resid, int size, int **stats,int *lenStats);
 
 /* DESCRIPTOR FUNCTIONS */
-void set_pockets_descriptors(c_lst_pockets *pockets) ;
+void set_pockets_descriptors(c_lst_pockets *pockets,int niter) ;
 void set_normalized_descriptors(c_lst_pockets *pockets) ;
 void set_pockets_bary(c_lst_pockets *pockets) ;
 s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms) ;

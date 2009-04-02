@@ -161,7 +161,7 @@ void reset_desc(s_desc *desc)
    -----------------------------------------------------------------------------
 */
 void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
-					 s_desc *desc)
+					 s_desc *desc,int niter)
 {
 	/* Setting atom-based descriptors */
 	set_atom_based_descriptors(atoms, natoms, desc) ;
@@ -244,9 +244,8 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	desc->nb_asph = nvert ;
 	desc->as_density = as_density / ((nvert*nvert - nvert) * 0.5) ;
 		
-	desc->volume = get_verts_volume_ptr(tvert, nvert, 3000) ;
+	desc->volume = get_verts_volume_ptr(tvert, nvert, niter,-1.6) ;
 	desc->as_max_r = as_max_r ;
-
 }
 
 /**-----------------------------------------------------------------------------
