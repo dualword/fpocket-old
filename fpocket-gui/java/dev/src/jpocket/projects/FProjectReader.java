@@ -89,7 +89,7 @@ public class FProjectReader
                                           cNode.getAttributeValue("path"),
                                           cNode.getAttributeValue("fpocketOutput")) ;
 
-                newTreeNode = new DefaultMutableTreeNode(cNode.getAttributeValue("name")) ;
+                newTreeNode = new DefaultMutableTreeNode(pdb) ;
                 curTreeNode.add(newTreeNode) ;
                 
                 List ligands = cNode.getChildren() ;
@@ -102,8 +102,9 @@ public class FProjectReader
                         boolean drug = (ligand.getAttributeValue("isDrug").equals("1"))
                                        ?true:false ;
                         String hetatm = ligand.getAttributeValue("hetatm") ;
+                        String type = ligand.getAttributeValue("type") ;
 
-                        PDBLigand lig = new PDBLigand(hetatm, drug) ;
+                        PDBLigand lig = new PDBLigand(hetatm, type, drug) ;
                         ligNode = new DefaultMutableTreeNode(lig) ;
                         
                         pdb.addLigand(lig) ;

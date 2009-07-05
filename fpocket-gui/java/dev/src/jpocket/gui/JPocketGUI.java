@@ -34,6 +34,7 @@ public class JPocketGUI extends javax.swing.JFrame
     private void updateComponents()
     {
         treeModel = new JProjectTreeModel();
+        projectsTree.setCellRenderer(new JProjectTreeCellRenderer()) ;
         projectsTree.setModel(treeModel.getModel());
         projectsTree.repaint();
         projectsTree.revalidate();

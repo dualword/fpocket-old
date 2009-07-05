@@ -2,9 +2,12 @@
 <ROOT>
     <PROJECT name="PDB Library 1" type="PDB">
         <CATEGORY name="Transferases">
-            <PDB type="PDB" name="2UZT" path="~/2UZT.pdb" fpocketOutput="">
+            <PDB type="PDB" name="2UZT" path="~/2UZT.pdb" fpocketOutput="/test/test/test">
             </PDB>
-            <PDB type="PDB" name="2UZU" path="~/2UZU.pdb" fpocketOutput="">
+            <PDB type="PDB" name="2UZU" path="~/2UZU.pdb" fpocketOutput="/test/test/test">
+                <LIG hetatm="ATP" type="Sugar" isDrug="1"/>
+                <LIG hetatm="ATP" type="Sugar" isDrug="0"/>
+                <LIG hetatm="FUK" type="Sugar" isDrug="0"/>
             </PDB>
             <PDB type="PDB" name="2J9M" path="~/2J9M.pdb" fpocketOutput="">
             </PDB>

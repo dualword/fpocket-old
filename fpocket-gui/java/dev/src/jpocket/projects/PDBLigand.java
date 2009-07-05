@@ -12,11 +12,21 @@ package jpocket.projects;
 public class PDBLigand {
     
     private String hetatmCode ;
+    private String type ;
     private boolean isDrug ;
 
-    public PDBLigand(String hetatmCode, boolean isDrug) {
+    public PDBLigand(String hetatmCode, String type, boolean isDrug) {
         this.hetatmCode = hetatmCode;
+        this.type = type ;
         this.isDrug = isDrug;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getHetatmCode() {
