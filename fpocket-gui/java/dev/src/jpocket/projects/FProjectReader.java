@@ -1,0 +1,119 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package jpocket.projects;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+/**
+ *
+ * @author Administrateur
+ */
+public class FProjectReader
+{
+    private String xml ;
+
+    private ArrayList<IFProject> projects ;
+
+    public FProjectReader(String xml) {
+        this.xml = xml ;
+        projects = new ArrayList() ;
+    }
+
+    public ArrayList<IFProject> readProjects() 
+            throws JDOMException, IOException
+    {
+        projects = new ArrayList() ;
+
+        SAXBuilder sxb = new SAXBuilder();
+        Document document = sxb.build(new File(xml));
+
+        //On initialise un nouvel élément racine avec l'élément racine du document.
+        Element root = document.getRootElement();
+        Element curProj = null ;
+        String name = null, type = null;
+        DefaultMutableTreeNode projectRoot = null ;
+        
+        Iterator it = root.getChildren().iterator() ;
+        while(it.hasNext()) {
+            curProj = (Element) it.next() ;
+            name = curProj.getName() ;
+
+            // Ignore anything else that project
+            if(! name.equals("PROJECT")) continue ;
+
+            name = curProj.getAttributeValue("name");
+            type = curProj.getAttributeValue("type") ;
+
+            if(type.equals("PDB")) {
+                projectRoot = new DefaultMutableTreeNode(name) ;
+
+                System.out.println("Project: "+name);
+                readPDB(curProj, projectRoot) ;
+                
+                projects.add(new FPDBProject(xml, name, projectRoot)) ;
+            }
+        }
+
+        return projects ;
+    }
+
+    private void readPDB(Element node, DefaultMutableTreeNode curNode)
+    {
+        DefaultMutableTreeNode newNode = null ;
+        List childrens = node.getChildren() ;
+        Element cNode = null ;
+        
+        Iterator it = childrens.iterator() ;
+        while(it.hasNext()) {
+            cNode = (Element) it.next() ;
+            System.out.println("Element: "+cNode.getName()+" named "+cNode.getAttributeValue("name"));
+
+            String nodeName = cNode.getName() ;
+            if(nodeName.equals("CATEGORY")) {
+                newNode = new DefaultMutableTreeNode(cNode.getAttributeValue("name")) ;
+                System.out.println("Adding "+newNode.toString()+" to "+curNode.toString());
+                curNode.add(newNode) ;
+
+                readPDB(cNode, newNode) ;
+            }
+            else if(nodeName.equals("PDB")) {
+                PDBFile pdb = new PDBFile(node.getAttributeValue("name"),
+                                          node.getAttributeValue("path"),
+                                          node.getAttributeValue("fpocketOutput")) ;
+                newNode = new DefaultMutableTreeNode(node.getAttributeValue("name")) ;
+                curNode.add(newNode) ;
+                
+                List ligands = cNode.getChildren() ;
+                DefaultMutableTreeNode ligNode = null ;
+                
+                Iterator lit = ligands.iterator() ;
+                while(lit.hasNext()) {
+                    Element ligand = (Element) lit.next() ;
+                    if(ligand.getName().equals("LIG")) {
+                        boolean drug = (ligand.getAttributeValue("isDrug").equals("1"))
+                                       ?true:false ;
+                        String hetatm = ligand.getAttributeValue("hetatm") ;
+
+                        PDBLigand lig = new PDBLigand(hetatm, drug) ;
+                        ligNode = new DefaultMutableTreeNode(lig) ;
+                        
+                        pdb.addLigand(lig) ;
+                        newNode.add(ligNode);
+                    }
+                }
+            }
+        }
+    }
+}
