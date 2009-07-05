@@ -1,30 +1,30 @@
 
 #include "../headers/voronoi_lst.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					voronoi_lst.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			02-12-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Routines dealing with chained list of vertices.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -55,18 +55,18 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
    lst_vertices_alloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate a list of vertices
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	c_lst_vertices*
-   -----------------------------------------------------------------------------
+  
 */
 c_lst_vertices *c_lst_vertices_alloc(void) 
 {
@@ -80,19 +80,19 @@ c_lst_vertices *c_lst_vertices_alloc(void)
 	return lst ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	node_vertice_alloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate memory for one vertice node.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vvertice *vertice : pointer to the vertice to store in the node
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_vertice*: Allocated node
-   -----------------------------------------------------------------------------
+  
 */
 node_vertice *node_vertice_alloc(s_vvertice *vertice)
 {
@@ -105,20 +105,20 @@ node_vertice *node_vertice_alloc(s_vvertice *vertice)
 	return n_vertice ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	c_vertice_lst_add_first
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Add a vertice at the first position of the list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_vertices *lst : chained list of vertices
 	@ s_vvertice *vertice : vertice to add
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_vertice *: pointer toi the new node.
-   -----------------------------------------------------------------------------
+  
 */
 node_vertice *c_lst_vertices_add_first(c_lst_vertices *lst, s_vvertice *vertice)
 {
@@ -136,20 +136,20 @@ node_vertice *c_lst_vertices_add_first(c_lst_vertices *lst, s_vvertice *vertice)
 	return newn ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	c_vertice_lst_add_last
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Add a vertice at the end of the chained list
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pocket *lst   : chained list of pockets
 	@ s_vvertice *vertice : vertice to add
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_vertice *: Pointer to the new node
-   -----------------------------------------------------------------------------
+  
 */
 node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 {
@@ -172,18 +172,18 @@ node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 	return newn ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
    lst_vertice_free
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free memory of a chained list
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_vertices *lst: list of voronoi vertices
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void c_lst_vertices_free(c_lst_vertices *lst) 
 {
@@ -206,21 +206,21 @@ void c_lst_vertices_free(c_lst_vertices *lst)
 	my_free(lst) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_vert_contacted_atms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get the list of atoms contacted by each vertice in the given list of vertices.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_vertices *v_lst : The list of vertices of the pocket.
 	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found, 
  							  will be modified
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A tab of pointers to the pocket contacting atoms.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_vert_contacted_atms(c_lst_vertices *v_lst, int *nneigh) 
 {

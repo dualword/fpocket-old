@@ -1,19 +1,19 @@
  
 #include "../headers/pocket.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					pocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##	
 ##		All functions dealing with pockets: clustering, descriptors, allocation...
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  10-03-09    (v)  Added a function that count the number of atoms in a pocket.
 ##	09-02-09	(v)  Normalized maximum distance between two alpha sphere added
@@ -26,13 +26,13 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ## (v) Peter: comment culstering function ;) (updateIDs namely)
 ##
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -64,7 +64,7 @@
 **/
 
 
-/**
+/*
  ================================================================================
  ================================================================================
 
@@ -74,26 +74,26 @@
  ================================================================================
 */
 
-					/* -------------------- */
+					/* */
 					/* CLUSTERING FUNCTIONS */
-					/* -------------------- */
+					/* */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	clusterPockets
-   -----------------------------------------------------------------------------
+
    ## SPECIFICATION:
 	This function takes in argument a list of vertice, and perform a first
 	clusturing algorithm to merge vertices close from each others. The distance
 	criteria is in the params struct.
-   -----------------------------------------------------------------------------
+
    ## PARAMETRES:
 	@ s_lst_vvertice *lvvert : The list of vertices.
 	@ s_fparams *params      : Parameters
-   -----------------------------------------------------------------------------
+
    ## RETURN:
 	list of pockets!
-   -----------------------------------------------------------------------------
+  
 */
 c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 {
@@ -128,13 +128,13 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	updateIds
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Update ids.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_lst_vvertice *lvvert : The list of vertices.
 	@ int i					 : 
@@ -143,9 +143,9 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 	@ int curPocket			 :
 	@ c_lst_pockets *pockets : The current list of pockets.
 	@ s_fparams *params		 : Parameters
-   -----------------------------------------------------------------------------
+  
    int
-   -----------------------------------------------------------------------------
+  
 */
 int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 			  c_lst_pockets *pockets, s_fparams *params)
@@ -251,26 +251,26 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 }
 
 
-				/* ------------------------------- */
+				/* - */
 				/* VOLUME AND DESCRIPTOR FUNCTIONS */
-				/* ------------------------------- */
+				/* - */
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_pocket_mtvolume
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get an monte carlo approximation of the volume occupied by the pocket given
 	in argument.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket: Pockets to print
 	@ int niter       : Number of monte carlo iteration
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: volume.
-   -----------------------------------------------------------------------------
+  
 */
 float set_pocket_mtvolume(s_pocket *pocket, int niter) 
 {
@@ -346,22 +346,22 @@ float set_pocket_mtvolume(s_pocket *pocket, int niter)
 	return pocket->pdesc->volume ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_pocket_volume
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get an approximation of the volume occupied by the pocket given in argument,
 	using a discretized space.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket: Pockets to print
 	@ int idiscret    : Discretisation: the cube containing all vertices will be 
 						divided in idiscret*idiscret*idiscret cubes.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: volume.
-   -----------------------------------------------------------------------------
+  
 */
 float set_pocket_volume(s_pocket *pocket, int idiscret) 
 {
@@ -445,19 +445,19 @@ float set_pocket_volume(s_pocket *pocket, int idiscret)
 	return pocket->pdesc->volume ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_pockets_bary
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Set barycenter of each pockets. Use vertices to do so.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The list of pockets to handle
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void set_pockets_bary(c_lst_pockets *pockets)
 {
@@ -494,19 +494,19 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_descriptors
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Set descriptors for a list of pockets.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The list of pockets to handle
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
 {
@@ -559,10 +559,10 @@ void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	set_normalized_descriptors
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	 Perform normalisation for some descriptors, so that the maximum value of a
 	 given descriptor become 1 and the minimum value 0. This way, each descriptor
@@ -574,13 +574,13 @@ void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
 
      WARNING: It is assumed that basic descriptors have been normalized before
 	 calling this function!
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
     void: s_desc is filled
-   -----------------------------------------------------------------------------
+  
 */
 void set_normalized_descriptors(c_lst_pockets *pockets)
 {
@@ -691,20 +691,20 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
  ================================================================================
 */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
   	c_lst_pockets_add_first
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Add a pocket on the first position of the list
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pocket *lst : chained list of pockets
 	@ s_pocket			: pocket to add
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_pocket *: pointer to the new node.
-   -----------------------------------------------------------------------------
+  
 */
 node_pocket *c_lst_pockets_add_first(c_lst_pockets *lst, s_pocket *pocket)
 {
@@ -722,20 +722,20 @@ node_pocket *c_lst_pockets_add_first(c_lst_pockets *lst, s_pocket *pocket)
 	return newn ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	c_lst_pockets_add_last
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Add a pocket at the end of the chained list
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pocket *lst : chained list of pockets
 	@ s_pocket          : pocket to add
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_pocket *: Pointer to the new pocket.
-   -----------------------------------------------------------------------------
+  
 */
 node_pocket *c_lst_pockets_add_last(c_lst_pockets *lst,s_pocket *pocket,int cur_n_apol, int cur_n_pol)
 {
@@ -760,21 +760,21 @@ node_pocket *c_lst_pockets_add_last(c_lst_pockets *lst,s_pocket *pocket,int cur_
 	return newn ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	swap_pockets 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Swap two pockets in the given list (not that easy !!! ;) )
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets
 	@ const node_pocket *p1  : Pocket 1
 	@ const node_pocket *p2  : Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void swap_pockets(c_lst_pockets *pockets, node_pocket *p1, node_pocket *p2) 
 {
@@ -853,20 +853,20 @@ void swap_pockets(c_lst_pockets *pockets, node_pocket *p1, node_pocket *p2)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	searchPocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Search a pocket
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ int resid			 : ID of the pocket
 	@ c_lst_pockets *lst : The list of pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_pocket *: pointer to the pocket found. 
-   -----------------------------------------------------------------------------
+  
 */
 node_pocket *searchPocket(int resid, c_lst_pockets *lst)
 {
@@ -882,20 +882,20 @@ node_pocket *searchPocket(int resid, c_lst_pockets *lst)
 	return cur;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	void dropPocket(c_lst_pockets *pockets,node_pocket *pocket)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Drop a pocket from the list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *lst  : The list.
 	@ node_pocket *pocket : The pocket to drop
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void dropPocket(c_lst_pockets *pockets, node_pocket *pocket)
 {
@@ -927,21 +927,21 @@ void dropPocket(c_lst_pockets *pockets, node_pocket *pocket)
 	if(pockets->n_pockets == 0) pockets->first = NULL ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	 mergePockets
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Merge two pockets.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ node_pocket *pocket: The first pocket
 	@ node_pocket *pocket2: The second pocket
 	@ c_lst_pockets *pockets: The list of pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void mergePockets(node_pocket *pocket,node_pocket *pocket2,c_lst_pockets *pockets)
 {
@@ -989,18 +989,18 @@ void mergePockets(node_pocket *pocket,node_pocket *pocket2,c_lst_pockets *pocket
  ================================================================================
 */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	alloc_pocket 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Alloc memory for a pocket and reste values describing it.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_pocket* : pointer to the pocket allocated. 
-   -----------------------------------------------------------------------------
+  
 */
 s_pocket* alloc_pocket(void) 
 {
@@ -1013,18 +1013,18 @@ s_pocket* alloc_pocket(void)
 	return p ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
    c_lst_pockets_alloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate a list of pockets
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	c_lst_pockets*
-   -----------------------------------------------------------------------------
+  
 */
 c_lst_pockets *c_lst_pockets_alloc(void) 
 {
@@ -1039,19 +1039,19 @@ c_lst_pockets *c_lst_pockets_alloc(void)
 	return lst ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	node_pocket_alloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate memory for one pocket node
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket : pointer to the pocket
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	node_pocket*
-   -----------------------------------------------------------------------------
+  
 */
 node_pocket *node_pocket_alloc(s_pocket *pocket)
 {
@@ -1065,19 +1065,19 @@ node_pocket *node_pocket_alloc(s_pocket *pocket)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	c_lst_pocket_free
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free a pocket list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *lst: The list to free.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void c_lst_pocket_free(c_lst_pockets *lst) 
 {
@@ -1104,10 +1104,10 @@ void c_lst_pocket_free(c_lst_pockets *lst)
 
 }
 
-				// ----------------------------------------------- //
+				// //
 				// SORTING FUNCTION (REARANGE CHAINED LIST TO HAVE //
 				// POCKETS SORTED ACCORDING TO SEVERAL PROPERTIES) //
-				// ----------------------------------------------- //
+				// //
 
 /**
  ================================================================================
@@ -1119,20 +1119,20 @@ void c_lst_pocket_free(c_lst_pockets *lst)
  ================================================================================
 */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	get_pocket_contacted_atms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get all atoms contacted by the alpha spheres of a given pocket.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket : The pocket
 	@ int *natoms      : OUTPUT Number of atoms found (modified)
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_atm** Modify the value of natoms, and return an array of pointer to atoms.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 {
@@ -1176,19 +1176,19 @@ s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms)
 	return catoms ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	count_pocket_contacted_atms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Count all uniq atoms contacted by the alpha spheres of a given pocket.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket : The pocket
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: Number of atoms involed in the pocket
-   -----------------------------------------------------------------------------
+  
 */
 int count_pocket_contacted_atms(s_pocket *pocket)
 {
@@ -1220,19 +1220,19 @@ int count_pocket_contacted_atms(s_pocket *pocket)
 	return nb_atoms ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	get_pocket_contacted_atms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Get pocket vertices under the form of an array of pointer.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket : The pocket
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_vvertice**: All pointers to vertices
-   -----------------------------------------------------------------------------
+  
 */
 s_vvertice** get_pocket_pvertices(s_pocket *pocket)
 {
@@ -1248,19 +1248,19 @@ s_vvertice** get_pocket_pvertices(s_pocket *pocket)
 	return pverts ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	reset_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Reset pocket descriptors
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket: The pocket.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 
 void reset_pocket(s_pocket *pocket)
@@ -1278,20 +1278,20 @@ void reset_pocket(s_pocket *pocket)
 	reset_desc(pocket->pdesc) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_pockets
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print pockets info in the given buffer
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f				 : File to print in
 	@ c_lst_pockets *pockets : All pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void print_pockets(FILE *f, c_lst_pockets *pockets) 
 {
@@ -1309,21 +1309,21 @@ void print_pockets(FILE *f, c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_pockets_inv
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print pockets info in the given buffer, starting with the last pocket of the
 	chained list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f				: File to print in
 	@ c_lst_pockets *pockets: Pockets to print
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void print_pockets_inv(FILE *f, c_lst_pockets *pockets) 
 {
@@ -1340,20 +1340,20 @@ void print_pockets_inv(FILE *f, c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	void print_pocket(FILE *f, s_pocket *pocket) 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print one pocket info in the given buffer
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f			: File to print in
 	@ s_pocket *pocket  : Pocket to print
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void print_pocket(FILE *f, s_pocket *pocket) 
 {

@@ -1,19 +1,19 @@
 
 #include "../headers/fpout.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					fpout.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	Write output for fpocket.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	12-02-09	(v)  No more pocket.info output (useless...)
 ##	15-12-08	(v)  Minor bug corrected (output dir in the current dir...)
@@ -22,14 +22,14 @@
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Handle system command failure, clean!
 
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -60,21 +60,21 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	write_out_fpocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Output routine. See the documentation for more information.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
  *  @ c_lst_pockets *pockets : All pockets found and kept.
  *  @ c_lst_pockets *pockets : The (input) pdb structure
 	@ char *pdbname          : Name of the pdb
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname) 
 {

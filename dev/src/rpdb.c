@@ -1,15 +1,15 @@
 
 #include "../headers/rpdb.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					rpdb.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  PDB utilities, mainly reading routines. Not all information are stored,
 ##  this reader is specific to fpocket, and essentially deals with ATOMS,
@@ -29,7 +29,7 @@
 ##  We used VMD as a base for the code developpement, but now codes are quite
 ##  differents... 
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  17-03-09    (v)  Improved atom type guessing
 ##  10-03-09    (v)  Atom type guessed using resname when element symbol is missing
@@ -43,7 +43,7 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Improve element guessing by checking resname.
 ##
@@ -51,7 +51,7 @@
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -82,12 +82,6 @@
 
 **/
 
-
-/**
-	A list of HETATM to keep in the PDB structure.
-	REF Peter?
-*/
-
 static const char *ST_keep_hetatm[] = {
 
 	"HEA", "HBI", "BIO", "CFM", "CLP", "FES", "F3S", "FS3", "FS4", "BPH",
@@ -101,21 +95,21 @@ static const char *ST_keep_hetatm[] = {
     "BOZ",  "FE", "HEM", "HCO", "1CP", "CLN", "COH", "CP3", "DEU", "FDD",
     "FDE", "FEC", "FMI", "HEG", "HNI", "MMP", "MNH", "MNR", "MP1", "PC3",
     "PCU", "PNI", "POR", "PP9", "MSE"
-} ;
+} ;/**<	A list of HETATM to keep in the PDB structure.*/
 
-static const int ST_nb_keep_hetatm = 105 ;
+static const int ST_nb_keep_hetatm = 105 ; /**<  number of residue types to keep*/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_extract_pdb_atom
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Extract all information given in a pdb ATOM or HETATM line, and store them 
 	in given pointers. User must therefore provide enough memory in parameter.
 	PDB last known standart:
 
 	COLUMNS      DATA TYPE        FIELD      DEFINITION
-	------------------------------------------------------
+	
 	1 -  6      Record name      "ATOM    "
 	7 - 11      Integer          serial     Atom serial number.
 	13 - 16      Atom             name       Atom name.
@@ -135,7 +129,7 @@ static const int ST_nb_keep_hetatm = 105 ;
 	77 - 78      LString(2)       element    Element symbol, right-justified.
 	79 - 80      LString(2)       charge     Charge on the atom.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *pdb_line	: The PDB line containings info
 	@ int *atm_id		: Pointer to atom ID
@@ -153,10 +147,10 @@ static const int ST_nb_keep_hetatm = 105 ;
 	@ char *symbol		: Pointer to symbol
 	@ float *bfactor	: Pointer to charge
  	@ int guess_flag	: Flag if elements were guessed
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 
 void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name, 
@@ -247,10 +241,10 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	guess_element
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Guess the element of the atom based on atom name. The pattern matched here
 	have been taken from the MOE PDB reader.
@@ -268,14 +262,14 @@ void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
 	  S:'[P,N]S#*',
 	  SE:'NSE1'
 	];
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *atom_name	: The atom name
 	@ char *res_name	: OUTPUT the element guessed
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void (element is the output)
-   -----------------------------------------------------------------------------
+  
 */
 void guess_element(char *aname, char *element)
 {
@@ -348,26 +342,26 @@ int is_O(char *aname)
 	return 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_extract_atm_resname
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Extract the residu name for an ATOM or HETATM pdb record. To remember:
 
 	COLUMNS      DATA TYPE        FIELD      DEFINITION
-	------------------------------------------------------
+	
 	18 - 20      Residue name     resName    Residue name.
 
 	The memory to store the name has to be provided by the user.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *pdb_line	: The PDB line containings info
 	@ char *res_name	: Pointer to residue name
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 {
@@ -385,22 +379,22 @@ void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 	/*str_trim(res_name); */
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_extract_atom_values
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Extract coordinates, occupancy and bfactor values from a pdb ATOM or HETATM
 	line, and store them in given pointers.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *pdb_line	: The PDB line containings info
 	@ float *x, *y, *z	: Pointer to coordinates
 	@ float *occ		: Pointer to occupency
 	@ float *bfactor	: Pointer to b-factor
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 							  float *occ, float *bfactor) 
@@ -437,21 +431,21 @@ void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 	*bfactor = (float) atof(ptr) ; pdb_line[66] = ctmp ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_extract_cryst1
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Extract information on a box size from a pdb CRYSTL line, and store them 
 	in given pointers.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *pdb_line				: The PDB line containings info
 	@ float *alpha, *beta, *gamma	: Pointer to angles
 	@ float *A, B, C				: Pointer sides length
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma, 
 						 float *a, float *b, float *c) 
@@ -492,10 +486,10 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_open
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Open a PDB file, alloc memory for all information on this pdb, and store 
 	several information like the number of atoms, the header, the remark... 
@@ -505,15 +499,15 @@ void rpdb_extract_cryst1(char *pdb_line, float *alpha, float *beta, float *gamma
 	Hydrogens are conserved.
 	All HETATM are removed, except the given ligand if we have to keep it, and
 	important HETATM listed in the static structure at the top of this file.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char *fpath    : The pdb path.
 	@ const char *ligan    : Ligand resname.
 	@ const char *keep_lig :  Keep the given ligand or not?
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	s_pdb: data containing PDB info.
-   -----------------------------------------------------------------------------
+  
 */
 s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 {
@@ -610,10 +604,10 @@ s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 	return pdb ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	rpdb_read
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Read and store information on atoms for a pdb file.
     Curently:
@@ -622,14 +616,14 @@ s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig)
 		  listed in ST_keep_hetatm variable, and for a  given ligand, defined by 
 		  its resname.
 		- Solvent molecules are ignored
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb           : The structure to fill
 	@ const char *ligand   : The ligand resname
 	@ const char *keep_lig :  Keep the given ligand or not?
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) 
 {
@@ -790,19 +784,19 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_pdb_atoms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Free memory for s_pdb structure
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb: pdb struct to free
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void free_pdb_atoms(s_pdb *pdb) 
 {

@@ -54,41 +54,43 @@
 
 /* ---------------------- PUBLIC STRUCTURES ----------------------------------*/
 
+/**pocket containing structure*/
 typedef struct s_pocket
 {
-    s_desc *pdesc ;
+    s_desc *pdesc ; /**< pointer to pocket descriptor structure */
 
-    c_lst_vertices *v_lst ;
-    float score,	/* Discretize different parts of the score */
-	  ovlp,         /* Atomic overlap	*/
-	  ovlp2,
-	  vol_corresp,	/* Volume overlap */
-	  bary[3] ;			/* Barycenter of the pocket */
+    c_lst_vertices *v_lst ; /**< chained list of Voronoi vertices*/
+    float score,	/**< Discretize different parts of the score */
+	  ovlp,         /**< Atomic overlap	*/
+	  ovlp2,        /**< second overlap criterion*/
+	  vol_corresp,	/**< Volume overlap */
+	  bary[3] ;			/**< Barycenter (center of mass) of the pocket */
     
-    int rank,				/* Rank of the pocket */
+    int rank,				/**< Rank of the pocket */
 	size,
-	nAlphaApol,			/* Number of apolar alpha spheres*/
-	nAlphaPol ;			/* Number of polar alpha spheres */
+	nAlphaApol,			/**< Number of apolar alpha spheres*/
+	nAlphaPol ;			/**< Number of polar alpha spheres */
 
 } s_pocket ; 
 
-/* Chained list stuff for pockets */
+/** Chained list stuff for pockets */
 typedef struct node_pocket 
 {
-	struct node_pocket *next ;
-	struct node_pocket *prev ;
+	struct node_pocket *next ; /**< pointer to next pocket*/
+	struct node_pocket *prev ; /**< pointer to previous pocket*/
 	s_pocket *pocket ;
 
 } node_pocket ;
 
+/** Chained list stuff for pockets */
 typedef struct c_lst_pockets 
 {
-	struct node_pocket *first ;
-	struct node_pocket *last ;
-	struct node_pocket *current ;
-	size_t n_pockets ;
+	struct node_pocket *first ; /**< pointer to the first pocket*/
+	struct node_pocket *last ; /**< pointer to the last pocket*/
+	struct node_pocket *current ; /**< pointer to the current pocket*/
+	size_t n_pockets ;  /**< number of pockets in the chained list*/
 
-	s_lst_vvertice *vertices ;
+	s_lst_vvertice *vertices ; /**< access to vertice list*/
 
 } c_lst_pockets ;
 

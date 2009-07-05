@@ -50,20 +50,20 @@
 // -------------------------------------- PUBLIC MACROS ---------------------------------------------
 
 /* Options of the test program */
-#define M_PAR_VALID_INPUT_FILE 'L'
-#define M_PAR_LIG_NEIG_DIST 'd'
-#define M_PAR_P_STATS_OUT 'o'
-#define M_PAR_G_STATS_OUT 'e'
-#define M_PAR_KEEP_FP_OUTPUT 'k'
+#define M_PAR_VALID_INPUT_FILE 'L' /**< input file flag*/
+#define M_PAR_LIG_NEIG_DIST 'd' /**< ligand neighbour distance flag*/
+#define M_PAR_P_STATS_OUT 'o' /**< output prefix (particular) flag*/
+#define M_PAR_G_STATS_OUT 'e' /**< general output prefix flag*/
+#define M_PAR_KEEP_FP_OUTPUT 'k' /**< flag to keep the fpocket output*/
 
 
 /* Write the statistics output of tpocket to : */
-#define M_STATS_OUTP "stats_p.txt"
-#define M_STATS_OUTG "stats_g.txt"
-#define M_MAX_FILE_NAME_LENGTH 300
+#define M_STATS_OUTP "stats_p.txt" /**< standard per pocket output name*/
+#define M_STATS_OUTG "stats_g.txt" /**< standard general output name*/
+#define M_MAX_FILE_NAME_LENGTH 300 /**< max filename length */
 /* #define M_PAR_P_STATS_OUT 'o' */
 /* in order to get the atom set of the pocket, detect around x A of the ligand*/
-#define M_LIG_NEIG_DIST 4.0
+#define M_LIG_NEIG_DIST 4.0 /**< ligand neighbour distance for explicit pocket definition*/
 
 #define M_TP_USAGE "\
 \n***** USAGE (tpocket) *****\n\
@@ -87,30 +87,32 @@ Options:                                                             \n\
 \t             define the actual pocket               (4.0)          \n\n\
 Options specific to fpocket are usable too.\n\
 See the manual/documentation for mor information.\n\
-***************************\n"
+***************************\n" /**< output for the tpocket usage*/
 
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 
-
+/**
+ Container of the tpocket parameters
+*/
 typedef struct s_tparams
 {
-	char **fapo,
-		 **fcomplex,
-		 **fligan;
+	char **fapo,    /**< path to the apo structure*/
+		 **fcomplex, /**< path to the holo structure*/
+		 **fligan; /**< name of the ligand residue*/
 	
-	char *p_output;
-	char *g_output;
+	char *p_output; /**< per pocket output path*/
+	char *g_output; /**< general output path*/
 	
 	char stats_g[128] ; /* M_STATS_OUTG */
 	char stats_p[128] ; /* M_STATS_OUTP */
 
-	float lig_neigh_dist ;
-	int nfiles ;
-	int keep_fpout ;
+	float lig_neigh_dist ; /**< ligand neighbour dist for explicit pocket definition */
+	int nfiles ; /**< number of files to analyze*/
+	int keep_fpout ; /**< keep the fpocket output (flag)*/
 
 /* Parameters for the pocket finder program (also needed for validation program...) */
 
-	s_fparams *fpar ;
+	s_fparams *fpar ; /**< fpocket parameter container*/
 
 } s_tparams ;
 

@@ -1,15 +1,15 @@
 
 #include "../headers/neighbor.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					neighbor.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ## This file define functions used to perform a space search
 ## operation like looking for all neighbors of a given molecule
@@ -18,21 +18,21 @@
 ##
 ## See sort.c for information on the sorting procedure.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	11-02-09	(v)  Modified argument type for sorting function
 ##	28-11-08	(v)  Comments UTD + relooking.
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Check the algorithms more deeply... Try to make the code more lisible! 
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -63,17 +63,17 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_atm_neigh
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Return a list of pointer to the atoms situated a distance lower or equal
 	to dcrit from a molecule represented by a list of atoms.
 
 	This functon use a list of atoms that is sorted on the X dimension to accelerate
 	the research.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms        : The molecule atoms.
 	@ int natoms		   : Number of atoms in the molecule
@@ -81,11 +81,11 @@
 	@ float dcrit  	   : The distance criteria.
 	@ int *nneigh          : OUTPUT A pointer to the number of neighbour found,
 							 will be modified in the function...
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A tab of pointers to the neighbours, with the number of neighbors stored in
 	nneigh
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_atm **all, int nall,
 						  float dcrit, int *nneigh)
@@ -187,17 +187,17 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_atm **all, int nall,
 	return neigh ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_vert_neigh
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Return a list of pointer to the vertices situated a distance lower or equal
 	to dcrit of a molecule represented by it's list of atoms.
 
 	This functon use a list of atoms that is sorted on the X dimension to accelerate
 	the research.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms         : The molecule.
 	@ int natoms		    : Number of atoms in the molecule
@@ -205,10 +205,10 @@ s_atm** get_mol_atm_neigh(s_atm **atoms, int natoms, s_atm **all, int nall,
 	@ float dcrit       : The distance criteria.
 	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found,
 							  will be modified in the function...
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A tab of pointers to the neighbours.
-   -----------------------------------------------------------------------------
+  
 */
 s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms,
 								s_vvertice **pvert, int nvert,
@@ -308,14 +308,14 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms,
 	return neigh ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_ctd_atm_neigh
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Return a list of atoms contacted by voronoi vertices situated at dcrit
 	of a given molecule represented by a list of its atoms.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms         : The molecule.
 	@ int natoms		    : Number of atoms in the molecule
@@ -324,10 +324,10 @@ s_vvertice** get_mol_vert_neigh(s_atm **atoms, int natoms,
     @ int interface_search  : Perform an interface-type search ?
 	@ int *nneigh           : OUTPUT A pointer to the number of neighbour found,
 							  will be modified in the function...
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A tab of pointers to atoms describing the pocket.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms,
 							  s_vvertice **pvert, int nvert,
@@ -480,25 +480,25 @@ s_atm** get_mol_ctd_atm_neigh(s_atm **atoms, int natoms,
 	return neigh ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	count_pocket_lig_vert_ovlp
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Return the proportion of alpha sphere given in parameter that lies within
 	dcrit A of the ligand -> we loop on each ligand atom and we count the
 	number of unique vertices next to each atoms using dist-crit.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **lig         : The molecule.
 	@ int nlig		      : Number of atoms in the molecule
     @ s_vvertice *pvert   : List of vertices to check.
 	@ int nvert		      : Number of verties (tipically in a given pocket)
 	@ float dcrit     : The distance criteria.s
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A tab of pointers to the neighbours.
-   -----------------------------------------------------------------------------
+  
 */
 float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
 								 s_vvertice **pvert, int nvert,
@@ -588,24 +588,24 @@ float count_pocket_lig_vert_ovlp(s_atm **lig, int nlig,
 	free_s_vsort(lsort) ;
 	return (float)nb_neigh/(float)nvert ;
 }
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	count_pocket_lig_vert_ovlp
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Return the proportion of atoms given in parameter that have at least one
 	vertice that lies within dcrit A
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **lig         : The molecule.
 	@ int nlig		      : Number of atoms in the molecule
     @ s_vvertice *pvert   : List of vertices to check.
 	@ int nvert		      : Number of verties (tipically in a given pocket)
 	@ float dcrit     : The distance criteria.s
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	The proportion of atoms with dcrit A of at least 1 vertice.
-   -----------------------------------------------------------------------------
+  
 */
 float count_atm_prop_vert_neigh (s_atm **lig, int nlig,s_vvertice **pvert, int nvert,
                                                         float dcrit, int n_lig_molecules)
@@ -709,26 +709,26 @@ float count_atm_prop_vert_neigh (s_atm **lig, int nlig,s_vvertice **pvert, int n
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	count_vert_neigh_P
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Count the number of vertices that lies within a distance <= dist_crit from
 	a list of query vertices.
 	The user must provide the query vertices, the full list of vertices to
 	consider, and the distance criteria.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
     @ s_vvertice *pvert     : List of pointer to query vertices
     @ int nvert				: Number of query vertices
     @ s_vvertice *pvert_all : List of pointer to all vertice to consider
     @ int nvert_all			: Total number of vertices to consider
 	@ float dcrit			: The distance criteria.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: The total number of vertices lying within dist_crit A of the query vertices
-   -----------------------------------------------------------------------------
+  
 */
 int count_vert_neigh_P(s_vvertice **pvert, int nvert,
 					 s_vvertice **pvert_all, int nvert_all,
@@ -743,10 +743,10 @@ int count_vert_neigh_P(s_vvertice **pvert, int nvert,
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	count_vert_neigh
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Count the number of vertices that lies within a distance <= dist_crit from
 	a list of query vertices.
@@ -756,16 +756,16 @@ int count_vert_neigh_P(s_vvertice **pvert, int nvert,
 
 	Note that if the query vertices are not present in the list of ordered
 	vertices, the function will return 0.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
     @ s_vsort *lsort	    : List of sorted vertices.
     @ s_vvertice **pvert    : List of pointer to query vertices
     @ int nvert				: Number of query vertices
 	@ float dcrit			: The distance criteria.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: The total number of vertices lying within dist_crit A of the query vertices
-   -----------------------------------------------------------------------------
+  
 */
 int count_vert_neigh(s_vsort *lsort, s_vvertice **pvert, int nvert, float dcrit)
 {

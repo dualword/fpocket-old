@@ -1,30 +1,30 @@
 
 #include "../headers/pscoring.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					pscoring.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ## This file stores scoring functions for pockets.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	21-01-09	(v) Added new scoring function
 ##	28-11-08	(v) Created + Comments UTD
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -55,21 +55,21 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	score_pocket2
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Set a score to a given pocket. The current scoring function has been determined
 	using a logistic regression based on an analysis of pocket descriptors.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pocket: The pocket
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: The score
-   -----------------------------------------------------------------------------
+  
 */
 float score_pocket(s_desc *pdesc)
 {
@@ -99,7 +99,7 @@ float score_pocket(s_desc *pdesc)
 	Scoring function 1:
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
-	------------------------
+	
 	Train   : 62/86 - 65/89
 	PP holo : 79/92 - 79/90
 	PP apo  : 69/90
@@ -136,7 +136,7 @@ float score_pocket(s_desc *pdesc)
 	Scoring function 1:
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
-	------------------------
+	
 	Train   : 62/86 - 65/89
 	PP holo : 79/92 - 79/90
 	PP apo  : 69/90
@@ -164,7 +164,7 @@ float score_pocket(s_desc *pdesc)
 	Scoring function 1:
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
-	------------------------
+	
 	Train   : 59/84 - 64/89
 	PP holo : 79/94 - 81/94
 	PP apo  : 69/90
@@ -193,7 +193,7 @@ float score_pocket(s_desc *pdesc)
 	Scoring function 1:
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
-	------------------------
+	
 	Train   : 59/84 - 64/89
 	PP holo : 79/94 - 81/94
 	PP apo  : 71/90
@@ -223,7 +223,7 @@ float score_pocket(s_desc *pdesc)
 	Scoring function 1:
 			  CPP     OVL
 	Data      T1/T3 | T1/T3
-	------------------------
+	
 	Train   : 62/86 - 65/89
 	PP holo : 79/90 - 79/88
 	PP apo  : 67/90

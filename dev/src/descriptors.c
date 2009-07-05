@@ -1,14 +1,14 @@
 #include "../headers/descriptors.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					descriptors.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	This file is used to calculate descriptors using a set of atoms
 ##	and/or alpha spheres, using structures defined in atoms.c and
@@ -16,7 +16,7 @@
 ##
 ##	
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	09-02-09	(v)  Maximum distance between two alpha sphere added
 ##	29-01-09	(v)  Normalized density and polarity score added
@@ -26,7 +26,7 @@
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##  (v) Some descriptors need urgent improvement (amino-acids volume 
 ##	    score is the best example: maybe replace by the molecular weight 
@@ -37,7 +37,7 @@
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -66,21 +66,21 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
-**/
+*/
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	allocate_s_desc 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate a descroptor structure
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_desc*
-   -----------------------------------------------------------------------------
+  
 */
 s_desc* allocate_s_desc(void) 
 {
@@ -91,18 +91,18 @@ s_desc* allocate_s_desc(void)
 	return desc ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	reset_s_desc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Reset descriptors to 0 values.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void reset_desc(s_desc *desc)
 {
@@ -133,10 +133,10 @@ void reset_desc(s_desc *desc)
 	for(i = 0 ; i < 20 ; i++) desc->aa_compo[i] = 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_descriptors
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Set descriptors using a set of atoms with corresponding voronoi vertices.
 	Current descriptors (need to be improved...) includes atom/AA based descriptors
@@ -148,17 +148,17 @@ void reset_desc(s_desc *desc)
 		- The mean_loc_hyd_dens is the mean value of apolar density calculated
 		  for each vertice and defined in the next function (see comments or doc)
    
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms         : The list of atoms
 	@ int natoms            : The number of atoms
 	@ s_vvertice **tvert : The list of vertices
 	@ int nvert             : The number of vertices
 	@ s_desc *desc          : OUTPUT: The descriptor structure to fill
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
     void: s_desc is filled
-   -----------------------------------------------------------------------------
+  
 */
 void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 					 s_desc *desc,int niter)
@@ -248,10 +248,10 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	desc->as_max_r = as_max_r ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_vert_apolar_density
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Here we calculate the number of apolar vertices (vertices that contact at 
 	least 3 atoms having their electronegativity > 2.7) that lie within a range 
@@ -260,15 +260,15 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	It provides the apolar density for a given vertice, that will be used for
 	the calculation of the total apolar density of the pocket, defined as the
 	mean value of it.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vvertice **tvert : The list of vertices
 	@ int nvert             : The number of vertices
 	@ s_vvertice *vert      : The reference vertice.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: The apolar density as defined previously.
-   -----------------------------------------------------------------------------
+  
 */
 int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert)
 {
@@ -294,22 +294,22 @@ int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert)
 	return apol_neighbours ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	set_atom_based_descriptors
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Update atomic descriptors of the pocket for the given atom. Here, we just
 	update mean bfactor, electronegativity, amino-acids scores...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atom *atoms : The atoms
 	@ int natoms    : Number of atoms
 	@ s_desc *desc  : OUTPUT : The descriptor structure to fill
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc)
 {
@@ -343,20 +343,20 @@ void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc)
 	desc->prop_polar_atm = ((float) nb_polar_atm) / ((float) natoms) * 100.0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_aa_desc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Set amino-acid based descriptors.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
    @ s_desc *desc        : OUTPUT: Structure of descriptors to fill
    @ const char *aa_name : The amino acid name
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_desc*
-   -----------------------------------------------------------------------------
+  
 */
 void set_aa_desc(s_desc *desc, const char *aa_name) 
 {	

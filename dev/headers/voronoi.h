@@ -1,4 +1,4 @@
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -53,50 +53,53 @@
 
 /* ----------------------------------MACROS--------------------------------- */
 
-#define M_VORONOI_SUCCESS 0
-/*alpha sphere type - hydrophobic alpha sphere */
-#define M_APOLAR_AS 0
-/*alpha sphere type - hydrophilic alpha sphere */
-#define M_POLAR_AS 1
-/*tolerance for coordinate imprecion during alpha sphere search	 */
+#define M_VORONOI_SUCCESS 0 /**< alpha sphere type - hydrophobic alpha sphere */
+#define M_APOLAR_AS 0 /**< alpha sphere type - hydrophilic alpha sphere */
+#define M_POLAR_AS 1 /**< tolerance for coordinate imprecion during alpha sphere search	 */
 #define M_PREC_TOLERANCE 1e-4
 
-#define M_BUFSIZE 1e7
+#define M_BUFSIZE 1e7   /**< buffer size*/
 /* --------------------------------STRUCTURES-------------------------------- */
 
+/**
+ Container of the Voronoi vertice
+ */
 typedef struct s_vvertice 
 {
-	int resid ;
-	int id,
-            seen,       /* Say if we have seen this vertice during a neighbor search */
-            qhullId,
-            type ;	/* 0 if apolar contacts, 1 if polar */
+	int resid ; /**< residue ID*/
+	int id, /**< vertice ID*/
+            seen,       /**< Say if we have seen this vertice during a neighbor search */
+            qhullId,    /**< ID of the vertice in qhull output*/
+            type ;	/**< 0 if apolar contacts, 1 if polar */
 
-	float ray ;	/* Ray of voronoi vertice */
-	float x,	/* X coord */
-              y,	/* Y coord */
-	      z ;	/* Z coord */
+	float ray ;	/**< Ray of voronoi vertice */
+	float x,	/**< X coord */
+              y,	/**< Y coord */
+	      z ;	/**< Z coord */
 	
-	int sort_x;		/* Index in the sorted tab by X coord */
-	int apol_neighbours;	/* number of neighbouring apolar alpha spheres */
+	int sort_x;		/**< Index in the sorted tab by X coord */
+	int apol_neighbours;	/**< number of neighbouring apolar alpha spheres */
 
-	int vneigh[4] ;
- 	s_atm *neigh[4] ;	/* The theorical 4 contacted atoms */
+	int vneigh[4] ;         /**< vertice neighbours (4 contact atoms)*/
+ 	s_atm *neigh[4] ;	/**< The theorical 4 contacted atoms */
 	
-	float bary[3] ;         /* Barycenter of the pocket */
+	float bary[3] ;         /**< Barycenter of the pocket */
 
 } s_vvertice ;
 
+/**
+ vertice list container
+ */
 typedef struct s_lst_vvertice
 {
-	s_vvertice *vertices ;			/* List of voronoi vertices */
-        s_vvertice **pvertices ;
+	s_vvertice *vertices ;      /**< List of voronoi vertices */
+        s_vvertice **pvertices ;  /**< list of pointers to vertices*/
         
-	int *h_tr;
-	int n_h_tr;
-	int *tr,
-		nvert,
-		qhullSize ;
+	int *h_tr;  /**< translation of voronoi vertice indices*/
+	int n_h_tr; /**< size of *h_tr*/
+	int *tr,    /**< translation of voronoi vertice indices*/
+		nvert,  /**< no of vertices*/
+		qhullSize ; /**< number of vertices in qhull*/
 
 } s_lst_vvertice ;
 

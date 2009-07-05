@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -43,11 +43,11 @@
 #include "memhandler.h"
 
 
-#define M_PDB_LINE_LEN 80   /* actual record size */
-#define M_PDB_BUF_LEN  83    /* size need to buffer + CR, LF, and NUL */
+#define M_PDB_LINE_LEN 80   /**< actual record size */
+#define M_PDB_BUF_LEN  83    /**< size need to buffer + CR, LF, and NUL */
 
-#define M_KEEP_LIG  1
-#define M_DONT_KEEP_LIG 0
+#define M_KEEP_LIG  1       /**< Keep ligand flag*/
+#define M_DONT_KEEP_LIG 0   /**< Don't keep ligand flag*/
 
 #define M_PDB_HEADER  1
 #define M_PDB_REMARK  2
@@ -62,25 +62,27 @@
 /*
  * API functions start here
  */
-
+/**
+ Container of the PDB structure
+ */
 typedef struct s_pdb
 {
-    FILE *fpdb ;
+    FILE *fpdb ;    /**< file handle of the pdb file*/
 
-    s_atm *latoms ;     /* The list of atoms: contains all atoms! */
+    s_atm *latoms ;     /**< The list of atoms: contains all atoms! */
 
-    s_atm **latoms_p ;  /* List of pointers to latoms elements. */
-    s_atm **lhetatm ;	/* List of pointer to heteroatoms in the latoms list. */
-    s_atm **latm_lig ;	/* List of pointer to the ligand atoms in the atom list*/
+    s_atm **latoms_p ;  /**< List of pointers to latoms elements. */
+    s_atm **lhetatm ;	/**< List of pointer to heteroatoms in the latoms list. */
+    s_atm **latm_lig ;	/**< List of pointer to the ligand atoms in the atom list*/
 
-    int natoms,			/* Number of atoms */
-            nhetatm,		/* Number of HETATM */
-            natm_lig ;		/* Number of ligand atoms */
+    int natoms,			/**< Number of atoms */
+            nhetatm,		/**< Number of HETATM */
+            natm_lig ;		/**< Number of ligand atoms */
 
-    float A, B, C, 			/* Side lengths of the unit cell */
-          alpha, beta, gamma ;	/* Angle between B and C, A and C, A and C */
+    float A, B, C, 			/**< Side lengths of the unit cell */
+          alpha, beta, gamma ;	/**< Angle between B and C, A and C, A and C */
 
-    char header[M_PDB_BUF_LEN] ;
+    char header[M_PDB_BUF_LEN] ; /**< Header container*/
 
 } s_pdb ;
 

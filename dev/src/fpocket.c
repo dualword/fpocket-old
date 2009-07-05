@@ -1,15 +1,15 @@
 
 #include "../headers/fpocket.h" 
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					fpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	Top function(s) to use for looking for pockets in a given protein.
 ##	This function will call successively all function necessary to
@@ -17,20 +17,20 @@
 ##
 ##	No output is writen, just the list of pockets are returned.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	09-02-09	(v)  Drop tiny pocket step added
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -62,22 +62,22 @@
 **/
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	pockets search_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will call all functions needed for the pocket finding algorith
 	and will return the list of pockets found on the protein.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb : The pdb data of the protein to handle.
 	@ s_fparams  : Parameters of the algorithm
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	A chained list of pockets found, sorted according to the current critera
 	(the default is a scoring function)
-   -----------------------------------------------------------------------------
+  
 */
 c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 {

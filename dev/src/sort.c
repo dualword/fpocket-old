@@ -1,34 +1,34 @@
 
 #include "../headers/sort.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					sort.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  This file contains routines used to sort atoms and vertices systems using
 ##  coordinates x, y or z. We define a structure containing all information
 ##  
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	11-02-09	(v)  Modified argument type for sorting function
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Gives more explanation for the file description.
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -64,24 +64,24 @@ static void qsort_dim(s_vect_elem *lst, int len) ;
 static void qsort_rec(s_vect_elem *lst, int start, int end) ;
 static int partition_x(s_vect_elem *lst, int start, int end) ;
  
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_sorted_list
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will return a lists which will contains all atoms and vertices 
 	sorted on x axis.
 	First, we merge atom and vertice lists into those a single list. Then they 
 	will be sorted using a quickSort algorithm, using the x positions of vertices
 	 and atoms as criteria for sorting.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb			: PDB structure, basically containing atoms
 	@ s_vvertice **pvert, int nvert : List of vertices (if NULL, only atoms will be sorted)
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	  s_vsort*: pointer to the structure containing all sorted data (see .h)
-   -----------------------------------------------------------------------------
+  
 */
 s_vsort* get_sorted_list(s_atm **atoms, int natms, s_vvertice **pvert, int nvert)
 {
@@ -104,21 +104,21 @@ s_vsort* get_sorted_list(s_atm **atoms, int natms, s_vvertice **pvert, int nvert
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	merge_atom_vert
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Merge atom and vertice lists into three single list that
 	will be sorted next.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vsort *lsort        : Structure that should contains the 3 lists
 	@ s_pdb *pdb            : pdb structure containing atoms
 	@ s_vvertice **pvert, int nvert : List of v ertices
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 static void merge_atom_vert(s_vsort *lsort, s_atm **atoms, int natms, s_vvertice **pvert, int nvert)
 {
@@ -148,39 +148,39 @@ static void merge_atom_vert(s_vsort *lsort, s_atm **atoms, int natms, s_vvertice
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	qsort_dim
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vect_elem *lst : List of vector to sort
 	@ int *len         : Length of the list
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 static void qsort_dim(s_vect_elem *lst, int len)
 {
 	qsort_rec(lst, 0,  len-1) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static qsort_rec
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
     qsort routine adapted to what we wanna do.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vect_elem *lst : List of vector to sort
 	@ int start		   : Sort from start
 	@ int end		   : to end
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
     void
-   -----------------------------------------------------------------------------
+  
 */
 static void qsort_rec(s_vect_elem *lst, int start, int end)
 {
@@ -193,22 +193,22 @@ static void qsort_rec(s_vect_elem *lst, int start, int end)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static partition_x
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Partition function for the qsort on atoms and vertices, using the X coordinate
 	as criteria to sort the list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vect_elem *lst : List of vector to sort
 	@ int start        : Sort from start
 	@ int end          : to end
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
    int: qsort index
-   -----------------------------------------------------------------------------
+  
 */
 static int partition_x(s_vect_elem *lst, int start, int end)
 {
@@ -269,19 +269,19 @@ static int partition_x(s_vect_elem *lst, int start, int end)
 	return(c);
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_sorted_lst
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print one of the sorted tab of a  s_vsort structure
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vsort *lsort : Structure containing tab
 	@ FILE *buf      : Buffer to print in.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void print_sorted_lst(s_vsort *lsort, FILE *buf)
 {
@@ -312,18 +312,18 @@ void print_sorted_lst(s_vsort *lsort, FILE *buf)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_s_vsort
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free memory for s_vsort structure
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vsort *lsort: Structure to free
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void free_s_vsort(s_vsort *lsort)
 {

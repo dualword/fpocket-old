@@ -1,31 +1,31 @@
 
 #include "../headers/writepdb.h"
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					writepdb.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			02-12-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Routine to write several data in the PDB/PQR format
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  02-12-08    (v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##  (v) Handle (unlakely) error when entries are actually writen (using fprinf)
 ##
 
 */
 
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -56,15 +56,15 @@
 
 **/
  
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_pdb_atom_line
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write an atom in the following pdb format 2.3.
 	
 	COLUMNS      DATA TYPE        FIELD      DEFINITION
-	------------------------------------------------------
+	
 	1 -  6      Record name      "ATOM    "
 	7 - 11      Integer          serial     Atom serial number.
 	13 - 16      Atom             name       Atom name.
@@ -84,11 +84,11 @@
 	77 - 78      LString(2)       element    Element symbol, right-justified.
 	79 - 80      LString(2)       charge     Charge on the atom.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pdb_atom_line(FILE *f, const char rec_name[], int id, const char atom_name[], 
 						 char alt_loc, const char res_name[], const char chain[], 
@@ -128,15 +128,15 @@ void write_pdb_atom_line(FILE *f, const char rec_name[], int id, const char atom
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_pqr_atom_line
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write an atom in pqr format.
 	
 	COLUMNS      DATA TYPE        FIELD      DEFINITION
-	------------------------------------------------------
+	
 	1 -  6      Record name      "ATOM    "
 	7 - 11      Integer          serial     Atom serial number.
 	13 - 16      Atom             name       Atom name.
@@ -153,11 +153,11 @@ void write_pdb_atom_line(FILE *f, const char rec_name[], int id, const char atom
 											 Angstroms
 						 charge
 						 vdw radius
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pqr_atom_line(FILE *f, const char *rec_name, int id, const char *atom_name, 
 						 char alt_loc, const char *res_name, const char *chain, 

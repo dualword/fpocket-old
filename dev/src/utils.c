@@ -1,31 +1,31 @@
 
 #include "../headers/utils.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					utils.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Some usefull functions
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	22-01-09	(v)  Added function to split a string using a given separator
 ##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -58,25 +58,25 @@
 
 
 
-/* Says wether we have seeded the generator. */ 
-static int ST_is_rand_init = 0 ;
+
+static int ST_is_rand_init = 0 ; /**< Says wether we have seeded the generator. */
 
 #ifdef MD_USE_GSL	/* GSL */
 static gsl_rng *ST_r = NULL ;
 #endif				/* /GSL */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	start_rand_generator
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Initialize generator. This initialisation depends on the library to use.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void start_rand_generator(void) 
 {
@@ -105,20 +105,20 @@ void start_rand_generator(void)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	rand_uniform
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Generate a random number between 0 and 1 using a uniform distribution.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
     @ float min : Lower boundary 
     @ float max : Upper boundary
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	double: A uniform random number between min and max
-   -----------------------------------------------------------------------------
+  
 */
 float rand_uniform(float min, float max)
 {
@@ -137,25 +137,25 @@ float rand_uniform(float min, float max)
 	return min+rnd ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	 tab_str* f_readl(const char fpath[], int nchar_max) 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Read file line and store them in a tab_str structure. The function skip empty
 	lines.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char *fpath : Full path of the file.
 	@ int nchar_max     : A number giving the max number of caractere in each line.
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	tab_str* : Pointer to the sab_str structure containing lines of the file.
-   -----------------------------------------------------------------------------
+  
 */
 tab_str* f_readl(const char *fpath, int nchar_max) 
 {
-/* --- Variable declaration */
+/*  Variable declaration */
 
 	FILE *f ;
 	int i, n,
@@ -164,12 +164,12 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 		 **f_lines ;
 	tab_str *lines ;
 
-/* --- Variable initialisation */
+/*  Variable initialisation */
 
 	i = nb_string = 0 ;
 	cline = (char *) my_malloc(nchar_max*sizeof(char)) ;
 
-/* --- How many lines is there in the file? */
+/*  How many lines is there in the file? */
 
  	f = fopen(fpath, "r") ;
 	if(f == NULL) {
@@ -184,7 +184,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	}
 	fclose(f) ;
 
-/* --- Once we have the number of lines, lets allocate memory and get the lines */
+/*  Once we have the number of lines, lets allocate memory and get the lines */
 
 	f = fopen(fpath, "r") ;
 	if(f == NULL) {
@@ -195,13 +195,13 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	lines = (tab_str *)my_malloc(sizeof(tab_str)) ;
 	f_lines = (char **)my_malloc(nb_string*sizeof(char*)) ;
 	
-/* --- Getting lines. */
+/*  Getting lines. */
 
 	while(fgets(cline, nchar_max, f) != NULL) {
 		if(strcmp("\n", cline) != 0) {
 			n = strlen(cline) ;
 			if(cline[n-1] == '\n') {
-				n -- ;
+				n ;
 				cline[n] = '\0' ;
 			}
 			
@@ -216,7 +216,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	lines->nb_str  = nb_string ;
 	lines->t_str = f_lines ;
 
-/* --- Free memory and close file */
+/*  Free memory and close file */
 
 	fclose(f) ;
 	my_free(cline);
@@ -224,19 +224,19 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 	return lines ;
 }
  
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_tab_str
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free the given structure
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ tab_str* strings : Pointer to the tab_str to print
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void free_tab_str(tab_str *tstr) 
 {
@@ -256,19 +256,19 @@ void free_tab_str(tab_str *tstr)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_tab_str
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print strings contained in the given tab_str.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ tab_str* strings : Pointer to the tab_str to print
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void print_tab_str(tab_str* strings)
 {
@@ -276,11 +276,11 @@ void print_tab_str(tab_str* strings)
 		int i ;
 		char **strs = strings->t_str ;
 		
-		printf("\n----- String tab: \n");
+		printf("\n-- String tab: \n");
 		for (i = 0 ; i < strings->nb_str ; i++) {
 			fprintf(stdout, "<%s>\n", strs[i]) ;
 		}
-		printf("-----\n") ;
+		printf("--\n") ;
 	}
 	else {
 		fprintf(stderr, "! Argument NULL in print_tab_str().\n");
@@ -288,20 +288,20 @@ void print_tab_str(tab_str* strings)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	str_is_number
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Check if the string given in argument is a number.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str      : The string to deal with
 	@ const int sign : The first caractere is the sign?
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: 1 if its a valid number, 0 else
-   -----------------------------------------------------------------------------
+  
 */
 int str_is_number(const char *str, const int sign)
 {
@@ -341,20 +341,20 @@ int str_is_number(const char *str, const int sign)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	str_is_float
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Check if the string given in argument is a valid float.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str      : The string to deal with
 	@ const int sign : The first caractere is the sign?
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int:  1 if its a valid float, 0 else
-   -----------------------------------------------------------------------------
+  
 */
 int str_is_float(const char *str, const int sign)
 {
@@ -403,21 +403,21 @@ int str_is_float(const char *str, const int sign)
 	return ok;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	in_tab
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Check if val is present in tab.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ int *tab: Tab
 	@ int size: Size of the tab
 	@ int val: Value to check
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: 1 if val is in tab, 0 if not
-   -----------------------------------------------------------------------------
+  
 */
 int in_tab(int *tab, int size, int val)
 {
@@ -431,21 +431,21 @@ int in_tab(int *tab, int size, int val)
 	return 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	index_of
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Check if val is present in tab and return its index if so
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ int *tab: Tab
 	@ int size: Size of the tab
 	@ int val: Value to check
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: index if val is in tab, -1 if not
-   -----------------------------------------------------------------------------
+  
 */
 int index_of(int *tab, int size, int val) 
 {
@@ -459,18 +459,18 @@ int index_of(int *tab, int size, int val)
 	return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	str_trim
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Remove spaces from a given string
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str: String to deal with
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void str_trim(char *str) 
 {
@@ -488,19 +488,19 @@ void str_trim(char *str)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	 extract_path
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	 Extract path from a string
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str  : String to deal with
 	@ char *dest : OUTPUT The destination string
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void extract_path(char *str, char *dest) 
 {
@@ -531,19 +531,19 @@ void extract_path(char *str, char *dest)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	 extract_ext
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	 Get rid of the extension of a string (.pdb eg.)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str: String to deal with
 	@ char *dest : OUTPUT The destination string
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void extract_ext(char *str, char *dest) 
 {
@@ -568,19 +568,19 @@ void extract_ext(char *str, char *dest)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	remove_path
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Remove the path from a string
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str: INOUT String to deal with
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
      The input string is modified
-   -----------------------------------------------------------------------------
+  
 */
 void remove_path(char *str) 
 {
@@ -608,19 +608,19 @@ void remove_path(char *str)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
     remove_ext
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
     Remove the extention of a given string
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str: INOUT String to deal with
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
     The input string is modified
-   -----------------------------------------------------------------------------
+  
 */
 void remove_ext(char *str)
 {
@@ -641,22 +641,22 @@ void remove_ext(char *str)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	 fopen_pdb_check_case
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Try to open a pdb file. If the open failed, put the 4 letter before extention
 	at the lower case and try again.
 	This function assume that the file name has the format path/file.pdb !
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *name       : The string to parse
 	@ const char *mode : Opening mode
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	The file, NULL if the openning fails.
-   -----------------------------------------------------------------------------
+  
 */
 FILE* fopen_pdb_check_case(char *name, const char *mode) 
 {
@@ -683,10 +683,10 @@ FILE* fopen_pdb_check_case(char *name, const char *mode)
 	
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION:
 	tab_str* str_split_memopt(const char *str, const char sep)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Split the string given using a char separator. Every token will be stored in
 	a tab_str structure which will be returned by the function.
@@ -698,15 +698,15 @@ FILE* fopen_pdb_check_case(char *name, const char *mode)
 	!! MEMORY OF THE RETURNED ARGUMENT MUST BE FREED BY CALLING free_tab_str() !!
 
 	COULD BE OPTIMISED.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char *str: The string to deal with
 	@ const char sep: The separator
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	tab_str*: A pointer to a structure tab_str which will contain all elements of
 	the string.
-   -----------------------------------------------------------------------------
+  
 */
 tab_str* str_split(const char *str, const int sep)
 {
@@ -715,7 +715,7 @@ tab_str* str_split(const char *str, const int sep)
 	const char *pstr = str ;	// A temp pointer to str
 	int n = 1 ;					// At least one token (no separator in the string)
 
-	// --- Count the number of token
+	//  Count the number of token
 
 	while(*pstr) {
 		if(*pstr == sep) {
@@ -727,7 +727,7 @@ tab_str* str_split(const char *str, const int sep)
 	ts->nb_str = n ;
 	ts->t_str = (char**)my_calloc(n, sizeof(char*)) ;
 
-	// --- If there is more than one token, split the string
+	//  If there is more than one token, split the string
 
 	if(n > 1) {
 		char **ptab_str = ts->t_str ;
@@ -739,7 +739,7 @@ tab_str* str_split(const char *str, const int sep)
 
 		pstr = str ;
 
-		// --- Allocate exact memory and copy each tokens
+		//  Allocate exact memory and copy each tokens
 
 		while(*pstr) {
 			if(*pstr == sep) {
@@ -761,7 +761,7 @@ tab_str* str_split(const char *str, const int sep)
 			pstr ++ ;
 		}
 
-	// --- Copy the last token
+	//  Copy the last token
 
 		ptab_str[tok_i] =  (char*)my_calloc(size_tok, sizeof(char)) ;
 		s_pctok = ptab_str[tok_i] ;
@@ -773,7 +773,7 @@ tab_str* str_split(const char *str, const int sep)
 		*s_pctok = '\0' ;
 	}
 	else {
-	// --- One token only, just copy the original string
+	//  One token only, just copy the original string
 		ts->t_str[0] =  (char*)my_calloc(strlen(str), sizeof(char));
 		strcpy(ts->t_str[0], str);
 	}

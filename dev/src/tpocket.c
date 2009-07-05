@@ -1,20 +1,20 @@
 #include "../headers/tpocket.h" 
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					tpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  This file contains all routines used to execute tpocket and test the fpocket
 ##  performance, given a set of complexe-apo-ligand structure stored in a single
 ##  text file.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	10-03-09	(v)  Mean number of atom per pocket + ligand volume added
 ##	05-03-09	(v)  Mean pocket volume added to tpocket output
@@ -25,14 +25,14 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) CLEAN THE CODE! It's such a mess here...
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -63,21 +63,21 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	test_fpocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Test fpocket for a set of pdb files. The output is writen in this function,
 	and consists of two files (see documentation for details)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_tparams *par: Parameters, contain the fpocket parameters, and the list
 					  of data set information.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void test_fpocket(s_tparams *par)
 {
@@ -211,11 +211,11 @@ void test_fpocket(s_tparams *par)
 
 
 		/* Write the first criteria statistics */
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t-                       _ Distance criteria _                      -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg, "   Ratio of good predictions (dist = 4A) \n") ;
-		fprintf(fg, "------------------------------------------\n") ;
+		fprintf(fg, "\n") ;
 
 		for(i = 0 ; i < nranks ; i++) {
 			nok = 0 ;
@@ -230,7 +230,7 @@ void test_fpocket(s_tparams *par)
 					((float)nok) / ((float) N)) ;
 		}
 
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean distance                   : %8.2f\n", mean_dst) ;
 		fprintf(fg, "Mean relative overlap           : %8.2f\n", mean_ovr3) ;
 		fprintf(fg, "Mean pocket volume (estimation) : %8.2f\n", mean_pvol3) ;
@@ -239,17 +239,17 @@ void test_fpocket(s_tparams *par)
 
 
 		/* Write the 2nd criteria statistics */
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t- _ 1st overlap criteria (use of ligand's alpha sphere neighbors)_ -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg,"           :");
 		for( j = 0 ; j < novlp ; j++) {
 				fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"------------");
+		fprintf(fg,"");
 		for( j = 0 ; j < novlp ; j++) {
-			fprintf(fg, "-------------") ;
+			fprintf(fg, "-") ;
 		}
 		fprintf(fg,"\n");
 		
@@ -269,15 +269,15 @@ void test_fpocket(s_tparams *par)
 			}
 			fprintf(fg, "\n") ;
 		}
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean overlap          : %8.2f\n", mean_ov2) ;
 		fprintf(fg, "Mean relative overlap : %8.2f\n", mean_ovr2) ;
 
 		/* Write the 3rd criteria statistics */
 		
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t-        _ 2nd overlap criteria (simple distance criteria) _       -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg,"           :");
 
 		for( j = 0 ; j < novlp ; j++) {
@@ -285,10 +285,10 @@ void test_fpocket(s_tparams *par)
 		}
 
 		fprintf(fg,"\n");
-		fprintf(fg,"------------");
+		fprintf(fg,"");
 
 		for( j = 0 ; j < novlp ; j++) {
-			fprintf(fg, "-------------") ;
+			fprintf(fg, "-") ;
 		}
 		fprintf(fg,"\n");
 
@@ -308,23 +308,23 @@ void test_fpocket(s_tparams *par)
 			}
 			fprintf(fg, "\n") ;
 		}
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov1) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr1) ;
 
 		/* Write the 4th criteria statistics */
 		
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t-          _ 4th overlap criteria (alpha sphere overlap) _         -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg,"           :");
 		for( j = 0 ; j < novlp2 ; j++) {
 				fprintf(fg, "  >%5.2f  :", ovlp2[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"------------");
+		fprintf(fg,"");
 		for( j = 0 ; j < novlp2 ; j++) {
-			fprintf(fg, "-------------") ;
+			fprintf(fg, "-") ;
 		}
 		fprintf(fg,"\n");
 
@@ -344,23 +344,23 @@ void test_fpocket(s_tparams *par)
 			}
 			fprintf(fg, "\n") ;
 		}
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov4) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr4) ;
 
 		/* Write the 4th criteria statistics */
 		
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t-          _ 5th overlap criteria (alpha sphere overlap) _         -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg,"           :");
 		for( j = 0 ; j < novlp3 ; j++) {
 				fprintf(fg, "  >%5.2f  :", ovlp3[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"------------");
+		fprintf(fg,"");
 		for( j = 0 ; j < novlp3 ; j++) {
-			fprintf(fg, "-------------") ;
+			fprintf(fg, "-") ;
 		}
 		fprintf(fg,"\n");
 
@@ -380,16 +380,16 @@ void test_fpocket(s_tparams *par)
 			}
 			fprintf(fg, "\n") ;
 		}
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean overlap          : %f\n", mean_ov5) ;
 		fprintf(fg, "Mean relative overlap : %f\n", mean_ovr5) ;
 
 
-		fprintf(fg, "\n\t--------------------------------------------------------------------\n") ;
+		fprintf(fg, "\n\t--\n") ;
 		fprintf(fg,   "\t-      _ Concensus overlap criteria (alpha sphere overlap) _       -\n") ;
-		fprintf(fg,   "\t--------------------------------------------------------------------\n\n") ;
+		fprintf(fg,   "\t--\n\n") ;
 		fprintf(fg, "   Ratio of good predictions (dist = 3A) \n") ;
-		fprintf(fg, "------------------------------------------\n") ;
+		fprintf(fg, "\n") ;
 
 		for(i = 0 ; i < nranks ; i++) {
 			nok = 0 ;
@@ -404,7 +404,7 @@ void test_fpocket(s_tparams *par)
 					((float)nok) / ((float) N)) ;
 		}
 
-		fprintf(fg, "-------------------------------------\n") ;
+		fprintf(fg, "-\n") ;
 		fprintf(fg, "Mean relative overlap           : %7.2f\n", mean_ovr6) ;
 		fprintf(fg, "Mean pocket volume (estimation) : %10.2f\n", mean_pvol6) ;
 		fprintf(fg, "Mean number of pocket atom      : %4d\n", mean_nbatm6) ;
@@ -414,13 +414,13 @@ void test_fpocket(s_tparams *par)
 	else fprintf(stdout, "The file %s could not be opened\n", par->g_output) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	void test_set(s_tparams *par)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Test fpocket for a single set of apo/complexe/ligand.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_tparams *par  : Parameters, contain the fpocket parameters, and the list
 					    of data set to test. 
@@ -428,14 +428,14 @@ void test_fpocket(s_tparams *par)
  					    statistic arrays
     @ float ddata[][] : Used to store statistics for the evaluation (float)
     @ float idata[][] : Used to store statistics for the evaluation (integers)
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int - A flag saying whether or not the evaluation is successfull. Values:
 		M_LIGNOTFOUND -2
 		M_PDBOPENFAILED -1
 		M_OK 0 
 		M_NOPOCKETFOUND 1
-   -----------------------------------------------------------------------------
+  
 */
 int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NIDATA]) 
 {
@@ -531,27 +531,27 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	return M_OK ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_actual_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get atoms contacted by voronoi vertices present in the actual pocket and 
 	situated at a distance of M_DST_CRIT from each ligand atoms.
 	This way of finding exact atoms contacted by the ligand is more accurate,
 	but need an extra search by fpocket to find voronoi vertices in the complexe
 	form without the ligand...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *cpdb       : The pdb structure of the complexe.
 	@ s_pdb *cpdb_nolig : The pdb structure of the complexe WITHOUT the ligand
  	@ int i             : ID of the current test set
 	@ s_tparams *par    : Parameters
 	@ int *nb_atm       : Number of atom (this an output, it should be set here)
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_atm **: A 2D table containing pointers to atoms which defines the pocket.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par, int *nb_atm) 
 {
@@ -579,24 +579,24 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
 	return neigh ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_actual_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get atoms situated at a distance of lig_dist_crit from each ligand atoms.
     This is a quite inacurate way of defining the pocket -> DEPRECATED
     If the distance criteria used does not allow any identification, we will
     test a larger distance until 6A. 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *cpdb         : The pdb structure of the complexe.
 	@ float lig_dist_crit : The distance criteria
 	@ int *nb_atm         : OUTPUT: Number of atom found in the pocket
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_atm **: A 2D table containing pointers to atoms which defines the pocket.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_atm) 
 {
@@ -625,10 +625,10 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
 	return alneigh ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	check_pockets
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Checking the pocket prediction for one data set. (apo+complex+ligand)
 	This function will calculate three criterias:
@@ -640,7 +640,7 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
  			pocket. Cutoff: 4A
   
    The two arrays ddata and idata given in paramet are used as output.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The pockets found for this set.
     @ s_atm accpck          : The actual pocket using first definition
@@ -653,10 +653,10 @@ s_atm** get_actual_pocket_DEPRECATED(s_pdb *cpdb, float lig_dist_crit, int *nb_a
     @ float idata[][]       : Used to store statistics for the evaluation (integers)
     @ int i                 : ID if the current test set. Used to fill the two 
  							  following statistic arrays
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **lig, 
 				   int nalig, s_atm **alneigh, int nlneigh, 
@@ -837,9 +837,9 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 	}
 }
 
-/** -----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
+/**
+	--
+	--
 
 	ALL THE FOPLLOWING FUNCTIONS SHOULD BE USED TO CALCULATE AN OVERLAP VOLUME
 	BETWEEN A GIVEN POPCKET AND THE REAL POCKET.
@@ -851,21 +851,21 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 	BOTH ALGORITHM CAN BE USED INDEPENDENLTLY WITHOUT THE NEED OF A PARAMETER
 	STRUCTURE (s_fparams)
 
-	-----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
-    -----------------------------------------------------------------------------
+	--
+	--
+   
 */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	void set_overlap_volumes
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will set an overlap volume between a pocket, defined here by
     its voronoi vertices, and the ligand.
 	Depending on the parameters, the method used will be either Monte Carlo 
 	approximation, or discret basic approximation.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pocket *pockets : The pocket
 	@ s_atm **lig       : The ligand atoms.
@@ -873,10 +873,10 @@ void check_pockets(c_lst_pockets *pockets, s_atm **accpck, int naccpck, s_atm **
 	@ float lig_vol     : Volume of the ligand
 	@ s_fparams *params : Parameters, giving the algorithm to use and the 
  					      corresponding parameter.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: The overlap volume found
-   -----------------------------------------------------------------------------
+  
 */
 float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_vol, 
 						  s_fparams *params) 
@@ -903,23 +903,23 @@ float set_overlap_volumes(s_pocket *pocket, s_atm **lig, int natoms, float lig_v
 	return pf_set_vol(lig, natoms, lig_vol, pocket, crit) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	set_mc_overlap_volume
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will set an overlap volume between each pocket and the ligand.
 	Method: monte Carlo aproximation.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **lig       : The ligand atoms.
 	@ int natoms natoms : Number of atoms of the ligand.
 	@ float lig_vol     : Volume of the ligand
 	@ s_pocket *pockets : The pocket
 	@ int niter         : Number of monte-carlo iterations
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol, 
 							s_pocket *pocket, int niter)
@@ -1025,14 +1025,14 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol,
 	return pocket->vol_corresp ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_basic_overlap_volume
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will set an overlap volume between each pocket and the ligand.
 	Discrete aproximation. (algo in idiscret*idiscret*idiscret operation minimum)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **lig       : The ligand atoms.
 	@ int natoms natoms : Number of atoms of the ligand.
@@ -1040,9 +1040,9 @@ float set_mc_overlap_volume(s_atm **lig, int natoms, float lig_vol,
 	@ s_pocket *pockets : The pocket
 	@ int idiscret      : Discretisation of the space: splitt the space in N*N*N
 						  cubes.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 float set_basic_overlap_volume(s_atm **lig, int natoms, float lig_vol,
 							   s_pocket *pocket, int idiscret)

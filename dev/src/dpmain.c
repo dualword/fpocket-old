@@ -1,31 +1,31 @@
  
 #include "../headers/dpmain.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## -- GENERAL INFORMATION
 ##
 ## FILE 					dpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## -- SPECIFICATIONS
 ##
 ##	Top function to call dpocket routines. Get programm parameters,
 ##	call function and free memory.
 ##
-## ----- MODIFICATIONS HISTORY
+## -- MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Added COPYRIGHT DISCLAMER
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## -- TODO or SUGGESTIONS
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -56,13 +56,13 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	int main(int argc, char *argv[])
-   -----------------------------------------------------------------------------
+   
    ## SPECIFICATION:
 	Main program for dpocket!
-   -----------------------------------------------------------------------------
+   
 */
 int main(int argc, char *argv[])
 {

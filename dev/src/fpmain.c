@@ -1,20 +1,20 @@
 
 #include "../headers/fpmain.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					fpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	Top function to call fpocket routines. Get and check programm parameters,
 ##	call functions, write output and free memory.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	19-01-09	(v)  Minor modif (print on the same line)
 ##	28-11-08	(v)  process_pdb added, list of pdb taken into account as input
@@ -23,12 +23,12 @@
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -60,13 +60,13 @@
 **/
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	int main(int argc, char *argv[])
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Main program!
-   -----------------------------------------------------------------------------
+  
 */
 int main(int argc, char *argv[])
 {
@@ -110,21 +110,21 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	process_pdb
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Handle a single pdb: check the pdb name, load data, and launch fpocket if
 	the pdb file have been successfully read.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *pdbname     : Name of the pdb
 	@ s_fparams *params : Parameters of the algorithm. See fparams.c/.h
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void process_pdb(char *pdbname, s_fparams *params) 
 {

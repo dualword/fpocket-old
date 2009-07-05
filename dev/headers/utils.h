@@ -1,4 +1,4 @@
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -54,7 +54,7 @@
 
 /* ------------------------------- PUBLIC MACROS ---------------------------- */
 
-#define M_MAX_PDB_NAME_LEN 200
+#define M_MAX_PDB_NAME_LEN 200  /**< maximum pdb filename length*/
 
 #define M_SIGN 1
 #define M_NO_SIGN 0

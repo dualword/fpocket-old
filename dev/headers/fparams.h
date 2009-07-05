@@ -1,6 +1,6 @@
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -52,55 +52,44 @@
 /* Options of the pocket finder program */
 /* standard parameters */
 
-/* Use min alpha sphere radius of : 3.0 */
-#define M_MIN_ASHAPE_SIZE_DEFAULT 3.0
 
-/* Use max alpha sphere radius of : 6.0 */
-#define M_MAX_ASHAPE_SIZE_DEFAULT 6.0
+#define M_MIN_ASHAPE_SIZE_DEFAULT 3.0/**< Use min alpha sphere radius of : 3.0 */
 
-/* Use first connection distance (see report) : 2.0 */
-#define M_CLUST_MAX_DIST 1.73
+#define M_MAX_ASHAPE_SIZE_DEFAULT 6.0/**< Use max alpha sphere radius of : 6.0 */
 
-/*use second connection distance (see report) : 4.5 */
-#define M_REFINE_DIST 4.5
+#define M_CLUST_MAX_DIST 1.73/**< Use first connection distance (see report) : 2.0 */
 
-/* At least a proportion of  M_REFINE_MIN_NAPOL_AS apolar alpha spheres in 
- * the pocket 0.0 */
-#define M_REFINE_MIN_PROP_APOL_AS 0.0
+#define M_REFINE_DIST 4.5/**< use second connection distance (see report) : 4.5 */
 
-/* Single linkage clustering connection distance 2.5 */
-#define M_SLCLUST_MAX_DIST 2.5
+#define M_REFINE_MIN_PROP_APOL_AS 0.0/**< At least a proportion of  M_REFINE_MIN_NAPOL_AS apolar alpha spheres in the pocket 0.0 */
 
-/* Minimum number of common neighbours for single linkage clustering 5 */
-#define M_SLCLUST_MIN_NUM_NEIGH 2
+#define M_SLCLUST_MAX_DIST 2.5/**< Single linkage clustering connection distance 2.5 */
 
-/* Number of iterations for the Monte Carlo volume calculation 3000 */
-#define M_MC_ITER 3000
+#define M_SLCLUST_MIN_NUM_NEIGH 2/**< Minimum number of common neighbours for single linkage clustering 5 */
 
-/* Precision for "exact" volume integration, set to -1 if not used -1 */
-#define M_BASIC_VOL_DIVISION -1
+#define M_MC_ITER 3000/**< Number of iterations for the Monte Carlo volume calculation 3000 */
 
-/* Minimum number of alpha spheres for a pocket to be kept */
-#define M_MIN_POCK_NB_ASPH 36
+#define M_BASIC_VOL_DIVISION -1/**< Precision for "exact" volume integration, set to -1 if not used -1 */
 
-/* Minimum number of atoms having a low electronegativity in order to declare 
- * an alpha sphere to be apolar 3 */
-#define M__MIN_APOL_NEIGH_DEFAULT 3
+#define M_MIN_POCK_NB_ASPH 36/**< Minimum number of alpha spheres for a pocket to be kept */
 
-/* Parameters flags */
-#define M_PAR_PDB_FILE 'f'
-#define M_PAR_PDB_LIST 'F'
-#define M_PAR_MAX_ASHAPE_SIZE 'M'
-#define M_PAR_MIN_ASHAPE_SIZE 'm'
-#define M_PAR_MIN_APOL_NEIGH 'A'
-#define M_PAR_CLUST_MAX_DIST 'D'
-#define M_PAR_SL_MAX_DIST 's'
-#define M_PAR_SL_MIN_NUM_NEIGH 'n'
-#define M_PAR_MC_ITER 'v'
-#define M_PAR_BASIC_VOL_DIVISION 'b'
-#define M_PAR_MIN_POCK_NB_ASPH 'i'
-#define M_PAR_REFINE_DIST 'r'
-#define M_PAR_REFINE_MIN_NAPOL_AS 'p'
+#define M__MIN_APOL_NEIGH_DEFAULT 3/**< Minimum number of atoms having a low electronegativity in order to declare
+ an alpha sphere to be apolar 3 */
+
+
+#define M_PAR_PDB_FILE 'f' /**< flag to give a single pdb input file*/
+#define M_PAR_PDB_LIST 'F' /**< flag to give a txt file containing paths to multiple pdb files*/
+#define M_PAR_MAX_ASHAPE_SIZE 'M' /**< flag for the maximum alpha sphere size*/
+#define M_PAR_MIN_ASHAPE_SIZE 'm' /**< flag for the minimum alpha sphere size*/
+#define M_PAR_MIN_APOL_NEIGH 'A' /**< flag for the minimum number of apolar neighbours for an alpha sphere to be considered as apolar*/
+#define M_PAR_CLUST_MAX_DIST 'D' /**< flag for the first clustering distance*/
+#define M_PAR_SL_MAX_DIST 's' /**< flag for the distance crit. of the multiple linkage clustering algorithm*/
+#define M_PAR_SL_MIN_NUM_NEIGH 'n' /**< flag for the single linkage min neighbours*/
+#define M_PAR_MC_ITER 'v' /**< flag for how many iterations for the monte carlo volume calculation algorithm*/
+#define M_PAR_BASIC_VOL_DIVISION 'b' /**< flag for the space approximation of the MC*/
+#define M_PAR_MIN_POCK_NB_ASPH 'i' /**< flag for the min number of alpha spheres in the pocket*/
+#define M_PAR_REFINE_DIST 'r' /**< flag for the refining distance*/
+#define M_PAR_REFINE_MIN_NAPOL_AS 'p'/**< flag for minimum proportion of apolar alpha spheres*/
 
 #define M_FP_USAGE "\n\
 ***** USAGE (fpocket) *****\n\
@@ -131,7 +120,7 @@ Pocket finding on a pdb - list of pdb - file(s):             \n\
 \t              default (Monte Carlo approximation is)       \n\
 \nSee the manual (man fpocket), or the full documentation for\n\
 more information.\n\
-***************************\n"
+***************************\n" /**< the usage print content*/
 
 /* --------------------------- PUBLIC STRUCTURES ---------------------------- */
 /**
@@ -139,29 +128,28 @@ more information.\n\
 	This structure is commun to both programs (validation and pocket finding), 
 	even if the pocked finding programm doesn't need some parameters.
 */
-
 typedef struct s_fparams
 {
-	char pdb_path[M_MAX_PDB_NAME_LEN] ;	/* The pdb file */
+	char pdb_path[M_MAX_PDB_NAME_LEN] ;	/**< The pdb file */
 	char **pdb_lst ;
-	int npdb ;
+	int npdb ;      /**< number of pdb files*/
 	
-	int min_apol_neigh,		 /* Min number of apolar neighbours for an a-sphere 
+	int min_apol_neigh,		 /**< Min number of apolar neighbours for an a-sphere
 								to be an apolar a-sphere */
-		sl_clust_min_nneigh, /* Min number of neighbours for single linkage 
+		sl_clust_min_nneigh, /**< Min number of neighbours for single linkage
 								clustering */
-		nb_mcv_iter,		 /* Number of iteration for the Monte Carlo volume 
+		nb_mcv_iter,		 /**< Number of iteration for the Monte Carlo volume
 								calculation */
-		basic_volume_div,	 /* Box division factor for basic volume calculation */
-		min_pock_nb_asph ;	 /* Minimump number of alpha spheres per pocket */
+		basic_volume_div,	 /**< Box division factor for basic volume calculation */
+		min_pock_nb_asph ;	 /**< Minimump number of alpha spheres per pocket */
 
-	float clust_max_dist,					/* First clustering distance criteria */
-		  refine_min_apolar_asphere_prop,	/* Min proportion of apolar alpha 
+	float clust_max_dist,					/**< First clustering distance criteria */
+		  refine_min_apolar_asphere_prop,	/**< Min proportion of apolar alpha
 											spheres for each pocket */
-		  sl_clust_max_dist,	/* Single linkage clusturing distance criteria */
-		  refine_clust_dist,	/* Refine clustering distance criteria */
-		  asph_min_size,	 	/* Minimum size of alpha spheres to keep */
-		  asph_max_size ;		/* Maximum size of alpha spheres to keep */
+		  sl_clust_max_dist,	/**< Single linkage clusturing distance criteria */
+		  refine_clust_dist,	/**< Refine clustering distance criteria */
+		  asph_min_size,	 	/**< Minimum size of alpha spheres to keep */
+		  asph_max_size ;		/**< Maximum size of alpha spheres to keep */
 
 
 } s_fparams ;

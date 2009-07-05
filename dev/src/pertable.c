@@ -1,34 +1,34 @@
 
 #include "../headers/pertable.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					pertable.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ## This file defines the periodic element table. It's strongly based on the
 ## VMD source code.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  17-03-09    (v)  Added function testing if a string is a valid element symbol
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Merge with atom.c
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -59,7 +59,7 @@
 
 **/
 
-static const int ST_nelem = 112 ;
+static const int ST_nelem = 112 ; /**< number of elements in the @static const char *ST_pte_symbol list*/
 
 static const char *ST_pte_symbol[] = { 
 	"X",  "H",  "He", "Li", "Be", "B",  "C",  "N",  "O",  "F",  "Ne",
@@ -73,7 +73,7 @@ static const char *ST_pte_symbol[] = {
 	"Ra", "Ac", "Th", "Pa", "U",  "Np", "Pu", "Am", "Cm", "Bk", "Cf",
 	"Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt",
 	"Ds", "Rg"
-} ;
+} ; /**< element list*/
 
 static const float ST_pte_electronegativity[] = {
 	 0.0,  2.1, 0.98,  1.0,  1.5,  2.0,  2.5,  3.0,  3.5,  4.0, -1.0,
@@ -87,7 +87,7 @@ static const float ST_pte_electronegativity[] = {
 	 0.9,  1.1,  1.3,  1.5,  1.7,  1.3,  1.3,  1.3,  1.3,  1.3,  1.3,
 	 1.3,  1.3,  1.3,  1.3, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
 	-1.0, -1.0
-} ;
+} ; /**< electronegativity list*/
 
 static const float ST_pte_mass[] = { 
 	/* X  */ 0.00000, 1.00794, 4.00260, 6.941, 9.012182, 10.811,  
@@ -109,7 +109,7 @@ static const float ST_pte_mass[] = {
 	/* Np */ 237.0, 244.0, 243.0, 247.0, 247.0, 251.0, 252.0, 257.0,
 	/* Md */ 258.0, 259.0, 262.0, 261.0, 262.0, 266.0, 264.0, 269.0,
 	/* Mt */ 268.0, 271.0, 272.0
-};
+}; /**< atomic masses*/
 
 /*
 	 A. Bondi, J. Phys. Chem., 68, 441 - 452, 1964, 
@@ -135,21 +135,21 @@ static const float ST_pte_rvdw[] = {
 	/* Np */ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
 	/* Md */ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
 	/* Mt */ 2.0, 2.0, 2.0
-};
+}; /**< VDW radii for different elements*/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	pte_get_mass
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Returns the mass for a given element
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:	
 	@ const char *symbol: The symbol of the element in the periodic table
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: mass corresponding to symbol
-   -----------------------------------------------------------------------------
+  
 */
 float pte_get_mass(const char *symbol)
 {	
@@ -172,19 +172,19 @@ float pte_get_mass(const char *symbol)
 	return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	pte_get_vdw_ray
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Returns the van der walls radius for a given element
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:	
 	@ const char *symbol: The symbol of the element in the periodic table
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: vdw radius corresponding to symbol
-   -----------------------------------------------------------------------------
+  
 */
 float pte_get_vdw_ray(const char *symbol)
 {
@@ -206,19 +206,19 @@ float pte_get_vdw_ray(const char *symbol)
 	return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	pte_get_enegativity
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Returns the electronegativity (Pauling) value for a given element
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:	
 	@ const char *symbol: The symbol of the element in the periodic table
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: electrobegativity of Pauling corresponding to symbol
-   -----------------------------------------------------------------------------
+  
 */
 float pte_get_enegativity(const char *symbol)
 {
@@ -240,20 +240,20 @@ float pte_get_enegativity(const char *symbol)
 	return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	is_valid_element
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Check if a given string corresponds to an atom element.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ const char *str : The string to test
 	@ int tcase       : If = 1, dont take into account the case.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	int: -1 if the strig is not an atom element, the index in the periodic table if so.
-   -----------------------------------------------------------------------------
+  
 */
 int is_valid_element(const char *str, int ignore_case)
 {

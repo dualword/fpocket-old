@@ -1,29 +1,29 @@
 
 #include "../headers/writepocket.h"
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					writepocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			02-12-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Output routine for pockets.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  02-12-08    (v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -55,22 +55,22 @@
 **/
  
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_single_pdb
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write atoms and vertices given in argument in the following standard v2.2 
 	pdb format.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char out[]       : Output file name
 	@ s_pdb *pdb             : PDB infos
 	@ c_lst_pockets *pockets : All pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pockets_single_pdb(const char out[],  s_pdb *pdb, c_lst_pockets *pockets) 
 {
@@ -107,20 +107,20 @@ void write_pockets_single_pdb(const char out[],  s_pdb *pdb, c_lst_pockets *pock
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_pdb_atoms
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Print list of atoms as pdb format in given buffer
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f      : Buffer to write in.
 	@ s_atm *atoms : List of atoms
 	@ int natoms   : Number of atoms
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms) 
 {
@@ -136,21 +136,21 @@ void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	write_pockets_single_pqr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write only pockets (alpha sphere) given in argument in the pqr format.
 
 	!! No atoms writen here, only all pockets in a single pqr file.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char out[]       : Output file path
 	@ c_lst_pockets *pockets : List of pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pockets_single_pqr(const char out[], c_lst_pockets *pockets) 
 {
@@ -189,19 +189,19 @@ void write_pockets_single_pqr(const char out[], c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	write_each_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write each pocket in a single pqr (vertices) and pdb (atoms) file format.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char out[]       : Output file path
 	@ c_lst_pockets *pockets : List of pockets
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_each_pocket(const char out_path[], c_lst_pockets *pockets)
 {
@@ -231,20 +231,20 @@ void write_each_pocket(const char out_path[], c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	void write_pocket_pqr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write vertices of the pocket given in argument in the pqr format.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char out[]  : Output file path
 	@ s_pocket *pocket : The pocket to write
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pocket_pqr(const char out[], s_pocket *pocket) 
 {
@@ -289,21 +289,21 @@ void write_pocket_pqr(const char out[], s_pocket *pocket)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	write_pocket_pdb
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write atoms contacted by vertices of the pocket given in argument in 
 	the pdb format.
 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const char out[]  : Output file path
 	@  s_pocket *pocket : The pocket to write
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pocket_pdb(const char out[], s_pocket *pocket) 
 {

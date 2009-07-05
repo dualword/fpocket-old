@@ -105,19 +105,19 @@ See the manual/tutorial for mor information.                        \n\
 
 typedef struct s_dparams
 {
-	char **fcomplex,
-		 **ligs ;
+	char **fcomplex,    /**< path of the holo form of the structure */
+		 **ligs ;   /**< HET residue name of the ligand */
 
-	char *f_exp,
-		 *f_fpckp,
-		 *f_fpcknp ;
+	char *f_exp,    /**< name of the explicit pocket definition output file*/
+		 *f_fpckp, /**< name of the pocket definition output file*/
+		 *f_fpcknp ; /**< name of the non pocket definition output file*/
 
-	float interface_dist_crit;
+	float interface_dist_crit;  /**< distance for explicit binding pocket definition*/
 
-	int nfiles,
-	    interface_method ;
+	int nfiles,         /**< number of files to analyse*/
+	    interface_method ;  /**< how to identify the explicit binding pocket*/
 
-	s_fparams *fpar ;
+	s_fparams *fpar ;   /**< fparams container*/
 
 } s_dparams ;
 

@@ -1,19 +1,19 @@
 
 #include "../headers/tparams.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					tparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Handle and parse parameters for the tpocket program.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Comments UTD
 ##	27-11-08	(v)  Added option to keep fpocket output + minor relooking
@@ -22,13 +22,13 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ## (v) Check fpocket parameters to avoid 'unknown option' warning message
 ##
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -59,18 +59,18 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	s_tparams* init_def_tparams(void)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Initialisation of default parameters
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES: void
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	Pointer to allocated paramers.
-   -----------------------------------------------------------------------------
+  
 */
 s_tparams* init_def_tparams(void)
 {
@@ -89,21 +89,21 @@ s_tparams* init_def_tparams(void)
 	return par ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_tpocket_args
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function analyse the user's command line and parse it to store parameters
 	for the test programm.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ int nargs   :  Number of arguments
 	@ char **args : Arguments of main program
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	s_tparams*: Pointer to parameters
-   -----------------------------------------------------------------------------
+  
 */
 s_tparams* get_tpocket_args(int nargs, char **args)
 {
@@ -223,22 +223,22 @@ s_tparams* get_tpocket_args(int nargs, char **args)
 	return par;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	add_list_data
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Load a list of apo-complex-ligand file. This file should have the following
 	format:
 	apo_file complex_file ligan_file
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str_list_file : Path of the file containing all data
 	@ s_tparams *par      : Structures that stores all thoses files
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	int: Number of file read.
-   -----------------------------------------------------------------------------
+  
 */
 int add_list_data(char *str_list_file, s_tparams *par) 
 {
@@ -282,26 +282,26 @@ int add_list_data(char *str_list_file, s_tparams *par)
 	return nread ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	add_prot
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 	
 	Add a set of data to the list of set of data in the parameters. this function
 	is used for the tpocket program only.
 	
 	The function will try to open each file, and data will be stored only if the
 	two files exists, and if the name of the ligand is valid.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *apo     : The apo path
 	@ char *complex : The complex path
 	@ char *ligan   : The ligand resname: a 4 letter (max!) 
 	@ s_tparams *p  : The structure than contains parameters.
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	int: Flag: 1 = ok, 0 : ko
-   -----------------------------------------------------------------------------
+  
 */
 int add_prot(char *apo, char *complex, char *ligan, s_tparams *par) 
 {
@@ -352,20 +352,20 @@ int add_prot(char *apo, char *complex, char *ligan, s_tparams *par)
 	return 1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	parse_lig_neigh_dist
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 	
 	Parsing function for the distance criteria to find ligand neighbours.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *str    : The string to parse
 	@ s_fparams *p : The structure than will contain the parsed parameter
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	int: 0 if the parameter is valid (here a valid float), 1 if not
-   -----------------------------------------------------------------------------
+  
 */
 int parse_lig_neigh_dist(char *str, s_tparams *p) 
 {
@@ -380,19 +380,19 @@ int parse_lig_neigh_dist(char *str, s_tparams *p)
 	return 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_tparams
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free parameters
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES: 
 	@ s_tparams *p: Pointer to the structure to free
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void free_tparams(s_tparams *p)
 {
@@ -421,19 +421,19 @@ void free_tparams(s_tparams *p)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_test_usage
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Displaying usage of the programm in the given buffer
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f: buffer to print in
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
     void
-   -----------------------------------------------------------------------------
+  
 */
 void print_test_usage(FILE *f)
 {
@@ -441,19 +441,19 @@ void print_test_usage(FILE *f)
 	fprintf(f, M_TP_USAGE) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_params
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print function
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
    @ s_tparams *p : Pointer to parameters structure
    @ FILE *f      : Buffer to write in
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
-   -----------------------------------------------------------------------------
+  
 */
 void print_params(s_tparams *p, FILE *f)
 {

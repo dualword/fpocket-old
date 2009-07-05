@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -28,7 +28,7 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
-**/
+*/
 
 #ifndef DH_CLUSTER
 #define DH_CLUSTER

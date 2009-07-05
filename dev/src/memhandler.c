@@ -1,15 +1,15 @@
 
 #include "../headers/memhandler.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					memhandler.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	This file implements a memory handler. Whenever you call 
 ##	my_bloc_malloc function, the allocated pointer will be 
@@ -30,19 +30,19 @@
 ##	free a bloc allocated by my_(..), and if you call free_all at 
 ##	the end, a double free coprruption will occure.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -74,26 +74,27 @@
 **/
 
 
-/* Simple chained structures to store allocated pointers */
+/**< Pointer node of a chained list */
 
 typedef struct ptr_node 
 {
-	struct ptr_node *next ;
-	void *ptr ;
+	struct ptr_node *next ; /**< next pointer node*/
+	void *ptr ; /**< pointer to void*/
 
 } ptr_node ;
 
+/**< Simple chained structures to store allocated pointers */
 typedef struct
 {
-	ptr_node *first ;
-	ptr_node *last ;
+	ptr_node *first ;   /**< first pointer of the chained list*/
+	ptr_node *last ; /**< last pointer in the chained list*/
 
-	size_t n_ptr ;
+	size_t n_ptr ; /**< size of the chained list*/
 
 } ptr_lst ;
 
-/* A list containing all the allocated pointers. */
-static ptr_lst *ST_lst_alloc = NULL ;
+
+static ptr_lst *ST_lst_alloc = NULL ;/* A list containing all the allocated pointers. */
 #ifdef M_MEM_DEBUG
 static FILE *ST_fdebug = NULL ;
 #endif
@@ -103,19 +104,19 @@ static void add_bloc(void *bloc) ;
 static void remove_bloc(void *bloc) ;
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	my_malloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate memory for a bloc of size s.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ size_t s : Size of the bloc to allocate
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void *: Pointer to the allocated bloc
-   -----------------------------------------------------------------------------
+  
 */
 void* my_malloc(size_t s)
 {
@@ -134,20 +135,20 @@ void* my_malloc(size_t s)
 	return bloc ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	my_calloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate memory for nb bloc of size s using calloc standart function.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ size_t nb : Number of bloc to allocate
 	@ size_t s  : Size of the bloc to allocate
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void *: Pointer to the allocated bloc
-   -----------------------------------------------------------------------------
+  
 */
 void* my_calloc(size_t nb, size_t s)
 {
@@ -165,20 +166,20 @@ void* my_calloc(size_t nb, size_t s)
 	return bloc ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	my_realloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate memory for a bloc of size s using calloc standart function.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ size_t s : Size of the bloc to allocate
 	@ int exit : Whether we exit the programm if malloc fails.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void *: Pointer to the allocated bloc
-   -----------------------------------------------------------------------------
+  
 */
 void* my_realloc(void *ptr, size_t s)
 {
@@ -207,19 +208,19 @@ void* my_realloc(void *ptr, size_t s)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	ptr_node_alloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Allocate a simple chained node.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ void *ptr: Pointer
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	ptr_node*
-   -----------------------------------------------------------------------------
+  
 */
 static ptr_node* ptr_node_alloc(void *ptr)
 {
@@ -238,18 +239,18 @@ static ptr_node* ptr_node_alloc(void *ptr)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	my_free
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free memory for the given bloc, and remove this pointer from the list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ void *bloc: Pointer to free.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void my_free(void *bloc) 
 {
@@ -269,21 +270,21 @@ void my_free(void *bloc)
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static add_bloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Add an allocated pointer (bloc) to the list ST_lst_alloc. 
 
 	This function is supposed to be called by my_malloc, my_calloc or my_realloc 
 	functions only.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ void *bloc: The pointer to remove
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 static void add_bloc(void *bloc) 
 {	
@@ -323,21 +324,21 @@ static void add_bloc(void *bloc)
 	ST_lst_alloc->n_ptr += 1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static remove_bloc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Remove the given pointer (node) from the list ST_lst_alloc. Donc free the
 	memory.
 
 	This function is supposed to be called by my_free function and not another.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ void *bloc: The pointer to remove.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:	void
-   -----------------------------------------------------------------------------
+  
 */
 static void remove_bloc(void *bloc)
 {
@@ -396,18 +397,18 @@ static void remove_bloc(void *bloc)
 	#endif
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_all 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free all pointers allocated and present in the list ST_lst_alloc. If a
 	NULL pointer is found, ignore it.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:	void
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 	void
-   -----------------------------------------------------------------------------
+  
 */
 void free_all(void) 
 {
@@ -447,10 +448,10 @@ void free_all(void)
 #endif
 }
  
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	my_exit
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Before exiting the programm, just free all allocated pointers (if any). This
 	allows to exit the programme whenever one wants during the execution without
@@ -459,11 +460,11 @@ void free_all(void)
 	This implies to use my_malloc and my_free functions instead of standart
 	functions. Only memory blocs allocated with those functions will be freed
 	when my_exit is called.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:	void
-   -----------------------------------------------------------------------------
+  
    ## RETURN:	void
-   -----------------------------------------------------------------------------
+  
 */
 void my_exit(void) 
 {
@@ -472,17 +473,17 @@ void my_exit(void)
 	exit(1) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_ptr_lst 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print allocated pointers stored in ST_lst_alloc for debugging purpose.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:	void
-   -----------------------------------------------------------------------------
+  
    ## RETURN:	void
-   -----------------------------------------------------------------------------
+  
 */
 void print_ptr_lst(void) 
 {

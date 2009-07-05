@@ -1,15 +1,15 @@
 
 #include "../headers/atom.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					atom.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	This file should be used to deal with atoms. The corresponding
 ##	header contains a structure that define an atoms and its 
@@ -19,13 +19,13 @@
 ##	In this file one will find most of functions that deal with atoms
 ##	structures.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Merge with pertable.c
 ##	(v) Add a function to write all known atomic properties for a given atom type
@@ -35,7 +35,7 @@
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -66,21 +66,21 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_mass
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Calculate mass of a molecule represented by a list of atoms. (structure)
 	Perform a simple sum of atoms mass.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm *atoms : List of atoms structures
 	@ int natoms   : Number of atoms
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: mass of the molecule
-   -----------------------------------------------------------------------------
+  
 */
 float get_mol_mass(s_atm *latoms, int natoms)
 {
@@ -94,20 +94,20 @@ float get_mol_mass(s_atm *latoms, int natoms)
 	return mass ; 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_mass_ptr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Same as previous, but using different input type (array of pointers)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms : List of pointers to atom structures
 	@ int natoms    : Number of atoms
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: mass of the molecule
-   -----------------------------------------------------------------------------
+  
 */
 float get_mol_mass_ptr(s_atm **latoms, int natoms)
 {
@@ -121,22 +121,22 @@ float get_mol_mass_ptr(s_atm **latoms, int natoms)
 	return mass ; 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	set_mol_barycenter_ptr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Calculate the barycenter of a molecule represented by a list of atoms 
     pointers.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms	: List of pointers to atoms structures
 	@ int natoms	: Number of atoms
 	@ float bary[3]	: OUTPUT: Where to store the calculated barycenter
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void (the OUTPUT is set using the input parameter bary)
-   -----------------------------------------------------------------------------
+  
 */
 void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[3])
 {
@@ -158,22 +158,22 @@ void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[3])
 	bary[2] = xsum / natoms ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_mol_volume_ptr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Get an monte carlo approximation of the volume occupied by the atoms given 
 	in argument (list of pointers).
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **atoms : List of pointer to atoms
 	@ int natoms    : Number of atoms
 	@ int niter     : Number of monte carlo iteration to perform
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: calculated volume (approximation).
-   -----------------------------------------------------------------------------
+  
 */
 float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 {
@@ -238,21 +238,21 @@ float get_mol_volume_ptr(s_atm **atoms, int natoms, int niter)
 	return ((float)nb_in)/((float)niter)*vbox;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	is_in_lst_atm
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Says wether an atom of id atm_id is in a list of atoms or not 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **lst_atm :  List of atoms
     @ int nb_atms     : Number of atoms in the list
     @ int atm_id      : ID of the atom to look for.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the atom is in the tab, 0 if not
-   -----------------------------------------------------------------------------
+  
 */
 int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id) 
 {
@@ -265,23 +265,23 @@ int is_in_lst_atm(s_atm **lst_atm, int nb_atm, int atm_id)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	atm_corsp
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Calculate correspondance between two list of atoms, using the first list as
 	reference.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_atm **al1 : First list
 	@ int nal1    : Number of atoms of the first list
 	@ s_atm **al2 : Second list
 	@ int nal2    : Number of atoms of the second list
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: % of atoms of the first list present in the second list
-   -----------------------------------------------------------------------------
+  
 */
 float atm_corsp(s_atm **al1, int nal1, s_atm **al2, int nal2) 
 {
@@ -311,20 +311,20 @@ float atm_corsp(s_atm **al1, int nal1, s_atm **al2, int nal2)
 	return ((float)nb_atm_found)/((float)nal1)*100.0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	void print_atoms(FILE *f, s_atm *atoms, int natoms) 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Print list of atoms...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f      : File to write in.
 	@ s_atm *atoms : List of atoms
 	@ int natoms   : Number of atoms
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void print_atoms(FILE *f, s_atm *atoms, int natoms) 
 {

@@ -3,25 +3,25 @@
 
 /**
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					dparams.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	Handle parameters (parse the command line and sore values)
 ##	for the dpocket programm.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Comments UTD + relooking
 ##	27-11-08	(v)  Minor Relooking
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Check and update if necessary comments of each function!!
 ##	(v) Review the main function and handle all possible crashes.
@@ -60,18 +60,18 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	init_def_dparams
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Initialisation of default parameters.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES: void
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	s_dparams*: Pointer to allocated paramers.
-   -----------------------------------------------------------------------------
+  
 */
 s_dparams* init_def_dparams(void)
 {
@@ -94,21 +94,21 @@ s_dparams* init_def_dparams(void)
 	return par ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_dpocket_args
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function analyse the user's command line and parse it to store 
 	parameters for the descriptor calculator programm.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ int nargs   : Number of arguments
 	@ char **args : Arguments of main program
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_dparams*: Pointer to parameters
-   -----------------------------------------------------------------------------
+  
 */
 s_dparams* get_dpocket_args(int nargs, char **args)
 {
@@ -207,10 +207,10 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 	return par;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	add_list_complexes
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Load a list of protein-ligand pdb file path. This file should have the 
 	following format:
@@ -221,14 +221,14 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 	(...)
  
  	Each complexe-ligand set will be stored in the parameters structure.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ char *str_list_file : Path of the file containing all data
 	@ s_dparams *par      : Structures that stores all thoses files
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	int: Number of file read.
-   -----------------------------------------------------------------------------
+  
 */
 int add_list_complexes(char *str_list_file, s_dparams *par) 
 {
@@ -276,26 +276,26 @@ int add_list_complexes(char *str_list_file, s_dparams *par)
 	return nread ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	add_complexe
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 	
 	Add a set of data to the list of set of data in the parameters. this function
 	is used for the tpocket program only.
 	
 	The function will try to open the file, and data will be stored only if the
 	file exists, and if the name of the ligand is valid.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *apo     : The apo path
 	@ char *complex : The complex path
 	@ char *ligan   : The ligand resname: a 4 letter (max!) 
 	@ s_dparams *par: The structure than contains parameters.
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	int: 1 if everything is OK, 0 if not.
-   -----------------------------------------------------------------------------
+  
 */
 int add_complexe(char *complex, char *ligand, s_dparams *par) 
 {
@@ -336,21 +336,21 @@ int add_complexe(char *complex, char *ligand, s_dparams *par)
 	return 1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	parse_dist_crit
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 	
 	Parsing function for the distance criteria defining the protein-ligand 
 	interface.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *str    : The string to parse
 	@ s_dparams *p : The structure than will contain the parsed parameter
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	0 if the parameter is valid (here a valid integer), 1 if not
-   -----------------------------------------------------------------------------
+  
 */
 int parse_dist_crit(char *str, s_dparams *p) 
 {
@@ -365,20 +365,20 @@ int parse_dist_crit(char *str, s_dparams *p)
 	return 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_dparams
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Print function, usefull to debug
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_dparams *p : The structure than will contain the parsed parameter
 	@ FILE *f      : The file to write in
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
     void
-   -----------------------------------------------------------------------------
+  
 */
 void print_dparams(s_dparams *p, FILE *f)
 {
@@ -402,18 +402,18 @@ void print_dparams(s_dparams *p, FILE *f)
 	else fprintf(f, "> No parameters detected\n");
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	print_dparams_usage
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Displaying usage of the programm in the given buffer
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f: buffer to print in
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
-   -----------------------------------------------------------------------------
+  
 */
 void print_dpocket_usage(FILE *f)
 {
@@ -422,19 +422,19 @@ void print_dpocket_usage(FILE *f)
 	fprintf(f, M_DP_USAGE) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	free_params
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Free parameters
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES: 
 	@ s_dparams *p: Pointer to the structure to free
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void free_dparams(s_dparams *p)
 {

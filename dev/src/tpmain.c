@@ -1,27 +1,27 @@
  
 #include "../headers/tpmain.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					tpmain.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
-## ----- MODIFICATIONS HISTORY
+## SPECIFICATIONS
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v)  Comments OK
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -52,13 +52,13 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	int main(int argc, char *argv[])
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Main program for tpocket!
-   -----------------------------------------------------------------------------
+  
 */
 int main(int argc, char *argv[])
 {

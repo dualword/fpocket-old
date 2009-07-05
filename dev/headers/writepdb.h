@@ -1,5 +1,5 @@
  
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby

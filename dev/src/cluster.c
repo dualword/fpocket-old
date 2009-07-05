@@ -1,21 +1,21 @@
  
 #include "../headers/cluster.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					cluster.h
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	This file contains currently only one function, providing
 ##	a mutliple linkage clustering algorithm performed on a list
 ##	of pockets.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##      19-11-08        (p)  Extension of comments, change in multiple linkage clustering
 ##	28-11-08	(v)  Comments UTD + minor relooking
@@ -23,7 +23,7 @@
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Possible improvement:
 ##		Use the sorted structure to find neighbors in a more
@@ -35,7 +35,7 @@
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -64,27 +64,27 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
-**/
+*/
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION: 
 	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will apply a mutliple linkage clustering algorithm on the given
 	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
 	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
 	then merge the two pockets.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets  : The list of pockets
 	@ s_fparams *params       : Parameters of the program, including single  
 								linkage parameters
-   -----------------------------------------------------------------------------
+  
    ## RETURN: 
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 {
@@ -153,24 +153,24 @@ void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FONCTION:
 	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	This function will apply a mutliple linkage clustering algorithm on the given
 	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
 	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
 	then merge the two pockets.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets  : The list of pockets
 	@ s_fparams *params       : Parameters of the program, including single
 								linkage parameters
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void pck_ml_clust_test(c_lst_pockets *pockets, s_fparams *params)
 {

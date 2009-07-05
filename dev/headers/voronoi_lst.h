@@ -1,5 +1,5 @@
 
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -50,21 +50,21 @@
 
 /* -------------------------------STRUCTURES-------------------------------- */
 
-/* Chained list stuff for vertices in a pocket (to enable dynamic modifications) */
+/** Chained list stuff for vertices in a pocket (to enable dynamic modifications) */
 typedef struct node_vertice
 {
-	struct node_vertice *next;
-	struct node_vertice *prev;
-	s_vvertice *vertice ;
+	struct node_vertice *next;  /**<pointer to next node*/
+	struct node_vertice *prev;  /**< pointer to previous node*/
+	s_vvertice *vertice ; /**< pointer to current vertice*/
 
 } node_vertice ;
-
+/** Chained list stuff for vertices in a pocket (to enable dynamic modifications) */
 typedef struct c_lst_vertices
 {
-	struct node_vertice *first ;
-	struct node_vertice *last ;
-	struct node_vertice *current ;
-	size_t n_vertices ;
+	struct node_vertice *first ;    /**< pointer to first node*/
+	struct node_vertice *last ;     /**< pointer to last node */
+	struct node_vertice *current ;  /**< pointer to current node*/
+	size_t n_vertices ;     /**< number of vertices*/
 
 } c_lst_vertices ;
 

@@ -1,19 +1,19 @@
 #include "../headers/write_visu.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					write_visu.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			02-12-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##		Write output script to launch visualization of fpocket output using
 ##		pymol and VMD.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##  02-12-08    (v)  Comments UTD
 ##  29-11-08    (p)  Enhanced VMD output, corrected bug in pymol output
@@ -21,13 +21,13 @@
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ## (v) Handle system command failure
 ##
 */
 
- /**
+ /*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -58,19 +58,19 @@
 
 **/
  
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_visualization
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write visualization scripts for VMD and PyMol
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *pdb_name     : pdb code
 	@ char *pdb_out_name : name of the pdb output file
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 
 void write_visualization(char *pdb_name,char *pdb_out_name)
@@ -79,19 +79,19 @@ void write_visualization(char *pdb_name,char *pdb_out_name)
  	write_pymol(pdb_name,pdb_out_name);
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_vmd
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Write visualization script for VMD
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *pdb_name : pdb code
 	@ char *pdb_out_name : name of the pdb output file
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 
 
@@ -179,19 +179,19 @@ void write_vmd(char *pdb_name,char *pdb_out_name)
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_pymol
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	write visualization script for PyMol
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ char *pdb_name     : pdb code
 	@ char *pdb_out_name : name of the pdb output file
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void write_pymol(char *pdb_name,char *pdb_out_name)
 {

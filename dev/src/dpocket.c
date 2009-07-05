@@ -1,15 +1,15 @@
 
 #include "../headers/dpocket.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					dpocket.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	This file contains all main routines of the dpocket program.
 ##	Given a set of protein-ligand PDB file, those routines will
@@ -49,7 +49,7 @@
 ##	"dpout_fpocketp.txt"
 ##	"dpout_fpocketnp.txt"
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	06-03-09	(v)  Criteria 4, 5, 6 added to dpocket output
 ##	09-02-09	(v)  Maximum distance between two alpha sphere added
@@ -60,14 +60,14 @@
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##	(v) Clean the structure of the code... It could be done in a much better way
 
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -99,19 +99,19 @@
 **/
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	dpocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Dpocket main function. Simple loop is performed over all files.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_dparams *par: Parameters of the programm
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void dpocket(s_dparams *par)
 {
@@ -166,20 +166,20 @@ void dpocket(s_dparams *par)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
     desc_pocket
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	@ const char fcomplexe[] : File containing the PDB
 	@ const char ligname[]   : Ligand resname identifier
 	@ s_dparams *par         : Parameters
 	@ FILE *f[3]             : The 3 FILE * to write output in
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par, 
 				 FILE *f[3]) 
@@ -311,14 +311,14 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 	
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	get_explicit_desc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Determine the explicit pocket (see comments at the top of the file), and
 	calculate descriptors (and fill the input structure) 
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb_cplx_l     : The pdb structure
 	@ s_lst_vvertice *verts : The vertices found
@@ -327,11 +327,11 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 	@ s_dparams *par        : Parameters
 	@ int *nai              : OUTPUT Number of atom in the interface
 	@ s_desc *desc          : OUTPUT Descriptors
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_atm **: List of pointer to atoms defining the explicit pocket.
 	plus nai and desc are filled.
-   -----------------------------------------------------------------------------
+  
 */
 s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig, 
 						  int nal, s_dparams *par, int *nai, s_desc *desc)
@@ -381,13 +381,13 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 	return interface ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	write_pocket_desc
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
      Write pocket descriptors into a file.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
     @ const char fc[] : Name of the pdb file
 	@ const char l[]  : Resname of the ligand
@@ -395,10 +395,10 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 	@ float lv        : Ligand volume
 	@ float ovlp      : Overlap
 	@ FILE *f         : Buffer to write in
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
     void
-   -----------------------------------------------------------------------------
+  
 */
 void write_pocket_desc(const char fc[], const char l[], s_desc *d, float lv, 
 					   float ovlp, float dst, float c4, float c5, FILE *f)

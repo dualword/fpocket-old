@@ -1,29 +1,29 @@
 
 #include "../headers/voronoi.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					voronoi.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			02-12-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##  Functions dealing with input/output of qhull: we will send to qhull a set
 ##  of points (basically all atoms of the system), and qhull will send back all
 ##  voronoi vertices positions. Everything will then be parsed properly for
 ##  future use.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	21-02-08	(p)	 Adding support for proteins with hydrogens
 ##	01-01-08	(vp) Created (random date...)
 ##
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##  (v) Improve the reading of vertices. Better: include qhull algorithm in our
 ##		source code.
@@ -31,7 +31,7 @@
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -65,27 +65,27 @@
 static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
 						   int min_apol_neigh, float asph_min_size, float asph_max_size) ;
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	s_lst_vvertice
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Calculate voronoi vertices using an ensemble of atoms, and then load resulting
 	vertices into a s_lst_vvertice structure. The function call an external
 	programm qvoronoi, part of qhull programme which can be download at:
 		http://www.qhull.org/download/
 	or installed with apt-get install qhull-bin
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_pdb *pdb          : PDB informations
 	@ int min_apol_neigh  : Number of apolar neighbor of a vertice to be
 							considered as apolar
 	@ float asph_min_size : Minimum size of voronoi vertices to retain
 	@ float asph_max_size : Maximum size of voronoi vertices to retain
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	s_lst_vvertice * :The structure containing the list of vertices.
-   -----------------------------------------------------------------------------
+  
 */
 s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_size, float asph_max_size)
 {
@@ -160,10 +160,10 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 	return lvvert ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	fill_vertices
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_lst_vvertice *lvvert : The structure to fill
 	@ const char fpath[]     : File containing vertices
@@ -173,14 +173,14 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 							considered as apolar
 	@ float asph_min_size : Minimum size of voronoi vertices to retain
 	@ float asph_max_size : Maximum size of voronoi vertices to retain
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Fill structure given in argument (must have been allocated) using a file
 	containing vertice coordinates and neighbours using p i options of qhull.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
 						   int min_apol_neigh, float asph_min_size, float asph_max_size)
@@ -303,18 +303,18 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 	fclose(fvNb);
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	set_barycenter
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Set barycenter of a vertice using it's 4 contacting atoms.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ s_vvertice *v: The vertice
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void set_barycenter(s_vvertice *v)
 {
@@ -335,24 +335,24 @@ void set_barycenter(s_vvertice *v)
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	testVvertice
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Test if alpha sphere conditions are fulfilled for current vertice
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ float xyz[3]        : Coordinates of current vertice
 	@ int curNbIdx[4]     : Indexes of atomic neighbours of the current vertice
 	@ s_atm *atoms        : List of all atoms
 	@ float min_asph_size : Minimum size of alpha spheres.
 	@ float max_asph_size : Maximum size of alpha spheres.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float : -1 if conditions are not fulfilled, else the alpha sphere radius
 		    is returned.
-   -----------------------------------------------------------------------------
+  
 */
 float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 				   float min_asph_size, float max_asph_size,
@@ -392,19 +392,19 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 	return -1.0;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	print_vvertices
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Print function.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ FILE *f                : Buffer to print in
 	@ s_lst_vvertice *lvvert : Vertices to print
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void print_vvertices(FILE *f, s_lst_vvertice *lvvert)
 {
@@ -430,24 +430,24 @@ void print_vvertices(FILE *f, s_lst_vvertice *lvvert)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	get_verts_volume_ptr
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Get an monte carlo approximation of the volume occupied by the alpha spheres
 	given in argument (list of pointers)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ s_vvertice **verts: List of pointer to alpha spheres
 	@ int nvert: Number of spheres
 	@ int niter: Number of monte carlo iteration to perform
         @ float correct: radius for which the size of an alpha sphere should be 
           corrected in order to calculate the volume
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	float: volume.
-   -----------------------------------------------------------------------------
+  
 */
 float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter,float correct)
 {
@@ -512,18 +512,18 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter,float correc
 	return ((float)nb_in)/((float)niter)*vbox;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	free_vert_lst
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Free memory
-   -----------------------------------------------------------------------------
+  
    ## PARAMETERS:
 	@ s_lst_vvertice *lvvert : Data to free
-   -----------------------------------------------------------------------------
+  
    ## RETURN: void
-   -----------------------------------------------------------------------------
+  
 */
 void free_vert_lst(s_lst_vvertice *lvvert)
 {
@@ -548,18 +548,18 @@ void free_vert_lst(s_lst_vvertice *lvvert)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	is_in_lst_vert
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Says wether a vertice of id v_id is in a list of vertices or not
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the vertice is in the tab, 0 if not
-   -----------------------------------------------------------------------------
+  
 */
 int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 {
@@ -571,18 +571,18 @@ int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id)
 	return 0 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	is_in_lst_vert
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Says wether a vertice of id v_id is in a list of vertices or not
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the vertice is in the tab, 0 if not
-   -----------------------------------------------------------------------------
+  
 */
 int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert)
 {
@@ -593,30 +593,30 @@ int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert)
 
 	return 0 ;
 }
-/** -----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
+/**
+	--
+	--
 
 	OUTPUT FUNCTIONS
 
-	-----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
-	-----------------------------------------------------------------------------
+	--
+	--
+	--
 */
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	void write_pdb_vertice(FILE *f, s_vvertice *v)
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Write a voronoi vertice in pdb format.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f: file to write in
 	@ s_vvertice *v: The vertice
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void write_pdb_vert(FILE *f, s_vvertice *v)
 {
@@ -630,20 +630,20 @@ void write_pdb_vert(FILE *f, s_vvertice *v)
 								"Ve", -1);
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	write_pqr_vertice
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Write a voronoi vertice in pqr format.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ FILE *f       : file to write in
 	@ s_vvertice *v : The vertice
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void write_pqr_vert(FILE *f, s_vvertice *v)
 {

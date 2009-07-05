@@ -1,4 +1,4 @@
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -63,40 +63,39 @@
  * store them. In the src file, those statistics values are stored in a tab
  * using indices given here.
  **/
-#define M_NDDATA 16		/* Number of floating values */
-#define M_MAXPCT1 0		/* Maximum observed overlap for the criteria 1 */
-#define M_MAXPCT2 1		/* Maximum observed overlap for the criteria 2 */
-#define M_MINDST 2		/* Minimum distance observed (barycenter/ligand), crit 3 */
-#define M_CRIT4 3		/* Minimum distance observed (barycenter/ligand), crit 4 */
-#define M_CRIT5 4		/* Minimum distance observed (barycenter/ligand), crit 5 */
-#define M_CRIT6 5		/* Minimum distance observed (barycenter/ligand), crit 5 */
-#define M_OREL1 6		/* Relative overlap of the pocket found for criteria 1 */
-#define M_OREL2 7		/* Relative overlap of the pocket found for criteria 2 */
-#define M_OREL3 8		/* Relative overlap of the pocket found for criteria 3 */
-#define M_OREL4 9		/* Relative overlap of the pocket found for criteria 3 */
-#define M_OREL5 10		/* Relative overlap of the pocket found for criteria 3 */
-#define M_OREL6 11		/* Relative overlap of the pocket found for criteria 3 */
-#define M_LIGMASS 12		/* Mass of the ligand */
-#define M_LIGVOL 13		/* Volume of the ligand */
-#define M_POCKETVOL_C3 14       /* Volume of the pocket found by the 1st criteria*/
-#define M_POCKETVOL_C6 15       /* Volume of the pocket found by the 6th criteria*/
+#define M_NDDATA 16		/**< Number of floating values */
+#define M_MAXPCT1 0		/**< Maximum observed overlap for the criteria 1 */
+#define M_MAXPCT2 1		/**< Maximum observed overlap for the criteria 2 */
+#define M_MINDST 2		/**< Minimum distance observed (barycenter/ligand), crit 3 */
+#define M_CRIT4 3		/**< Minimum distance observed (barycenter/ligand), crit 4 */
+#define M_CRIT5 4		/**< Minimum distance observed (barycenter/ligand), crit 5 */
+#define M_CRIT6 5		/**< Minimum distance observed (barycenter/ligand), crit 5 */
+#define M_OREL1 6		/**< Relative overlap of the pocket found for criteria 1 */
+#define M_OREL2 7		/**< Relative overlap of the pocket found for criteria 2 */
+#define M_OREL3 8		/**< Relative overlap of the pocket found for criteria 3 */
+#define M_OREL4 9		/**< Relative overlap of the pocket found for criteria 3 */
+#define M_OREL5 10		/**< Relative overlap of the pocket found for criteria 3 */
+#define M_OREL6 11		/**< Relative overlap of the pocket found for criteria 3 */
+#define M_LIGMASS 12		/**< Mass of the ligand */
+#define M_LIGVOL 13		/**< Volume of the ligand */
+#define M_POCKETVOL_C3 14       /**< Volume of the pocket found by the 1st criteria*/
+#define M_POCKETVOL_C6 15       /**< Volume of the pocket found by the 6th criteria*/
 
-#define M_NIDATA 9		/* Number of interger values */
-#define M_NPOCKET 0		/* Total number of pocket found */
-#define M_POS1 1		/* Rank of the right pocket for the 1st criteria */
-#define M_POS2 2		/* Rank of the right pocket for the 2nd criteria */
-#define M_POS3 3		/* Rank of the right pocket for the 3rd criteria */
-#define M_POS4 4		/* Rank of the right pocket for the 4th criteria */
-#define M_POS5 5		/* Rank of the right pocket for the 5th criteria */
-#define M_POS6 6		/* Rank of the right pocket for the 6th criteria */
-#define M_NATM3 7		/* Rank of the right pocket for the 5th criteria */
-#define M_NATM6 8		/* Rank of the right pocket for the 6th criteria */
+#define M_NIDATA 9		/**< Number of interger values */
+#define M_NPOCKET 0		/**< Total number of pocket found */
+#define M_POS1 1		/**< Rank of the right pocket for the 1st criteria */
+#define M_POS2 2		/**< Rank of the right pocket for the 2nd criteria */
+#define M_POS3 3		/**< Rank of the right pocket for the 3rd criteria */
+#define M_POS4 4		/**< Rank of the right pocket for the 4th criteria */
+#define M_POS5 5		/**< Rank of the right pocket for the 5th criteria */
+#define M_POS6 6		/**< Rank of the right pocket for the 6th criteria */
+#define M_NATM3 7		/**< Rank of the right pocket for the 5th criteria */
+#define M_NATM6 8		/**< Rank of the right pocket for the 6th criteria */
 
-/* Flags used for the pocket detection */
-#define M_LIGNOTFOUND -2
-#define M_PDBOPENFAILED -1
-#define M_OK 0 
-#define M_NOPOCKETFOUND 1
+#define M_LIGNOTFOUND -2 /**< Flags used for the pocket detection */
+#define M_PDBOPENFAILED -1 /**< Flags used for the pocket detection */
+#define M_OK 0  /**< Flags used for the pocket detection */
+#define M_NOPOCKETFOUND 1 /**< Flags used for the pocket detection */
 
 /* ------------------------------SRUCTURES------------------------------------*/
 

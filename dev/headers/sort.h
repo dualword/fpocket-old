@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -62,8 +62,8 @@
 */
 typedef struct s_vect_elem 
 {
-	void *data ;	/* Pointer to data */
-	int type ;		/* Type of data (either s_atm or s_vvertice) */
+	void *data ;	/**< Pointer to data */
+	int type ;		/**< Type of data (either s_atm or s_vvertice) */
 
 } s_vect_elem ;
 
@@ -72,8 +72,8 @@ typedef struct s_vect_elem
 */
 typedef struct s_vsort
 {
-	s_vect_elem *xsort ;	/* Elements sorted by x coord */
-	int nelem ;				/* Number of elements */
+	s_vect_elem *xsort ;	/**< Elements sorted by x coord */
+	int nelem ;				/**< Number of elements */
 
 } s_vsort ;
 

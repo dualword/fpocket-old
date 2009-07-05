@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -45,8 +45,8 @@
 
 /* -------------------------------MACROS--------------------------------------*/
 
-#define M_EXIT 1
-#define M_CONTINUE 0
+#define M_EXIT 1    /**< exit flag*/
+#define M_CONTINUE 0 /**< continue flag */
 
 /* ------------------------- PUBLIC STRUCTURES ------------------------------ */
 

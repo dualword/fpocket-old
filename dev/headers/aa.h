@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -28,7 +28,7 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
-**/
+*/
 
 #ifndef DH_AA
 #define DH_AA
@@ -40,27 +40,27 @@
 
 /* ------------------------------MACROS---------------------------------------*/
 
-#define M_NB_AA 20
-#define M_ALA_IDX 0
-#define M_CYS_IDX 1
-#define M_ASP_IDX 2
-#define M_GLU_IDX 3
-#define M_PHE_IDX 4
-#define M_GLY_IDX 5
-#define M_HIS_IDX 6
-#define M_ILE_IDX 7
-#define M_LYS_IDX 8
-#define M_LEU_IDX 9
-#define M_MET_IDX 10
-#define M_ASN_IDX 11
-#define M_PRO_IDX 12
-#define M_GLN_IDX 13
-#define M_ARG_IDX 14
-#define M_SER_IDX 15
-#define M_THR_IDX 16
-#define M_VAL_IDX 17
-#define M_TRP_IDX 18
-#define M_TYR_IDX 19
+#define M_NB_AA 20  /**< number of amino acid macros*/
+#define M_ALA_IDX 0 /**< 0 for ALA*/
+#define M_CYS_IDX 1 /**< 1 for CYS*/
+#define M_ASP_IDX 2 /**< 2 for ASP*/
+#define M_GLU_IDX 3 /**< 3 for GLU*/
+#define M_PHE_IDX 4 /**< 4 for PHE*/
+#define M_GLY_IDX 5 /**< 5 for GLY*/
+#define M_HIS_IDX 6 /**< 6 for HIS*/
+#define M_ILE_IDX 7 /**< 7 for ILE*/
+#define M_LYS_IDX 8 /**< 8 for LYS*/
+#define M_LEU_IDX 9 /**< 9 for LEU*/
+#define M_MET_IDX 10 /**< 10 for MET*/
+#define M_ASN_IDX 11 /**< 11 for ASN*/
+#define M_PRO_IDX 12 /**< 12 for PRO*/
+#define M_GLN_IDX 13 /**< 13 for GLN*/
+#define M_ARG_IDX 14 /**< 14 for ARG*/
+#define M_SER_IDX 15 /**< 15 for SER*/
+#define M_THR_IDX 16 /**< 16 for THR*/
+#define M_VAL_IDX 17 /**< 17 for VAL*/
+#define M_TRP_IDX 18 /**< 18 for TRP*/
+#define M_TYR_IDX 19 /**< 19 for TYR*/
 
 /* --------------------------- PUBLIC STRUCTURES ------------------------------*/
 
@@ -69,15 +69,15 @@
 */
 typedef struct s_amino_a
 {
-	char name3[4] ;
-	char code ;
+	char name3[4] ; /**< name of the amino-acid (3 letter code)*/
+	char code ; /**< one letter code for the amino acid*/
 
-	float mw ;
-	float volume;
-	float hydrophobicity;
-	int charge,
-	 	polarity, 
-		func_grp ;
+	float mw ; /**< molecular weight of the amino acid*/
+	float volume; /**< volume score for each aa taken from http://www.info.univ-angers.fr/~gh/Idas/proprietes.htm*/
+	float hydrophobicity; /**< hydrophobicity score for each aa taken from Monera & al. Journal of Protein Science 1, 319-329 (1995)*/
+	int charge, /**< crude net charge of each amino acid in pH 7*/
+	 	polarity,  /**< polarity of each aa taken from http://www.info.univ-angers.fr/~gh/Idas/proprietes.htm*/
+		func_grp ; /**< funct. groups of each aa taken from http://www.info.univ-angers.fr/~gh/Idas/proprietes.htm*/
 
 } s_amino_a ;
 

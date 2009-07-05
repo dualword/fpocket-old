@@ -1,34 +1,34 @@
 #include "../headers/refine.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					refine.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			01-04-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ## This file defins several routines which refine the clustering algorithm
 ## used by fpocket. In particular, we merge pockets too closed from each other
 ## we drop small pockets, and we perform reindexation after those operations.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	09-02-09	(v)  Drop tiny pocket routine added
 ##	28-11-08	(v)  Comments UTD 
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ## (v) Improve and optimize the algorithm.
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -59,21 +59,21 @@
 
 **/
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	refinePockets
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Refine algorithm: will merge two pockets whose barycenters are
 	close together (distance criteria given in params).
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets.
 	@ s_fparams *params      : Parameters
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void refinePockets(c_lst_pockets *pockets, s_fparams *params)
 {
@@ -110,22 +110,22 @@ void refinePockets(c_lst_pockets *pockets, s_fparams *params)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	dropSmallNpolarPockets
-	-----------------------------------------------------------------------------
+	--
    ## SPECIFICATION:
 	Refine algorithm: will remove small pockets (depends on the corresponding
 	parameters in params), pockets containing less than NB apolar alpha spheres
 	(given in params)..
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets.
 	@ s_fparams *params      : Parameters
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 {
@@ -159,19 +159,19 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	drop_tiny
-	-----------------------------------------------------------------------------
+	--
    ## SPECIFICATION:
 	Drop really tiny pockets (< 5 alpha spheres)
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void drop_tiny(c_lst_pockets *pockets)
 {
@@ -190,20 +190,20 @@ void drop_tiny(c_lst_pockets *pockets)
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	reIndexPockets
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Reindex pockets, after dropping and merging operations on pockets and
 	recalculate barycentres in the same loop
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The list of pockets.
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	void
-   -----------------------------------------------------------------------------
+  
 */
 void reIndexPockets(c_lst_pockets *pockets)
 {

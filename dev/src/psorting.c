@@ -1,31 +1,31 @@
 
 #include "../headers/psorting.h"
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					psorting.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			28-11-08
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ## This file contains all function needed to sort pocket according to a given
 ## criteria.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	28-11-08	(v) Corresp renamed to ovlp
 ##	28-11-08	(v) Created + Comments UTD
 ##	
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 ##
 
 */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -64,10 +64,10 @@ static int pock_partition(c_lst_pockets *pockets, node_pocket **pocks,
 						  int start, int end, 
 						  int (*fcmp)(const node_pocket*, const node_pocket*));
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	sort_pockets 
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	Top function used to sort pockets. First we copy the chained list of 
 	pockets in a tab to make use of indices (for the quick sort algorithm),
@@ -76,13 +76,13 @@ static int pock_partition(c_lst_pockets *pockets, node_pocket **pocks,
 
 	Finally, the given chained list will be modified and sorted using the 
 	function given in argument.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets: The list of pockets that will be updated
 	@ int (*fcmp)(const node_pocket*, const node_pocket*): Comparison function
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 void sort_pockets(c_lst_pockets *pockets, 
 				  int (*fcmp)(const node_pocket*, const node_pocket*)) 
@@ -101,23 +101,23 @@ void sort_pockets(c_lst_pockets *pockets,
 	my_free(pocks) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static pock_qsort_rec
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION: 
 	This function will perform a recursive quick sort on the given tab, updating
 	the corresponding chained list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets that will be updated
 	@ node_pocket **pocks    : Tab that will be sorted
 	@ int start				 : start index of the sort
 	@ int end				 : end index of the sort
 	@ int (*fcmp)(const node_pocket*, const node_pocket*): Comparison function
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 static void pock_qsort_rec(c_lst_pockets *pockets, node_pocket **pocks, 
 						   int start, int end, 
@@ -132,10 +132,10 @@ static void pock_qsort_rec(c_lst_pockets *pockets, node_pocket **pocks,
 	}
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	static pock_partition
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Partition fuction used for the quicksort. The comparison between two pockets
 	is done with the function given in last argument. The pivot is chosen as the
@@ -144,16 +144,16 @@ static void pock_qsort_rec(c_lst_pockets *pockets, node_pocket **pocks,
 
 	The function is sorting a tab of pointer to the pockets, and will update the
 	corresponding chained list.
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ c_lst_pockets *pockets : The list of pockets that will be updated
 	@ node_pocket **pocks    : Tab that will be sorted
 	@ int start				 : start index of the sort
 	@ int end				 : end index of the sort
 	@ int (*fcmp)(const node_pocket*, const node_pocket*): Comparison function
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
-   -----------------------------------------------------------------------------
+  
 */
 static int pock_partition(c_lst_pockets *pockets, node_pocket **pocks, int start, int end, 
 							int (*fcmp)(const node_pocket*, const node_pocket*))
@@ -188,20 +188,20 @@ static int pock_partition(c_lst_pockets *pockets, node_pocket **pocks, int start
 	return(c) ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	compare_pockets_nasph
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Function comparing two pocket on there number of alpha spheres. 
 	Uses this for quicksort, or whatever you want...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const node_pocket *p1: Pocket 1
 	@ const node_pocket *p2: Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:. 
-   -----------------------------------------------------------------------------
+  
 */
 int compare_pockets_nasph(const node_pocket *p1, const node_pocket *p2) 
 {
@@ -210,21 +210,21 @@ int compare_pockets_nasph(const node_pocket *p1, const node_pocket *p2)
 }
 
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	compare_pockets_volume
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Function comparing two pocket on there volume. Uses this for quicksort, or
 	whatever you want...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const node_pocket *p1: Pocket 1
 	@ const node_pocket *p2: Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the volume of p2 is greater than the volume of p1, -1 else. 
-   -----------------------------------------------------------------------------
+  
 */
 int compare_pockets_volume(const node_pocket *p1, const node_pocket *p2) 
 {
@@ -232,21 +232,21 @@ int compare_pockets_volume(const node_pocket *p1, const node_pocket *p2)
 	else return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	compare_pockets_score
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Function comparing two pocket on there score. Uses this for quicksort, or
 	whatever you want...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const node_pocket *p1: Pocket 1
 	@ const node_pocket *p2: Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the score of p2 is greater than the score of p1, -1 else. 
-   -----------------------------------------------------------------------------
+  
 */
 int compare_pockets_score(const node_pocket *p1, const node_pocket *p2) 
 {
@@ -254,21 +254,21 @@ int compare_pockets_score(const node_pocket *p1, const node_pocket *p2)
 	else return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	compare_pockets_corresp
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Function comparing two pocket on there correspondance with the ligan (for the
 	test programm). Uses this for quicksort, orwhatever you want...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const node_pocket *p1: Pocket 1
 	@ const node_pocket *p2: Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the correspondance of p2 is greater than the correspondance of p1, -1 else. 
-   -----------------------------------------------------------------------------
+  
 */
 int compare_pockets_corresp(const node_pocket *p1, const node_pocket *p2) 
 {
@@ -276,22 +276,22 @@ int compare_pockets_corresp(const node_pocket *p1, const node_pocket *p2)
 	else return -1 ;
 }
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION: 
 	compare_pockets_vol_corresp
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Function comparing two pocket on there volume correspondance with the ligan 
 	(for the test programm). Uses this for quicksort, orwhatever you want...
-   -----------------------------------------------------------------------------
+  
    ## PARAMETRES:
 	@ const node_pocket *p1: Pocket 1
 	@ const node_pocket *p2: Pocket 2
-   -----------------------------------------------------------------------------
+  
    ## RETURN:
 	1 if the volume correspondance of p2 is greater than the volume  
 	correspondance of p1, -1 else. 
-   -----------------------------------------------------------------------------
+  
 */
 int compare_pockets_vol_corresp(const node_pocket *p1, const node_pocket *p2) 
 {

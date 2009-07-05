@@ -1,5 +1,5 @@
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -46,37 +46,37 @@
 
 // -------------------------- PUBLIC STRUCTURES ----------------------------- */
 
-/***
+/**
 	A structure for the modelisation of an atom
-**/
+*/
 typedef struct s_atm
 {
-    int sort_x;                 /* Index in the sorted tab by X coord */
+    int sort_x;                 /**< Index in the sorted tab by X coord */
 
-    float x, y, z ;		/* Coords */
-    char name[5],		/* Atom name */
-         type[7],		/* Atom type */
-         chain[2],		/* Chain name */
-         symbol[3],		/* Chemical symbol of the atom */
-         res_name[8];		/* Atom residue name */
+    float x, y, z ;		/**< Coords */
+    char name[5],		/**< Atom name */
+         type[7],		/**< Atom type */
+         chain[2],		/**< Chain name */
+         symbol[3],		/**< Chemical symbol of the atom */
+         res_name[8];		/**< Atom residue name */
 
-    int id,			/* Atom id */
-        seen,                   /* Say if we have seen this atom during a neighbor search */
-        res_id,			/* Atom residue ID */
+    int id,			/**< Atom id */
+        seen,                   /**< Say if we have seen this atom during a neighbor search */
+        res_id,			/**< Atom residue ID */
         atype,
-        charge ;		/* Atom charge */
+        charge ;		/**< Atom charge */
 
     /* Optional fields */
-    float mass,			// Mass */
-          radius,		// Vdw radius */
-          electroneg,		/* Electronegativity */
-          occupancy,		// Occupancy */
-          bfactor ;		// B-factor for christal structures */
+    float mass,			/**< Mass */
+          radius,		/**< Vdw radius */
+          electroneg,		/**< Electronegativity */
+          occupancy,		/**< Occupancy */
+          bfactor ;		/**< B-factor for christal structures */
 
-    char pdb_insert, 		/* PDB insertion code */
-         pdb_aloc;		/* PDB alternate location code */
+    char pdb_insert, 		/**< PDB insertion code */
+         pdb_aloc;		/**< PDB alternate location code */
 
-    int atomic_num ;   		/* Atomic number */
+    int atomic_num ;   		/**< Atomic number */
 
 } s_atm ;
 

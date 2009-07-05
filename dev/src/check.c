@@ -1,29 +1,29 @@
 
-/**
+/*
 
-## ----- GENERAL INFORMATION
+## GENERAL INFORMATION
 ##
 ## FILE 					check.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
 ## LAST MODIFIED			22-01-09
 ##
-## ----- SPECIFICATIONS
+## SPECIFICATIONS
 ##
 ##	Perform basic tests for fpocket.
 ##
-## ----- MODIFICATIONS HISTORY
+## MODIFICATIONS HISTORY
 ##
 ##	23-03-09	(v) No more test for qhull installation
 ##	17-03-09	(v) Additional test routines for pdb reading
 ##	22-01-09	(v) Created
 ##
-## ----- TODO or SUGGESTIONS
+## TODO or SUGGESTIONS
 ##
 
 */
 
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -52,17 +52,18 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
-**/
+*/
 
+/** TODO: finish documentation here.*/
 #include "../headers/check.h"
 
-/**-----------------------------------------------------------------------------
+/**
    ## FUNCTION:
 	int main(int argc, char *argv[])
-   -----------------------------------------------------------------------------
+  
    ## SPECIFICATION:
 	Main program for testing programm.
-   -----------------------------------------------------------------------------
+  
 */
 int main(void)
 {
@@ -93,6 +94,14 @@ int check_qhull(void)
 	return status ;
 }
 
+/**
+   ## FUNCTION:
+	int check_fpocket(void)
+
+   ## SPECIFICATION:
+        function to check fpocket correct functionality
+
+*/
 int check_fpocket (void)
 {
 	fprintf(stdout, "\n--> TESTING FPOCKET ALGORITHM <--\n") ;
@@ -151,6 +160,14 @@ int check_fpocket (void)
 	return nfail ;
 }
 
+/**
+   ## FUNCTION:
+	int check_fparams(void)
+
+   ## SPECIFICATION:
+        function to check fparams parsing
+
+*/
 int check_fparams(void)
 {
 	fprintf(stdout, "\n--> TESTING FPOCKET PARAMETERS <--\n") ;
@@ -267,6 +284,14 @@ int check_fparams(void)
 	return nfails ;
 }
 
+/**
+   ## FUNCTION:
+	int check_pdb_reader(void)
+
+   ## SPECIFICATION:
+        function to check pdb parser
+
+*/
 int check_pdb_reader(void)
 {
 	int nfails = 0 ;
@@ -302,6 +327,14 @@ int check_pdb_reader(void)
 	
 }
 
+/**
+   ## FUNCTION:
+	int test_pdb_line(void)
+
+   ## SPECIFICATION:
+        test pdb line parsing
+
+*/
 void test_pdb_line( char test_case[], const char entry[], int id, const char name[],
 					char aloc, char chain, int resid, char insert,
 					float x, float y, float z, float occ, float bfactor,
