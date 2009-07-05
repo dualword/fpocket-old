@@ -13,6 +13,7 @@ package jpocket.gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import jpocket.utils.Utils;
 
@@ -30,6 +31,14 @@ public class JPocketGUI extends javax.swing.JFrame
         updateComponents() ;
     }
 
+    private void updateComponents()
+    {
+        treeModel = new JProjectTreeModel();
+        projectsTree.setModel(treeModel.getModel());
+        projectsTree.repaint();
+        projectsTree.revalidate();
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -69,7 +78,7 @@ public class JPocketGUI extends javax.swing.JFrame
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("JPocket - Fpocket GUI");
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -206,6 +215,7 @@ public class JPocketGUI extends javax.swing.JFrame
 
         fileMenu.setText("File");
 
+        openProjectMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jpocket/ressources/icons/benzene.png"))); // NOI18N
         openProjectMenu.setText("Open projects");
         openProjectMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -326,11 +336,4 @@ public class JPocketGUI extends javax.swing.JFrame
     private javax.swing.JPanel viewerPanel;
     // End of variables declaration//GEN-END:variables
 
-    private void updateComponents()
-    {
-        treeModel = new JProjectTreeModel();
-        projectsTree.setModel(treeModel.getModel());
-        projectsTree.repaint();
-        projectsTree.revalidate();
-    }
 }

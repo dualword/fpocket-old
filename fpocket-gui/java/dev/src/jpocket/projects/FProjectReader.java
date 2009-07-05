@@ -31,7 +31,7 @@ public class FProjectReader
         projects = new ArrayList() ;
     }
 
-    public ArrayList<IFProject> readProjects() 
+    public ArrayList<IFProject> readProjects()
             throws JDOMException, IOException
     {
         projects = new ArrayList() ;
@@ -59,41 +59,38 @@ public class FProjectReader
             if(type.equals("PDB")) {
                 projectRoot = new DefaultMutableTreeNode(name) ;
 
-                System.out.println("Project: "+name);
                 readPDB(curProj, projectRoot) ;
-                
-                projects.add(new FPDBProject(xml, name, projectRoot)) ;
+                projects.add(new FPDBProject(xml, name, projectRoot) ) ;
             }
         }
 
         return projects ;
     }
 
-    private void readPDB(Element node, DefaultMutableTreeNode curNode)
+    private void readPDB(Element node, DefaultMutableTreeNode curTreeNode)
     {
-        DefaultMutableTreeNode newNode = null ;
+        DefaultMutableTreeNode newTreeNode = null ;
         List childrens = node.getChildren() ;
         Element cNode = null ;
         
         Iterator it = childrens.iterator() ;
         while(it.hasNext()) {
             cNode = (Element) it.next() ;
-            System.out.println("Element: "+cNode.getName()+" named "+cNode.getAttributeValue("name"));
 
             String nodeName = cNode.getName() ;
             if(nodeName.equals("CATEGORY")) {
-                newNode = new DefaultMutableTreeNode(cNode.getAttributeValue("name")) ;
-                System.out.println("Adding "+newNode.toString()+" to "+curNode.toString());
-                curNode.add(newNode) ;
+                newTreeNode = new DefaultMutableTreeNode(cNode.getAttributeValue("name")) ;
+                curTreeNode.add(newTreeNode) ;
 
-                readPDB(cNode, newNode) ;
+                readPDB(cNode, newTreeNode) ;
             }
             else if(nodeName.equals("PDB")) {
-                PDBFile pdb = new PDBFile(node.getAttributeValue("name"),
-                                          node.getAttributeValue("path"),
-                                          node.getAttributeValue("fpocketOutput")) ;
-                newNode = new DefaultMutableTreeNode(node.getAttributeValue("name")) ;
-                curNode.add(newNode) ;
+                PDBFile pdb = new PDBFile(cNode.getAttributeValue("name"),
+                                          cNode.getAttributeValue("path"),
+                                          cNode.getAttributeValue("fpocketOutput")) ;
+
+                newTreeNode = new DefaultMutableTreeNode(cNode.getAttributeValue("name")) ;
+                curTreeNode.add(newTreeNode) ;
                 
                 List ligands = cNode.getChildren() ;
                 DefaultMutableTreeNode ligNode = null ;
@@ -110,7 +107,7 @@ public class FProjectReader
                         ligNode = new DefaultMutableTreeNode(lig) ;
                         
                         pdb.addLigand(lig) ;
-                        newNode.add(ligNode);
+                        newTreeNode.add(ligNode);
                     }
                 }
             }

@@ -6,9 +6,7 @@
 package jpocket.projects;
 
 import java.util.List;
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -26,10 +24,8 @@ public class FPDBProject implements IFProject
         this.xmlFile = xmlFile;
         this.name = name;
 
-        if(arborescence == null) arborescence = new DefaultMutableTreeNode(name) ;
+        if(root == null) arborescence = new DefaultMutableTreeNode(name) ;
         else arborescence = root ;
-
-        System.out.println(arborescence.toString()) ;
     }
 
     public String getName() {
