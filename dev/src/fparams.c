@@ -169,7 +169,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 				if(strcmp("\n", cline) != 0) {
 					l = strlen(cline) ;
 					if(cline[l-1] == '\n') {
-						l ;
+						l-- ;
 						cline[l] = '\0' ;
 					}
 					char *line = (char *) my_malloc((l+1)*sizeof(char)) ;

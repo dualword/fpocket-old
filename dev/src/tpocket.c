@@ -247,7 +247,7 @@ void test_fpocket(s_tparams *par)
 				fprintf(fg, "  >%5.2f  :", ovlp[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"");
+		fprintf(fg,"--");
 		for( j = 0 ; j < novlp ; j++) {
 			fprintf(fg, "-") ;
 		}
@@ -285,7 +285,7 @@ void test_fpocket(s_tparams *par)
 		}
 
 		fprintf(fg,"\n");
-		fprintf(fg,"");
+		fprintf(fg,"---");
 
 		for( j = 0 ; j < novlp ; j++) {
 			fprintf(fg, "-") ;
@@ -322,7 +322,7 @@ void test_fpocket(s_tparams *par)
 				fprintf(fg, "  >%5.2f  :", ovlp2[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"");
+		fprintf(fg,"----");
 		for( j = 0 ; j < novlp2 ; j++) {
 			fprintf(fg, "-") ;
 		}
@@ -358,7 +358,7 @@ void test_fpocket(s_tparams *par)
 				fprintf(fg, "  >%5.2f  :", ovlp3[j]) ;
 		}
 		fprintf(fg,"\n");
-		fprintf(fg,"");
+		fprintf(fg,"----");
 		for( j = 0 ; j < novlp3 ; j++) {
 			fprintf(fg, "-") ;
 		}

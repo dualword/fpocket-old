@@ -201,7 +201,7 @@ tab_str* f_readl(const char *fpath, int nchar_max)
 		if(strcmp("\n", cline) != 0) {
 			n = strlen(cline) ;
 			if(cline[n-1] == '\n') {
-				n ;
+				n-- ;
 				cline[n] = '\0' ;
 			}
 			
