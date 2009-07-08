@@ -17,8 +17,9 @@ MANDIR  = /usr/local/man/man8/
 FPOCKET     = fpocket
 TPOCKET		= tpocket
 DPOCKET		= dpocket
+MDPOCKET	= mdpocket
 CHECK		= pcheck
-MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET)
+MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET) $(PATH_BIN)$(MDPOCKET)
 
 CC          = gcc
 CCQHULL	    = gcc
@@ -89,6 +90,17 @@ DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)write_visu.o \
 		$(PATH_OBJ)voronoi_lst.o $(QOBJS)
 
+MDPOBJ = $(PATH_OBJ)mdpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
+		$(PATH_OBJ)mdparams.o  $(PATH_OBJ)voronoi.o \
+		$(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o \
+		$(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o \
+		$(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o \
+		$(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o \
+		$(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o \
+		$(PATH_OBJ)fpocket.o $(PATH_OBJ)fpout.o $(PATH_OBJ)writepocket.o \
+		$(PATH_OBJ)write_visu.o \
+		$(PATH_OBJ)voronoi_lst.o $(QOBJS)
+
 #------------------------------------------------------------
 # GENERAL RULES FOR COMPILATION
 #------------------------------------------------------------
@@ -120,12 +132,16 @@ $(PATH_BIN)$(TPOCKET): $(TPOBJ) $(QOBJS)
 $(PATH_BIN)$(DPOCKET): $(DPOBJ) $(QOBJS)
 	$(LINKER) $(LFLAGS) $^ -o $@
 
+$(PATH_BIN)$(MDPOCKET): $(MDPOBJ) $(QOBJS)
+	$(LINKER) $(LFLAGS) $^ -o $@
+
 install:
 	mkdir -p $(BINDIR)
 	mkdir -p $(MANDIR)
 	cp $(PATH_BIN)$(FPOCKET) $(BINDIR)
 	cp $(PATH_BIN)$(TPOCKET) $(BINDIR)
 	cp $(PATH_BIN)$(DPOCKET) $(BINDIR)
+	cp $(PATH_BIN)$(MDPOCKET) $(BINDIR)
 	cp $(PATH_MAN)* $(MANDIR)
 
 check:
@@ -142,5 +158,6 @@ uninstall:
 	rm -f $(PATH_BIN)$(FPOCKET) $(BINDIR)$(FPOCKET)
 	rm -f $(PATH_BIN)$(TPOCKET) $(BINDIR)$(TPOCKET)
 	rm -f $(PATH_BIN)$(DPOCKET) $(BINDIR)$(DPOCKET)
+	rm -f $(PATH_BIN)$(MDPOCKET) $(BINDIR)$(MDPOCKET)
 	rm -f $(MANDIR)fpocket.8 $(MANDIR)tpocket.8 $(MANDIR)dpocket.8
 	
