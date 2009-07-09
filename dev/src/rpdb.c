@@ -376,7 +376,7 @@ void rpdb_extract_atm_resname(char *pdb_line, char *res_name)
 /* Residue name */
 	strncpy(res_name, pdb_line + 17, 4);
 	res_name[4] = '\0';
-	/*str_trim(res_name); */
+	str_trim(res_name); 
 }
 
 /**
