@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ROOT>
+    <PROJECT name="PDB Library 1 copy" type="PDB">
+        <LIBRARY name="Transferases">
+            <PDB type="PDB" name="2UZT" path="~/2UZT.pdb" fpocketOutput=""></PDB>
+            <PDB type="PDB" name="2UZU" path="~/2UZU.pdb" fpocketOutput=""></PDB>
+            <PDB type="PDB" name="2J9M" path="~/2J9M.pdb" fpocketOutput=""></PDB>
+            <PDB type="PDB" name="2UZV" path="~/2UZV.pdb" fpocketOutput=""></PDB>
+        </LIBRARY>
+        <LIBRARY name="Hydrolases">
+            <LIBRARY name="C1">
+                <PDB type="PDB" name="2VEU" path="~/2VEU.pdb" fpocketOutput=""></PDB>
+                <PDB type="PDB" name="2VEV" path="~/2VEV.pdb" fpocketOutput=""></PDB>
+            </LIBRARY>
+            <LIBRARY name="C2">
+                    <PDB type="PDB" name="2CMC" path="~/2CMC.pdb" fpocketOutput=""></PDB>
+            </LIBRARY>
+            <PDB type="PDB" name="2VEW" path="~/2UZU.pdb" fpocketOutput=""></PDB>
+        </LIBRARY>
+        <LIBRARY name="MetalBindingProteins">
+            <PDB type="PDB" name="1BOL" path="~/1BOL.pdb" fpocketOutput=""></PDB>
+            <PDB type="PDB" name="1B1G" path="~/1B1G.pdb" fpocketOutput=""></PDB>
+            <PDB type="PDB" name="1B1B" path="~/1B1B.pdb" fpocketOutput=""></PDB>
+        </LIBRARY>
+        <LIBRARY name="Other (empty)">
+        </LIBRARY>
+    </PROJECT>
+</ROOT>

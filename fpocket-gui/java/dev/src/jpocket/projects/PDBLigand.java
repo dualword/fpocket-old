@@ -9,18 +9,22 @@ package jpocket.projects;
  *
  * @author Administrateur
  */
-public class PDBLigand implements IFProjectObject
+public class PDBLigand implements IFMolecularObject
 {
     private PDBFile pdb ;
 
+    private boolean tpocket ;
+
     private String hetatmCode ;
     private String type ;
-    private boolean isDrug ;
 
-    public PDBLigand(String hetatmCode, String type, boolean isDrug) {
+    public PDBLigand(String hetatmCode, String type, PDBFile parent)
+    {
         this.hetatmCode = hetatmCode;
         this.type = type ;
-        this.isDrug = isDrug;
+
+        tpocket = false ;
+        this.pdb = parent ;
     }
 
     public String getType() {
@@ -39,14 +43,6 @@ public class PDBLigand implements IFProjectObject
         this.hetatmCode = hetatmCode;
     }
 
-    public boolean isIsDrug() {
-        return isDrug;
-    }
-
-    public void setIsDrug(boolean isDrug) {
-        this.isDrug = isDrug;
-    }
-
     public String getName() {
         return hetatmCode ;
     }
@@ -58,4 +54,25 @@ public class PDBLigand implements IFProjectObject
     public String getPDBFile() {
         return pdb.getFile() ;
     }
+
+    public String getPDBAtoms() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PDBFile getPdb() {
+        return pdb;
+    }
+
+    public void setPdb(PDBFile pdb) {
+        this.pdb = pdb;
+    }
+
+    public boolean isTpocket() {
+        return tpocket;
+    }
+
+    public void setTpocket(boolean tpocket) {
+        this.tpocket = tpocket;
+    }
+
 }

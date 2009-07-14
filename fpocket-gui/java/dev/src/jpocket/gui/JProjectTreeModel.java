@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import jpocket.projects.FProjectReader;
+import jpocket.projects.io.FProjectReader;
 import jpocket.projects.IFProject;
 
 /**

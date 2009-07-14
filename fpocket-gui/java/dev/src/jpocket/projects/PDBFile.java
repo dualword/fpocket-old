@@ -12,11 +12,12 @@ import java.util.List;
  *
  * @author Administrateur
  */
-public class PDBFile implements IFProjectObject
+public class PDBFile 
 {
     private String name ;
     private String file ;
     private String fpocketOutputPath ;
+    
     private List<PDBLigand> ligands ;
 
     public PDBFile(String name, String file) {

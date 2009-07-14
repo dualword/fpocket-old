@@ -11,15 +11,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
- * @author Administrateur
+ * @author Noé
  */
-public interface IFProject
+public interface IFLibrary
 {
     public String getName() ;
     public Date getCreationDate() ;
     public Date getLastModifiedDate() ;
     public String getDescription() ;
-    
+
     public List getPDBs() ;
     public int countPDBs() ;
 
