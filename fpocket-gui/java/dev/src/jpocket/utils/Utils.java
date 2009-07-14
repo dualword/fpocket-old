@@ -6,6 +6,7 @@
 package jpocket.utils;
 
 import java.awt.Component;
+import java.io.File;
 import javax.swing.JFileChooser;
 
 /**
@@ -13,10 +14,12 @@ import javax.swing.JFileChooser;
  * @author Administrateur
  */
 public class Utils {
-    public static String openFile(String s, String extension, Component parent)
+    public static String[] openFiles(String s, String extension, Component parent)
     {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle(s);
+        chooser.setMultiSelectionEnabled(true) ;
+
         ExampleFileFilter filter = new ExampleFileFilter();
         filter.addExtension(extension);
         filter.setDescription(extension);
@@ -24,11 +27,17 @@ public class Utils {
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(parent);
 
-        String result = null ;
-        if(returnVal == JFileChooser.APPROVE_OPTION)
-                result = chooser.getSelectedFile().getAbsolutePath();
+        String [] results = null ;
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            File[] files = chooser.getSelectedFiles();
+            results = new String[files.length] ;
 
-        return result;
+            for(int i = 0 ; i < results.length ; i++) {
+                results[i] = files[i].getAbsolutePath() ;
+            }
+        }
+
+        return results ;
     }
 
 }

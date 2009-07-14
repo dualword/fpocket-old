@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package jpocket.gui;
+package jpocket.gui.tree;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,18 +26,21 @@ public class JProjectTreeModel
     public JProjectTreeModel() {
         root = new DefaultMutableTreeNode("Fpocket projects") ;
         model = new DefaultTreeModel(root) ;
+        projects = new ArrayList<IFProject>() ;
     }
 
-    public JProjectTreeModel(String xml) {
+    public JProjectTreeModel(String [] xml) {
         this() ;
         
-        try {
-            updateModel(xml);
-        }
-        catch (Exception ex) {
-            root = new DefaultMutableTreeNode("ERROR") ;
-            model = new DefaultTreeModel(root);
-            ex.printStackTrace();
+        for(int i = 0 ; i < xml.length ; i++) {
+            try {
+                addProjects(xml[i]);
+            }
+            catch (Exception ex) {
+//                root = new DefaultMutableTreeNode("ERROR") ;
+//                model = new DefaultTreeModel(root);
+//                ex.printStackTrace();
+            }
         }
     }
 
@@ -49,19 +52,20 @@ public class JProjectTreeModel
         return projects ;
     }
 
-    public void updateModel(String xml)
+    public void addProjects(String xml)
         throws Exception
     {
-        root.removeAllChildren() ;
-        
         FProjectReader reader = new FProjectReader(xml) ;
-        
-        projects = reader.readProjects();
+        ArrayList<IFProject> newProjects = reader.readProjects();
 
-        Iterator it = projects.iterator() ;
+        Iterator it = newProjects.iterator() ;
         while(it.hasNext()) {
             IFProject project = (IFProject) it.next();
+            
             root.add(project.getArborescence());
+            projects.add(project) ;
+            
+            model.nodeStructureChanged(root) ;
         }
     }
 

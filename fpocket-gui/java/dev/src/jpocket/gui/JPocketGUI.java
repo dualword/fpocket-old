@@ -11,9 +11,10 @@
 
 package jpocket.gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import jpocket.gui.tree.JPocketProjectTree;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import javax.swing.JScrollPane;
 import jpocket.jmol.JMolPanel;
 import jpocket.utils.Utils;
 import org.openscience.jmol.app.JmolApp;
@@ -24,7 +25,7 @@ import org.openscience.jmol.app.JmolApp;
  */
 public class JPocketGUI extends javax.swing.JFrame
 {
-    private JProjectTreeModel treeModel ;
+    private JPocketProjectTree tree ;
 
     /** Creates new form JPocketGUI */
     public JPocketGUI() {
@@ -34,11 +35,14 @@ public class JPocketGUI extends javax.swing.JFrame
 
     private void updateComponents()
     {
-        treeModel = new JProjectTreeModel();
-        projectsTree.setCellRenderer(new JProjectTreeCellRenderer()) ;
-        projectsTree.setModel(treeModel.getModel());
-        projectsTree.repaint();
-        projectsTree.revalidate();
+        // Create the tree model
+        tree = new JPocketProjectTree() ;
+        tree.setPreferredSize(new Dimension(200, 300)) ;
+        
+        JScrollPane jsp = new JScrollPane(tree) ;
+        jsp.setViewportView(tree) ;
+        jsp.setPreferredSize(new Dimension(200, 300)) ;
+        treePanel.add(jsp, BorderLayout.CENTER) ;
 
         //viewerPanel.add(new JMolPanelSA()) ;
         JmolApp jmolApp = new JmolApp(new String[]{});
@@ -61,8 +65,6 @@ public class JPocketGUI extends javax.swing.JFrame
 
         jPanel1 = new javax.swing.JPanel();
         treePanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectsTree = new javax.swing.JTree();
         statusPanel = new javax.swing.JPanel();
         Status1 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
@@ -93,54 +95,7 @@ public class JPocketGUI extends javax.swing.JFrame
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("PDB library");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Transferases");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2UZT");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2UZU");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2J9M");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2UZV");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2UZW");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Hydrolases");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2VEU");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2VEV");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("2CMC");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Metal binding prot");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("1BOL");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("1B1G");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("1B1B");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        projectsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane1.setViewportView(projectsTree);
-
-        javax.swing.GroupLayout treePanelLayout = new javax.swing.GroupLayout(treePanel);
-        treePanel.setLayout(treePanelLayout);
-        treePanelLayout.setHorizontalGroup(
-            treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treePanelLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        treePanelLayout.setVerticalGroup(
-            treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
+        treePanel.setLayout(new java.awt.BorderLayout());
         jPanel1.add(treePanel, java.awt.BorderLayout.LINE_START);
 
         statusPanel.setLayout(new java.awt.BorderLayout());
@@ -176,7 +131,7 @@ public class JPocketGUI extends javax.swing.JFrame
         pocketsPanel.setLayout(pocketsPanelLayout);
         pocketsPanelLayout.setHorizontalGroup(
             pocketsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pocketsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+            .addComponent(pocketsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 814, Short.MAX_VALUE)
         );
         pocketsPanelLayout.setVerticalGroup(
             pocketsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +147,7 @@ public class JPocketGUI extends javax.swing.JFrame
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(viewerPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+                    .addComponent(viewerPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
                     .addComponent(pocketsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -201,7 +156,7 @@ public class JPocketGUI extends javax.swing.JFrame
             .addGroup(leftPanelLayout.createSequentialGroup()
                 .addComponent(pocketsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(viewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                .addComponent(viewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -275,30 +230,11 @@ public class JPocketGUI extends javax.swing.JFrame
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void openProjectMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openProjectMenuActionPerformed
-        String xml = Utils.openFile("Select XML project file", "XML", this) ;
-        try {
-            treeModel.updateModel(xml);
-            projectsTree.setModel(treeModel.getModel());
-            projectsTree.repaint();
-            projectsTree.revalidate();
-        }
-        catch (Exception ex) {
-            Logger.getLogger(JPocketGUI.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Error while loading XML file.\n"
-                                            +"Message:\n\n"+ex.getMessage());
+        String [] xml = Utils.openFiles("Select XML project file(s)", "XML", this) ;
+        for(int i = 0 ; i < xml.length ; i++) {
+            tree.addProjectsXML(xml[i]);
         }
     }//GEN-LAST:event_openProjectMenuActionPerformed
-
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new JPocketGUI().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Status1;
@@ -313,7 +249,6 @@ public class JPocketGUI extends javax.swing.JFrame
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel leftPanel;
@@ -322,7 +257,6 @@ public class JPocketGUI extends javax.swing.JFrame
     private javax.swing.JMenuItem pasteMenuItem;
     private javax.swing.JPanel pocketsPanel;
     private javax.swing.JScrollPane pocketsScrollPane;
-    private javax.swing.JTree projectsTree;
     private javax.swing.JMenu runMenu;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
@@ -330,5 +264,4 @@ public class JPocketGUI extends javax.swing.JFrame
     private javax.swing.JPanel treePanel;
     private javax.swing.JPanel viewerPanel;
     // End of variables declaration//GEN-END:variables
-
 }

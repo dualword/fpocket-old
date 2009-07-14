@@ -62,22 +62,25 @@ public class FProjectReader
 
             if(type.equals("PDB")) {
                 Date creation = null, modif = null ;
+
+                String strCreaton = cProj.getAttributeValue("creation_date") ;
+                String strModif   = cProj.getAttributeValue("modif_date") ;
                 try {
-                    creation = PDBLibrary.DFORMAT.parse(
-                                        cProj.getAttributeValue("creaton_date"));
-                    modif = PDBLibrary.DFORMAT.parse(
-                                        cProj.getAttributeValue("creaton_date")) ;
+                    if(strCreaton != null) 
+                        creation = PDBLibrary.DFORMAT.parse(strCreaton);
+
+                    if(strModif != null)
+                        modif = PDBLibrary.DFORMAT.parse(strModif) ;
 
                 } catch (ParseException ex) {
                     Logger.getLogger(FProjectReader.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-
                 project = new PDBProject(xml, name,
                                          cProj.getAttributeValue("description"),
                                          creation, modif, null) ;
 
-                projectRoot = new DefaultMutableTreeNode(name) ;
+                projectRoot = new DefaultMutableTreeNode(project) ;
 
                 project.setArborescence(projectRoot) ;
 
@@ -110,11 +113,15 @@ public class FProjectReader
             nodeName = cNode.getName() ;
             if(nodeName.equals("LIBRARY")) {
                 Date creation = null, modif = null ;
+
+                String strCreaton = cNode.getAttributeValue("creation_date") ;
+                String strModif   = cNode.getAttributeValue("modif_date") ;
                 try {
-                    creation = PDBLibrary.DFORMAT.parse(
-                                        cNode.getAttributeValue("creaton_date"));
-                    modif = PDBLibrary.DFORMAT.parse(
-                                        cNode.getAttributeValue("creaton_date")) ;
+                    if(strCreaton != null)
+                        creation = PDBLibrary.DFORMAT.parse(strCreaton);
+
+                    if(strModif != null)
+                        modif = PDBLibrary.DFORMAT.parse(strModif) ;
                     
                 } catch (ParseException ex) {
                     Logger.getLogger(FProjectReader.class.getName()).log(Level.SEVERE, null, ex);

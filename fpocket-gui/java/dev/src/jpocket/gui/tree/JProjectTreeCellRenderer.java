@@ -3,13 +3,15 @@
  * and open the template in the editor.
  */
 
-package jpocket.gui;
+package jpocket.gui.tree;
 
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import jpocket.projects.IFLibrary;
+import jpocket.projects.IFProject;
 import jpocket.projects.PDBFile;
 import jpocket.projects.PDBLigand;
 
@@ -34,12 +36,18 @@ public class JProjectTreeCellRenderer extends DefaultTreeCellRenderer
         super.getTreeCellRendererComponent( tree, value, sel,
                                             expanded, leaf, row,
                                             hasFocus);
-                                            System.out.println("    In Renderer?");
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value ;
         value = node.getUserObject() ;
 
-        if(value instanceof String) {
-            setText(value.toString());
+        if(value instanceof IFProject) {
+            IFProject project = (IFProject) value ;
+            setText(project.getName());
+            setToolTipText(project.getDescription());
+        }
+        else if(value instanceof IFLibrary) {
+            IFLibrary lib = (IFLibrary) value ;
+            setText(lib.getName());
+            setToolTipText(lib.getDescription());
         }
         else if(value instanceof PDBFile) {
             PDBFile pdb = (PDBFile) value ;
