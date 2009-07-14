@@ -13,9 +13,10 @@ package jpocket.gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import jpocket.jmol.JMolPanel;
 import jpocket.utils.Utils;
+import org.openscience.jmol.app.JmolApp;
 
 /**
  *
@@ -38,6 +39,15 @@ public class JPocketGUI extends javax.swing.JFrame
         projectsTree.setModel(treeModel.getModel());
         projectsTree.repaint();
         projectsTree.revalidate();
+
+        //viewerPanel.add(new JMolPanelSA()) ;
+        JmolApp jmolApp = new JmolApp(new String[]{});
+        String commandOptions = jmolApp.commandOptions ;
+        JMolPanel jmol = new JMolPanel(jmolApp, null, jmolApp.startupWidth,
+                                         jmolApp.startupHeight, commandOptions, null);
+        jmolApp.startViewer(jmol.viewer, null);
+
+        viewerPanel.add(jmol) ;
     }
     
     /** This method is called from within the constructor to
@@ -57,12 +67,11 @@ public class JPocketGUI extends javax.swing.JFrame
         Status1 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jSeparator1 = new javax.swing.JSeparator();
-        viewerPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        leftPanel = new javax.swing.JPanel();
+        pocketsPanel = new javax.swing.JPanel();
+        pocketsScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
+        viewerPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openProjectMenu = new javax.swing.JMenuItem();
@@ -79,6 +88,7 @@ public class JPocketGUI extends javax.swing.JFrame
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JPocket - Fpocket GUI");
 
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -127,7 +137,7 @@ public class JPocketGUI extends javax.swing.JFrame
             treePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -145,7 +155,7 @@ public class JPocketGUI extends javax.swing.JFrame
 
         jPanel1.add(statusPanel, java.awt.BorderLayout.PAGE_END);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Pockets"));
+        pocketsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pockets"));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -160,57 +170,42 @@ public class JPocketGUI extends javax.swing.JFrame
                 "Rank", "Score", "Nb. Alpha sphere", "Descriptor 1", "Descriptor 2", "Descriptor 3"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        pocketsScrollPane.setViewportView(jTable1);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+        javax.swing.GroupLayout pocketsPanelLayout = new javax.swing.GroupLayout(pocketsPanel);
+        pocketsPanel.setLayout(pocketsPanelLayout);
+        pocketsPanelLayout.setHorizontalGroup(
+            pocketsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pocketsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-        );
-
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Viewer"));
-        jPanel4.setLayout(new java.awt.BorderLayout());
-
-        jPanel5.setBackground(new java.awt.Color(0, 0, 0));
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 447, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 318, Short.MAX_VALUE)
+        pocketsPanelLayout.setVerticalGroup(
+            pocketsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pocketsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
-        jPanel4.add(jPanel5, java.awt.BorderLayout.CENTER);
+        viewerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Viewer"));
+        viewerPanel.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout viewerPanelLayout = new javax.swing.GroupLayout(viewerPanel);
-        viewerPanel.setLayout(viewerPanelLayout);
-        viewerPanelLayout.setHorizontalGroup(
-            viewerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, viewerPanelLayout.createSequentialGroup()
-                .addGroup(viewerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
+        leftPanel.setLayout(leftPanelLayout);
+        leftPanelLayout.setHorizontalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(viewerPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+                    .addComponent(pocketsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        viewerPanelLayout.setVerticalGroup(
-            viewerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(viewerPanelLayout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        leftPanelLayout.setVerticalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addComponent(pocketsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addComponent(viewerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel1.add(viewerPanel, java.awt.BorderLayout.CENTER);
+        jPanel1.add(leftPanel, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -317,17 +312,16 @@ public class JPocketGUI extends javax.swing.JFrame
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JPanel leftPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openProjectMenu;
     private javax.swing.JMenuItem pasteMenuItem;
+    private javax.swing.JPanel pocketsPanel;
+    private javax.swing.JScrollPane pocketsScrollPane;
     private javax.swing.JTree projectsTree;
     private javax.swing.JMenu runMenu;
     private javax.swing.JMenuItem saveAsMenuItem;

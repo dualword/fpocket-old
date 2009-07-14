@@ -12,5 +12,6 @@ package jpocket.projects;
 public interface IFProjectObject {
     public String getName() ;
     public String getType() ;
+    public String getPDBFile() ;
     public String getPDB() ;
 }

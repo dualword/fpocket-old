@@ -9,8 +9,10 @@ package jpocket.projects;
  *
  * @author Administrateur
  */
-public class PDBLigand {
-    
+public class PDBLigand implements IFProjectObject
+{
+    private PDBFile pdb ;
+
     private String hetatmCode ;
     private String type ;
     private boolean isDrug ;
@@ -43,5 +45,17 @@ public class PDBLigand {
 
     public void setIsDrug(boolean isDrug) {
         this.isDrug = isDrug;
+    }
+
+    public String getName() {
+        return hetatmCode ;
+    }
+
+    public String getPDB() {
+        return pdb.getName() ;
+    }
+
+    public String getPDBFile() {
+        return pdb.getFile() ;
     }
 }

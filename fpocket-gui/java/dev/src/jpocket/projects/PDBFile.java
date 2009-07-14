@@ -12,8 +12,8 @@ import java.util.List;
  *
  * @author Administrateur
  */
-public class PDBFile {
-
+public class PDBFile implements IFProjectObject
+{
     private String name ;
     private String file ;
     private String fpocketOutputPath ;
@@ -77,5 +77,17 @@ public class PDBFile {
         ligands.add(ligand) ;
     
         return ligand ;
+    }
+
+    public String getType() {
+        return "PDB" ;
+    }
+
+    public String getPDB() {
+        return this.name ;
+    }
+
+    public String getPDBFile() {
+        return this.file ;
     }
 }

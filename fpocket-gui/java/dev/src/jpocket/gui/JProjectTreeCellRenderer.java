@@ -7,8 +7,6 @@ package jpocket.gui;
 
 import java.awt.Component;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -45,7 +43,6 @@ public class JProjectTreeCellRenderer extends DefaultTreeCellRenderer
         }
         else if(value instanceof PDBFile) {
             PDBFile pdb = (PDBFile) value ;
-            System.out.println("PDB File to render: "+pdb.getName());
             if(pdb.getFpocketOutputPath() == null || pdb.getFpocketOutputPath().equals(""))
                  setIcon(PDBIcon) ;
             else setIcon(fpocketPDBIcon);
