@@ -29,10 +29,10 @@ LINKERQHULL = gcc
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
 CDEBUG		= -DMNO_MEM_DEBUG
-CWARN       = -Wall -O2 -Wextra -Wwrite-strings -Wstrict-prototypes
+CWARN       = -Wall -Wextra -Wwrite-strings -Wstrict-prototypes
 
-CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -pg -g -O2 #$(CGSL)
-QCFLAGS     = -O -ansi 
+CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -O4 -g -pg #$(CGSL)
+QCFLAGS     = -O -ansi
 
 LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas 
 LFLAGS	    = -fno-underscoring -lm 
@@ -55,7 +55,7 @@ CHOBJ = $(PATH_OBJ)check.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o \
 		$(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o \
 		$(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o \
-		$(PATH_OBJ)neighbor.o \
+		$(PATH_OBJ)neighbor.o $(PATH_OBJ)asa.o \
 		$(QOBJS)
 
 FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
@@ -65,7 +65,7 @@ FPOBJ = $(PATH_OBJ)fpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)fparams.o $(PATH_OBJ)pocket.o $(PATH_OBJ)refine.o \
 		$(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o $(PATH_OBJ)aa.o \
 		$(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o  $(PATH_OBJ)fpout.o \
-		$(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o \
+		$(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o $(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)asa.o \
 		$(QOBJS)
 
 TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
@@ -76,7 +76,7 @@ TPOBJ = $(PATH_OBJ)tpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)tpocket.o  $(PATH_OBJ)descriptors.o $(PATH_OBJ)cluster.o \
 		$(PATH_OBJ)aa.o $(PATH_OBJ)fpocket.o $(PATH_OBJ)write_visu.o \
 		$(PATH_OBJ)fpout.o $(PATH_OBJ)atom.o $(PATH_OBJ)writepocket.o \
-		$(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o \
+		$(PATH_OBJ)voronoi_lst.o $(PATH_OBJ)neighbor.o $(PATH_OBJ)asa.o\
 		$(QOBJS)
 
 DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
@@ -87,18 +87,18 @@ DPOBJ = $(PATH_OBJ)dpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o \
 		$(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o \
 		$(PATH_OBJ)fpocket.o $(PATH_OBJ)fpout.o $(PATH_OBJ)writepocket.o \
-		$(PATH_OBJ)write_visu.o \
+		$(PATH_OBJ)write_visu.o $(PATH_OBJ)asa.o\
 		$(PATH_OBJ)voronoi_lst.o $(QOBJS)
 
-MDPOBJ = $(PATH_OBJ)mdpmain.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
-		$(PATH_OBJ)mdparams.o  $(PATH_OBJ)voronoi.o \
+MDPOBJ = $(PATH_OBJ)mdpmain.o $(PATH_OBJ)mdpocket.o $(PATH_OBJ)mdpbase.o $(PATH_OBJ)mdpout.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
+		$(PATH_OBJ)mdparams.o $(PATH_OBJ)voronoi.o \
 		$(PATH_OBJ)sort.o  $(PATH_OBJ)rpdb.o $(PATH_OBJ)descriptors.o \
 		$(PATH_OBJ)neighbor.o $(PATH_OBJ)atom.o $(PATH_OBJ)aa.o \
 		$(PATH_OBJ)pertable.o $(PATH_OBJ)calc.o $(PATH_OBJ)utils.o \
 		$(PATH_OBJ)writepdb.o $(PATH_OBJ)memhandler.o $(PATH_OBJ)pocket.o \
 		$(PATH_OBJ)refine.o $(PATH_OBJ)cluster.o $(PATH_OBJ)fparams.o \
-		$(PATH_OBJ)fpocket.o $(PATH_OBJ)fpout.o $(PATH_OBJ)writepocket.o \
-		$(PATH_OBJ)write_visu.o \
+		$(PATH_OBJ)fpocket.o $(PATH_OBJ)fpout.o \
+		$(PATH_OBJ)writepocket.o $(PATH_OBJ)write_visu.o $(PATH_OBJ)asa.o \
 		$(PATH_OBJ)voronoi_lst.o $(QOBJS)
 
 #------------------------------------------------------------
