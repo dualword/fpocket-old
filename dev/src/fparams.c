@@ -91,7 +91,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 
 	s_fparams *par = init_def_fparams() ;
 	char *pdb_lst = NULL ;
-	
+
 	//read arguments by flags
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
@@ -141,7 +141,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 	}
 	
 	par->npdb = npdb ;
-	
+
 	/* Handle a file containing a list of PDB */
 	if(pdb_lst != NULL) {
 		FILE *f = fopen(pdb_lst, "r") ;
@@ -183,7 +183,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 			par->npdb = n ;
 		}
 	}
-	
+
 	return par;
 }
 

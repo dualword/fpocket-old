@@ -67,15 +67,13 @@
 */
 int main(int argc, char *argv[])
 {
-	s_mdparams *par = get_mdpocket_args(argc, argv) ;
-	//print_dparams(par, stdout) ;
+    s_mdparams *par = get_mdpocket_args(argc, argv) ;
+    print_mdparams(par, stdout) ;
+    if(par && par->fwantedpocket[0]==0) mdpocket_detect(par) ; /* run only pocket detection, 1st way of running mdpocket*/
+    else if(par) mdpocket_characterize(par);                    /* run pocket characterization 2nd way of running mdpocket*/
+    free_mdparams(par) ;
+    free_all() ;
 
-	//dpocket(par) ;
-
-	free_mdparams(par) ;
-
-  	free_all() ;
-
-	return 0 ;
+    return 0 ;
 }
 

@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
 
 	s_fparams *params = get_fpocket_args(argc, argv) ;
-	
+
 	/* If parameters parsing is ok */
 	if(params) {
 		if(params->pdb_lst != NULL) {
@@ -88,16 +88,17 @@ int main(int argc, char *argv[])
 				fflush(stdout) ;
                 process_pdb(params->pdb_lst[i], params) ;
             }
-		}
-		else {
-			if(params->pdb_path == NULL || strlen(params->pdb_path) <= 0) {
-				fprintf(stdout, "! Invalid pdb name given.\n");
-				print_pocket_usage(stdout) ;
-			}
-			else {
-				process_pdb(params->pdb_path, params) ;
-			}
-		}
+        }
+        else {
+                if(params->pdb_path == NULL || strlen(params->pdb_path) <= 0) {
+                        fprintf(stdout, "! Invalid pdb name given.\n");
+                        print_pocket_usage(stdout) ;
+                }
+                else {
+                
+                        process_pdb(params->pdb_path, params) ;
+                }
+        }
 	
 		free_fparams(params) ;
 	}
@@ -149,6 +150,7 @@ void process_pdb(char *pdbname, s_fparams *params)
 				write_out_fpocket(pockets, pdb, pdbname);
 				c_lst_pocket_free(pockets) ;
 			}
+                        fclose(pdb->fpdb);
 	}
 	else fprintf(stderr, "! PDB reading failed!\n");
 }

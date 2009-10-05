@@ -189,6 +189,54 @@ void write_pockets_single_pqr(const char out[], c_lst_pockets *pockets)
 	}
 }
 
+
+/**
+   ## FUNCTION:
+	write_mdpockets_concat_pqr
+
+   ## SPECIFICATION:
+	Write only pockets (alpha sphere) given in argument in the pqr format.
+
+	!! No atoms writen here, only all pockets in a single pqr file.
+
+   ## PARAMETRES:
+	@ File *f       : File handle for the output file
+	@ c_lst_pockets *pockets : List of pockets
+
+   ## RETURN:
+
+*/
+void write_mdpockets_concat_pqr(FILE *f, c_lst_pockets *pockets)
+{
+	node_pocket *nextPocket ;
+	node_vertice *nextVertice ;
+
+	if(f) {
+
+		if(pockets){
+			pockets->current = pockets->first ;
+
+			while(pockets->current){
+				pockets->current->pocket->v_lst->current = pockets->current->pocket->v_lst->first ;
+
+				while(pockets->current->pocket->v_lst->current){
+					write_pqr_vert(f, pockets->current->pocket->v_lst->current->vertice) ;
+
+					nextVertice = pockets->current->pocket->v_lst->current->next;
+					pockets->current->pocket->v_lst->current = nextVertice;
+				}
+
+				nextPocket=pockets->current->next;
+				pockets->current=nextPocket;
+			}
+		}
+	}
+	else {
+		fprintf(stderr, "! The pqr concat output file is not open!\n");
+	}
+}
+
+
 /**
    ## FUNCTION:
 	write_each_pocket

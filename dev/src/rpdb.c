@@ -763,9 +763,9 @@ void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig)
 	}
 
        
-        if(guess_flag>0) {
+        /*if(guess_flag>0) {
             fprintf(stderr, ">! Warning: You did not provide a standard PDB file.\nElements were guessed by fpocket, because not provided in the PDB file. \nThere is no guarantee on the results!\n");
-        }
+        }*/
         
 	if(ligan && keep_lig && (ligfound == 0 || pdb->natm_lig <= 0)) {
 		fprintf(stderr, ">! Warning: ligand '%s' not found in the pdb...\n", ligan) ;
@@ -805,6 +805,7 @@ void free_pdb_atoms(s_pdb *pdb)
 			my_free(pdb->lhetatm) ;
 			pdb->lhetatm = NULL ;		
 		}
+
 		if(pdb->latoms) {
 			my_free(pdb->latoms) ;
 			pdb->latoms = NULL ;

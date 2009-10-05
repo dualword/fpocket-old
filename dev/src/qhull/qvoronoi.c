@@ -262,7 +262,7 @@ Except for 'F.' and 'PG', upper-case options take an argument.\n\
 
 
 int run_qvoronoi(FILE *fin,FILE *fout) {
-  int curlong, totlong; /* used !qh_NOmem */
+  int curlong, i,totlong; /* used !qh_NOmem */
   int exitcode, numpoints, dim;
   coordT *points;
   boolT ismalloc;

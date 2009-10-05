@@ -42,7 +42,7 @@
 #include <ctype.h>
 
 #include "mdparams.h"
-//#include "dpocket.h"
+#include "mdpocket.h"
 #include "memhandler.h"
 
 // -------------------------------PROTOTYPES--------------------------------- */

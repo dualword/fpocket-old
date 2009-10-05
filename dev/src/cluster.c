@@ -1,4 +1,4 @@
- 
+
 #include "../headers/cluster.h"
 
 /*
@@ -22,7 +22,7 @@
 ##	11-05-08	(v)  singleLinkageClustering -> pck_sl_clust
 ##	01-04-08	(v)  Added comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
-##	
+##
 ## TODO or SUGGESTIONS
 ##
 ##	(v) Possible improvement:
@@ -67,24 +67,224 @@
 */
 
 
+void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
+{
+	node_pocket *pcur = NULL,
+				*pnext = NULL ,
+				*curMobilePocket = NULL ;
+
+	node_vertice *vcur = NULL ;
+	node_vertice *curMobileVertice = NULL ;
+
+	s_vvertice *vvcur = NULL,
+			   *mvvcur = NULL ;
+	float vcurx,
+		  vcury,
+		  vcurz ;
+        float curdist;
+        float curasphdens,dens1,dens2;
+        float **dmat;   /*distance matrix*/
+        size_t i,j;
+        dmat=(float **)malloc(sizeof(float *)*pockets->n_pockets);
+        for(i=0;i<pockets->n_pockets;i++) {
+            dmat[i]=(float *) malloc(sizeof(float)*pockets->n_pockets);
+            for(j=0;j<pockets->n_pockets;j++) dmat[i][j]=0.0;
+        }
+
+	/* Flag to know if two clusters are next to each other by single linkage
+	 * clustering...or not */
+	int nflag ;
+
+	if(!pockets) {
+		fprintf(stderr, "! Incorrect argument during Multiple Linkage Clustering.\n") ;
+		return ;
+	}
+
+	/* Set the first pocket */
+        set_pockets_descriptors(pockets,params->nb_mcv_iter,pdb);
+	pcur = pockets->first ;
+        //fprintf(stdout,"\nHaving %d comparisons\n",pockets->n_pockets*pockets->n_pockets);
+        i=0;
+        size_t n_slist=0;
+	while(pcur) {
+            j=i+1;
+		/* Set the second pocket */
+		curMobilePocket = pcur->next ;
+		while(curMobilePocket) {
+                        curdist=0.0;
+
+			nflag = 0 ;
+			/* Set the first vertice/alpha sphere center of the first pocket */
+			vcur = pcur->pocket->v_lst->first ;
+			while(vcur){
+				/* Set the first vertice/alpha sphere center of the second pocket */
+				curMobileVertice = curMobilePocket->pocket->v_lst->first ;
+				vvcur = vcur->vertice ;
+				vcurx = vvcur->x ;
+				vcury = vvcur->y ;
+				vcurz = vvcur->z ;
+
+				/* Double loop for vertices -> if not near */
+				while(curMobileVertice){
+					mvvcur = curMobileVertice->vertice ;
+                                        if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z)<params->sl_clust_max_dist) curdist-=1.0;
+					curMobileVertice = curMobileVertice->next;
+				}
+				vcur = vcur->next ;
+			}
+
+			pnext =  curMobilePocket->next ;
+			/* If the distance flag has counted enough occurences of near neighbours, merge pockets*/
+				/* If they are next to each other, merge them */
+				//mergePockets(pcur,curMobilePocket,pockets);
+                        //fprintf(stdout,"\ni %d j %d\n",i,j),
+
+                        dens1=pcur->pocket->pdesc->as_density;
+                        dens1=((isnan(dens1)) ? 0.0 : dens1);
+
+                        dens2=curMobilePocket->pocket->pdesc->as_density;
+                        dens2=((isnan(dens2)) ? 0.0 : dens2);
+                        curasphdens=0.01*(dens1-dens2)*(dens1-dens2);
+                        curasphdens+=(exp(0.1*dens1)+exp(0.1*dens2))/2.0-1.0;
+                        //curasphdens=0.0;
+                        dmat[i][j]=curdist;
+                        dmat[j][i]=curdist;
+                        curMobilePocket = pnext ;
+                        n_slist++;
+                        j++;
+                }
+		pcur = pcur->next ;
+                i++;
+	}
+
+        /* Now we have to merge nearby pockets without loosing track*/
+
+        /*create a chained list with track on */
+        n_slist=((pockets->n_pockets*pockets->n_pockets)-pockets->n_pockets)/2;
+        s_sorted_pocket_list *slist=NULL;
+        slist=(s_sorted_pocket_list *)my_malloc(sizeof(s_sorted_pocket_list)*n_slist);
+        //s_sorted_pocket_list slist[n_slist];
+        for(i=0;i<n_slist;i++) slist[i].dist=0.0;
+        //for(i=0;i<n_slist;i++)slist[i]=(s_sorted_pocket_list *)my_malloc(sizeof(s_sorted_pocket_list));
+        s_sorted_pocket_list *el=my_malloc(sizeof(s_sorted_pocket_list));
+        //pcur=pockets->first;
+
+        int c=0;
+        for(i=0;i<pockets->n_pockets-1;i++){
+            //curMobilePocket=pcur->next;
+            for(j=i+1;j<pockets->n_pockets;j++){
+
+                el->dist=dmat[i][j];
+                memcpy(&(slist[c].dist),&(dmat[i][j]),sizeof(float));
+                //slist[i+j-1].dist=dmat[i][j];
+                slist[c].pid1=i;
+                slist[c].pid2=j;
+                //if(i==173 && j==299)fprintf(stdout,"\ncurdist %d %d %f %f\n",j+i-1, n_slist,dmat[i][j], slist[j+i-1].dist);
+                //fprintf(stdout,"%f %d %d\n",slist[c].dist,slist[c].pid1,slist[c].pid2);
+                c++;
+            }
+            pcur=pcur->next;
+        }
+        //for(i=0;i<n_slist;i++) if(slist[i].dist<-480.0)fprintf(stdout,"%f %d %d\n",slist[i].dist,slist[i].pid1,slist[i].pid2);
+        //fflush(stdout);
+        qsort((void *)slist,n_slist,sizeof(s_sorted_pocket_list),comp_pocket);
+
+        //for(i=0;i<n_slist;i++) fprintf(stdout,"%f %d %d\n",slist[i].dist,slist[i].pid1,slist[i].pid2);
+        /*TODO : debug here there are still some neighbours with nan pid's after the qsort*/
+        i=0;
+
+        /*create a tmp pocket list for updating pointers*/
+        node_pocket **pock_list=my_malloc(sizeof(node_pocket *)*pockets->n_pockets);
+        pcur=pockets->first;
+        i=0;
+        /*get a list of pointers to nodes*/
+        while(pcur) {
+            pock_list[i]=pcur;
+            pcur=pcur->next;
+            i++;
+        }
+
+        int idx1,idx2;
+        node_pocket *p1,*p2;
+        i=0;
+        size_t init_n_pockets=pockets->n_pockets;
+
+        while((slist[i].dist<=-params->sl_clust_min_nneigh) && (i<n_slist)){
+            /*for all nearby pockets merge*/
+            //fprintf(stdout,"%f\n",slist[i].dist);
+            idx1=slist[i].pid1;
+            idx2=slist[i].pid2;
+
+            /*fprintf(stdout,"%d %d\n",idx1,idx2);
+            fflush(stdout);*/
+            if(pock_list[idx1]!=pock_list[idx2]){
+                p1=*(pock_list+idx1);
+                p2=*(pock_list+idx2);
+                dens1=((isnan(p1->pocket->pdesc->as_density)) ? 0.0 : p1->pocket->pdesc->as_density)/p1->pocket->pdesc->nb_asph;
+                dens2=((isnan(p2->pocket->pdesc->as_density)) ? 0.0 : p2->pocket->pdesc->as_density)/p2->pocket->pdesc->nb_asph;
+                //printf("%f vs %f\n",dens1/p1->pocket->pdesc->nb_asph, dens2/p1->pocket->pdesc->nb_asph);
+                if(dens1 < 0.1 && dens2 < 0.1){
+                    for(j=0;j<init_n_pockets;j++){
+                        if(pock_list[j]==p2){ //j!=idx2 &&
+                            pock_list[j]=p1;
+                            //fprintf(stdout,"update %d to %d\n",j, idx1);
+                        }
+                    }
+
+                    mergePockets(p1,p2,pockets);
+                    pock_list[idx2]=p1;
+                }
+            }
+            i++;
+        }
+
+        //for(i=0;i<pockets->n_pockets-1;i++){
+            //fprintf(stdout,"dist %d vs %d = %f\n",slist[i].p1->pocket->rank,slist[i].p2->pocket->rank,slist[i].dist);
+        //}
+
+        /*free dmat*/
+        for(i=0;i<pockets->n_pockets;i++) free(dmat[i]);
+        free(dmat);
+
+}
+
+
+
+
+int comp_pocket(const void *el1, const void *el2)
+{
+
+    s_sorted_pocket_list *ia = (s_sorted_pocket_list *)el1;
+    s_sorted_pocket_list *ib = (s_sorted_pocket_list *)el2;
+
+    //if (ia->dist<0.0)printf("dist %f\n",((s_sorted_pocket_list *)el1)->dist);
+  if (ia->dist <  ib->dist) return -1;
+  if (ia->dist == ib->dist) return  0;
+  if (ia->dist >  ib->dist) return  1;
+    return 0;
+}
+
+
+
+
 /**
-   ## FONCTION: 
+   ## FONCTION:
 	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
-  
-   ## SPECIFICATION: 
+
+   ## SPECIFICATION:
 	This function will apply a mutliple linkage clustering algorithm on the given
 	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
 	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
 	then merge the two pockets.
-  
+
    ## PARAMETRES:
 	@ c_lst_pockets *pockets  : The list of pockets
-	@ s_fparams *params       : Parameters of the program, including single  
+	@ s_fparams *params       : Parameters of the program, including single
 								linkage parameters
-  
-   ## RETURN: 
+
+   ## RETURN:
 	void
-  
+
 */
 void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 {
@@ -100,11 +300,11 @@ void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 	float vcurx,
 		  vcury,
 		  vcurz ;
-	
-	/* Flag to know if two clusters are next to each other by single linkage 
+
+	/* Flag to know if two clusters are next to each other by single linkage
 	 * clustering...or not */
 	int nflag ;
-	
+
 	if(!pockets) {
 		fprintf(stderr, "! Incorrect argument during Single Linkage Clustering.\n") ;
 		return ;
@@ -156,21 +356,21 @@ void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
 /**
    ## FONCTION:
 	void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params)
-  
+
    ## SPECIFICATION:
 	This function will apply a mutliple linkage clustering algorithm on the given
 	list of pockets. Considering two pockets, if params->ml_clust_min_nneigh
 	alpha spheres are separated by a distance lower than params->ml_clust_max_dist,
 	then merge the two pockets.
-  
+
    ## PARAMETRES:
 	@ c_lst_pockets *pockets  : The list of pockets
 	@ s_fparams *params       : Parameters of the program, including single
 								linkage parameters
-  
+
    ## RETURN:
 	void
-  
+
 */
 void pck_ml_clust_test(c_lst_pockets *pockets, s_fparams *params)
 {
@@ -250,3 +450,5 @@ void pck_ml_clust_test(c_lst_pockets *pockets, s_fparams *params)
 	}
 	printf("ML ending\n") ;
 }
+
+

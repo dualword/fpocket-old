@@ -98,6 +98,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh, 
 												params->asph_min_size, 
 												params->asph_max_size) ;
+
 /*
 	et = time(NULL) ;
  	fprintf(stdout, "> Vertices successfully calculated in apox. %f sec.\n",
@@ -113,6 +114,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 
 		b = clock() ;
 */
+                    			
 	pockets = clusterPockets(lvert, params);
 
 	if(pockets) {
@@ -142,7 +144,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 /*
 		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
 */
-		pck_ml_clust(pockets, params);	/* Single Linkage Clustering */
+		pck_final_clust(pockets, params,pdb);	/* Single Linkage Clustering */
 		reIndexPockets(pockets) ;
 
 	/* Descriptors calculation */
@@ -150,7 +152,8 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		fprintf(stdout,"> Calculating descriptors and score...\n");
 		b = clock() ;
 */
-		set_pockets_descriptors(pockets,params->nb_mcv_iter);
+                
+		set_pockets_descriptors(pockets,params->nb_mcv_iter,pdb);
 /*
 		e = clock() ;
 		fprintf(stdout, "> Descriptors found in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;

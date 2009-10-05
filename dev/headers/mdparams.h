@@ -51,36 +51,37 @@
 
 
 /* Options of the test program */
-#define M_DPAR_INTERFACE_METHOD1 'e'
-#define M_DPAR_INTERFACE_METHOD2 'E'
-#define M_DPAR_DISTANCE_CRITERIA 'd'
-#define M_DPAR_INPUT_FILE 'f'
-#define M_DPAR_OUTPUT_FILE 'o'
+#define M_MDPAR_INPUT_FILE 'L'
+#define M_MDPAR_INPUT_FILE2 'f'
+#define M_MDPAR_OUTPUT_FILE 'o'
 
-/* Two way of defining the interface: */
-/* 1 - Get atoms ocontacted by vertices within M_VERT_LIG_NEIG_DIST of the ligand. */
-/* 2 - Just get atoms within M_LIG_NEIG_DIST of the ligand, based on each ligand atom. */
-#define M_INTERFACE_METHOD1 1
-#define M_VERT_LIG_NEIG_DIST 4.0
 
-#define M_INTERFACE_METHOD2 2
-#define M_LIG_NEIG_DIST 4.0
-
-#define M_OUTPUT_FILE1_DEFAULT "dpout_explicitp.txt"
-#define M_OUTPUT_FILE2_DEFAULT "dpout_fpocketp.txt"
-#define M_OUTPUT_FILE3_DEFAULT "dpout_fpocketnp.txt"
+#define M_MDP_OUTPUT_FILE1_DEFAULT "mdpout_snapshots_concat.pqr"
+#define M_MDP_OUTPUT_FILE2_DEFAULT "mdpout_snapshots.dx"
+#define M_MDP_OUTPUT_FILE3_DEFAULT "mdpout_iso_8.pdb"
+#define M_MDP_OUTPUT_FILE4_DEFAULT "mdpout_descriptors.txt"
+#define M_MDP_OUTPUT_FILE5_DEFAULT "mdpout_mdpocket.pdb"
+#define M_MDP_OUTPUT_FILE6_DEFAULT "mdpout_mdpocket_atoms.pdb"
+#define M_MDP_DEFAULT_ISO_VALUE 8.0
 
 #define M_MAX_FILE_NAME_LENGTH 300
 #define M_NB_MC_ITER 2500
 #define M_MIN_ASPH_RAY 2.8
 #define M_MAX_ASPH_RAY 10.0
 
+
 #define M_MDP_USAGE "\
-***** USAGE (mfpocket) *****\n\
+***** USAGE (mdpocket) *****\n\
 \n\
-Pocket finding on a MD trajectory -> list of pdb - file(s):             \n\
-\t./bin/mdpocket -F pdb_list                                  \n\
+1 : Pocket finding on a MD trajectory -> list of pre-aligned pdb ordered by time file:\n\
+\t./bin/mdpocket -L pdb_list                                  \n\
+2 : Pocket characterization on a MD trajectory -> list of pre-aligned pdb ordered by \n\
+    time file and wanted pocket pdb file \n\
+\t./bin/mdpocket -L pdb_list -f wanted_pocket.pdb \n\
+\t an example of a wanted pocket file can be obtained by running (1) \n\
+\t (mdpout_iso_8.pdb) and non wanted grid points should be deleted by hand (i.e. PyMOL).\n\
 \nOPTIONS (find standard parameters in brackets)           \n\n\
+\t-o (char *) : common prefix of output file (mdpout_snapshots) \n\n\
 \t-m (float)  : Minimum radius of an alpha-sphere.      (3.0)\n\
 \t-M (float)  : Maximum radius of an alpha-sphere.      (6.0)\n\
 \t-A (int)    : Minimum number of apolar neighbor for        \n\
@@ -107,21 +108,21 @@ more information.\n\
 
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 
-
+/**
+ Structure containing input and output params for mdpocket
+ **/
 typedef struct s_mdparams
 {
-	char **fcomplex,    /**< path of the holo form of the structure */
-		 **ligs ;   /**< HET residue name of the ligand */
+	char **fsnapshot;       /**< path of the snapshot form of the structure */
+        char fwantedpocket[M_MAX_PDB_NAME_LEN];    /**< path of the wanted pocket file*/
 
-	char *f_exp,    /**< name of the explicit pocket definition output file*/
-		 *f_fpckp, /**< name of the pocket definition output file*/
-		 *f_fpcknp ; /**< name of the non pocket definition output file*/
-
-	float interface_dist_crit;  /**< distance for explicit binding pocket definition*/
-
-	int nfiles,         /**< number of files to analyse*/
-	    interface_method ;  /**< how to identify the explicit binding pocket*/
-
+	char *f_pqr,        /**< name of the pqr concatenated snapshot file*/
+		*f_dx,      /**< name of the dx grid file*/
+                *f_iso,     /**< name of the iso pdb file*/
+                *f_desc,    /**< name of the descriptor file*/
+                *f_ppdb,    /**< name of the pocket pdb output file */
+                *f_apdb;    /**< name of the atoms pdb output file */
+	int nfiles;         /**< number of files to analyse*/
 	s_fparams *fpar ;   /**< fparams container*/
 
 } s_mdparams ;
@@ -131,9 +132,8 @@ typedef struct s_mdparams
 s_mdparams* init_def_mdparams(void) ;
 s_mdparams* get_mdpocket_args(int nargs, char **args) ;
 
-int add_list_complexes(char *str_list_file, s_mdparams *par) ;
-int add_complexe(char *complex, char *ligand, s_mdparams *par) ;
-int parse_dist_crit(char *str, s_mdparams *p) ;
+int add_list_snapshots(char *str_list_file, s_mdparams *par) ;
+int add_snapshot(char *snapbuf, s_mdparams *par) ;
 
 void print_mdparams(s_mdparams *p, FILE *f) ;
 void print_mdpocket_usage(FILE *f) ;

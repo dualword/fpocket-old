@@ -1,5 +1,6 @@
 #include "../headers/descriptors.h"
 
+
 /*
 
 ## GENERAL INFORMATION
@@ -122,12 +123,24 @@ void reset_desc(s_desc *desc)
 	desc->prop_asapol_norm = 0.0 ;
 	desc->mean_loc_hyd_dens_norm = 0.0 ;
 	desc->as_density_norm = 0.0 ;
-    desc->polarity_score_norm = 0.0 ;
+        desc->polarity_score_norm = 0.0 ;
 	desc->as_max_dst_norm = 0.0 ;
 
 	desc->nb_asph = 0 ;
 	desc->polarity_score  = 0 ;
 	desc->charge_score = 0 ;
+
+        desc->surf_apol_vdw=0.0;
+        desc->surf_apol_vdw14=0.0;
+        desc->surf_apol_vdw22=0.0;
+
+        desc->surf_pol_vdw=0.0;
+        desc->surf_pol_vdw14=0.0;
+        desc->surf_pol_vdw22=0.0;
+
+        desc->surf_vdw=0.0;
+        desc->surf_vdw14=0.0;
+        desc->surf_vdw22=0.0;
 
 	int i ;
 	for(i = 0 ; i < 20 ; i++) desc->aa_compo[i] = 0 ;
@@ -161,7 +174,7 @@ void reset_desc(s_desc *desc)
   
 */
 void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
-					 s_desc *desc,int niter)
+					 s_desc *desc,int niter,s_pdb *pdb)
 {
 	/* Setting atom-based descriptors */
 	set_atom_based_descriptors(atoms, natoms, desc) ;
@@ -236,6 +249,8 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 
 	if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
 	else desc->mean_loc_hyd_dens= 0.0;
+
+        set_ASA(desc,pdb, atoms, natoms, tvert,nvert);
 
 	desc->as_max_dst = as_max_dst ;
 	desc->apolar_asphere_prop = (float)nAlphaApol / (float)nvert ;

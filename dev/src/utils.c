@@ -223,7 +223,60 @@ tab_str* f_readl(const char *fpath, int nchar_max)
  
 	return lines ;
 }
- 
+
+/**
+   ## FUNCTION:
+	float_get_max_in_2D_array
+
+   ## SPECIFICATION:
+	receive the maximum value in a give column in a 2D float array
+
+   ## PARAMETRES:
+	@ **t float : pointer to pointer to float (2D float array)
+        @ n int : size of the array (number of lines)
+        @ col int : column on which the maximum is to extract
+
+   ## RETURN:
+	float
+ **/
+/*TODO: replace this by a divde & conquer approach*/
+float float_get_max_in_2D_array(float **t,size_t n,int col){
+    float c=0.0,m=-1e15;
+    size_t i;
+    for(i=0;i<n;i++){
+        c=t[i][col];
+        if(c>m)m=c;
+    }
+    return m;
+}
+
+/**
+   ## FUNCTION:
+	float_get_min_in_2D_array
+
+   ## SPECIFICATION:
+	receive the minimum value in a give column in a 2D float array
+
+   ## PARAMETRES:
+	@ **t float : pointer to pointer to float (2D float array)
+        @ n int : size of the array (number of lines)
+        @ col int : column on which the minimum is to extract
+
+   ## RETURN:
+	float
+ **/
+/*TODO: replace this by a divde & conquer approach*/
+float float_get_min_in_2D_array(float **t,size_t n,int col){
+    float c=0.0,m=1e15;
+    size_t i;
+    for(i=0;i<n;i++){
+        c=t[i][col];
+        if(c<m)m=c;
+    }
+    return m;
+}
+
+
 /**
    ## FUNCTION: 
 	free_tab_str

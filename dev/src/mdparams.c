@@ -12,7 +12,7 @@
 ## SPECIFICATIONS
 ##
 ##	Handle parameters (parse the command line and sore values)
-##	for the dpocket programm.
+##	for the mdpocket programm.
 ##
 ## MODIFICATIONS HISTORY
 ##
@@ -77,19 +77,22 @@ s_mdparams *init_def_mdparams(void)
 {
 	s_mdparams *par = (s_mdparams*) my_malloc(sizeof(s_mdparams)) ;
 
-	par->f_exp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-	par->f_fpckp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-	par->f_fpcknp = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_pqr = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_dx = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_iso = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_desc = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_ppdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_apdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	strcpy(par->f_pqr, M_MDP_OUTPUT_FILE1_DEFAULT) ;
+	strcpy(par->f_dx, M_MDP_OUTPUT_FILE2_DEFAULT) ;
+        strcpy(par->f_iso, M_MDP_OUTPUT_FILE3_DEFAULT) ;
+        strcpy(par->f_desc, M_MDP_OUTPUT_FILE4_DEFAULT) ;
+        strcpy(par->f_ppdb, M_MDP_OUTPUT_FILE5_DEFAULT) ;
+        strcpy(par->f_apdb, M_MDP_OUTPUT_FILE6_DEFAULT) ;
 
-	strcpy(par->f_exp, M_OUTPUT_FILE1_DEFAULT) ;
-	strcpy(par->f_fpckp, M_OUTPUT_FILE2_DEFAULT) ;
-	strcpy(par->f_fpcknp, M_OUTPUT_FILE3_DEFAULT) ;
-
-	par->fcomplex = NULL ;
-	par->ligs = NULL ;
+	par->fsnapshot = NULL ;
+        par->fwantedpocket[0] = 0 ;
 	par->nfiles = 0 ;
-	par->interface_dist_crit = M_VERT_LIG_NEIG_DIST ;
-	par->interface_method = M_INTERFACE_METHOD1 ;
 
 	return par ;
 }
@@ -114,7 +117,8 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 {
 	int i,
 		status = 0,
-		nstats = 0 ;
+		nstats = 0,
+                npdb=0;
 
 	char *str_list_file = NULL ;
 
@@ -125,33 +129,18 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 	for (i = 1; i < nargs; i++) {
 		if (strlen(args[i]) == 2 && args[i][0] == '-') {
 			switch (args[i][1]) {
-				case M_DPAR_DISTANCE_CRITERIA :
-						if(i < nargs-1) status += parse_dist_crit(args[++i], par) ;
-						else {
-							fprintf(stdout, "! Distance criteria defining the protein-ligand interface is missing.\n") ;
-							status += 1 ;
-						}
-						break ;
-
-				case M_DPAR_INTERFACE_METHOD1 :
-						par->interface_method = M_INTERFACE_METHOD1 ;
-						par->interface_dist_crit = M_VERT_LIG_NEIG_DIST ;
-						break ;
-
-				case M_DPAR_INTERFACE_METHOD2 :
-						par->interface_method = M_INTERFACE_METHOD2 ;
-						par->interface_dist_crit = M_LIG_NEIG_DIST ;
-						break ;
-
-				case M_DPAR_OUTPUT_FILE :
+				case M_MDPAR_OUTPUT_FILE :
 						if(nstats >= 1) fprintf(stdout, "! More than one single file for the stats output file has been given. Ignoring this one.\n") ;
 						else {
 							if(i < nargs-1) {
 								if(strlen(args[++i]) < M_MAX_FILE_NAME_LENGTH) {
 									remove_ext(args[i]) ;
-									sprintf(par->f_exp, "%s_exp.txt", args[i]) ;
-									sprintf(par->f_fpckp, "%s_fp.txt", args[i]) ;
-									sprintf(par->f_fpcknp, "%s_fpn.txt", args[i]) ;
+									sprintf(par->f_pqr, "%s.pqr", args[i]) ;
+									sprintf(par->f_dx, "%s.dx", args[i]) ;
+                                                                        sprintf(par->f_iso, "%s_iso_8.pdb", args[i]) ;
+                                                                        sprintf(par->f_desc, "%s_descriptors.txt", args[i]) ;
+                                                                        sprintf(par->f_ppdb, "%s_mdpocket.pdb", args[i]) ;
+                                                                        sprintf(par->f_apdb, "%s_mdpocket_atoms.pdb", args[i]) ;
 								}
 								else fprintf(stdout, "! Output file name is too long... Keeping default.") ;
 							}
@@ -162,14 +151,20 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 						}
 						break ;
 
-				case M_DPAR_INPUT_FILE :
+				case M_MDPAR_INPUT_FILE :
 						if(i < nargs-1) str_list_file = args[++i] ;
 						else {
 							fprintf(stdout, "! Input file name argument missing.\n") ;
 							status += 1 ;
 						}
 						 break ;
-
+                                case M_MDPAR_INPUT_FILE2 :
+						if(npdb >= 1) fprintf(stderr,
+							"! Only first input pdb will be used.\n") ;
+						else {
+							strcpy(par->fwantedpocket, args[++i]) ; npdb++ ;
+						}
+						break ;
 				default:
 					//  Check fpocket parameters!
 					if(!is_fpocket_opt(args[i][1])) {
@@ -188,7 +183,7 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 	}
 	else {
 		if(str_list_file) {
-			int res = add_list_complexes(str_list_file, par) ;
+			int res = add_list_snapshots(str_list_file, par) ;
 			if(res <= 0) {
 				fprintf(stdout, "! No data has been read.\n") ;
 				free_mdparams(par) ;
@@ -209,18 +204,18 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 
 /**
    ## FUNCTION:
-	add_list_complexes
+	add_list_snapshots
 
    ## SPECIFICATION:
-	Load a list of protein-ligand pdb file path. This file should have the
+	Load a list of snapshot pdb file path. This file should have the
 	following format:
 
-	complex_pdb_file	ligand_code
-	complex_pdb_file2	ligand_code2
-	complex_pdb_file3	ligand_code3
+	snapshot_pdb_file
+	snapshot_pdb_file2
+	snapshot_pdb_file3
 	(...)
 
- 	Each complexe-ligand set will be stored in the parameters structure.
+ 	Each snapshot file will be stored in the parameters structure.
 
    ## PARAMETRES:
 	@ char *str_list_file : Path of the file containing all data
@@ -230,7 +225,7 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 	int: Number of file read.
 
 */
-int add_list_complexes(char *str_list_file, s_mdparams *par)
+int add_list_snapshots(char *str_list_file, s_mdparams *par)
 {
 	FILE *f;
 	int n,
@@ -238,8 +233,7 @@ int add_list_complexes(char *str_list_file, s_mdparams *par)
 		status ;
 
 	char buf[M_MAX_PDB_NAME_LEN*2 + 6],
-		 complexbuf[M_MAX_PDB_NAME_LEN],
-		 ligbuf[5];
+		 snapbuf[M_MAX_PDB_NAME_LEN];
 
 	/* Loading data. */
 	f = fopen(str_list_file, "r") ;
@@ -252,19 +246,14 @@ int add_list_complexes(char *str_list_file, s_mdparams *par)
 			printf("B: %s\n" , buf);
 */
 			n = par->nfiles ;
-			status = sscanf(buf, "%s\t%s", complexbuf, ligbuf) ;
+			status = sscanf(buf, "%s", snapbuf) ;
+			if(status < 1) {
 
-			if(status < 2) {
-/*
 				fprintf(stderr, "! Skipping row '%s' with bad format (status %d).\n",
 								buf, status) ;
-*/
 			}
 			else {
-/*
-				printf("%s %s\n", complexbuf, ligbuf );
-*/
-				nread += add_complexe(complexbuf, ligbuf, par) ;
+				nread += add_snapshot(snapbuf, par) ;
 			}
 
 		}
@@ -272,97 +261,54 @@ int add_list_complexes(char *str_list_file, s_mdparams *par)
 	else {
 		fprintf(stderr, "! File %s doesn't exists\n", str_list_file) ;
 	}
-
-	return nread ;
+        fclose(f);
+        return nread ;
 }
 
 /**
    ## FUNCTION:
-	add_complexe
+	add_snapshot
 
    ## SPECIFICATION:
 	Add a set of data to the list of set of data in the parameters. this function
-	is used for the tpocket program only.
+	is used for the mdpocket program only.
 
 	The function will try to open the file, and data will be stored only if the
 	file exists, and if the name of the ligand is valid.
 
    ## PARAMETERS:
-	@ char *apo     : The apo path
-	@ char *complex : The complex path
-	@ char *ligan   : The ligand resname: a 4 letter (max!)
+	@ char *snapbuf     : The snapshots path
 	@ s_mdparams *par: The structure than contains parameters.
 
    ## RETURN:
 	int: 1 if everything is OK, 0 if not.
 
 */
-int add_complexe(char *complex, char *ligand, s_mdparams *par)
+int add_snapshot(char *snapbuf, s_mdparams *par)
 {
-	int nm1, i, l ;
+	int nm1 ;
 
-	FILE *f = fopen_pdb_check_case(complex, "r") ;
+	FILE *f = fopen_pdb_check_case(snapbuf, "r") ;
 	if(f) {
-		l = strlen(ligand) ;
-		if(strlen(ligand) >= 2) {
-			for(i = 0 ; i < l ; i++) ligand[i] = toupper(ligand[i]) ;
+                nm1 = par->nfiles ;
+                par->nfiles += 1 ;
 
-			nm1 = par->nfiles ;
-			par->nfiles += 1 ;
+                
+                par->fsnapshot = (char**) my_realloc(par->fsnapshot, (par->nfiles)*sizeof(char*)) ;
 
-			par->ligs   = (char**) my_realloc(par->ligs, (par->nfiles)*sizeof(char*)) ;
-			par->fcomplex = (char**) my_realloc(par->fcomplex, (par->nfiles)*sizeof(char*)) ;
+                par->fsnapshot[nm1] = (char *)my_malloc((strlen(snapbuf)+1)*sizeof(char)) ;
 
-			par->fcomplex[nm1] = (char *)my_malloc((strlen(complex)+1)*sizeof(char)) ;
-			par->ligs[nm1]   = (char *)my_malloc((strlen(ligand)+1)*sizeof(char)) ;
+                strcpy(par->fsnapshot[nm1], snapbuf) ;
 
-			strcpy(par->fcomplex[nm1], complex) ;
-			strcpy(par->ligs[nm1], ligand) ;
-
-			fclose(f) ;
-		}
-		else {
-			fprintf(stdout, "! The name given for the ligand is invalid or absent.\n") ;
-			fclose(f) ;
-			return 0 ;
-		}
+                fclose(f) ;
 
 	}
 	else {
-		fprintf(stdout, "! The pdb file '%s' doesn't exists.\n", complex) ;
+		fprintf(stdout, "! The pdb file '%s' doesn't exists.\n", snapbuf) ;
 		return 0 ;
 	}
 
 	return 1 ;
-}
-
-/**
-   ## FUNCTION:
-	parse_dist_crit
-
-   ## SPECIFICATION:
-	Parsing function for the distance criteria defining the protein-ligand
-	interface.
-
-   ## PARAMETERS:
-	@ char *str    : The string to parse
-	@ s_mdparams *p : The structure than will contain the parsed parameter
-
-   ## RETURN:
-	0 if the parameter is valid (here a valid integer), 1 if not
-
-*/
-int parse_dist_crit(char *str, s_mdparams *p)
-{
-	if(str_is_float(str, M_NO_SIGN)) {
-		p->interface_dist_crit = (float) atof(str) ;
-	}
-	else {
-		fprintf(stdout, "! Invalid value (%s) given for the distance criteria defining the protein-ligand interface.\n", str) ;
-		return 1 ;
-	}
-
-	return 0 ;
 }
 
 /**
@@ -387,17 +333,13 @@ void print_mdparams(s_mdparams *p, FILE *f)
 		fprintf(f, "==============\nParameters of the program: \n");
 		int i ;
 		for(i = 0 ; i < p->nfiles ; i++) {
-			fprintf(f, "> Protein %d: '%s', '%s'\n", i+1, p->fcomplex[i], p->ligs[i]) ;
+			fprintf(f, "> Snaphot %d: '%s'\n", i+1, p->fsnapshot[i]) ;
 		}
-
-		if(p->interface_method == M_INTERFACE_METHOD1)
-			fprintf(f, "> Method used to define explicitely the interface atoms: contacted atom by alpha spheres.\n") ;
-		else fprintf(f, "> Method used to define explicitely the interface atoms: ligand's neighbors.\n") ;
-
-		fprintf(f, "> Distance used to define explicitely the interface: %f.\n",
-					p->interface_dist_crit) ;
-
 		fprintf(f, "==============\n");
+                if(p->fwantedpocket[0]!=0){
+                    fprintf(f,"Wanted pocket given in file : %s\n",p->fwantedpocket);
+                    fprintf(f, "==============\n");
+                }
 	}
 	else fprintf(f, "> No parameters detected\n");
 }
@@ -439,31 +381,25 @@ void print_mdpocket_usage(FILE *f)
 void free_mdparams(s_mdparams *p)
 {
 	if(p) {
-		if(p->ligs) {
-			my_free(p->ligs) ;
-			p->ligs = NULL ;
+		
+		if(p->fsnapshot) {
+			my_free(p->fsnapshot) ;
+			p->fsnapshot = NULL ;
 		}
 
-		if(p->fcomplex) {
-			my_free(p->fcomplex) ;
-			p->fcomplex = NULL ;
+		if(p->f_pqr) {
+			my_free(p->f_pqr) ;
+			p->f_pqr = NULL ;
 		}
 
-		if(p->f_exp) {
-			my_free(p->f_exp) ;
-			p->f_exp = NULL ;
+		if(p->f_dx) {
+			my_free(p->f_dx) ;
+			p->f_dx = NULL ;
 		}
-
-		if(p->f_fpckp) {
-			my_free(p->f_fpckp) ;
-			p->f_fpckp = NULL ;
+		if(p->f_desc) {
+			my_free(p->f_desc) ;
+			p->f_desc = NULL ;
 		}
-
-		if(p->f_fpcknp) {
-			my_free(p->f_fpcknp) ;
-			p->f_fpcknp = NULL ;
-		}
-
 		free_fparams(p->fpar) ;
 
  		my_free(p) ;

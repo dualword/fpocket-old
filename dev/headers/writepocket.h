@@ -50,6 +50,7 @@
 
 void write_pockets_single_pdb(const char out[], s_pdb *pdb, c_lst_pockets *pockets)  ;
 void write_pockets_single_pqr(const char out[], c_lst_pockets *pockets);
+void write_mdpockets_concat_pqr(FILE *f, c_lst_pockets *pockets);
 
 void write_each_pocket(const char out_path[], c_lst_pockets *pockets) ;
 void write_pocket_pdb(const char out[], s_pocket *pocket) ;

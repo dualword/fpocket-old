@@ -107,7 +107,7 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 			   *vcur = NULL ;
 
 	c_lst_pockets *pockets = c_lst_pockets_alloc();		
-		
+
 	for(i=0;i<lvvert->nvert;i++) {
 		vcur = vertices + i ;
 		for(j=0;j<4;j++) vNb[j] = vcur->vneigh[j];
@@ -508,7 +508,7 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	void
   
 */
-void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
+void set_pockets_descriptors(c_lst_pockets *pockets,int niter,s_pdb *pdb)
 {
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
@@ -537,7 +537,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets,int niter)
 
 			/* Calculate descriptors*/
 			set_descriptors(pocket_atoms, natms, tab_vert,
-							pcur->v_lst->n_vertices, pcur->pdesc,niter) ;
+							pcur->v_lst->n_vertices, pcur->pdesc,niter,pdb) ;
 
 			my_free(pocket_atoms) ;
 			my_free(tab_vert) ;
@@ -1090,7 +1090,7 @@ void c_lst_pocket_free(c_lst_pockets *lst)
 			next = cur->next ;
 			dropPocket(lst, cur) ;
 			cur = next ;
-        }
+                }
 
 		free_vert_lst(lst->vertices) ;
 

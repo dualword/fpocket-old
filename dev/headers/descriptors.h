@@ -47,6 +47,7 @@
 #include "aa.h"
 #include "utils.h"
 
+
 /* --------------------------------STRUCTURES---------------------------------*/
 /**
         Structure containing descriptors for binding pockets
@@ -75,7 +76,18 @@ typedef struct s_desc
               mean_loc_hyd_dens_norm,/**< Normalized mean local hydrophobic density */
               prop_asapol_norm,      /**< Normalized proportion of apolar alphasphere */
               as_density_norm,       /**< Normalized alpha sphere density */
-              as_max_dst_norm        /**< normalized maximum distance between alpha sphere centers*/
+              as_max_dst_norm,       /**< normalized maximum distance between alpha sphere centers*/
+                
+                /**< The following descriptors are various surface calculations*/
+              surf_vdw,              /**< Van der Waals surface of the pocket*/
+              surf_vdw14,            /**< Van der Waals surface + 1.4 A probe*/
+              surf_vdw22,            /**< Van der Waals surface + 2.2 A probe*/
+              surf_pol_vdw,          /**< polar van der Waals surface of the pocket*/
+              surf_pol_vdw14,        /**< polar van der Waals surface + 1.4 A probe*/
+              surf_pol_vdw22,        /**< polar an der Waals surface + 2.2 A probe*/
+              surf_apol_vdw,         /**< polar van der Waals surface of the pocket*/
+              surf_apol_vdw14,       /**< polar van der Waals surface + 1.4 A probe*/
+              surf_apol_vdw22        /**< polar van der Waals surface + 2.2 A probe*/
         ;
 	
 	int aa_compo[20] ;	/**< Absolute amino acid composition */
@@ -91,7 +103,7 @@ typedef struct s_desc
 s_desc* allocate_s_desc(void) ;
 void reset_desc(s_desc *desc) ;
 
-void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc, int niter) ;
+void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc, int niter,s_pdb *pdb) ;
 
 int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert) ;
 void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc) ;
