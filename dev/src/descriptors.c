@@ -198,8 +198,14 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 			   *vc = NULL ;
 
 	desc->mean_loc_hyd_dens = 0.0 ;
+/*
+                fprintf(stdout, "\nIn set descripotirs\n") ;
+*/
 	for(i = 0 ; i < nvert ; i++) {
 		vcur = tvert[i] ;
+/*
+                fprintf(stdout, "Vertice %d: %d %f\n", i, vcur->id, vcur->ray) ;
+*/
 		if(vcur->ray > as_max_r) as_max_r = vcur->ray ;
 
 		vx = vcur->x ; vy = vcur->y ; vz = vcur->z ; vrad = vcur->ray ;
@@ -250,7 +256,9 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
 	else desc->mean_loc_hyd_dens= 0.0;
 
-        set_ASA(desc,pdb, atoms, natoms, tvert,nvert);
+
+        set_ASA(desc, pdb, tvert, nvert);
+        /*set_ASA(desc,pdb, atoms, natoms, tvert, nvert);*/
 
 	desc->as_max_dst = as_max_dst ;
 	desc->apolar_asphere_prop = (float)nAlphaApol / (float)nvert ;
@@ -420,7 +428,7 @@ void set_aa_desc(s_desc *desc, const char *aa_name)
 
 		case 'V' : aa_idx = M_VAL_IDX ; break ;				/* VAL amino acid! */
 
-		default: /*fprintf(stderr, "! Amno acid %s does not exists!\n", aa_name) ;*/ 
+                default: /*fprintf(stderr, "! Amno acid %s does not exists!\n", aa_name) ;*/
 			break ;
 	}
 

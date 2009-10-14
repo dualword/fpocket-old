@@ -63,9 +63,22 @@ s_atm **get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
     s_atm **ua=NULL;
     int z,j;
     *n_ua=0;
+
+    s_vvertice *vcur = NULL ;
+    s_atm **neighs = NULL ;
+/*
+    fprintf(stdout, "\nIn get unique atom\n") ;
+*/
     for(z=0;z<nvert;z++){
+        vcur = tvert[z] ;
+/*
+        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
+        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
+*/
+
+        neighs = tvert[z]->neigh ;
         for(j=0;j<4;j++){
-            a=tvert[z]->neigh[j];
+            a=neighs[j];
             if(atom_not_in_list(a,ua,*n_ua)){
                 *n_ua=*n_ua+1;
                 if(ua==NULL){
@@ -84,8 +97,6 @@ s_atm **get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
     return ua;
 }
 
-
-
 void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
     desc->surf_pol_vdw14=0.0;
     desc->surf_apol_vdw14=0.0;
@@ -95,7 +106,19 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
     int n_sa;
     int n_ua;
     //char out[30]="";
-    
+
+
+/*
+    fprintf(stdout, "\nIn set ASA\n") ;
+    s_vvertice *vcur = NULL ;
+    int z ;
+    for( z=0;z<nvert;z++){
+        vcur = tvert[z] ;
+        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
+        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
+    }
+*/
+
     sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
     ua=get_unique_atoms(tvert,nvert, &n_ua);
 
@@ -113,6 +136,9 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
         for(k=0;k<M_NSPIRAL;k++){
             burried=0;
             j=0;
+/*
+            fprintf(stdout,"%d %d %p %p\n",i, k, cura, curpts);
+*/
             tx=cura->x+curpts[3*k]*(cura->radius+M_PROBE_SIZE);
             ty=cura->y+curpts[3*k+1]*(cura->radius+M_PROBE_SIZE);
             tz=cura->z+curpts[3*k+2]*(cura->radius+M_PROBE_SIZE);

@@ -523,11 +523,20 @@ void set_pockets_descriptors(c_lst_pockets *pockets,int niter,s_pdb *pdb)
 
 			/* Get a list of vertices in a tab of pointer */
 			s_vvertice **tab_vert = (s_vvertice **)
-					my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
+                                                my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
 			i = 0 ;
 			node_vertice *nvcur = pcur->v_lst->first ;
+                        
+/*
+                        fprintf(stdout, "A Pocket:\n") ;
+*/
 			while(nvcur) {
-				tab_vert[i] = nvcur->vertice ;
+/*
+                                fprintf(stdout, "Vertice %d: %p %d %f\n", i, nvcur->vertice, nvcur->vertice->id, nvcur->vertice->ray) ;
+                                fprintf(stdout, "Atom %s\n", nvcur->vertice->neigh[0]->name) ;
+*/
+
+                                tab_vert[i] = nvcur->vertice ;
 				nvcur = nvcur->next ;
 				i++ ;
 			}
