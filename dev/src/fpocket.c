@@ -131,9 +131,11 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		b = clock() ;
 		fprintf(stdout,"> Cluster refinment steps: \n");
 */
-		reIndexPockets(pockets) ;/* Create index and calculate statistics */
-		drop_tiny(pockets) ;	 /* Create index and calculate statistics */
-		reIndexPockets(pockets) ;/* Create index and calculate statistics */
+		reIndexPockets(pockets) ;
+/*
+		drop_tiny(pockets) ;	
+		reIndexPockets(pockets) ;
+*/
 
 /*
 		fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
