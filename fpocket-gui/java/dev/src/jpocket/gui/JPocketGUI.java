@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
+import jpocket.core.JPocket;
 import jpocket.gui.editors.FpocketParamsEditors;
 import jpocket.gui.jmol.JmolEvolvedPanel;
 import jpocket.gui.jmol.JmolPanel;
@@ -137,7 +138,7 @@ public class JPocketGUI extends javax.swing.JFrame
             desk.registerDockable(viewerPanel);
 
             BufferedInputStream in = new BufferedInputStream(
-                    new FileInputStream("/home/vince/NetBeansProjects/JPocket/settings/desktopLayout.xml"));
+                    new FileInputStream(JPocket.ENV_PATH+"settings/desktopLayout.xml"));
 
             // Load the workspace
             desk.readXML(in);
