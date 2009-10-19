@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
+import jpocket.core.JPocket;
 import jpocket.core.fpocket.Parameter.Mendatory;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,7 +43,8 @@ import org.jdom.input.SAXBuilder;
  */
 public class FPocketParameters
 {
-    private static String XML_LOCATION = "/home/vince/NetBeansProjects/JPocket/settings/fpocket_params.xml";
+    private static String XML_LOCATION = JPocket.ENV_PATH+"settings/fpocket_params.xml";
+    
     public static void setXmlLocation(String location) 
             throws Exception
     {
