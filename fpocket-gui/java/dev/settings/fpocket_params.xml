@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ROOT>
+    <PARAM mendatory="NOT_MENDATORY" command="-m" name="Min. ASR" desc="Minimum alpha sphere radius" type="Double" dval="3.0"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-M" name="Max. ASR" desc="Maximum alpha sphere radius" type="Double" dval="6.0"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-i" name="Min. NAS" desc="Minimum number of alpha sphere per pocket" type="Integer" dval="30"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-D" name="Clust1 Dist" desc="Distance criteria for the first step of algorithm" type="Double" dval="1.73"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-r" name="Clust2 Dist" desc="Distance criteria for the second (barycenter) step of algorithm" type="Double" dval="4.5"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-s" name="Clust3 Dist" desc="Distance criteria for the third (multiple linkage) of algorithm" type="Double" dval="2.5"/>
+    <PARAM mendatory="NOT_MENDATORY" command="-n" name="Clust3 N" desc="Number of common vertices criteria for the single linkage  algorithm" type="Integer" dval="3"/>
+</ROOT>

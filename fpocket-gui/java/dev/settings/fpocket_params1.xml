@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ROOT>
+    <NAME>JUST A TEST</NAME>
+    <DESC> JUST A DESC</DESC>
+    <PVALUE command="-m" value="3.0" />
+    <PVALUE command="-M" value="6.0" />
+    <PVALUE command="-i" value="40" />
+    <PVALUE command="-D" value="1.76" />
+    <PVALUE command="-r" value="4.0" />
+    <PVALUE command="-s" value="2.5" />
+    <PVALUE command="-n" value="3" />
+</ROOT>

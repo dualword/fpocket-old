@@ -28,12 +28,13 @@
             <PDB type="PDB" name="2VEW" path="~/2UZU.pdb" fpocketOutput="">
             </PDB>
         </LIBRARY>
-        <LIBRARY name="MetalBindingProteins">
-            <PDB type="PDB" name="1BOL" path="~/1BOL.pdb" fpocketOutput=""></PDB>
-            <PDB type="PDB" name="1B1G" path="~/1B1G.pdb" fpocketOutput=""></PDB>
-            <PDB type="PDB" name="1B1B" path="~/1B1B.pdb" fpocketOutput=""></PDB>
-        </LIBRARY>
-        <LIBRARY name="Other (empty)">
+        <LIBRARY name="Astex">
+            <PDB type="PDB" name="1g9v" path="/home/vince/NetBeansProjects/fpocket/data/astex-diverse/1g9v.pdb" fpocketOutput="">
+            </PDB>
+            <PDB type="PDB" name="1gkc" path="/home/vince/NetBeansProjects/fpocket/data/astex-diverse/1gkc.pdb" fpocketOutput="">
+            </PDB>
+            <PDB type="PDB" name="1gm8" path="/home/vince/NetBeansProjects/fpocket/data/astex-diverse/1gm8.pdb" fpocketOutput="">
+            </PDB>
         </LIBRARY>
     </PROJECT>
 </ROOT>
