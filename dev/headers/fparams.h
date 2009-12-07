@@ -133,7 +133,7 @@ typedef struct s_fparams
 	char pdb_path[M_MAX_PDB_NAME_LEN] ;	/**< The pdb file */
 	char **pdb_lst ;
 	int npdb ;      /**< number of pdb files*/
-	
+        int flag_do_asa_and_volume_calculations; /**<if 1, asa and volume calculations are performed(slower), if 0, not*/
 	int min_apol_neigh,		 /**< Min number of apolar neighbours for an a-sphere
 								to be an apolar a-sphere */
 		sl_clust_min_nneigh, /**< Min number of neighbours for single linkage

@@ -101,7 +101,7 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
 	}
 
 	/* Set the first pocket */
-        set_pockets_descriptors(pockets,params->nb_mcv_iter,pdb);
+        set_pockets_descriptors(pockets,pdb,params);
 	pcur = pockets->first ;
         //fprintf(stdout,"\nHaving %d comparisons\n",pockets->n_pockets*pockets->n_pockets);
         i=0;
@@ -167,7 +167,8 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
         for(i=0;i<n_slist;i++) slist[i].dist=0.0;
         //for(i=0;i<n_slist;i++)slist[i]=(s_sorted_pocket_list *)my_malloc(sizeof(s_sorted_pocket_list));
         s_sorted_pocket_list *el=my_malloc(sizeof(s_sorted_pocket_list));
-        //pcur=pockets->first;
+//        pcur=pockets->first;
+
 
         int c=0;
         for(i=0;i<pockets->n_pockets-1;i++){
@@ -183,7 +184,7 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
                 //fprintf(stdout,"%f %d %d\n",slist[c].dist,slist[c].pid1,slist[c].pid2);
                 c++;
             }
-            pcur=pcur->next;
+  //          pcur=pcur->next;
         }
         //for(i=0;i<n_slist;i++) if(slist[i].dist<-480.0)fprintf(stdout,"%f %d %d\n",slist[i].dist,slist[i].pid1,slist[i].pid2);
         //fflush(stdout);

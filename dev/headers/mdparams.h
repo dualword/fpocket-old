@@ -58,11 +58,11 @@
 
 #define M_MDP_OUTPUT_FILE1_DEFAULT "mdpout_snapshots_concat.pqr"
 #define M_MDP_OUTPUT_FILE2_DEFAULT "mdpout_snapshots.dx"
-#define M_MDP_OUTPUT_FILE3_DEFAULT "mdpout_iso_8.pdb"
+#define M_MDP_OUTPUT_FILE3_DEFAULT "mdpout_iso_3.pdb"
 #define M_MDP_OUTPUT_FILE4_DEFAULT "mdpout_descriptors.txt"
 #define M_MDP_OUTPUT_FILE5_DEFAULT "mdpout_mdpocket.pdb"
 #define M_MDP_OUTPUT_FILE6_DEFAULT "mdpout_mdpocket_atoms.pdb"
-#define M_MDP_DEFAULT_ISO_VALUE 8.0
+#define M_MDP_DEFAULT_ISO_VALUE 3.0
 
 #define M_MAX_FILE_NAME_LENGTH 300
 #define M_NB_MC_ITER 2500

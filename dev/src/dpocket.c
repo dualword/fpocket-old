@@ -370,7 +370,7 @@ s_atm** get_explicit_desc(s_pdb *pdb_cplx_l, s_lst_vvertice *verts, s_atm **lig,
 /*
 	fprintf(stdout, "dpocket: Calculating descriptors... ") ; fflush(stdout) ;
 */
-	set_descriptors(interface, *nai, tpverts, nvn, desc, par->fpar->nb_mcv_iter,pdb_cplx_l);
+	set_descriptors(interface, *nai, tpverts, nvn, desc, par->fpar->nb_mcv_iter,pdb_cplx_l,par->fpar->flag_do_asa_and_volume_calculations);
 /*
 	fprintf(stdout, " OK\n") ;
 */

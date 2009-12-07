@@ -63,6 +63,7 @@ s_fparams* init_def_fparams(void)
 	par->clust_max_dist = M_CLUST_MAX_DIST ;
 	par->npdb = 0 ;
 	par->pdb_lst = NULL ;
+        par->flag_do_asa_and_volume_calculations=1;
 
 	return par ;
 }

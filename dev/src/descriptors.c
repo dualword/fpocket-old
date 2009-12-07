@@ -174,7 +174,7 @@ void reset_desc(s_desc *desc)
   
 */
 void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
-					 s_desc *desc,int niter,s_pdb *pdb)
+					 s_desc *desc,int niter,s_pdb *pdb, int flag_do_expensive_calculations)
 {
 	/* Setting atom-based descriptors */
 	set_atom_based_descriptors(atoms, natoms, desc) ;
@@ -256,8 +256,10 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	if(nAlphaApol>0) desc->mean_loc_hyd_dens /= (float)nAlphaApol ;
 	else desc->mean_loc_hyd_dens= 0.0;
 
-
-        set_ASA(desc, pdb, tvert, nvert);
+        if(flag_do_expensive_calculations) {
+            set_ASA(desc, pdb, tvert, nvert);
+            desc->volume = get_verts_volume_ptr(tvert, nvert, niter,-1.6) ;
+        }
         /*set_ASA(desc,pdb, atoms, natoms, tvert, nvert);*/
 
 	desc->as_max_dst = as_max_dst ;
@@ -266,8 +268,7 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	desc->mean_asph_ray = mean_ashape_radius / (float)nvert ;
 	desc->nb_asph = nvert ;
 	desc->as_density = as_density / ((nvert*nvert - nvert) * 0.5) ;
-		
-	desc->volume = get_verts_volume_ptr(tvert, nvert, niter,-1.6) ;
+
 	desc->as_max_r = as_max_r ;
 }
 

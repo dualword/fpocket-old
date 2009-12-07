@@ -397,6 +397,20 @@ static void remove_bloc(void *bloc)
 	#endif
 }
 
+
+int get_number_of_objects_in_memory(void){
+    if(ST_lst_alloc) {
+        return(ST_lst_alloc->n_ptr);
+    }
+    return(0);
+}
+
+void print_number_of_objects_in_memory(void){
+    if(ST_lst_alloc) {
+        printf("\nHaving %d objects in memory\n",ST_lst_alloc->n_ptr);
+    }
+}
+
 /**
    ## FUNCTION: 
 	free_all 

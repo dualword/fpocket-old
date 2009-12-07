@@ -27,7 +27,7 @@ void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso)
                     i=0;
                     fprintf(f,"\n");
                 }
-                cv=g->gridvalues[cx][cy][cz]/(float)g->n_snapshots;
+                cv=g->gridvalues[cx][cy][cz];
                 fprintf(f,"%.3f ",cv);
                 if(cv>=(float)M_MDP_DEFAULT_ISO_VALUE){
                     cnt++;

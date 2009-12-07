@@ -105,15 +105,35 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 	
 	s_vvertice *vertices = lvvert->vertices,
 			   *vcur = NULL ;
-
+       
+/*
+        printf("alloc pockets");
+        print_number_of_objects_in_memory();
+*/
+        
 	c_lst_pockets *pockets = c_lst_pockets_alloc();		
 
+/*
+        printf("outside");
+*/
+/*
+        print_number_of_objects_in_memory();
+*/
+
+        
 	for(i=0;i<lvvert->nvert;i++) {
 		vcur = vertices + i ;
 		for(j=0;j<4;j++) vNb[j] = vcur->vneigh[j];
-
 		curPocketId=updateIds(lvvert,i,vNb,vcur->resid, curPocketId,pockets, params);
+                //printf("%d : %d in loop\n",i,get_number_of_objects_in_memory());
+
 	}
+        
+/*
+        print_number_of_objects_in_memory();
+*/
+        
+
 
 	node_pocket *p = pockets->first ;
 	while(p) {
@@ -155,21 +175,26 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 	int groupCreatedFlag=0;
 	int cur_n_apol=0;
 	int cur_n_pol=0;
+/*
+        print_number_of_objects_in_memory();
+*/
 
 	s_vvertice *vertices = lvvert->vertices ;
 	s_vvertice *vert = &(vertices[i]),
 			   *fvert = NULL ;
+
 
 	for(j=0;j<4;j++) {
 		if(vNb[j] < lvvert->qhullSize && vNb[j] > 0) {
 			filteredIdx = lvvert->tr[vNb[j]];
 			if(filteredIdx!=-1 && filteredIdx < lvvert->nvert){
 				fvert = &(vertices[filteredIdx]) ;
-				
+
 				if(dist(vert->x, vert->y, vert->z, fvert->x, fvert->y, fvert->z) <= params->clust_max_dist){
+                                    
 					groupCreatedFlag=1;
 					/* Add a new pocket */
-					if(resid == -1 && fvert->resid==-1){						
+					if(resid == -1 && fvert->resid==-1){
 						resid=++curPocket;
 						vert->resid=resid;
 						fvert->resid=curPocket;	
@@ -177,7 +202,7 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 						s_pocket *pocket = alloc_pocket();				
 						pocket->v_lst=c_lst_vertices_alloc();
 						/* Add vertices to the pocket */
-						c_lst_vertices_add_last(pocket->v_lst, vert);				
+						c_lst_vertices_add_last(pocket->v_lst, vert);
 						c_lst_vertices_add_last(pocket->v_lst, fvert);
 
 						if(vert->type==M_APOLAR_AS) cur_n_apol++;
@@ -187,6 +212,7 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 						else cur_n_pol++;
 
 						c_lst_pockets_add_last(pockets, pocket,cur_n_apol,cur_n_pol);
+
 					}
 					/* Add new vertice to existing pocket */
 					else if(resid!=-1 && fvert->resid==-1) 						
@@ -197,6 +223,9 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 
 						if(fvert->type==M_APOLAR_AS) pocket->pocket->nAlphaApol+=1;
 						else pocket->pocket->nAlphaPol+=1;
+
+
+
 					}
 					else if(resid==-1 && fvert->resid!=-1) {
 						vert->resid = fvert->resid;
@@ -205,35 +234,51 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 						if(pocket) c_lst_vertices_add_last(pocket->pocket->v_lst, vert);
 						if(vert->type==M_APOLAR_AS) pocket->pocket->nAlphaApol+=1;
 						else pocket->pocket->nAlphaPol+=1;
+
 					}
 					else if((resid!=-1 && fvert->resid!=-1) && (resid!=fvert->resid)) {
 						node_pocket *pocket=searchPocket(resid,pockets);
+
  						node_pocket *pocket2=searchPocket(fvert->resid,pockets);
-						/* Write content of pocket1 into pocket2 */
-						mergePockets(pocket,pocket2,pockets);					
+
+                                                /* Write content of pocket1 into pocket2 */
+						mergePockets(pocket,pocket2,pockets);
 
 						for(z=0;z<lvvert->nvert;z++){
 							/* Merge two clusters -> to optimize */
 							if(vertices[z].resid==resid) vertices[z].resid=fvert->resid;	
 						}
 						resid=fvert->resid;
-
+                                                
 					}
 				}
 			}
 			else {
+                            
 				if(filteredIdx >= lvvert->nvert) {
 					fprintf(stdout, "INDEX ERROR\n") ;
 				}
 			}
 		}
+/*
+
+                                                        if(i==43){
+                                                    printf("finished loop %d",j);
+                                                    c_lst_pocket_free(pockets);
+                                                    print_number_of_objects_in_memory();
+                                                    exit(0);
+                                                }
+*/
 	}
-	/* if a pocket was created return the pocket */
+
+        /* if a pocket was created return the pocket */
+        	
+
 	if(groupCreatedFlag) return curPocket;
-	
+
 	/* if no vertice neighbours were found, still build a new pocket containing 
 	 * only one vertice */
-	
+
 	cur_n_apol=0;
 	cur_n_pol=0;
 	resid=++curPocket;
@@ -243,9 +288,9 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid, int curPocket,
 	c_lst_vertices_add_last(pocket->v_lst, vert);	/* Add vertices to the pocket */
 	if(vert->type==M_APOLAR_AS) cur_n_apol++;
 	else cur_n_pol++;
+        c_lst_pockets_add_last(pockets,pocket,cur_n_apol,cur_n_pol);
 
-	c_lst_pockets_add_last(pockets,pocket,cur_n_apol,cur_n_pol);
-
+        
 	return curPocket;
 	
 }
@@ -508,11 +553,11 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	void
   
 */
-void set_pockets_descriptors(c_lst_pockets *pockets,int niter,s_pdb *pdb)
+void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params)
 {
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
-	
+        int niter=params->nb_mcv_iter;
 	int natms = 0, i ;
 
 	if(pockets && pockets->n_pockets > 0) {
@@ -545,8 +590,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets,int niter,s_pdb *pdb)
 			s_atm **pocket_atoms = get_pocket_contacted_atms(pcur, &natms) ;
 
 			/* Calculate descriptors*/
-			set_descriptors(pocket_atoms, natms, tab_vert,
-							pcur->v_lst->n_vertices, pcur->pdesc,niter,pdb) ;
+			set_descriptors(pocket_atoms, natms, tab_vert,pcur->v_lst->n_vertices, pcur->pdesc,niter,pdb,params->flag_do_asa_and_volume_calculations) ;
 
 			my_free(pocket_atoms) ;
 			my_free(tab_vert) ;
@@ -891,6 +935,21 @@ node_pocket *searchPocket(int resid, c_lst_pockets *lst)
 	return cur;
 }
 
+/*
+void c_lst_vertices_free(c_lst_vertices *l){
+    node_vertice *cur=l->first;
+    node_vertice *next;
+    while(cur){
+        next=cur->next;
+        my_free(cur->vertice);
+        my_free(cur);
+        cur=next;
+    }
+    my_free(l);
+    l=NULL;
+}
+*/
+
 /**
    ## FONCTION: 
 	void dropPocket(c_lst_pockets *pockets,node_pocket *pocket)
@@ -921,11 +980,10 @@ void dropPocket(c_lst_pockets *pockets, node_pocket *pocket)
 		pocket->prev->next = NULL;
 		pockets->last = pocket->prev;
 	}
-
+        c_lst_vertices_free(pocket->pocket->v_lst);
 	pocket->next = NULL ;
 	pocket->prev = NULL ;
 	pockets->n_pockets -= 1;
-
 	my_free(pocket->pocket->pdesc);
 	pocket->pocket->pdesc = NULL ;
 	my_free(pocket->pocket);
@@ -957,35 +1015,52 @@ void mergePockets(node_pocket *pocket,node_pocket *pocket2,c_lst_pockets *pocket
 	s_pocket *pock =  pocket->pocket,
 			 *pock2 = pocket2->pocket ;
 
+        pockets->current=pocket2;
 	pock->nAlphaApol += pock2->nAlphaApol;
 	pock->nAlphaPol += pock2->nAlphaPol;
 	pock->v_lst->n_vertices += pock2->v_lst->n_vertices;
 	pock->size = pock->v_lst->n_vertices ;
-	
+
 	pock->v_lst->last->next = pock2->v_lst->first;
 	pock->v_lst->last = pock2->v_lst->last;
-	pocket2->pocket->v_lst = NULL;
 
+        my_free(pocket2->pocket->v_lst);
+	pocket2->pocket->v_lst = NULL;
+        my_free(pocket2->pocket->pdesc);
 	my_free(pocket2->pocket);
 	pocket2->pocket=NULL;
-	
+        
 	if(pocket2->prev && pocket2->next){
 		pocket2->prev->next = pocket2->next;
 		pocket2->next->prev = pocket2->prev;
-	}
+        }
 	else if(pocket2->next){
 		pockets->first=pocket2->next;
 		pocket2->next->prev=NULL;
-	}
+        }
 	else if(pocket2->prev){
-
 		pocket2->prev->next=NULL;
 		pockets->last=pocket2->prev;
 	}
 	else if(!pocket2->prev && !pocket2->next) my_free(pocket2);
 
-	pockets->n_pockets-=1;
- 	my_free(pocket2);
+        pockets->n_pockets-=1;
+
+        
+        
+        my_free(pocket2);
+/*
+if(pocket2==0x80e8358){
+            printf("%p\n",pocket2);
+
+            c_lst_pocket_free(pockets);
+            print_number_of_objects_in_memory();
+            exit(0);
+        }
+*/
+        
+
+
 }
 
 /**

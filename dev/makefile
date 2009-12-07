@@ -31,11 +31,11 @@ COS         = -DM_OS_LINUX
 CDEBUG		= -DMNO_MEM_DEBUG
 CWARN       = -Wall -Wextra -Wwrite-strings -Wstrict-prototypes
 
-CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -O4 -g -pg #$(CGSL)
-QCFLAGS     = -O -ansi
+CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -O2 -g -pg -std=c99#$(CGSL)
+QCFLAGS     = -O -g -pg -ansi
 
 LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas 
-LFLAGS	    = -fno-underscoring -lm 
+LFLAGS	    = -fno-underscoring -lm
 
 #------------------------------------------------------------
 # BINARIES OBJECTS 

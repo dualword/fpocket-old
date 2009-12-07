@@ -10,54 +10,6 @@ s_mdconcat *init_md_concat(void){
 }
 
 
-/**
-   ## FUNCTION:
-	init_md_grid
-
-   ## SPECIFICATION:
-	Initialize the md grid (allocate + 0)
-
-   ## PARAMETRES:
-	@ s_mdconcat *mdc: Pointer to the mdconcat structure (vertices),
-
-   ## RETURN:
-	s_mdgrid * : the grid
-
-*/
-s_mdgrid *init_md_grid(s_mdconcat *mdc){
-    s_mdgrid *g=(s_mdgrid *)my_malloc(sizeof(s_mdgrid));
-    float xmax=float_get_max_in_2D_array(mdc->vertpos,mdc->n_vertpos, 0);
-    float ymax=float_get_max_in_2D_array(mdc->vertpos,mdc->n_vertpos, 1);
-    float zmax=float_get_max_in_2D_array(mdc->vertpos,mdc->n_vertpos, 2);
-    float xmin=float_get_min_in_2D_array(mdc->vertpos,mdc->n_vertpos, 0);
-    float ymin=float_get_min_in_2D_array(mdc->vertpos,mdc->n_vertpos, 1);
-    float zmin=float_get_min_in_2D_array(mdc->vertpos,mdc->n_vertpos, 2);
-    int cx,cy,cz;
-    float span=(M_MDP_CUBE_SIDE/2.0)/M_MDP_GRID_RESOLUTION;
-    g->resolution=M_MDP_GRID_RESOLUTION;
-
-    g->nx=1+(int)(xmax+2*span-xmin)/(g->resolution);
-    g->ny=1+(int)(ymax+2*span-ymin)/(g->resolution);
-    g->nz=1+(int)(zmax+2*span-zmin)/(g->resolution);
-
-    g->gridvalues=(float ***)my_malloc(sizeof(float **)*g->nx);
-    for(cx=0;cx<g->nx;cx++){
-        g->gridvalues[cx]=(float **)my_malloc(sizeof(float *)*g->ny);
-        for(cy=0;cy<g->ny;cy++){
-            g->gridvalues[cx][cy]=(float *)my_malloc(sizeof(float *)*g->nz);
-            for(cz=0;cz<g->nz;cz++){
-                g->gridvalues[cx][cy][cz]=0.0;
-            }
-        }
-    }
-
-    g->origin=(float *)my_malloc(sizeof(float)*3);
-    g->origin[0]=xmin-span;
-    g->origin[1]=ymin-span;
-    g->origin[2]=zmin-span;
-    g->n_snapshots=mdc->n_snapshots;
-    return g;
-}
 
 
 /**

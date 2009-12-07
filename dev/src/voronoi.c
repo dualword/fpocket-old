@@ -529,25 +529,26 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter,float correc
 */
 void free_vert_lst(s_lst_vvertice *lvvert)
 {
-	if(lvvert) {
-		if(lvvert->vertices) {
-			my_free(lvvert->vertices) ;
-			lvvert->vertices = NULL ;
-		}
-		if(lvvert->pvertices) {
-			my_free(lvvert->pvertices) ;
-			lvvert->pvertices = NULL ;
-		}
-		if(lvvert->tr) {
-			my_free(lvvert->tr) ;
-			lvvert->tr = NULL ;
-		}
-		if(lvvert->h_tr) {
-			my_free(lvvert->h_tr) ;
-			lvvert->h_tr = NULL ;
-		}
-		my_free(lvvert) ;
-	}
+    if(lvvert) {
+
+        if(lvvert->vertices) {
+            my_free(lvvert->vertices) ;
+            lvvert->vertices = NULL ;
+        }
+        if(lvvert->pvertices) {
+            my_free(lvvert->pvertices) ;
+            lvvert->pvertices = NULL ;
+        }
+        if(lvvert->tr) {
+                my_free(lvvert->tr) ;
+                lvvert->tr = NULL ;
+        }
+        if(lvvert->h_tr) {
+                my_free(lvvert->h_tr) ;
+                lvvert->h_tr = NULL ;
+        }
+        my_free(lvvert) ;
+    }
 }
 
 /**

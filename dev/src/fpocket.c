@@ -95,10 +95,9 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 
 	bt = time(NULL) ;
 */
-	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh, 
-												params->asph_min_size, 
+	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh,
+												params->asph_min_size,
 												params->asph_max_size) ;
-
 /*
 	et = time(NULL) ;
  	fprintf(stdout, "> Vertices successfully calculated in apox. %f sec.\n",
@@ -114,9 +113,9 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 
 		b = clock() ;
 */
-                    			
 	pockets = clusterPockets(lvert, params);
 
+        
 	if(pockets) {
 		pockets->vertices = lvert ;
 /*
@@ -132,6 +131,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		fprintf(stdout,"> Cluster refinment steps: \n");
 */
 		reIndexPockets(pockets) ;
+
 /*
 		drop_tiny(pockets) ;	
 		reIndexPockets(pockets) ;
@@ -154,8 +154,9 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		fprintf(stdout,"> Calculating descriptors and score...\n");
 		b = clock() ;
 */
+
+		set_pockets_descriptors(pockets,pdb,params);
                 
-		set_pockets_descriptors(pockets,params->nb_mcv_iter,pdb);
 /*
 		e = clock() ;
 		fprintf(stdout, "> Descriptors found in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;

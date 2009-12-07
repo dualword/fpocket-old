@@ -57,7 +57,7 @@ void* my_calloc(size_t nb, size_t s) ;
 void* my_realloc(void *ptr, size_t nb) ;
 void my_free(void *bloc) ;
 void my_exit(void) ;
-
+void print_number_of_objects_in_memory(void);
 void free_all(void) ;
 void print_ptr_lst(void) ;
 

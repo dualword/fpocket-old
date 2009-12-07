@@ -64,7 +64,6 @@
 
 
 s_mdconcat *init_md_concat(void);
-s_mdgrid *init_md_grid(s_mdconcat *mdc);
 void alloc_first_md_concat(s_mdconcat *m,size_t n);
 void realloc_md_concat(s_mdconcat *m,size_t n);
 void free_mdconcat(s_mdconcat *m);

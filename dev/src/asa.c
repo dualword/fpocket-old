@@ -58,7 +58,8 @@ int *get_surrounding_atoms_idx(s_vvertice **tvert,int nvert,s_pdb *pdb, int *n_s
     return sa;
 }
 
-s_atm **get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
+
+s_atm **get_unique_atoms_DEPRECATED(s_vvertice **tvert,int nvert, int *n_ua){
     s_atm *a=NULL;
     s_atm **ua=NULL;
     int z,j;
@@ -82,13 +83,13 @@ s_atm **get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
             if(atom_not_in_list(a,ua,*n_ua)){
                 *n_ua=*n_ua+1;
                 if(ua==NULL){
-                    ua=(s_atm **)my_malloc(sizeof(s_atm*));
-                    ua[*n_ua-1]=(s_atm *)my_malloc(sizeof(s_atm));
+                    ua=(s_atm **)malloc(sizeof(s_atm*));
+                    ua[*n_ua-1]=(s_atm *)malloc(sizeof(s_atm));
                     ua[*n_ua-1]=a;
                 }
                 else {
-                    ua=(s_atm **)my_realloc(ua,sizeof(s_atm*)*(*n_ua));
-                    ua[*n_ua-1]=(s_atm *)my_malloc(sizeof(s_atm));
+                    ua=(s_atm **)realloc(ua,sizeof(s_atm*)*(*n_ua));
+                    ua[*n_ua-1]=(s_atm *)malloc(sizeof(s_atm));
                     ua[*n_ua-1]=a;
                 }
             }
@@ -97,48 +98,73 @@ s_atm **get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
     return ua;
 }
 
+
+int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
+    s_atm *a=NULL;
+    int *ua=NULL;
+    int z,j;
+    *n_ua=0;
+    int flag=0;
+
+    s_vvertice *vcur = NULL ;
+    s_atm **neighs = NULL ;
+/*
+    fprintf(stdout, "\nIn get unique atom\n") ;
+*/
+    for(z=0;z<nvert;z++){
+        vcur = tvert[z] ;
+/*
+        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
+        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
+*/
+
+        neighs = tvert[z]->neigh ;
+        for(j=0;j<4;j++){
+            a=neighs[j];
+            flag=in_tab(ua,*n_ua,a->id);
+            if(!flag){
+                *n_ua=*n_ua+1;
+                if(ua==NULL){
+                    ua=(int *)malloc(sizeof(int));
+                    ua[*n_ua-1]=a->id-1;
+                    //memcpy(ua[*n_ua-1],a,sizeof(a));
+                    
+                }
+                else {
+                    ua=(int *)realloc(ua,sizeof(int)*(*n_ua));
+                    ua[*n_ua-1]=a->id-1;
+                    //memcpy(ua[*n_ua-1],a,sizeof(a));
+                }
+            }
+        }
+    }
+
+    return ua;
+}
+
 void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
     desc->surf_pol_vdw14=0.0;
     desc->surf_apol_vdw14=0.0;
     desc->surf_vdw14=0.0;
     int *sa=NULL;    /*surrounding atoms container*/
-    s_atm **ua=NULL;    /*unique atoms contacting vvertices*/
+    int *ua=NULL;    /*unique atoms contacting vvertices*/
     int n_sa;
     int n_ua;
-    //char out[30]="";
-
-
-/*
-    fprintf(stdout, "\nIn set ASA\n") ;
-    s_vvertice *vcur = NULL ;
-    int z ;
-    for( z=0;z<nvert;z++){
-        vcur = tvert[z] ;
-        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
-        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
-    }
-*/
-
+    int i;
     sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
     ua=get_unique_atoms(tvert,nvert, &n_ua);
-
-    //fprintf(stdout,"%d %d atoms\n",n_ua,n_sa);
-    //sprintf(out, "pocket_%d.xyz", n_ua) ;
+    
     s_atm *a,*cura;
-    //FILE *f=fopen(out,"w");
     float *curpts=NULL,tz,tx,ty,dsq,area;
-    int j=0,i,iv,k,burried,nnburried,vidx,vrefburried;
-
+    int j=0,iv,k,burried,nnburried,vidx,vrefburried;
+    curpts=get_points_on_sphere(M_NSPIRAL);
     for(i=0;i<n_ua;i++){
-        cura=ua[i];
+        cura=pdb->latoms_p[ua[i]];
         nnburried=0;
-        curpts=get_points_on_sphere(M_NSPIRAL);
+        
         for(k=0;k<M_NSPIRAL;k++){
             burried=0;
             j=0;
-/*
-            fprintf(stdout,"%d %d %p %p\n",i, k, cura, curpts);
-*/
             tx=cura->x+curpts[3*k]*(cura->radius+M_PROBE_SIZE);
             ty=cura->y+curpts[3*k+1]*(cura->radius+M_PROBE_SIZE);
             tz=cura->z+curpts[3*k+2]*(cura->radius+M_PROBE_SIZE);
@@ -160,22 +186,97 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
             }
             if(!burried && !vrefburried) {
                 nnburried++;
-                //fprintf(f,"C %f %f %f\n",tx,ty,tz);
             }
         }
-        free(curpts);
-        curpts=NULL;
         area=(4*PI*(cura->radius+M_PROBE_SIZE)*(cura->radius+M_PROBE_SIZE)/(float)M_NSPIRAL)*nnburried;
         if(cura->electroneg<2.8) desc->surf_apol_vdw14=desc->surf_apol_vdw14+area;
         else desc->surf_pol_vdw14=desc->surf_pol_vdw14+area;
         desc->surf_vdw14=desc->surf_vdw14+area;
         
     }
-    free(sa);
-    my_free(ua);
-    //printf("%f\n",desc->surf_vdw14);
-    //fclose(f);
+    free(curpts);
+    curpts=NULL;
+   /* for(i=0;i<n_ua-1;i++){
+        free(ua[i]);
+    }*/
+    free(ua);
 
+    free(sa);
+
+    sa=NULL;
+    ua=NULL;
+}
+
+void set_ASA_DEPRECATED(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
+    desc->surf_pol_vdw14=0.0;
+    desc->surf_apol_vdw14=0.0;
+    desc->surf_vdw14=0.0;
+    int *sa=NULL;    /*surrounding atoms container*/
+    s_atm **ua=NULL;    /*unique atoms contacting vvertices*/
+    int n_sa;
+    int n_ua;
+    int i;
+    sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
+    ua=get_unique_atoms(tvert,nvert, &n_ua);
+
+
+
+    s_atm *a,*cura;
+    float *curpts=NULL,tz,tx,ty,dsq,area;
+    int j=0,iv,k,burried,nnburried,vidx,vrefburried;
+    curpts=get_points_on_sphere(M_NSPIRAL);
+
+    for(i=0;i<n_ua;i++){
+        cura=ua[i];
+        nnburried=0;
+
+        for(k=0;k<M_NSPIRAL;k++){
+            burried=0;
+            j=0;
+            tx=cura->x+curpts[3*k]*(cura->radius+M_PROBE_SIZE);
+            ty=cura->y+curpts[3*k+1]*(cura->radius+M_PROBE_SIZE);
+            tz=cura->z+curpts[3*k+2]*(cura->radius+M_PROBE_SIZE);
+            vrefburried=1;
+            for(iv=0;iv<nvert;iv++){
+                for(vidx=0;vidx<4;vidx++){
+                    if(cura==tvert[iv]->neigh[vidx]){
+                        if(ddist(tx,ty,tz,tvert[iv]->x,tvert[iv]->y,tvert[iv]->z)<=tvert[iv]->ray*tvert[iv]->ray) vrefburried=0;
+                    }
+                }
+            }
+
+            while(!burried && j< n_sa && !vrefburried){
+                a=pdb->latoms_p[sa[j]];
+                if(a!=cura){
+                    dsq=ddist(tx,ty,tz,a->x,a->y,a->z);
+                    if(dsq<(a->radius+M_PROBE_SIZE)*(a->radius+M_PROBE_SIZE)) burried=1;
+                }
+                j++;
+            }
+            if(!burried && !vrefburried) {
+                nnburried++;
+            }
+
+        }
+
+
+        area=(4*PI*(cura->radius+M_PROBE_SIZE)*(cura->radius+M_PROBE_SIZE)/(float)M_NSPIRAL)*nnburried;
+        if(cura->electroneg<2.8) desc->surf_apol_vdw14=desc->surf_apol_vdw14+area;
+        else desc->surf_pol_vdw14=desc->surf_pol_vdw14+area;
+        desc->surf_vdw14=desc->surf_vdw14+area;
+
+    }
+    free(curpts);
+    curpts=NULL;
+   /* for(i=0;i<n_ua-1;i++){
+        free(ua[i]);
+    }*/
+    free(ua);
+
+    free(sa);
+
+    sa=NULL;
+    ua=NULL;
 }
 
 /**

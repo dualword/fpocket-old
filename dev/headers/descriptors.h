@@ -103,7 +103,7 @@ typedef struct s_desc
 s_desc* allocate_s_desc(void) ;
 void reset_desc(s_desc *desc) ;
 
-void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc, int niter,s_pdb *pdb) ;
+void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc, int niter,s_pdb *pdb,int flag_do_expensive_calculations) ;
 
 int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert) ;
 void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc) ;

@@ -187,7 +187,7 @@ node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 */
 void c_lst_vertices_free(c_lst_vertices *lst) 
 {
-	fprintf(stdout, "Freeing list of vertices\n") ;
+	//fprintf(stdout, "Freeing list of vertices\n") ;
 	node_vertice *next = NULL ;
 	
 	if(lst) {
