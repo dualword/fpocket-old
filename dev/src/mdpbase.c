@@ -53,7 +53,7 @@ void store_vertice_positions(s_mdconcat *m,c_lst_pockets *pockets){
 
 */
 s_mdgrid *calculate_md_grid_DEPRECATED(s_mdconcat *mdc){
-    s_mdgrid *g=init_md_grid(mdc);          /*initialize the md grid, memory allocation*/
+    s_mdgrid *g=init_md_grid(mdc,NULL);          /*initialize the md grid, memory allocation*/
     size_t vidx;
     int xidx,yidx,zidx;                     /*direct indices of the positions in the grid*/
     int sxidx,syidx,szidx;                  /*indices nearby xidx,yidx,zidx that are within M_MDP_CUBE_SIDE of this point*/
@@ -112,56 +112,102 @@ s_mdgrid *calculate_md_grid_DEPRECATED(s_mdconcat *mdc){
 	void
 
 */
-void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets){
+void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
     size_t vidx;
     int xidx,yidx,zidx;                     /*direct indices of the positions in the grid*/
     int sxidx,syidx,szidx;                  /*indices nearby xidx,yidx,zidx that are within M_MDP_CUBE_SIDE of this point*/
     int sxi,syi,szi;
     float vx,vy,vz;
+    float incre=1.0;
+    node_pocket *cp=NULL;
+    s_pocket *pocket=NULL;
+    node_vertice *cnv=NULL;
+    s_vvertice *cv=NULL;
     int s=(int)(((float)M_MDP_CUBE_SIDE/2.0)/g->resolution);    /*possible stepsize (resolution dependent) in the discrete grid*/
     /*loop over all known vertices and CALCULATE the grid positions and increment grid values by 1*/
     /*important : no distance calculations are done here, thus this routine is very fast*/
     size_t n=pockets->vertices->nvert;
-    for(vidx=0;vidx<n;vidx++){
-        vx=pockets->vertices->vertices[vidx].x;                               /*tmp the vertice position*/
-        vy=pockets->vertices->vertices[vidx].y;
-        vz=pockets->vertices->vertices[vidx].z;
-        xidx=(int)roundf((vx-g->origin[0])/g->resolution);      /*calculate the nearest grid point internal coordinates*/
-        yidx=(int)roundf((vy-g->origin[1])/g->resolution);
-        zidx=(int)roundf((vz-g->origin[2])/g->resolution);
-        /*we use a cube of M_MDP_CUBE_SIDE**3 volume to check if there are grid points nearby,
-         *thus a check in the neighbourhood is performed here...this looks a bit awful and should be changed later on*/
-        for(sxi=-s;sxi<=s;sxi++){
-            for(syi=-s;syi<=s;syi++){
-                for(szi=-s;szi<=s;szi++){
-                    /*check if we are not on the point xidx,yidx, zidx....the square sum is just a little trick*/
-                    if((sxi*sxi+syi*syi+szi*szi)!=0){
-                        /*next we have to check in a discrete manner if we can include a new grid point or not.*/
-                        if(sxi<0) sxidx=(int)ceil(((float)sxi+vx-g->origin[0])/g->resolution);
-                        else if(sxi>0) sxidx=(int)floor(((float)sxi+vx-g->origin[0])/g->resolution);
-                        else if(sxi==0) sxidx=xidx;
-                        if(syi<0) syidx=(int)ceil(((float)syi+vy-g->origin[1])/g->resolution);
-                        else if(syi>0) syidx=(int)floor(((float)syi+vy-g->origin[1])/g->resolution);
-                        else if(syi==0) syidx=yidx;
-                        if(szi<0) szidx=(int)ceil(((float)szi+vz-g->origin[2])/g->resolution);
-                        else if(szi>0) szidx=(int)floor(((float)szi+vz-g->origin[2])/g->resolution);
-                        else if(szi==0) szidx=zidx;
-                        /*double check if we are not on the already incremented grid point*/
-                        if(((sxidx!=xidx) || (syidx!=yidx) || (szidx!=zidx)) && (sxidx>=0 && syidx>=0 && szidx>=0 && sxidx<g->nx && syidx<g->ny && szidx<g->nz)) g->gridvalues[sxidx][syidx][szidx]+=1.0;
+    cp=pockets->first;
+    while(cp){
+        pocket=cp->pocket;
+        cnv=pocket->v_lst->first;
+        if(par->flag_scoring) incre=pocket->score;
+        while(cnv){
+            cv=cnv->vertice;
+            vx=cv->x;                               /*tmp the vertice position*/
+            vy=cv->y;
+            vz=cv->z;
+            xidx=(int)roundf((vx-g->origin[0])/g->resolution);      /*calculate the nearest grid point internal coordinates*/
+            yidx=(int)roundf((vy-g->origin[1])/g->resolution);
+            zidx=(int)roundf((vz-g->origin[2])/g->resolution);
+            /*we use a cube of M_MDP_CUBE_SIDE**3 volume to check if there are grid points nearby,
+             *thus a check in the neighbourhood is performed here...this looks a bit awful and should be changed later on*/
+            for(sxi=-s;sxi<=s;sxi++){
+                for(syi=-s;syi<=s;syi++){
+                    for(szi=-s;szi<=s;szi++){
+                        /*check if we are not on the point xidx,yidx, zidx....the square sum is just a little trick*/
+                        if((sxi*sxi+syi*syi+szi*szi)!=0){
+                            /*next we have to check in a discrete manner if we can include a new grid point or not.*/
+                            if(sxi<0) sxidx=(int)ceil(((float)sxi+vx-g->origin[0])/g->resolution);
+                            else if(sxi>0) sxidx=(int)floor(((float)sxi+vx-g->origin[0])/g->resolution);
+                            else if(sxi==0) sxidx=xidx;
+                            if(syi<0) syidx=(int)ceil(((float)syi+vy-g->origin[1])/g->resolution);
+                            else if(syi>0) syidx=(int)floor(((float)syi+vy-g->origin[1])/g->resolution);
+                            else if(syi==0) syidx=yidx;
+                            if(szi<0) szidx=(int)ceil(((float)szi+vz-g->origin[2])/g->resolution);
+                            else if(szi>0) szidx=(int)floor(((float)szi+vz-g->origin[2])/g->resolution);
+                            else if(szi==0) szidx=zidx;
+                            /*double check if we are not on the already incremented grid point*/
+                            if(((sxidx!=xidx) || (syidx!=yidx) || (szidx!=zidx)) && (sxidx>=0 && syidx>=0 && szidx>=0 && sxidx<g->nx && syidx<g->ny && szidx<g->nz)) g->gridvalues[sxidx][syidx][szidx]+=incre;
+                        }
                     }
                 }
             }
+            cnv=cnv->next;
         }
-
+        
         //if(zidx<0 || zidx>=g->nz) printf("herez zidx : %d max : %d\n",zidx,g->nz);
         //fprintf(stdout,"%d\n",n);
         //fflush(stdout);
-        if(xidx<g->nx && yidx<g->ny && zidx<g->nz && xidx>=0 && yidx>=0 && zidx>=0) g->gridvalues[xidx][yidx][zidx]+=1.0;   /*increment the already known grid point value*/
+        if(xidx<g->nx && yidx<g->ny && zidx<g->nz && xidx>=0 && yidx>=0 && zidx>=0) g->gridvalues[xidx][yidx][zidx]+=incre;   /*increment the already known grid point value*/
         else fprintf(stderr,"\n\nWarning (oh oh!!) : Your structure is not aligned or is moving a lot. Results might not reflect what you expect. Consider first structural alignemnt\nIf your structure is moving a lot, consider to split up analysis in two distinct parts.\n\n");
+        cp=cp->next;
     }
     //return g;
 }
 
+
+void project_grid_on_atoms(s_mdgrid *g,s_pdb *pdb){
+    s_atm *ca=NULL;
+    float x,y,z;
+    int ix,iy,iz;
+    float maxix, maxiy,maxiz;
+    int i;
+    float density;
+    //float ngridpoints1D=(float)M_MDP_ATOM_DENSITY_DIST/g->resolution;
+    for(i=0;i<pdb->natoms;i++){
+        density=0.0;
+        ca=pdb->latoms_p[i];
+        x=ca->x; y= ca->y; z=ca->z;
+        ix=(int)roundf((x-M_MDP_ATOM_DENSITY_DIST-g->origin[0])/g->resolution);
+        iy=(int)roundf((y-M_MDP_ATOM_DENSITY_DIST-g->origin[1])/g->resolution);
+        iz=(int)roundf((z-M_MDP_ATOM_DENSITY_DIST-g->origin[2])/g->resolution);
+        maxix=(int)roundf((x+M_MDP_ATOM_DENSITY_DIST-g->origin[0])/g->resolution);
+        maxiy=(int)roundf((y+M_MDP_ATOM_DENSITY_DIST-g->origin[1])/g->resolution);
+        maxiz=(int)roundf((z+M_MDP_ATOM_DENSITY_DIST-g->origin[2])/g->resolution);
+        while(ix<=maxix){
+            while(iy<=maxiy){
+                while(iz<=maxiz){
+                    density+=g->gridvalues[ix][iy][iz];
+                    iz++;
+                }
+                iy++;
+            }
+            ix++;
+        }
+        ca->bfactor=density/(float)g->n_snapshots;
+    }
+}
 
 void calculate_pocket_densities(s_mdgrid *g, int n){
     int x,y,z;
@@ -241,7 +287,7 @@ s_min_max_pockets *float_get_min_max_from_pockets(c_lst_pockets *pockets){
 	s_mdgrid * : the grid
 
 */
-s_mdgrid *init_md_grid(c_lst_pockets *pockets){
+s_mdgrid *init_md_grid(c_lst_pockets *pockets, s_mdparams *par){
     s_mdgrid *g=(s_mdgrid *)my_malloc(sizeof(s_mdgrid));
     s_min_max_pockets *mm=float_get_min_max_from_pockets(pockets);
     float xmax=mm->maxx;
@@ -250,6 +296,7 @@ s_mdgrid *init_md_grid(c_lst_pockets *pockets){
     float xmin=mm->minx;
     float ymin=mm->miny;
     float zmin=mm->minz;
+    float initvalue=0.0;
     my_free(mm);
     int cx,cy,cz;
     float span=(M_MDP_CUBE_SIDE/2.0)/M_MDP_GRID_RESOLUTION;
@@ -263,9 +310,9 @@ s_mdgrid *init_md_grid(c_lst_pockets *pockets){
     for(cx=0;cx<g->nx;cx++){
         g->gridvalues[cx]=(float **)my_malloc(sizeof(float *)*g->ny);
         for(cy=0;cy<g->ny;cy++){
-            g->gridvalues[cx][cy]=(float *)my_malloc(sizeof(float *)*g->nz);
+            g->gridvalues[cx][cy]=(float *)my_malloc(sizeof(float)*g->nz);
             for(cz=0;cz<g->nz;cz++){
-                g->gridvalues[cx][cy][cz]=0.0;
+                g->gridvalues[cx][cy][cz]=initvalue;
                 
             }
         }

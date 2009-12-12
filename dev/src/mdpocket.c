@@ -172,17 +172,19 @@ void mdpocket_detect_DEPRECATED(s_mdparams *par)
 void mdpocket_detect(s_mdparams *par)
 {
 	int i;
-	FILE *fout[3] ;                             /*output file handles*/
+	FILE *fout[4] ;                             /*output file handles*/
         FILE *timef;                                /*just an output for performance measurements*/
         c_lst_pockets *pockets=NULL;                /*tmp handle for pockets*/
         s_mdgrid *mdgrid=NULL;                      /*init mdgrid structure*/
         s_pdb *cpdb=NULL;                           /*handle for the current snapshot structure*/
         par->fpar->flag_do_asa_and_volume_calculations=0; /*don't do ASA and volume calculations here as they are expensive and we don't need the results here*/
+
 	if(par) {
 	/* Opening output files */
 		//fout[0] = fopen(par->f_pqr,"w") ;   /*concat pqr output*/
 		fout[1] = fopen(par->f_dx,"w") ;    /*grid dx output*/
                 fout[2] = fopen(par->f_iso,"w") ;   /*iso pdb output*/
+                fout[3] = fopen(par->f_appdb,"w");  /*all atom -> pocket density output on bfactors*/
                 timef=fopen("time.txt","w");        /*performance measurement output*/
 		if(fout[1] && fout[2]) {
                         //mdconcat=init_md_concat();  /*alloc & init of the mdconcat structure*/
@@ -198,8 +200,8 @@ void mdpocket_detect(s_mdparams *par)
                                 
                                 pockets=mdprocess_pdb(cpdb, par,fout[0],i+1);   /*perform pocket detection*/
                                 if(pockets){
-                                    if(i==0)mdgrid=init_md_grid(pockets);          /*initialize the md grid, memory allocation*/
-                                    calculate_md_grid(mdgrid,pockets); // calculate and update mdgrid
+                                    if(i==0) mdgrid=init_md_grid(pockets,par);          /*initialize the md grid, memory allocation*/
+                                    calculate_md_grid(mdgrid,pockets,par); // calculate and update mdgrid
                                 }
                                 free_pdb_atoms(cpdb);                           /*free atoms of the snapshot*/
                                 if(i == par->nfiles - 1) fprintf(stdout,"\n") ;
@@ -215,14 +217,20 @@ void mdpocket_detect(s_mdparams *par)
                                 
 
 			}
+                        mdgrid->n_snapshots=par->nfiles;
                         calculate_pocket_densities(mdgrid,par->nfiles);
+                        cpdb=open_pdb_file(par->fsnapshot[0]);  /*open again the first snapshot*/
+                        rpdb_read(cpdb, NULL, M_DONT_KEEP_LIG) ;
+                        project_grid_on_atoms(mdgrid,cpdb);
+                        write_first_bfactor_density(fout[3],cpdb);
+                        free_pdb_atoms(cpdb);
                        // fprintf(fout[0],"TER\nEND\n");          /*just to get a good pqr output file*/
 
 
                      //   mdconcat->n_snapshots=par->nfiles;      /*updata a variable in the mdconcat structure*/
                      //   mdgrid=calculate_md_grid(mdconcat);     /*calculate the actual md grid*/
                         write_md_grid(mdgrid, fout[1],fout[2]); /*write the grid to a vmd readable dx file*/
-			for( i = 1 ; i < 3 ; i++ ) fclose(fout[i]) ;    /*close all output file handles*/
+			for( i = 1 ; i < 4 ; i++ ) fclose(fout[i]) ;    /*close all output file handles*/
 		}
 		else {
 			/*if(! fout[0]) {
@@ -486,6 +494,7 @@ c_lst_pockets* mdprocess_pdb(s_pdb *pdb, s_mdparams *mdparams,FILE *pqrout, int 
 	if(pdb) {
 		/* Actual reading of pdb data and then calculation */
 			rpdb_read(pdb, NULL, M_DONT_KEEP_LIG) ;
+                        
 			pockets = search_pocket(pdb, params);   /*run fpocket*/
                       //  if(pockets) write_mdpockets_concat_pqr(pqrout,pockets); /*write pqr concat output*/
 	}

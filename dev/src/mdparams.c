@@ -83,16 +83,19 @@ s_mdparams *init_def_mdparams(void)
         par->f_desc = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_ppdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_apdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_appdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char));
 	strcpy(par->f_pqr, M_MDP_OUTPUT_FILE1_DEFAULT) ;
 	strcpy(par->f_dx, M_MDP_OUTPUT_FILE2_DEFAULT) ;
         strcpy(par->f_iso, M_MDP_OUTPUT_FILE3_DEFAULT) ;
         strcpy(par->f_desc, M_MDP_OUTPUT_FILE4_DEFAULT) ;
         strcpy(par->f_ppdb, M_MDP_OUTPUT_FILE5_DEFAULT) ;
         strcpy(par->f_apdb, M_MDP_OUTPUT_FILE6_DEFAULT) ;
+        strcpy(par->f_appdb, M_MDP_OUTPUT_FILE7_DEFAULT) ;
 
 	par->fsnapshot = NULL ;
         par->fwantedpocket[0] = 0 ;
 	par->nfiles = 0 ;
+        par->flag_scoring=0;
 
 	return par ;
 }
@@ -141,6 +144,7 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
                                                                         sprintf(par->f_desc, "%s_descriptors.txt", args[i]) ;
                                                                         sprintf(par->f_ppdb, "%s_mdpocket.pdb", args[i]) ;
                                                                         sprintf(par->f_apdb, "%s_mdpocket_atoms.pdb", args[i]) ;
+                                                                        sprintf(par->f_appdb, "%s_all_atom_pdensities.pdb", args[i]) ;
 								}
 								else fprintf(stdout, "! Output file name is too long... Keeping default.") ;
 							}
@@ -165,6 +169,9 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 							strcpy(par->fwantedpocket, args[++i]) ; npdb++ ;
 						}
 						break ;
+                                case M_MDPAR_SCORING_MODE :
+                                                par->flag_scoring=1;
+                                                break;
 				default:
 					//  Check fpocket parameters!
 					if(!is_fpocket_opt(args[i][1])) {

@@ -54,6 +54,7 @@
 #define M_MDPAR_INPUT_FILE 'L'
 #define M_MDPAR_INPUT_FILE2 'f'
 #define M_MDPAR_OUTPUT_FILE 'o'
+#define M_MDPAR_SCORING_MODE 'S'
 
 
 #define M_MDP_OUTPUT_FILE1_DEFAULT "mdpout_snapshots_concat.pqr"
@@ -62,12 +63,13 @@
 #define M_MDP_OUTPUT_FILE4_DEFAULT "mdpout_descriptors.txt"
 #define M_MDP_OUTPUT_FILE5_DEFAULT "mdpout_mdpocket.pdb"
 #define M_MDP_OUTPUT_FILE6_DEFAULT "mdpout_mdpocket_atoms.pdb"
+#define M_MDP_OUTPUT_FILE7_DEFAULT "mdpout_all_atom_pdensities.pdb"
 #define M_MDP_DEFAULT_ISO_VALUE 3.0
 
 #define M_MAX_FILE_NAME_LENGTH 300
 #define M_NB_MC_ITER 2500
-#define M_MIN_ASPH_RAY 2.8
-#define M_MAX_ASPH_RAY 10.0
+//#define M_MIN_ASPH_RAY 3.0
+//#define M_MAX_ASPH_RAY 6.0
 
 
 #define M_MDP_USAGE "\
@@ -121,9 +123,11 @@ typedef struct s_mdparams
                 *f_iso,     /**< name of the iso pdb file*/
                 *f_desc,    /**< name of the descriptor file*/
                 *f_ppdb,    /**< name of the pocket pdb output file */
-                *f_apdb;    /**< name of the atoms pdb output file */
+                *f_apdb,    /**< name of the atoms pdb output file */
+                *f_appdb;    /**< name of the all atoms pdb output file */
 	int nfiles;         /**< number of files to analyse*/
 	s_fparams *fpar ;   /**< fparams container*/
+        int flag_scoring;   /**< perform fpocket scoring on grid points instead of voronoi vertice counting*/
 
 } s_mdparams ;
 

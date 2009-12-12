@@ -66,3 +66,20 @@ void write_md_pocket_atoms(FILE *f,int *ids,s_pdb *prot, int nids, int sn){
     
 }
 
+
+
+void write_first_bfactor_density(FILE *f,s_pdb *prot){
+    s_atm *cura;
+    int i;
+    //fprintf(f,"MODEL        %d\n",sn);
+    for(i=0;i<prot->natoms;i++){
+        cura=prot->latoms_p[i];
+        write_pdb_atom_line(f, "ATOM", cura->id, cura->name,
+						 cura->pdb_aloc, cura->res_name, cura->chain,
+						 cura->res_id, cura->pdb_insert, cura->x, cura->y, cura->z, cura->occupancy,
+						 cura->bfactor,	cura->symbol, cura->charge);
+    }
+    fprintf(f,"TER\n");
+    fprintf(f,"END\n");
+
+}
