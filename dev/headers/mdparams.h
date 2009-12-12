@@ -84,6 +84,8 @@
 \t (mdpout_iso_8.pdb) and non wanted grid points should be deleted by hand (i.e. PyMOL).\n\
 \nOPTIONS (find standard parameters in brackets)           \n\n\
 \t-o (char *) : common prefix of output file (mdpout_snapshots) \n\n\
+\t-S : if you put this flag, the pocket score is matched to the \n\
+\t density grid \n\n\
 \t-m (float)  : Minimum radius of an alpha-sphere.      (3.0)\n\
 \t-M (float)  : Maximum radius of an alpha-sphere.      (6.0)\n\
 \t-A (int)    : Minimum number of apolar neighbor for        \n\

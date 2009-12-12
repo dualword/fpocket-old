@@ -67,89 +67,6 @@
 **/
 
 
-/**
-   ## FUNCTION:
-	mdpocket_detect_DEPRECATED
-
-   ## SPECIFICATION:
-	Mdpocket main function. Perform pocket detection on all snapshots.
-        Pockets will be merged in one single output file mdpout_concat.pqr and
-        a grid file will be produced, containing Voronoi vertice densities on
-        grid point positions
- *      This function is DEPRECATED because of its memory and time inefficiency.
-
-   ## PARAMETRES:
-	@ s_mdparams *par: Parameters of the programm
-
-   ## RETURN:
-	void
-
-*/
-void mdpocket_detect_DEPRECATED(s_mdparams *par)
-{
-	int i;
-	FILE *fout[3] ;                             /*output file handles*/
-        FILE *timef;                                /*just an output for performance measurements*/
-        c_lst_pockets *pockets=NULL;                /*tmp handle for pockets*/
-        s_mdconcat *mdconcat=NULL;                  /*init mdconcat structure*/
-        s_mdgrid *mdgrid=NULL;                      /*init mdgrid structure*/
-        s_pdb *cpdb=NULL;                           /*handle for the current snapshot structure*/
-	if(par) {
-	/* Opening output files */
-		//fout[0] = fopen(par->f_pqr,"w") ;   /*concat pqr output*/
-		fout[1] = fopen(par->f_dx,"w") ;    /*grid dx output*/
-                fout[2] = fopen(par->f_iso,"w") ;   /*iso pdb output*/
-                timef=fopen("time.txt","w");        /*performance measurement output*/
-		if(fout[1] && fout[2]) {
-                        mdconcat=init_md_concat();  /*alloc & init of the mdconcat structure*/
-                        clock_t b, e ;              /*for the calculation time measurements*/
-
-                        /* Begins mdpocket */
-			for(i = 0 ; i < par->nfiles ; i++) {
-                                b = clock() ;       /*init starting time for this snapshot*/
-				fprintf(stdout, "<mdpocket>s %d/%d - %s:",
-						i+1, par->nfiles, par->fsnapshot[i]) ;
-                                cpdb=open_pdb_file(par->fsnapshot[i]);          /*open the snapshot*/
-                                pockets=mdprocess_pdb(cpdb, par,fout[0],i+1);   /*perform pocket detection*/
-                                if(pockets){
-                                    store_vertice_positions(mdconcat,pockets);  /*store positions of current pocket vertices in mdconcat structure*/
-                                }
-                                free_pdb_atoms(cpdb);                           /*free atoms of the snapshot*/
-                                if(i == par->nfiles - 1) fprintf(stdout,"\n") ;
-				else fprintf(stdout,"\r") ;
-				fflush(stdout);
-
-                                c_lst_pocket_free(pockets);     /*free pockets of current snapshot*/
-                                e = clock() ;                   /*snapshot analysis end time*/
-                                /*output the time needed for analysis of this snapshots*/
-                                fprintf(timef,"%f\n",((double)e - b) / CLOCKS_PER_SEC);
-                                fflush(timef);
-
-			}
-                       // fprintf(fout[0],"TER\nEND\n");          /*just to get a good pqr output file*/
-
-
-                        mdconcat->n_snapshots=par->nfiles;      /*updata a variable in the mdconcat structure*/
-                        mdgrid=calculate_md_grid_DEPRECATED(mdconcat);     /*calculate the actual md grid*/
-                        write_md_grid(mdgrid, fout[1],fout[2]); /*write the grid to a vmd readable dx file*/
-			for( i = 1 ; i < 3 ; i++ ) fclose(fout[i]) ;    /*close all output file handles*/
-		}
-		else {
-			/*if(! fout[0]) {
-				fprintf(stdout, "! Output file <%s> couldn't be opened.\n",
-						par->f_pqr) ;
-			}
-			else */
-                        if (! fout[1]) {
-				fprintf(stdout, "! Output file <%s> couldn't be opened.\n",
-						par->f_dx) ;
-			}
-		}
-                fclose(timef);      /*close the performance measurement file handle*/
-                /*free_mdconcat(mdconcat);*/ /*should be freed by free_all*/
-	}
-}
-
 
 
 /**
@@ -200,7 +117,7 @@ void mdpocket_detect(s_mdparams *par)
                                 
                                 pockets=mdprocess_pdb(cpdb, par,fout[0],i+1);   /*perform pocket detection*/
                                 if(pockets){
-                                    if(i==0) mdgrid=init_md_grid(pockets,par);          /*initialize the md grid, memory allocation*/
+                                    if(i==0) mdgrid=init_md_grid(pockets);          /*initialize the md grid, memory allocation*/
                                     calculate_md_grid(mdgrid,pockets,par); // calculate and update mdgrid
                                 }
                                 free_pdb_atoms(cpdb);                           /*free atoms of the snapshot*/
