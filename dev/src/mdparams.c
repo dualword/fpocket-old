@@ -96,6 +96,7 @@ s_mdparams *init_def_mdparams(void)
         par->fwantedpocket[0] = 0 ;
 	par->nfiles = 0 ;
         par->flag_scoring=0;
+        par->bfact_on_all=0;
 
 	return par ;
 }
@@ -171,6 +172,9 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 						break ;
                                 case M_MDPAR_SCORING_MODE :
                                                 par->flag_scoring=1;
+                                                break;
+                                case M_MDPAR_OUTPUT_ALL_SNAPSHOTS :
+                                                par->bfact_on_all=1;
                                                 break;
 				default:
 					//  Check fpocket parameters!

@@ -55,6 +55,7 @@
 #define M_MDPAR_INPUT_FILE2 'f'
 #define M_MDPAR_OUTPUT_FILE 'o'
 #define M_MDPAR_SCORING_MODE 'S'
+#define M_MDPAR_OUTPUT_ALL_SNAPSHOTS 'a'
 
 
 #define M_MDP_OUTPUT_FILE1_DEFAULT "mdpout_snapshots_concat.pqr"
@@ -85,7 +86,8 @@
 \nOPTIONS (find standard parameters in brackets)           \n\n\
 \t-o (char *) : common prefix of output file (mdpout_snapshots) \n\n\
 \t-S : if you put this flag, the pocket score is matched to the \n\
-\t density grid \n\n\
+\t density grid \n\
+\t-a : output all bfactor colored snapshots\n\n\
 \t-m (float)  : Minimum radius of an alpha-sphere.      (3.0)\n\
 \t-M (float)  : Maximum radius of an alpha-sphere.      (6.0)\n\
 \t-A (int)    : Minimum number of apolar neighbor for        \n\
@@ -130,6 +132,7 @@ typedef struct s_mdparams
 	int nfiles;         /**< number of files to analyse*/
 	s_fparams *fpar ;   /**< fparams container*/
         int flag_scoring;   /**< perform fpocket scoring on grid points instead of voronoi vertice counting*/
+        int bfact_on_all;   /**< flag, if 1, output all snapshots with surface coloured by bfactors*/
 
 } s_mdparams ;
 

@@ -95,7 +95,9 @@ void mdpocket_detect(s_mdparams *par)
         s_mdgrid *mdgrid=NULL;                      /*init mdgrid structure*/
         s_pdb *cpdb=NULL;                           /*handle for the current snapshot structure*/
         par->fpar->flag_do_asa_and_volume_calculations=0; /*don't do ASA and volume calculations here as they are expensive and we don't need the results here*/
-
+        FILE *cf;                                   /*file handle for current bfact coloured file to write*/
+        char cf_name[350] = "" ;
+        char pdb_code[350] = "" ;
 	if(par) {
 	/* Opening output files */
 		//fout[0] = fopen(par->f_pqr,"w") ;   /*concat pqr output*/
@@ -135,12 +137,29 @@ void mdpocket_detect(s_mdparams *par)
 
 			}
                         mdgrid->n_snapshots=par->nfiles;
+
+
                         calculate_pocket_densities(mdgrid,par->nfiles);
                         cpdb=open_pdb_file(par->fsnapshot[0]);  /*open again the first snapshot*/
                         rpdb_read(cpdb, NULL, M_DONT_KEEP_LIG) ;
                         project_grid_on_atoms(mdgrid,cpdb);
                         write_first_bfactor_density(fout[3],cpdb);
                         free_pdb_atoms(cpdb);
+                        if(par->bfact_on_all){
+                            for(i = 0 ; i < par->nfiles ; i++) {
+                                strcpy(pdb_code, par->fsnapshot[i]) ;
+                                remove_ext(pdb_code) ;
+                                remove_path(pdb_code) ;
+                                sprintf(cf_name, "%s_out.pdb", pdb_code) ;
+                                cf=fopen(cf_name,"w");
+                                cpdb=open_pdb_file(par->fsnapshot[i]);
+                                rpdb_read(cpdb, NULL, M_DONT_KEEP_LIG) ;
+                                project_grid_on_atoms(mdgrid,cpdb);
+                                write_first_bfactor_density(cf,cpdb);
+                                free_pdb_atoms(cpdb);
+                                fclose(cf);
+                            }
+                        }
                        // fprintf(fout[0],"TER\nEND\n");          /*just to get a good pqr output file*/
 
 

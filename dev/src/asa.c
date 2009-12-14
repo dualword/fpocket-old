@@ -99,10 +99,11 @@ s_atm **get_unique_atoms_DEPRECATED(s_vvertice **tvert,int nvert, int *n_ua){
 }
 
 
-int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
+int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua,s_atm **atoms,int na){
     s_atm *a=NULL;
     int *ua=NULL;
     int z,j;
+    int ca_idx;
     *n_ua=0;
     int flag=0;
 
@@ -126,13 +127,30 @@ int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua){
                 *n_ua=*n_ua+1;
                 if(ua==NULL){
                     ua=(int *)malloc(sizeof(int));
-                    ua[*n_ua-1]=a->id-1;
+                    if(a->id-1 < na && a==atoms[a->id-1]) ua[*n_ua-1]=a->id-1;
+                    else {
+                        for(ca_idx=0;ca_idx<na;ca_idx++){
+                            if(a==atoms[ca_idx]) {
+                                ua[*n_ua-1]=ca_idx;
+                                break;
+                            }
+                        }
+                    }
+
                     //memcpy(ua[*n_ua-1],a,sizeof(a));
                     
                 }
                 else {
                     ua=(int *)realloc(ua,sizeof(int)*(*n_ua));
-                    ua[*n_ua-1]=a->id-1;
+                    if(a->id-1 < na && a==atoms[a->id-1]) ua[*n_ua-1]=a->id-1;
+                    else {
+                        for(ca_idx=0;ca_idx<na;ca_idx++){
+                            if(a==atoms[ca_idx]) {
+                                ua[*n_ua-1]=ca_idx;
+                                break;
+                            }
+                        }
+                    }
                     //memcpy(ua[*n_ua-1],a,sizeof(a));
                 }
             }
@@ -152,8 +170,7 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
     int n_ua;
     int i;
     sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
-    ua=get_unique_atoms(tvert,nvert, &n_ua);
-    
+    ua=get_unique_atoms(tvert,nvert, &n_ua,pdb->latoms_p,pdb->natoms);
     s_atm *a,*cura;
     float *curpts=NULL,tz,tx,ty,dsq,area;
     int j=0,iv,k,burried,nnburried,vidx,vrefburried;
@@ -193,78 +210,6 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
         else desc->surf_pol_vdw14=desc->surf_pol_vdw14+area;
         desc->surf_vdw14=desc->surf_vdw14+area;
         
-    }
-    free(curpts);
-    curpts=NULL;
-   /* for(i=0;i<n_ua-1;i++){
-        free(ua[i]);
-    }*/
-    free(ua);
-
-    free(sa);
-
-    sa=NULL;
-    ua=NULL;
-}
-
-void set_ASA_DEPRECATED(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
-    desc->surf_pol_vdw14=0.0;
-    desc->surf_apol_vdw14=0.0;
-    desc->surf_vdw14=0.0;
-    int *sa=NULL;    /*surrounding atoms container*/
-    s_atm **ua=NULL;    /*unique atoms contacting vvertices*/
-    int n_sa;
-    int n_ua;
-    int i;
-    sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
-    ua=get_unique_atoms(tvert,nvert, &n_ua);
-
-
-
-    s_atm *a,*cura;
-    float *curpts=NULL,tz,tx,ty,dsq,area;
-    int j=0,iv,k,burried,nnburried,vidx,vrefburried;
-    curpts=get_points_on_sphere(M_NSPIRAL);
-
-    for(i=0;i<n_ua;i++){
-        cura=ua[i];
-        nnburried=0;
-
-        for(k=0;k<M_NSPIRAL;k++){
-            burried=0;
-            j=0;
-            tx=cura->x+curpts[3*k]*(cura->radius+M_PROBE_SIZE);
-            ty=cura->y+curpts[3*k+1]*(cura->radius+M_PROBE_SIZE);
-            tz=cura->z+curpts[3*k+2]*(cura->radius+M_PROBE_SIZE);
-            vrefburried=1;
-            for(iv=0;iv<nvert;iv++){
-                for(vidx=0;vidx<4;vidx++){
-                    if(cura==tvert[iv]->neigh[vidx]){
-                        if(ddist(tx,ty,tz,tvert[iv]->x,tvert[iv]->y,tvert[iv]->z)<=tvert[iv]->ray*tvert[iv]->ray) vrefburried=0;
-                    }
-                }
-            }
-
-            while(!burried && j< n_sa && !vrefburried){
-                a=pdb->latoms_p[sa[j]];
-                if(a!=cura){
-                    dsq=ddist(tx,ty,tz,a->x,a->y,a->z);
-                    if(dsq<(a->radius+M_PROBE_SIZE)*(a->radius+M_PROBE_SIZE)) burried=1;
-                }
-                j++;
-            }
-            if(!burried && !vrefburried) {
-                nnburried++;
-            }
-
-        }
-
-
-        area=(4*PI*(cura->radius+M_PROBE_SIZE)*(cura->radius+M_PROBE_SIZE)/(float)M_NSPIRAL)*nnburried;
-        if(cura->electroneg<2.8) desc->surf_apol_vdw14=desc->surf_apol_vdw14+area;
-        else desc->surf_pol_vdw14=desc->surf_pol_vdw14+area;
-        desc->surf_vdw14=desc->surf_vdw14+area;
-
     }
     free(curpts);
     curpts=NULL;
