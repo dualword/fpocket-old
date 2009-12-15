@@ -17,14 +17,19 @@
    ## RETURN:
 	1 if a is in atoms, 0 if not
  */
-int atom_not_in_list(s_atm *a,s_atm **atoms,int natoms){
+int atom_in_list(s_atm *a, s_atm **atoms, int natoms){
     int i;
     if(atoms){
-        for(i=0;i<natoms;i++){
-            if(atoms[i]==a) return 0;
+        for(i = 0 ; i < natoms ; i++){
+            if(atoms[i]==a) {
+                if(atoms[i]->id != a->id) {
+                    fprintf(stdout,"WARNING asa.c: atom in the list but with different ID!") ;
+                }
+                return 1;
+            }
         }
     }
-    return 1;
+    return 0;
 }
 
 
@@ -58,48 +63,7 @@ int *get_surrounding_atoms_idx(s_vvertice **tvert,int nvert,s_pdb *pdb, int *n_s
     return sa;
 }
 
-
-s_atm **get_unique_atoms_DEPRECATED(s_vvertice **tvert,int nvert, int *n_ua){
-    s_atm *a=NULL;
-    s_atm **ua=NULL;
-    int z,j;
-    *n_ua=0;
-
-    s_vvertice *vcur = NULL ;
-    s_atm **neighs = NULL ;
-/*
-    fprintf(stdout, "\nIn get unique atom\n") ;
-*/
-    for(z=0;z<nvert;z++){
-        vcur = tvert[z] ;
-/*
-        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
-        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
-*/
-
-        neighs = tvert[z]->neigh ;
-        for(j=0;j<4;j++){
-            a=neighs[j];
-            if(atom_not_in_list(a,ua,*n_ua)){
-                *n_ua=*n_ua+1;
-                if(ua==NULL){
-                    ua=(s_atm **)malloc(sizeof(s_atm*));
-                    ua[*n_ua-1]=(s_atm *)malloc(sizeof(s_atm));
-                    ua[*n_ua-1]=a;
-                }
-                else {
-                    ua=(s_atm **)realloc(ua,sizeof(s_atm*)*(*n_ua));
-                    ua[*n_ua-1]=(s_atm *)malloc(sizeof(s_atm));
-                    ua[*n_ua-1]=a;
-                }
-            }
-        }
-    }
-    return ua;
-}
-
-
-int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua,s_atm **atoms,int na){
+int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua, s_atm **atoms,int na){
     s_atm *a=NULL;
     int *ua=NULL;
     int z,j;
@@ -114,44 +78,33 @@ int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua,s_atm **atoms,int 
 */
     for(z=0;z<nvert;z++){
         vcur = tvert[z] ;
-/*
-        fprintf(stdout, "%f %i\n", vcur->ray, vcur->id) ;
-        fprintf(stdout, "%f %i\n", tvert[z]->ray, tvert[z]->id) ;
-*/
-
         neighs = tvert[z]->neigh ;
         for(j=0;j<4;j++){
             a=neighs[j];
             flag=in_tab(ua,*n_ua,a->id);
-            if(!flag){
+            if(!flag) {
                 *n_ua=*n_ua+1;
-                if(ua==NULL){
-                    ua=(int *)malloc(sizeof(int));
-                    if(a->id-1 < na && a==atoms[a->id-1]) ua[*n_ua-1]=a->id-1;
-                    else {
-                        for(ca_idx=0;ca_idx<na;ca_idx++){
-                            if(a==atoms[ca_idx]) {
-                                ua[*n_ua-1]=ca_idx;
-                                break;
-                            }
-                        }
+                if(ua==NULL) ua=(int *)malloc(sizeof(int));
+                else ua=(int *)realloc(ua,sizeof(int)*(*n_ua));
+                
+                if(a->id-1 < na && a==atoms[a->id-1]) {
+                    ua[*n_ua-1]=a->id-1;
+                    if(a->id >= 1631) {
+                        fprintf(stdout, "\nSetting bad id! %d", a->id ) ;
                     }
-
-                    //memcpy(ua[*n_ua-1],a,sizeof(a));
-                    
                 }
                 else {
-                    ua=(int *)realloc(ua,sizeof(int)*(*n_ua));
-                    if(a->id-1 < na && a==atoms[a->id-1]) ua[*n_ua-1]=a->id-1;
-                    else {
-                        for(ca_idx=0;ca_idx<na;ca_idx++){
-                            if(a==atoms[ca_idx]) {
-                                ua[*n_ua-1]=ca_idx;
-                                break;
+                    for(ca_idx=0;ca_idx<na;ca_idx++){
+                        if(a==atoms[ca_idx]) {
+                            ua[*n_ua-1]=ca_idx;
+
+                            if(ca_idx >= 1631) {
+
+                                fprintf(stdout, "\nSetting bad id! %d", ca_idx ) ;
                             }
+                            break;
                         }
                     }
-                    //memcpy(ua[*n_ua-1],a,sizeof(a));
                 }
             }
         }
@@ -160,23 +113,91 @@ int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua,s_atm **atoms,int 
     return ua;
 }
 
-void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
+
+s_atm **get_unique_atoms_DEPRECATED(s_vvertice **tvert,int nvert, int *n_ua)
+{
+    s_vvertice *vcur = NULL ;
+    s_atm **neighs = NULL ;
+
+    s_atm *a=NULL;
+    s_atm **ua=(s_atm **) malloc(sizeof(s_atm*)*10);
+
+    int tab_size = 10 ;
+    int nb_ua = 0;
+    int z = 0, j = 0;
+
+    /* Loop over each vertice */
+    for(z = 0 ; z < nvert ; z++){
+        vcur = tvert[z] ;
+        neighs = tvert[z]->neigh ;
+
+        /* Loop over each vertice neighbors */
+        for(j = 0 ; j < 4 ; j++) {
+            a = neighs[j];
+            if(atom_in_list(a, ua, nb_ua) == 0) {
+                ua[nb_ua] = a;
+
+                nb_ua = nb_ua + 1;
+                if(nb_ua >= tab_size){
+                    ua = (s_atm **) realloc(ua,sizeof(s_atm*)*(nb_ua+10));
+                    tab_size += 10 ;
+                }
+            }
+        }
+    }
+
+    *n_ua = nb_ua ;
+
+    return ua;
+}
+
+void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
+{
     desc->surf_pol_vdw14=0.0;
     desc->surf_apol_vdw14=0.0;
     desc->surf_vdw14=0.0;
     int *sa=NULL;    /*surrounding atoms container*/
-    int *ua=NULL;    /*unique atoms contacting vvertices*/
-    int n_sa;
-    int n_ua;
+    /*int *ua=NULL;    /*unique atoms contacting vvertices*/
+    s_atm ** ua = NULL ;
+    
+    int n_sa = 0;
+    int n_ua = 0;
     int i;
     sa=get_surrounding_atoms_idx(tvert,nvert,pdb, &n_sa);
-    ua=get_unique_atoms(tvert,nvert, &n_ua,pdb->latoms_p,pdb->natoms);
+    /*ua=get_unique_atoms_DEPRECATED(tvert,nvert, &n_ua,pdb->latoms_p,pdb->natoms);*/
+
+    ua=get_unique_atoms_DEPRECATED(tvert,nvert, &n_ua);
+
+/*
+    for(i = 0 ; i < pdb->natoms ; i++) {
+        if(pdb->latoms_p[i]->id > 1631) {
+            fprintf(stdout, "\nWTF at %d %d", i,pdb->latoms_p[i]->id) ;
+        }
+    }
+    for( i = 0 ; i < n_ua ; i++) {
+        if(ua[i] > 1631)
+            fprintf(stdout, "Atom %d: %d\n", i, ua[i]) ;
+
+    }
+*/
+
     s_atm *a,*cura;
     float *curpts=NULL,tz,tx,ty,dsq,area;
     int j=0,iv,k,burried,nnburried,vidx,vrefburried;
     curpts=get_points_on_sphere(M_NSPIRAL);
     for(i=0;i<n_ua;i++){
+/*
+        fprintf(stdout, "\nUA %d (%d): %d (%d)", i, pdb->natoms, ua [i], n_ua);
+*/
+/*
+        if(ua [i] >= pdb->natoms) {
+            fprintf(stdout, "\nWOOPS at %d! %d \n", i, ua[i]) ;//exit(0) ;
+        }
+*/
+/*
         cura=pdb->latoms_p[ua[i]];
+*/
+        cura = ua[i] ;
         nnburried=0;
         
         for(k=0;k<M_NSPIRAL;k++){
@@ -216,8 +237,8 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert){
    /* for(i=0;i<n_ua-1;i++){
         free(ua[i]);
     }*/
+    
     free(ua);
-
     free(sa);
 
     sa=NULL;
