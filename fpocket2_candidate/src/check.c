@@ -126,16 +126,18 @@ int check_fpocket (void)
 	
 	fprintf(stdout, "    OPENING PDB FILE................ ") ;
 	s_pdb *pdb =  rpdb_open(params->pdb_path, NULL, M_DONT_KEEP_LIG) ;
+        s_pdb *pdb_w_lig =  rpdb_open(params->pdb_path, NULL, M_KEEP_LIG) ;
 
 	if(pdb) {
 		/* Actual reading of pdb data and then calculation */
 			fprintf(stdout, "OK \n") ;
 			fprintf(stdout, "    READING PDB FILE ............... ") ;
 			rpdb_read(pdb, NULL, M_DONT_KEEP_LIG) ;
+                        rpdb_read(pdb_w_lig, NULL, M_KEEP_LIG) ;
 			fprintf(stdout, "OK \n") ;
 
 			fprintf(stdout, "    RUNNING FPOCKET ................ ") ;
-			c_lst_pockets *pockets = search_pocket(pdb, params);
+			c_lst_pockets *pockets = search_pocket(pdb, params,pdb_w_lig);
 			if(pockets && pockets->n_pockets > 0) {
 				fprintf(stdout, "OK \n") ;
 				fprintf(stdout, "    WRITING FPOCKET OUTPUT ......... ") ;
@@ -411,13 +413,14 @@ void test_pdb_line( char test_case[], const char entry[], int id, const char nam
 
 void load_pdb_line(s_atm *atom, char *line)
 {
-    int trash;
+    /*int trash;*/
+        int guess_flag=0;
 	rpdb_extract_pdb_atom(line, atom->type, &(atom->id),
 						atom->name, &(atom->pdb_aloc), atom->res_name,
 						atom->chain, &(atom->res_id), &(atom->pdb_insert),
 						&(atom->x), &(atom->y), &(atom->z),
 						&(atom->occupancy), &(atom->bfactor), atom->symbol,
-						&(atom->charge),&trash) ;
+						&(atom->charge),&guess_flag) ;
 
 	str_trim(atom->type) ;
 	str_trim(atom->name) ;

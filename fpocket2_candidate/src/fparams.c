@@ -64,6 +64,7 @@ s_fparams* init_def_fparams(void)
 	par->npdb = 0 ;
 	par->pdb_lst = NULL ;
         par->flag_do_asa_and_volume_calculations=1;
+        par->db_run=M_DB_RUN;
 
 	return par ;
 }
@@ -95,7 +96,8 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 
 	//read arguments by flags
 	for (i = 1; i < nargs; i++) {
-		if (strlen(args[i]) == 2 && args[i][0] == '-' && i < (nargs-1)) {
+		if (strlen(args[i]) == 2 && args[i][0] == '-' && i <= (nargs-1)) {
+                    
 			switch (args[i][1]) {
 				case M_PAR_MAX_ASHAPE_SIZE	  : 
 					status += parse_asph_max_size(args[++i], par) ;		break ;
@@ -120,9 +122,14 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 				case M_PAR_REFINE_MIN_NAPOL_AS: 
 					status += parse_refine_minaap(args[++i], par) ; 
 					break ;
+                                case M_PAR_DB_RUN :
+                                        par->db_run=1;
+                                        break;
+
 				case M_PAR_PDB_LIST :
-					pdb_lst = args[++i] ; break ;
-					
+					pdb_lst = args[++i] ; 
+                                        break ;
+
 				case M_PAR_PDB_FILE			  : 
 						if(npdb >= 1) fprintf(stderr, 
 							"! Only first input pdb will be used.\n") ;

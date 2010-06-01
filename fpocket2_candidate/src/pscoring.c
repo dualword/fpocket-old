@@ -256,3 +256,57 @@ float score_pocket(s_desc *pdesc)
 
 	return score ;
 }
+
+
+/**
+   ## FUNCTION:
+	drug_score_pocket
+
+   ## SPECIFICATION:
+	Set a drug score to a given pocket. The current scoring function has been determined
+	using a logistic regression based on an analysis of pocket descriptors.
+
+
+   ## PARAMETRES:
+	@ s_desc *pdesc: The pocket descriptors
+
+   ## RETURN:
+	float: The score
+
+*/
+float drug_score_pocket(s_desc *pdesc)
+{
+/*
+        float b10=-5.088898;
+        float b11=6.367213;
+        float b20=-2.294515;
+        float b21=0.047952857;
+        float b30=-2.140685;
+        float b31=2.362326 ;
+        float b0=-6.040274;
+        float b1= 5.076534 ;
+        float b2= 4.9172461;
+        float b3= 3.300904;
+*/
+
+	float score ;
+        float l1,l2,l3;
+        float b10=-5.140959;
+        float b11=6.579424;
+        float b20=-2.668468;
+        float b21=0.05581948;
+        float b30=-2.445236;
+        float b31=2.762473 ;
+        float b0=-6.238031;
+        float b1= 4.592376 ;
+        float b2= 5.717858;
+        float b3= 3.985070;
+        l1=exp(b10+b11*(float)pdesc->mean_loc_hyd_dens_norm)/(1.0+exp(b10+b11*(float)pdesc->mean_loc_hyd_dens_norm));
+        l2=exp(b20+b21*(float)pdesc->hydrophobicity_score)/(1.0+exp(b20+b21*(float)pdesc->hydrophobicity_score));
+        l3=exp(b30+b31*(float)pdesc->polarity_score_norm)/(1.0+exp(b30+b31*(float)pdesc->polarity_score_norm));
+
+        score=exp(b0+b1*l1+b2*l2+b3*l3)/(1.0+exp(b0+b1*l1+b2*l2+b3*l3));
+        
+        /*fprintf(stdout,"drug score %.3f %.3f %.3f %.3f %.3f %.3f %.3f\n",pdesc->mean_loc_hyd_dens_norm,pdesc->hydrophobicity_score, pdesc->polarity_score_norm,l1,l2,l3,score);*/
+        return score ;
+}

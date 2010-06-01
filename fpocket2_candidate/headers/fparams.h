@@ -73,23 +73,24 @@
 
 #define M_MIN_POCK_NB_ASPH 36/**< Minimum number of alpha spheres for a pocket to be kept */
 
-#define M__MIN_APOL_NEIGH_DEFAULT 3/**< Minimum number of atoms having a low electronegativity in order to declare
- an alpha sphere to be apolar 3 */
+#define M__MIN_APOL_NEIGH_DEFAULT 3/**< Minimum number of atoms having a low electronegativity in order to declare an alpha sphere to be apolar 3 */
 
+#define M_DB_RUN 0  /**< default value for running fpocket for populating a database, 0 default*/
 
-#define M_PAR_PDB_FILE 'f' /**< flag to give a single pdb input file*/
-#define M_PAR_PDB_LIST 'F' /**< flag to give a txt file containing paths to multiple pdb files*/
-#define M_PAR_MAX_ASHAPE_SIZE 'M' /**< flag for the maximum alpha sphere size*/
-#define M_PAR_MIN_ASHAPE_SIZE 'm' /**< flag for the minimum alpha sphere size*/
-#define M_PAR_MIN_APOL_NEIGH 'A' /**< flag for the minimum number of apolar neighbours for an alpha sphere to be considered as apolar*/
-#define M_PAR_CLUST_MAX_DIST 'D' /**< flag for the first clustering distance*/
-#define M_PAR_SL_MAX_DIST 's' /**< flag for the distance crit. of the multiple linkage clustering algorithm*/
-#define M_PAR_SL_MIN_NUM_NEIGH 'n' /**< flag for the single linkage min neighbours*/
-#define M_PAR_MC_ITER 'v' /**< flag for how many iterations for the monte carlo volume calculation algorithm*/
-#define M_PAR_BASIC_VOL_DIVISION 'b' /**< flag for the space approximation of the MC*/
-#define M_PAR_MIN_POCK_NB_ASPH 'i' /**< flag for the min number of alpha spheres in the pocket*/
-#define M_PAR_REFINE_DIST 'r' /**< flag for the refining distance*/
+#define M_PAR_PDB_FILE 'f'          /**< flag to give a single pdb input file*/
+#define M_PAR_PDB_LIST 'F'          /**< flag to give a txt file containing paths to multiple pdb files*/
+#define M_PAR_MAX_ASHAPE_SIZE 'M'   /**< flag for the maximum alpha sphere size*/
+#define M_PAR_MIN_ASHAPE_SIZE 'm'   /**< flag for the minimum alpha sphere size*/
+#define M_PAR_MIN_APOL_NEIGH 'A'    /**< flag for the minimum number of apolar neighbours for an alpha sphere to be considered as apolar*/
+#define M_PAR_CLUST_MAX_DIST 'D'    /**< flag for the first clustering distance*/
+#define M_PAR_SL_MAX_DIST 's'       /**< flag for the distance crit. of the multiple linkage clustering algorithm*/
+#define M_PAR_SL_MIN_NUM_NEIGH 'n'  /**< flag for the single linkage min neighbours*/
+#define M_PAR_MC_ITER 'v'           /**< flag for how many iterations for the monte carlo volume calculation algorithm*/
+#define M_PAR_BASIC_VOL_DIVISION 'b'/**< flag for the space approximation of the MC*/
+#define M_PAR_MIN_POCK_NB_ASPH 'i'  /**< flag for the min number of alpha spheres in the pocket*/
+#define M_PAR_REFINE_DIST 'r'       /**< flag for the refining distance*/
 #define M_PAR_REFINE_MIN_NAPOL_AS 'p'/**< flag for minimum proportion of apolar alpha spheres*/
+#define M_PAR_DB_RUN 'd'            /**<flag for running fpocket as database run, more silent and special output is produced for automatic grabbing of results using other programs*/
 
 #define M_FP_USAGE "\n\
 ***** USAGE (fpocket) *****\n\
@@ -118,6 +119,8 @@ Pocket finding on a pdb - list of pdb - file(s):             \n\
 \t-b (integer): Space approximation for the basic method     \n\
 \t              of the volume calculation. Not used by       \n\
 \t              default (Monte Carlo approximation is)       \n\
+\t-d flag     : Put this flag if you want to run fpocket for \n\
+\t              database creation                            \n\
 \nSee the manual (man fpocket), or the full documentation for\n\
 more information.\n\
 ***************************\n" /**< the usage print content*/
@@ -141,7 +144,8 @@ typedef struct s_fparams
 		nb_mcv_iter,		 /**< Number of iteration for the Monte Carlo volume
 								calculation */
 		basic_volume_div,	 /**< Box division factor for basic volume calculation */
-		min_pock_nb_asph ;	 /**< Minimump number of alpha spheres per pocket */
+		min_pock_nb_asph, 	 /**< Minimump number of alpha spheres per pocket */
+                db_run;                 /**< flag for running fpocket for db population*/
 
 	float clust_max_dist,					/**< First clustering distance criteria */
 		  refine_min_apolar_asphere_prop,	/**< Min proportion of apolar alpha

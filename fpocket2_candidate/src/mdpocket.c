@@ -89,10 +89,12 @@
 void mdpocket_detect(s_mdparams *par)
 {
 	int i;
-	FILE *fout[4] ;                             /*output file handles*/
+	FILE *fout[6] ;                             /*output file handles*/
         FILE *timef;                                /*just an output for performance measurements*/
         c_lst_pockets *pockets=NULL;                /*tmp handle for pockets*/
-        s_mdgrid *mdgrid=NULL;                      /*init mdgrid structure*/
+        s_mdgrid *freqgrid=NULL;                      /*init mdgrid structure*/
+        s_mdgrid *refgrid=NULL;                     /*reference grid*/
+        s_mdgrid *densgrid=NULL;                    /*density grid*/
         s_pdb *cpdb=NULL;                           /*handle for the current snapshot structure*/
         par->fpar->flag_do_asa_and_volume_calculations=0; /*don't do ASA and volume calculations here as they are expensive and we don't need the results here*/
         FILE *cf;                                   /*file handle for current bfact coloured file to write*/
@@ -101,11 +103,13 @@ void mdpocket_detect(s_mdparams *par)
 	if(par) {
 	/* Opening output files */
 		//fout[0] = fopen(par->f_pqr,"w") ;   /*concat pqr output*/
-		fout[1] = fopen(par->f_dx,"w") ;    /*grid dx output*/
-                fout[2] = fopen(par->f_iso,"w") ;   /*iso pdb output*/
-                fout[3] = fopen(par->f_appdb,"w");  /*all atom -> pocket density output on bfactors*/
+		fout[1] = fopen(par->f_freqdx,"w") ;    /*grid dx output*/
+                fout[2] = fopen(par->f_densdx,"w") ;    /*grid dx output*/
+                fout[3] = fopen(par->f_freqiso,"w") ;   /*iso pdb output*/
+                fout[4] = fopen(par->f_densiso,"w") ;   /*iso pdb output*/
+                fout[5] = fopen(par->f_appdb,"w");  /*all atom -> pocket density output on bfactors*/
                 timef=fopen("time.txt","w");        /*performance measurement output*/
-		if(fout[1] && fout[2]) {
+		if(fout[1] && fout[2] && fout[3] && fout[4] && fout[5]) {
                         //mdconcat=init_md_concat();  /*alloc & init of the mdconcat structure*/
                         clock_t b, e ;              /*for the calculation time measurements*/
 
@@ -119,12 +123,20 @@ void mdpocket_detect(s_mdparams *par)
                                 
                                 pockets=mdprocess_pdb(cpdb, par,fout[0],i+1);   /*perform pocket detection*/
                                 if(pockets){
-                                    if(i==0) mdgrid=init_md_grid(pockets);          /*initialize the md grid, memory allocation*/
-                                    calculate_md_grid(mdgrid,pockets,par); // calculate and update mdgrid
+                                    if(i==0) {
+                                        freqgrid=init_md_grid(pockets);          /*initialize the md grid, memory allocation*/
+                                        densgrid=init_md_grid(pockets);
+                                        refgrid=init_md_grid(pockets);
+                                    }
+                                    else {
+                                        reset_grid(refgrid);
+                                    }
+                                    calculate_md_dens_grid(densgrid,pockets,par);          // calculate and update mdgrid with voronoi vertice local densities
+                                    update_md_grid(freqgrid,refgrid,pockets,par);           //update mdgrid with frequency measurements
                                 }
                                 free_pdb_atoms(cpdb);                           /*free atoms of the snapshot*/
-                                if(i == par->nfiles - 1) fprintf(stdout,"\n") ;
-				else fprintf(stdout,"\r") ;
+                                if(i == par->nfiles - 1) fprintf(stdout,"\n");
+				else fprintf(stdout,"\r");
 				fflush(stdout);
                                 c_lst_pocket_free(pockets);     /*free pockets of current snapshot*/
                                 //printf("\napres %d\n",get_number_of_objects_in_memory());
@@ -136,14 +148,15 @@ void mdpocket_detect(s_mdparams *par)
                                 
 
 			}
-                        mdgrid->n_snapshots=par->nfiles;
+                        freqgrid->n_snapshots=par->nfiles;
+                        densgrid->n_snapshots=par->nfiles;
 
-
-                        calculate_pocket_densities(mdgrid,par->nfiles);
+                        normalize_grid(freqgrid,par->nfiles);
+                        normalize_grid(densgrid,par->nfiles);
                         cpdb=open_pdb_file(par->fsnapshot[0]);  /*open again the first snapshot*/
                         rpdb_read(cpdb, NULL, M_DONT_KEEP_LIG) ;
-                        project_grid_on_atoms(mdgrid,cpdb);
-                        write_first_bfactor_density(fout[3],cpdb);
+                        project_grid_on_atoms(densgrid,cpdb);
+                        write_first_bfactor_density(fout[5],cpdb);
                         free_pdb_atoms(cpdb);
                         if(par->bfact_on_all){
                             for(i = 0 ; i < par->nfiles ; i++) {
@@ -154,7 +167,7 @@ void mdpocket_detect(s_mdparams *par)
                                 cf=fopen(cf_name,"w");
                                 cpdb=open_pdb_file(par->fsnapshot[i]);
                                 rpdb_read(cpdb, NULL, M_DONT_KEEP_LIG) ;
-                                project_grid_on_atoms(mdgrid,cpdb);
+                                project_grid_on_atoms(densgrid,cpdb);
                                 write_first_bfactor_density(cf,cpdb);
                                 free_pdb_atoms(cpdb);
                                 fclose(cf);
@@ -165,8 +178,9 @@ void mdpocket_detect(s_mdparams *par)
 
                      //   mdconcat->n_snapshots=par->nfiles;      /*updata a variable in the mdconcat structure*/
                      //   mdgrid=calculate_md_grid(mdconcat);     /*calculate the actual md grid*/
-                        write_md_grid(mdgrid, fout[1],fout[2]); /*write the grid to a vmd readable dx file*/
-			for( i = 1 ; i < 4 ; i++ ) fclose(fout[i]) ;    /*close all output file handles*/
+                        write_md_grid(freqgrid, fout[1],fout[3],par,M_MDP_DEFAULT_ISO_VALUE_FREQ); /*write the grid to a vmd readable dx file*/
+                        write_md_grid(densgrid, fout[2],fout[4],par,M_MDP_DEFAULT_ISO_VALUE_DENS); /*write the grid to a vmd readable dx file*/
+			for( i = 1 ; i < 6 ; i++ ) fclose(fout[i]) ;    /*close all output file handles*/
 		}
 		else {
 			/*if(! fout[0]) {
@@ -174,10 +188,11 @@ void mdpocket_detect(s_mdparams *par)
 						par->f_pqr) ;
 			}
 			else */
-                        if (! fout[1]) {
-				fprintf(stdout, "! Output file <%s> couldn't be opened.\n",
-						par->f_dx) ;
-			}
+                        for( i = 1 ; i < 6 ; i++ ){
+                            if (! fout[i] ) {
+				fprintf(stdout, "! Output file couldn't be opened.\n");
+                            }
+                        }
 		}
                 fclose(timef);      /*close the performance measurement file handle*/
                 /*free_mdconcat(mdconcat);*/ /*should be freed by free_all*/
@@ -431,7 +446,7 @@ c_lst_pockets* mdprocess_pdb(s_pdb *pdb, s_mdparams *mdparams,FILE *pqrout, int 
 		/* Actual reading of pdb data and then calculation */
 			rpdb_read(pdb, NULL, M_DONT_KEEP_LIG) ;
                         
-			pockets = search_pocket(pdb, params);   /*run fpocket*/
+			pockets = search_pocket(pdb, params,NULL);   /*run fpocket*/
                       //  if(pockets) write_mdpockets_concat_pqr(pqrout,pockets); /*write pqr concat output*/
 	}
         else fprintf(stderr, "! PDB reading failed on snapshot %d\n",snnumber);

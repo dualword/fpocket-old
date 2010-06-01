@@ -54,6 +54,6 @@ typedef struct s_sorted_pocket_list
 /* ------------------------------PROTOTYPES---------------------------------- */
 
 void pck_ml_clust(c_lst_pockets *pockets, s_fparams *params);
-void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb);
 int comp_pocket(const void *el1, const void *el2);
+void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb *pdb_w_lig);
 #endif

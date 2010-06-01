@@ -243,7 +243,7 @@ void desc_pocket(char fcomplexe[], const char ligname[], s_dparams *par,
 		fprintf(stdout, "dpocket: Explicit pocket definition... \n") ; 
 		fflush(stdout) ;
 */
-	pockets = search_pocket(pdb_cplx_nl, par->fpar) ;
+	pockets = search_pocket(pdb_cplx_nl, par->fpar,pdb_cplx_l) ;
 	if(pockets == NULL) {
 		fprintf(stdout, "ERROR - No pocket found for %s\n", fcomplexe) ;
 		return ;

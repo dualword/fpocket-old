@@ -67,7 +67,7 @@
 */
 
 
-void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
+void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb *pdb_w_lig)
 {
 	node_pocket *pcur = NULL,
 				*pnext = NULL ,
@@ -101,7 +101,7 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb)
 	}
 
 	/* Set the first pocket */
-        set_pockets_descriptors(pockets,pdb,params);
+        set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
 	pcur = pockets->first ;
         //fprintf(stdout,"\nHaving %d comparisons\n",pockets->n_pockets*pockets->n_pockets);
         i=0;

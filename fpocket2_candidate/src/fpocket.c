@@ -79,7 +79,7 @@
 	(the default is a scoring function)
   
 */
-c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
+c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 {
 /*
 	clock_t b, e ;
@@ -146,7 +146,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 /*
 		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
 */
-		pck_final_clust(pockets, params,pdb);	/* Single Linkage Clustering */
+		pck_final_clust(pockets, params,pdb,pdb_w_lig);	/* Single Linkage Clustering */
 		reIndexPockets(pockets) ;
 
 	/* Descriptors calculation */
@@ -154,8 +154,8 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params)
 		fprintf(stdout,"> Calculating descriptors and score...\n");
 		b = clock() ;
 */
-
-		set_pockets_descriptors(pockets,pdb,params);
+                
+		set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
                 
 /*
 		e = clock() ;

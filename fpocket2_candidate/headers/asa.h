@@ -58,9 +58,10 @@
 #include "memhandler.h"
 
 
-#define M_NSPIRAL 50
+#define M_NSPIRAL 100
 #define M_PADDING 1.0
 #define M_PROBE_SIZE 1.4
+#define M_PROBE_SIZE2 2.2
 #define PI 3.1415926535897931
 
 /* ---------------------- PUBLIC STRUCTURES ----------------------------------*/

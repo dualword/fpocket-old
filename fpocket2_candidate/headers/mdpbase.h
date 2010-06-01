@@ -65,6 +65,7 @@
 #define M_MDP_CUBE_SIDE 2.0         /**< size of the side of the cube to count vvertices*/
 #define M_MDP_WP_ATOM_DIST 4.0      /**< max distance for constructing the atom set of the pocket with voronoi vertices*/
 #define M_MDP_ATOM_DENSITY_DIST 2.0 /**< max distance (for each dimension) for mapping pocket densities to neighbouring atoms*/
+#define M_MIN_G_DENS 20.0            /**< minimum density of alpha spheres around a grid point for it to be taken into account for further processing using */
 /* -------------------------------STRUCTURES--------------------------------*/
 
 /**
@@ -104,11 +105,13 @@ typedef struct s_min_max_pockets
 
 void store_vertice_positions(s_mdconcat *m,c_lst_pockets *pockets);
 s_min_max_pockets *float_get_min_max_from_pockets(c_lst_pockets *pockets);
-void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par);
+void calculate_md_dens_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par);
+void update_md_grid(s_mdgrid *g, s_mdgrid *refg, c_lst_pockets *pockets,s_mdparams *par);
 void project_grid_on_atoms(s_mdgrid *g,s_pdb *pdb);
 s_mdconcat *init_md_concat(void);
+void reset_grid(s_mdgrid *g);
 s_mdgrid *init_md_grid(c_lst_pockets *pockets);
-void calculate_pocket_densities(s_mdgrid *g, int n);
+void normalize_grid(s_mdgrid *g, int n);
 void alloc_first_md_concat(s_mdconcat *m,size_t n);
 void realloc_md_concat(s_mdconcat *m,size_t n);
 void free_mdconcat(s_mdconcat *m);

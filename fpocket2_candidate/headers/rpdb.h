@@ -93,18 +93,18 @@ s_pdb* rpdb_open(char *fpath, const char *ligan, const int keep_lig) ;
 void rpdb_read(s_pdb *pdb, const char *ligan, const int keep_lig) ;
 
 void rpdb_extract_atm_resname(char *pdb_line, char *res_name) ;
+int element_in_kept_res(char *res_name);
+void guess_element(char *aname, char *element, char *res_name) ;
 
-void guess_element(char *aname, char *element) ;
-
-void rpdb_extract_cryst1(char *rstr, float *alpha, float *beta, float *gamma, 
+void rpdb_extract_cryst1(char *rstr, float *alpha, float *beta, float *gamma,
 						 float *a, float *b, float *c) ;
 void rpdb_extract_atom_values(char *pdb_line, float *x, float *y, float *z,
 							  float *occ, float *beta) ;
 
-void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name, 
-							char *alt_loc, char *res_name, char *chain, 
-							int *res_id, char *insert, 
-							float *x, float *y, float *z, float *occ, 
+void rpdb_extract_pdb_atom( char *pdb_line, char *type, int *atm_id, char *name,
+							char *alt_loc, char *res_name, char *chain,
+							int *res_id, char *insert,
+							float *x, float *y, float *z, float *occ,
 							float *bfactor, char *symbol, int *charge, int *guess_flag) ;
 
 void free_pdb_atoms(s_pdb *pdb) ;

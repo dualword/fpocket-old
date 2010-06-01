@@ -142,6 +142,12 @@ void reset_desc(s_desc *desc)
         desc->surf_vdw14=0.0;
         desc->surf_vdw22=0.0;
 
+        desc->drug_score=0.0;
+        desc->numResChain1=0;
+        desc->numResChain2=0;
+        desc->characterChain1=0;
+        desc->characterChain2=0;
+
 	int i ;
 	for(i = 0 ; i < 20 ; i++) desc->aa_compo[i] = 0 ;
 }
@@ -177,8 +183,8 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 					 s_desc *desc,int niter,s_pdb *pdb, int flag_do_expensive_calculations)
 {
 	/* Setting atom-based descriptors */
-	set_atom_based_descriptors(atoms, natoms, desc) ;
-
+	set_atom_based_descriptors(atoms, natoms, desc, pdb->latoms, pdb->natoms) ;
+            
 	/* Setting vertice-based descriptors */
 	if(! tvert) return ;
 
@@ -270,6 +276,12 @@ void set_descriptors(s_atm **atoms, int natoms, s_vvertice **tvert, int nvert,
 	desc->as_density = as_density / ((nvert*nvert - nvert) * 0.5) ;
 
 	desc->as_max_r = as_max_r ;
+        if (nvert==0){
+            desc->apolar_asphere_prop=0.0;
+            desc->masph_sacc=0.0;
+            desc->mean_asph_ray=0.0;
+            desc->as_density=0.0;
+        }
 }
 
 /**
@@ -318,6 +330,29 @@ int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert)
 	return apol_neighbours ;
 }
 
+int countResidues(s_atm *atoms, int natoms, char chain[2]){
+    int i,
+            n=0,
+            curRes=-1,
+            firstRes=-1,
+            lastRes=-1;
+    s_atm *curatom = NULL ;
+    for(i=0;i<natoms;i++){
+        curatom = &(atoms[i]) ;
+        if(!strncmp(curatom->chain,chain,1) ){
+            if(firstRes==-1) firstRes=curatom->res_id;
+            lastRes=curatom->res_id;
+            if(curRes!=curatom->res_id){
+                curRes=curatom->res_id;
+                n+=1;
+            }
+        }
+    }
+    return lastRes-firstRes;
+}
+
+
+
 /**
    ## FUNCTION:
 	set_atom_based_descriptors
@@ -335,36 +370,85 @@ int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert)
 	void
   
 */
-void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc)
+void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc,s_atm *all_atoms, int all_natoms)
 {
 	s_atm *curatom = NULL ;
-
+        s_atm *firstatom = NULL;
 	int i,
+                curChar = 0, 
 		res_ids[natoms],	/* Maximum natoms residues contacting the pocket */
 		nb_res_ids = 0 ;	/* Current number of residus */
 
 	int nb_polar_atm = 0 ;
- 
-	for(i = 0 ; i < natoms ; i++) {
-		curatom = atoms[i] ;
+        char curChainName[2];
+        if(atoms){
+            firstatom=atoms[0];
+            desc->interChain=0;
 
-	/* Setting amino acid descriptor of the current atom */
-		if(in_tab(res_ids,  nb_res_ids, curatom->res_id) == 0) {
-			set_aa_desc(desc, atoms[i]->res_name) ;
-			res_ids[nb_res_ids] = curatom->res_id ;
-			nb_res_ids ++ ;
-		}
+            if(element_in_std_res(firstatom->res_name))             desc->characterChain1=0;
+            else if(element_in_nucl_acid(firstatom->res_name))      desc->characterChain1=1;
+            else if(element_in_kept_res(firstatom->res_name))       desc->characterChain1=2;
+            strcpy(desc->nameChain1,firstatom->chain);
+            strcpy(curChainName,firstatom->chain);
+            desc->numResChain1 = countResidues(all_atoms,all_natoms,firstatom->chain);
 
-	/* Setting atom descriptor */
-		desc->flex += curatom->bfactor ;
-		if(curatom->electroneg > 2.7)  nb_polar_atm += 1 ;
-	}
+            for(i = 0 ; i < natoms ; i++) {
+                    curatom = atoms[i] ;
+                    if(curatom!=firstatom){
+                        if(strcmp(curatom->chain,firstatom->chain)!=0 && desc->interChain < 1) {
+                            desc->interChain = 1;
+                            if(!desc->numResChain2){
+                                desc->numResChain2 = countResidues(all_atoms,all_natoms,curatom->chain);
+                                strncpy(curChainName,curatom->chain,1);
+                            }
+                        }
 
-	desc->hydrophobicity_score = desc->hydrophobicity_score/ (float) nb_res_ids ;
-	desc->volume_score = desc->volume_score / (float) nb_res_ids ;
+                        if(element_in_std_res(curatom->res_name)){
+                            curChar=0;
+                            //strcpy(curChainName,curatom->chain);
+                        }
+                        else if(element_in_nucl_acid(curatom->res_name)){
+                            curChar=1;
+                            //strcpy(curChainName,curatom->chain);
+                        }
+                        else if(element_in_kept_res(curatom->res_name)){
+                            curChar=2;
+                            //strcpy(curChainName,curatom->chain);
+                        }
+                        if(curChar!=desc->characterChain1){
+                            desc->characterChain2=curChar;
+                            //strcpy(curChainName,curatom->chain);
+                        }
+                    }
+            /* Setting amino acid descriptor of the current atom */
+                    if(in_tab(res_ids,  nb_res_ids, curatom->res_id) == 0) {
+                            set_aa_desc(desc, atoms[i]->res_name) ;
+                            res_ids[nb_res_ids] = curatom->res_id ;
+                            nb_res_ids ++ ;
+                    }
 
-	desc->flex /= natoms ;
-	desc->prop_polar_atm = ((float) nb_polar_atm) / ((float) natoms) * 100.0 ;
+            /* Setting atom descriptor */
+                    desc->flex += curatom->bfactor ;
+                    if(curatom->electroneg > 2.7)  nb_polar_atm += 1 ;
+            }
+
+            if(!desc->numResChain2) desc->numResChain2 = countResidues(all_atoms,all_natoms,curatom->chain);
+            strcpy(desc->nameChain2,curChainName);
+
+            /*fprintf(stdout,":%s:",desc->ligTag);*/
+            desc->hydrophobicity_score = desc->hydrophobicity_score/ (float) nb_res_ids ;
+            desc->volume_score = desc->volume_score / (float) nb_res_ids ;
+
+            desc->flex /= natoms ;
+            desc->prop_polar_atm = ((float) nb_polar_atm) / ((float) natoms) * 100.0 ;
+        }
+        else {
+            desc->hydrophobicity_score=0.0;
+            desc->volume_score=0.0;
+            desc->flex=0.0;
+            desc->prop_polar_atm=0.0;
+        }
+
 }
 
 /**
@@ -437,7 +521,6 @@ void set_aa_desc(s_desc *desc, const char *aa_name)
 
 	if(aa_idx != -1) {
 		desc->aa_compo[aa_idx] ++ ;
-
 		desc->hydrophobicity_score += get_hydrophobicity_score_from_idx(aa_idx) ;
 		desc->polarity_score += get_polarity_from_idx(aa_idx) ;
 		desc->volume_score += get_volume_score_from_idx(aa_idx) ;

@@ -125,10 +125,142 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		sprintf(out_path, "%s/pockets", out_path) ;
 		sprintf(command, "mkdir %s", out_path) ;
 		status = system(command) ;
-		if(status != 0) {
+		/*if(status != 0) {
 			return ;
-		}
+		}*/
 
 		write_each_pocket(out_path, pockets) ;
 	}
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	void write_out(c_lst_pockets *pockets)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Output routine.
+   -----------------------------------------------------------------------------
+*/
+void write_out_fpocket_DB(c_lst_pockets *pockets, s_pdb *pdb, char *input_name)//s_fparams *params)
+{
+	char pdb_code[350] = "" ;
+	char pdb_path[350] = "" ;
+	char out_path[350] = "" ;
+	char pdb_out_path[350] = "" ;
+	char command[370] = "" ;
+
+	if(pockets) {
+	// Extract path, pdb code...
+		strcpy(pdb_code, input_name) ;
+		extract_path(input_name, pdb_path) ;
+		remove_ext(pdb_code) ;
+		remove_path(pdb_code) ;
+		/*sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;*/
+                if(strlen(pdb_path) > 0) sprintf(out_path, "%s/%s_out", pdb_path, pdb_code) ;
+		else sprintf(out_path, "%s_out", pdb_code) ;
+		sprintf(command, "mkdir %s", out_path) ;
+		system(command) ;
+/*
+		sprintf(out_path, "%s/%s_out/%s", pdb_path, pdb_code, pdb_code) ;
+		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
+*/
+	//Write vmd and pymol scripts
+/*
+		sprintf(fout, "%s_out.pdb", pdb_code) ;
+		write_visualization(out_path, fout);
+	// Print the whole pockets informations in a single file
+*/
+		/*sprintf(fout, "%s_pockets.info", out_path) ;
+		FILE *f = fopen(fout, "w") ;
+		if(f) {
+			print_pockets(f, pockets) ;
+			fclose(f) ;
+		}
+*/
+	// Writing full pdb
+		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
+
+		//write_pockets_single_pdb(pdb_out_path, pdb, pockets) ;
+
+        // Writing topology clusters
+               /* sprintf(pdb_out_path, "%s_topo_connect.pdb", out_path) ;
+
+		write_topology_pdb(pdb_out_path,pockets) ;*/
+	// Writing pockets as a single pqr
+		/*sprintf(fout, "%s_pockets.pqr", out_path) ;
+		write_pockets_single_pqr(fout, pockets) ;*/
+
+        // Writing pocket distance matrix to a file
+                //  sprintf(fout, "%s_dist_mat.txt", out_path) ;
+
+
+	// Writing individual pockets pqr
+
+/*		sprintf(out_path, "%s/%s_out/", pdb_path, pdb_code) ;
+		sprintf(command, "mkdir %s", out_path) ;
+		system(command) ;*/
+
+		write_each_pocket_for_DB(out_path, pockets,pdb) ;
+                //write_each_matrix(out_path,pockets);
+	}
+}
+
+
+
+
+void write_descriptors_DB(c_lst_pockets *pockets, FILE *f){
+
+    /*Todo adapt things here*/
+
+     int n=1;
+    s_pocket *p;
+    node_pocket *npcur;
+    npcur=pockets->first;
+    int r=1,i;
+    fprintf(f,"cav_id drug_score nb_asph inter_chain apol_asph_proportion mean_asph_radius "
+            "mean_asph_solv_acc mean_loc_hyd_dens flex hydrophobicity_score volume_score charge_score "
+            "polarity_score a0_apol a0_pol af_apol af_pol n_abpa "
+            "ala cys asp glu phe gly his ile lys ley met asn pro gln arg ser thr val trp tyr "
+            "chain_1_type chain_2_type num_res_chain_1 "
+            "num_res_chain_2 lig_het_tag name_chain_1 name_chain_2\n");
+    while(npcur){
+        p=npcur->pocket;
+// python counter part         entry={"pdb_id":pdbFile,"cav_id":int(r[0]),"drug_score":r[1],"nb_asph":int(r[2]),"inter_chain":int(r[3]),"apol_asph_proportion":
+        //float(r[4]),"mean_asph_radius":float(r[5]),"mean_asph_solv_acc":float(r[6]),"mean_loc_hyd_dens":float(r[7]),"flex":r[8],"hydrophobicity_score":float(r[9]),
+        //"volume_score":float(r[10]),"charge_score":int(r[11]),"polarity_score":int(r[12]),"a0_apol":float(r[13]),"a0_pol":float(r[14]),"af_apol":float(r[15]),
+        //"af_pol":float(r[16]),"n_abpa":int(r[17]),"ala":int(r[18]),"cys":int(r[19]),"asp":int(r[20]),"glu":int(r[21]),"phe":int(r[22]),"gly":int(r[23]),
+        //"his":int(r[24]),"ile":int(r[25]),"lys":int(r[26]),"leu":int(r[27]),"met":int(r[28]),"asn":int(r[29]),"pro":int(r[30]),"gln":int(r[31]),"arg":int(r[32]),
+        //"ser":int(r[33]),"thr":int(r[34]),"val":int(r[35]),"trp":int(r[36]),"tyr":int(r[37])}
+        //entry={"pdb_id":pdbFile,"cav_id":int(r[0]),"chain_1_type":int(r[38]), "chain_2_type":int(r[39]), "num_res_chain_1":int(r[40]),"num_res_chain_2":int(r[41])}
+        // entry={"pdb_id":pdbFile,"cav_id":int(r[0]),"lig_het_tag":str(r[42])}
+           fprintf(f,"%d %.4f %d %d %.4f %.4f",r,p->pdesc->drug_score,\
+                   p->pdesc->nb_asph,p->pdesc->interChain,(float)p->nAlphaApol/(float)p->pdesc->nb_asph,p->pdesc->mean_asph_ray);
+           fprintf(f," %.4f %.4f %.4f %.4f %.4f %d",p->pdesc->masph_sacc,p->pdesc->mean_loc_hyd_dens,p->pdesc->flex,p->pdesc->hydrophobicity_score,\
+                   p->pdesc->volume_score,p->pdesc->charge_score);
+           fprintf(f," %d %.4f %.4f %.4f %.4f %d",p->pdesc->polarity_score,p->pdesc->surf_apol_vdw14,p->pdesc->surf_pol_vdw14,\
+                   p->pdesc->surf_apol_vdw22,p->pdesc->surf_pol_vdw22,p->pdesc->n_abpa);
+           for(i = 0 ; i < 20 ; i++) fprintf(f, " %d", p->pdesc->aa_compo[i]) ;
+           fprintf(f," %d %d %d %d %s %s %s",p->pdesc->characterChain1, p->pdesc->characterChain2, p->pdesc->numResChain1, p->pdesc->numResChain2, p->pdesc->ligTag, p->pdesc->nameChain1, p->pdesc->nameChain2);
+           //fprintf(f,"%s %s %s",p->pdesc->nameChain1,p->pdesc->nameChain2);
+           fprintf(f,"\n");
+           fflush(f);
+
+
+           
+
+       /* sprintf(filename,"pocket_%d.txt",n);
+        f=fopen(filename,"w");
+        fprintf(f,"probe apolar_surface polar_surface\n");
+
+        int i;
+        for(i=0;i<l;i++){
+            fprintf(f,"%.3f %.3f %.3f\n",p->probe_size[i], p->apol_asa_probe[i],p->pol_asa_probe[i]);
+        }
+        fclose(f);*/
+        npcur=npcur->next;
+        n++;
+        r++;
+    }
+
 }

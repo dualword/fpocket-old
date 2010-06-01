@@ -55,6 +55,144 @@
 **/
  
 
+
+void write_each_pocket_for_DB(const char out_path[], c_lst_pockets *pockets,s_pdb *pdb)
+{
+	int out_len = strlen(out_path) ;
+	char out[out_len+20] ;
+	out[0] = '\0' ;
+
+	node_pocket *pcur ;
+
+	int i = 0 ;
+	if(pockets){
+		pcur = pockets->first ;
+
+		while(pcur){
+			sprintf(out, "%s/pocket%d_vert.pqr", out_path, i+1) ;
+			write_pocket_pqr_DB(out, pcur->pocket) ;
+
+			sprintf(out, "%s/pocket%d_env_atm.pdb", out_path, i+1) ;
+			write_pocket_pdb_DB(out, pcur->pocket,pdb) ;
+                        sprintf(out, "%s/pocket%d_atm.pdb", out_path, i+1) ;
+                        write_pocket_pdb(out, pcur->pocket) ;
+
+			pcur = pcur->next ;
+			i++ ;
+		}
+	}
+	else {
+		fprintf(stderr, "! The file %s could not be opened!\n", out);
+	}
+}
+
+
+
+void write_pocket_pqr_DB(const char out[], s_pocket *pocket)
+{
+	node_vertice *vcur = NULL ;
+
+	FILE *f = fopen(out, "w") ;
+	if(f && pocket) {
+		vcur = pocket->v_lst->first ;
+
+		while(vcur){
+			write_pqr_vert(f, vcur->vertice) ;
+
+			vcur = vcur->next ;
+		}
+
+		fprintf(f, "TER\nEND\n") ;
+		fclose(f) ;
+	}
+	else {
+		if(!f) fprintf(stderr, "! The file %s could not be opened!\n", out);
+		else fprintf(stderr, "! Invalid pocket to write in write_pocket_pqr !\n");
+	}
+}
+
+
+void write_pocket_pdb_DB(const char out[], s_pocket *pocket,s_pdb *pdb)
+{
+	int i = 0,nvert=0 ;
+	s_atm **atms = (s_atm **) my_malloc(sizeof(s_atm*)*10) ;
+	s_atm *atom = NULL ;
+        int n_sa=0;
+        int *sa=NULL;    /*surrounding atoms container*/
+        s_vvertice **tab_vert =NULL;
+
+	FILE *f = fopen(out, "w") ;
+	if(f && pocket) {
+	// First get the list of atoms
+                        tab_vert = (s_vvertice **) my_malloc(pocket->v_lst->n_vertices*sizeof(s_vvertice*)) ;
+		
+			node_vertice *nvcur = pocket->v_lst->first ;
+
+/*
+                        fprintf(stdout, "A Pocket:\n") ;
+*/
+			while(nvcur) {
+/*
+                                fprintf(stdout, "Vertice %d: %p %d %f\n", i, nvcur->vertice, nvcur->vertice->id, nvcur->vertice->ray) ;
+                                fprintf(stdout, "Atom %s\n", nvcur->vertice->neigh[0]->name) ;
+*/
+
+                                tab_vert[nvert] = nvcur->vertice ;
+				nvcur = nvcur->next ;
+				nvert++ ;
+			}
+            sa=(int *)get_surrounding_atoms_idx(tab_vert,nvert,pdb, &n_sa);
+            for(i=0;i<n_sa;i++){
+                	//atom = pocket->sou_atoms[i] ;
+                        atom=pdb->latoms_p[sa[i]];
+			write_pdb_atom_line(f, atom->type, atom->id, atom->name, atom->pdb_aloc,
+									atom->res_name, atom->chain, atom->res_id,
+ 									atom->pdb_insert, atom->x, atom->y, atom->z,
+ 									atom->occupancy, atom->bfactor, atom->symbol,
+ 									atom->charge);
+            }
+/*
+            vcur = pocket->v_lst->first ;
+
+		while(vcur){
+			for(i = 0 ; i < 4 ; i++) {
+				if(!is_in_lst_atm(atms, cur_size, vcur->vertice->neigh[i]->id)) {
+					if(cur_size >= cur_allocated-1) {
+						cur_allocated *= 2 ;
+						atms = (s_atm**) my_realloc(atms, sizeof(s_atm)*cur_allocated) ;
+					}
+					atms[cur_size] = vcur->vertice->neigh[i] ;
+					cur_size ++ ;
+				}
+
+			}
+			vcur = vcur->next ;
+		}
+*/
+	// Then write atoms...
+/*
+		for(i = 0 ; i < cur_size ; i++) {
+			atom = atms[i] ;
+
+			write_pdb_atom_line(f, atom->type, atom->id, atom->name, atom->pdb_aloc,
+									atom->res_name, atom->chain, atom->res_id,
+ 									atom->pdb_insert, atom->x, atom->y, atom->z,
+ 									atom->occupancy, atom->bfactor, atom->symbol,
+ 									atom->charge);
+		}
+*/
+		fprintf(f, "TER\nEND\n") ;
+		fclose(f) ;
+	}
+	else {
+		if(!f) fprintf(stderr, "! The file %s could not be opened!\n", out);
+		else fprintf(stderr, "! Invalid pocket to write in write_pocket_pqr !\n");
+	}
+
+	my_free(atms) ;
+}
+
+
 /**
    ## FUNCTION: 
 	write_single_pdb
@@ -307,18 +445,19 @@ void write_pocket_pqr(const char out[], s_pocket *pocket)
 		fprintf(f, "HEADER                                                                           \n") ;
 		fprintf(f, "HEADER Information about the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
 		fprintf(f, "HEADER 0  - Pocket Score                      : %.4f\n", pocket->score) ;
-		fprintf(f, "HEADER 1  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
-		fprintf(f, "HEADER 2  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;
-		fprintf(f, "HEADER 3  - Mean alpha-sphere SA              : %.4f\n", pocket->pdesc->masph_sacc) ;
-		fprintf(f, "HEADER 4  - Mean B-factor                     : %.4f\n", pocket->pdesc->flex) ;
-		fprintf(f, "HEADER 5  - Hydrophobicity Score              : %.4f\n", pocket->pdesc->hydrophobicity_score) ;
-		fprintf(f, "HEADER 6  - Polarity Score                    : %5d\n", pocket->pdesc->polarity_score) ;
-		fprintf(f, "HEADER 7  - Volume Score                      : %.4f\n", pocket->pdesc->volume_score) ;
-		fprintf(f, "HEADER 8  - Real volume (approximation)       : %.4f\n", pocket->pdesc->volume) ;
-		fprintf(f, "HEADER 9  - Charge Score                      : %5d\n", pocket->pdesc->charge_score) ;
-		fprintf(f, "HEADER 10 - Local hydrophobic density Score   : %.4f\n", pocket->pdesc->mean_loc_hyd_dens) ;
-		fprintf(f, "HEADER 11 - Number of apolar alpha sphere     : %5d\n", pocket->nAlphaApol) ;
-		fprintf(f, "HEADER 12 - Proportion of apolar alpha sphere : %.4f\n", pocket->pdesc->apolar_asphere_prop) ;
+                fprintf(f, "HEADER 1  - Drug Score                        : %.4f\n", pocket->pdesc->drug_score) ;
+		fprintf(f, "HEADER 2  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
+		fprintf(f, "HEADER 3  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;
+		fprintf(f, "HEADER 4  - Mean alpha-sphere SA              : %.4f\n", pocket->pdesc->masph_sacc) ;
+		fprintf(f, "HEADER 5  - Mean B-factor                     : %.4f\n", pocket->pdesc->flex) ;
+		fprintf(f, "HEADER 6  - Hydrophobicity Score              : %.4f\n", pocket->pdesc->hydrophobicity_score) ;
+		fprintf(f, "HEADER 7  - Polarity Score                    : %5d\n", pocket->pdesc->polarity_score) ;
+		fprintf(f, "HEADER 8  - Volume Score                      : %.4f\n", pocket->pdesc->volume_score) ;
+		fprintf(f, "HEADER 9  - Real volume (approximation)       : %.4f\n", pocket->pdesc->volume) ;
+		fprintf(f, "HEADER 10 - Charge Score                      : %5d\n", pocket->pdesc->charge_score) ;
+		fprintf(f, "HEADER 11 - Local hydrophobic density Score   : %.4f\n", pocket->pdesc->mean_loc_hyd_dens) ;
+		fprintf(f, "HEADER 12 - Number of apolar alpha sphere     : %5d\n", pocket->nAlphaApol) ;
+		fprintf(f, "HEADER 13 - Proportion of apolar alpha sphere : %.4f\n", pocket->pdesc->apolar_asphere_prop) ;
 
 		vcur = pocket->v_lst->first ;
 
@@ -372,18 +511,19 @@ void write_pocket_pdb(const char out[], s_pocket *pocket)
 		fprintf(f, "HEADER                                                                           \n") ;
 		fprintf(f, "HEADER Information about the pocket %5d:\n", pocket->v_lst->first->vertice->resid) ;
 		fprintf(f, "HEADER 0  - Pocket Score                      : %.4f\n", pocket->score) ;
-		fprintf(f, "HEADER 1  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
-		fprintf(f, "HEADER 2  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;
-		fprintf(f, "HEADER 3  - Mean alpha-sphere SA              : %.4f\n", pocket->pdesc->masph_sacc) ;
-		fprintf(f, "HEADER 4  - Mean B-factor                     : %.4f\n", pocket->pdesc->flex) ;
-		fprintf(f, "HEADER 5  - Hydrophobicity Score              : %.4f\n", pocket->pdesc->hydrophobicity_score) ;
-		fprintf(f, "HEADER 6  - Polarity Score                    : %5d\n", pocket->pdesc->polarity_score) ;
-		fprintf(f, "HEADER 7  - Volume Score                      : %.4f\n", pocket->pdesc->volume_score) ;
-		fprintf(f, "HEADER 8  - Real volume (approximation)       : %.4f\n", pocket->pdesc->volume) ;
-		fprintf(f, "HEADER 9  - Charge Score                      : %5d\n", pocket->pdesc->charge_score) ;
-		fprintf(f, "HEADER 10 - Local hydrophobic density Score   : %.4f\n", pocket->pdesc->mean_loc_hyd_dens) ;
-		fprintf(f, "HEADER 11 - Number of apolar alpha sphere     : %5d\n", pocket->nAlphaApol) ;
-		fprintf(f, "HEADER 12 - Proportion of apolar alpha sphere : %.4f\n", pocket->pdesc->apolar_asphere_prop) ;
+                fprintf(f, "HEADER 1  - Drug Score                        : %.4f\n", pocket->pdesc->drug_score) ;
+		fprintf(f, "HEADER 2  - Number of V. Vertices             : %5d\n", pocket->pdesc->nb_asph) ;
+		fprintf(f, "HEADER 3  - Mean alpha-sphere radius          : %.4f\n", pocket->pdesc->mean_asph_ray) ;
+		fprintf(f, "HEADER 4  - Mean alpha-sphere SA              : %.4f\n", pocket->pdesc->masph_sacc) ;
+		fprintf(f, "HEADER 5  - Mean B-factor                     : %.4f\n", pocket->pdesc->flex) ;
+		fprintf(f, "HEADER 6  - Hydrophobicity Score              : %.4f\n", pocket->pdesc->hydrophobicity_score) ;
+		fprintf(f, "HEADER 7  - Polarity Score                    : %5d\n", pocket->pdesc->polarity_score) ;
+		fprintf(f, "HEADER 8  - Volume Score                      : %.4f\n", pocket->pdesc->volume_score) ;
+		fprintf(f, "HEADER 9  - Real volume (approximation)       : %.4f\n", pocket->pdesc->volume) ;
+		fprintf(f, "HEADER 10 - Charge Score                      : %5d\n", pocket->pdesc->charge_score) ;
+		fprintf(f, "HEADER 11 - Local hydrophobic density Score   : %.4f\n", pocket->pdesc->mean_loc_hyd_dens) ;
+		fprintf(f, "HEADER 12 - Number of apolar alpha sphere     : %5d\n", pocket->nAlphaApol) ;
+		fprintf(f, "HEADER 13 - Proportion of apolar alpha sphere : %.4f\n", pocket->pdesc->apolar_asphere_prop) ;
 
 	/* First get the list of atoms */
 		vcur = pocket->v_lst->first ;

@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "voronoi.h"
 #include "voronoi_lst.h"
@@ -95,7 +96,16 @@ typedef struct s_desc
             polarity_score,	/**< Polarity score (based on amino acids properties ; see aa.c & aa.h) */
             charge_score ;	/**< Sum of all net charges at pH = 7 (see aa.c & aa.h) */
         float as_max_r ;        /**< Alpha sphere maximum radius*/
-
+        float drug_score;       /**< Drug score of the binding site*/
+        int interChain,                             /**< 0 if pocket in single chain, 1 if between 2 chains*/
+                characterChain1,                         /**< 0 if protein, 1 if nucl acid pocket, 2 if HETATM pocket*/
+                characterChain2,                         /**< 0 if protein, 1 if nucl acid pocket, 2 if HETATM pocket*/
+                numResChain1,                            /**<number of resdiues on chain 1*/
+                numResChain2;                           /**<number of res on chain 2*/
+        char nameChain1[2],        /**<name of the first chain in contact with the pocket*/
+                nameChain2[2];     /**<name of the second chain in contact with the pocket, if there is*/
+        char ligTag[8];           /**<het atom tag of ligands situated in the pocket*/
+        int n_abpa;               /**<number of abpas in the binding site*/
 } s_desc ;
 
 /* ------------------------------PROTOTYPES---------------------------------- */
@@ -103,11 +113,12 @@ typedef struct s_desc
 s_desc* allocate_s_desc(void) ;
 void reset_desc(s_desc *desc) ;
 
+
 void set_descriptors(s_atm **tatoms, int natoms, s_vvertice **tvert, int nvert, s_desc *desc, int niter,s_pdb *pdb,int flag_do_expensive_calculations) ;
 
 int get_vert_apolar_density(s_vvertice **tvert, int nvert, s_vvertice *vert) ;
-void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc) ;
+void set_atom_based_descriptors(s_atm **atoms, int natoms, s_desc *desc,s_atm *all_atoms, int all_natoms);
 void set_aa_desc(s_desc *desc, const char *aa_name) ;
-
+int countResidues(s_atm *atoms, int natoms, char chain[2]);
 
 #endif

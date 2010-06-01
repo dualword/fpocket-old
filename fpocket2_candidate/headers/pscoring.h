@@ -47,5 +47,5 @@
 /* ----------------------------PROTOTYPES-------------------------------------*/
 
 float score_pocket(s_desc *pdesc) ;
-
+float drug_score_pocket(s_desc *pdesc);
 #endif

@@ -156,6 +156,10 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
     desc->surf_pol_vdw14=0.0;
     desc->surf_apol_vdw14=0.0;
     desc->surf_vdw14=0.0;
+    desc->surf_vdw22=0.0;
+    desc->surf_pol_vdw22=0.0;
+    desc->surf_apol_vdw22=0.0;
+    desc->n_abpa=0;
     int *sa=NULL;    /*surrounding atoms container*/
     /*int *ua=NULL;    /*unique atoms contacting vvertices*/
     s_atm ** ua = NULL ;
@@ -167,7 +171,8 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
     /*ua=get_unique_atoms_DEPRECATED(tvert,nvert, &n_ua,pdb->latoms_p,pdb->natoms);*/
 
     ua=get_unique_atoms_DEPRECATED(tvert,nvert, &n_ua);
-
+    float *abpatmp=NULL;
+    abpatmp=(float *)my_malloc(sizeof(float)*n_ua);
 /*
     for(i = 0 ; i < pdb->natoms ; i++) {
         if(pdb->latoms_p[i]->id > 1631) {
@@ -186,6 +191,7 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
     int j=0,iv,k,burried,nnburried,vidx,vrefburried;
     curpts=get_points_on_sphere(M_NSPIRAL);
     for(i=0;i<n_ua;i++){
+        abpatmp[i]=0.0;
 /*
         fprintf(stdout, "\nUA %d (%d): %d (%d)", i, pdb->natoms, ua [i], n_ua);
 */
@@ -227,12 +233,71 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
             }
         }
         area=(4*PI*(cura->radius+M_PROBE_SIZE)*(cura->radius+M_PROBE_SIZE)/(float)M_NSPIRAL)*nnburried;
+        abpatmp[i]=area;
         if(cura->electroneg<2.8) desc->surf_apol_vdw14=desc->surf_apol_vdw14+area;
         else desc->surf_pol_vdw14=desc->surf_pol_vdw14+area;
         desc->surf_vdw14=desc->surf_vdw14+area;
         
     }
+    
+
+    /*now test with vdw +2.2*/
+    for(i=0;i<n_ua;i++){
+/*
+        fprintf(stdout, "\nUA %d (%d): %d (%d)", i, pdb->natoms, ua [i], n_ua);
+*/
+/*
+        if(ua [i] >= pdb->natoms) {
+            fprintf(stdout, "\nWOOPS at %d! %d \n", i, ua[i]) ;//exit(0) ;
+        }
+*/
+/*
+        cura=pdb->latoms_p[ua[i]];
+*/
+        cura = ua[i] ;
+        nnburried=0;
+
+        for(k=0;k<M_NSPIRAL;k++){
+            burried=0;
+            j=0;
+            tx=cura->x+curpts[3*k]*(cura->radius+M_PROBE_SIZE2);
+            ty=cura->y+curpts[3*k+1]*(cura->radius+M_PROBE_SIZE2);
+            tz=cura->z+curpts[3*k+2]*(cura->radius+M_PROBE_SIZE2);
+            vrefburried=1;
+            for(iv=0;iv<nvert;iv++){
+                for(vidx=0;vidx<4;vidx++){
+                    if(cura==tvert[iv]->neigh[vidx]){
+                        if(ddist(tx,ty,tz,tvert[iv]->x,tvert[iv]->y,tvert[iv]->z)<=tvert[iv]->ray*tvert[iv]->ray) vrefburried=0;
+                    }
+                }
+            }
+            while(!burried && j< n_sa && !vrefburried){
+                a=pdb->latoms_p[sa[j]];
+                if(a!=cura){
+                    dsq=ddist(tx,ty,tz,a->x,a->y,a->z);
+                    if(dsq<(a->radius+M_PROBE_SIZE2)*(a->radius+M_PROBE_SIZE2)) burried=1;
+                }
+                j++;
+            }
+            if(!burried && !vrefburried) {
+                nnburried++;
+            }
+        }
+        area=(4*PI*(cura->radius+M_PROBE_SIZE2)*(cura->radius+M_PROBE_SIZE2)/(float)M_NSPIRAL)*nnburried;
+        if(cura->electroneg<2.8) {
+            if(area<=abpatmp[i] && abpatmp[i] <=10.0 && area > 0.0){
+                desc->n_abpa+=1;
+            }
+            desc->surf_apol_vdw22=desc->surf_apol_vdw22+area;
+        }
+        else desc->surf_pol_vdw22=desc->surf_pol_vdw22+area;
+        desc->surf_vdw22=desc->surf_vdw22+area;
+
+    }
     free(curpts);
+
+
+
     curpts=NULL;
    /* for(i=0;i<n_ua-1;i++){
         free(ua[i]);

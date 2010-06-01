@@ -56,6 +56,6 @@
 
 /* ------------------------------PROTOTYPES-----------------------------------*/
 
-c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params) ;
+c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig) ;
 
 #endif

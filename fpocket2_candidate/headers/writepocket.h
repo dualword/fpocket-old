@@ -43,6 +43,7 @@
 #include "pocket.h"
 #include "writepdb.h"
 #include "utils.h"
+#include "asa.h"
 
 /* ------------------------- PUBLIC STRUCTURES ------------------------------ */
 
@@ -57,5 +58,9 @@ void write_pocket_pdb(const char out[], s_pocket *pocket) ;
 void write_pocket_pqr(const char out[], s_pocket *pocket) ;
 
 void write_pdb_atoms(FILE *f, s_atm *atoms, int natoms) ;
+
+void write_each_pocket_for_DB(const char out_path[], c_lst_pockets *pockets,s_pdb *pdb);
+void write_pocket_pqr_DB(const char out[], s_pocket *pocket);
+void write_pocket_pdb_DB(const char out[], s_pocket *pocket,s_pdb *pdb);
 
 #endif

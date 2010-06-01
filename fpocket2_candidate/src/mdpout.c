@@ -2,7 +2,7 @@
 
 
 
-void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso)
+void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso,s_mdparams *par,float isovalue)
 {
     int cx,cy,cz;
     float cv;
@@ -12,6 +12,12 @@ void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso)
     fprintf(f,"# Data calculated by mdpocket, part of the fpocket package\n");
     fprintf(f,"# This is a standard DX file of occurences of cavities within MD trajectories.\n");
     fprintf(f,"# The file can be visualised using the freely available VMD software\n");
+    fprintf(f,"# fpocket parameters used to create this dx file : \n");
+    fprintf(f,"# \t-m %2.f (min alpha sphere size) -M %.2f (max alpha sphere size)\n",par->fpar->asph_min_size, par->fpar->asph_max_size);
+    fprintf(f,"# \t-i %d (min number of alpha spheres per pocket)\n",par->fpar->min_pock_nb_asph);
+    fprintf(f,"# \t-D %.2f (Max distance for 1st clustering algo)\n#\t-r %.2f (Max dist for 2nd clustering algo)\n#\t-s %.2f (Max dist for third clustering algo)\n",par->fpar->clust_max_dist, par->fpar->refine_clust_dist, par->fpar->sl_clust_max_dist);
+    fprintf(f,"# \t-n %d (Min neighbour atoms for multi linkage clustering)\n",par->fpar->sl_clust_min_nneigh);
+    if(par->flag_scoring) fprintf(f,"# \t-S (Map drug score to density map!)\n");
     fprintf(f,"object 1 class gridpositions counts %d %d %d\n",g->nx,g->ny,g->nz);
     fprintf(f,"origin %.2f %.2f %.2f\n",g->origin[0],g->origin[1],g->origin[2]);
     fprintf(f,"delta %.2f 0 0\n",g->resolution);
@@ -29,7 +35,7 @@ void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso)
                 }
                 cv=g->gridvalues[cx][cy][cz];
                 fprintf(f,"%.3f ",cv);
-                if(cv>=(float)M_MDP_DEFAULT_ISO_VALUE){
+                if(cv>=isovalue){
                     cnt++;
                     rx=g->origin[0]+cx*g->resolution;
                     ry=g->origin[1]+cy*g->resolution;

@@ -10,12 +10,12 @@ if len(sys.argv)>3 :
 	if not os.path.exists(d):
 		sys.exit(" ERROR : the dx file provided does not exist . Breaking up.")
 else :
-	sys.exit(" ERROR : please provide the name of the dx file like, the isovalue and the outputname :\n python extractISOPdb.py path/my_dx_file.dx outputname.pdb isovalue")
+	sys.exit(" ERROR : please provide the name of the dx file, the isovalue and the outputname :\n python extractISOPdb.py path/my_dx_file.dx outputname.pdb isovalue")
 
 
 inputfile=sys.argv[1]
 pathOutput=sys.argv[2]
-iso_value=int(sys.argv[3])
+iso_value=float(sys.argv[3])
 #------------------------------------------------------------------------------------------------------------
 
 #don't touch the rest...unless you know what you do :)
@@ -29,19 +29,22 @@ f=open(inputfile,"r")
 
 #read the header - here is an example
 header=""
-for i in range(3) : header= header + f.readline()
-print header
+tmp=f.readline()
+while tmp[0]!="o" : 
+    header= header + tmp
+    tmp=f.readline()
+#print header
 
 #read the grid size
 r=re.compile('\w+')
-gsize=r.findall(f.readline())
+gsize=r.findall(tmp)
 gsize=[int(gsize[-3]),int(gsize[-2]),int(gsize[-1])]
-print gsize
+#print gsize
 
 #read the origin of the system
 line=f.readline().split()
 origin=[float(line[-3]),float(line[-2]),float(line[-1])]
-print origin
+#print origin
 
 #read grid space
 line=f.readline().split()
@@ -94,3 +97,5 @@ for count in range(n_entries/3) :
 
 path.close()
 f.close()
+
+print "finished writing %s"(path)

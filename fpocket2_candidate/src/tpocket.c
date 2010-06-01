@@ -485,7 +485,7 @@ int test_set(s_tparams *par, int i, float ddata [][M_NDDATA], int idata [][M_NID
 	rpdb_read(cpdb, lig, M_KEEP_LIG) ;
 	rpdb_read(cpdb_nolig, lig, M_DONT_KEEP_LIG) ;
 
-	c_lst_pockets *pockets = search_pocket(apdb, par->fpar);
+	c_lst_pockets *pockets = search_pocket(apdb, par->fpar,cpdb);
 	set_pockets_bary(pockets) ;
 	
 	/* Check that at least one pocket have been found */
@@ -557,7 +557,7 @@ s_atm** get_actual_pocket(s_pdb *cpdb, s_pdb *cpdb_nolig, int i, s_tparams *par,
 {
 	s_atm **neigh = NULL ;
 
-	c_lst_pockets *pockets = search_pocket(cpdb_nolig, par->fpar);
+	c_lst_pockets *pockets = search_pocket(cpdb_nolig, par->fpar,cpdb);
 	if(pockets && pockets->n_pockets > 0) {
 		/* */
 		/* Get the list of atoms contacted by the vertices near the ligand. */

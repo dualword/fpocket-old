@@ -64,7 +64,7 @@
 /* --------------------------- PUBLIC STRUCTURES -----------------------------*/
 
 /* ----------------------------- PROTOTYPES --------------------------------- */
-void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso);
+void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso,s_mdparams *par,float isovalue);
 void write_md_pocket_atoms(FILE *f,int *ids,s_pdb *prot, int nids, int sn);
 void write_first_bfactor_density(FILE *f,s_pdb *prot);
 

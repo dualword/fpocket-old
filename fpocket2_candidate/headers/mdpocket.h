@@ -61,12 +61,15 @@
 #include "mdpout.h"
 
 /* ---------------------------------MACROS----------------------------------*/
-#define M_MDP_OUTP_HEADER "snapshot pock_volume pock_asa pock_pol_asa pock_apol_asa nb_AS mean_as_ray mean_as_solv_acc apol_as_prop mean_loc_hyd_dens hydrophobicity_score volume_score polarity_score charge_score prop_polar_atm as_density as_max_dst" /**< header for the dpocket output*/
-#define M_MDP_OUTP_FORMAT "%d %4.2f %4.2f %4.2f %4.2f %d %4.2f %4.2f %4.2f %4.2f %4.2f %4.2f %d %d %4.2f %4.2f %4.2f" /**< format for the dpocket output*/
+#define M_MDP_OUTP_HEADER "snapshot pock_volume pock_asa pock_pol_asa pock_apol_asa pock_asa22 pock_pol_asa22 pock_apol_asa22 nb_AS mean_as_ray mean_as_solv_acc apol_as_prop mean_loc_hyd_dens hydrophobicity_score volume_score polarity_score charge_score prop_polar_atm as_density as_max_dst" /**< header for the dpocket output*/
+#define M_MDP_OUTP_FORMAT "%d %4.2f %4.2f %4.2f %4.2f %4.2f %4.2f %4.2f %d %4.2f %4.2f %4.2f %4.2f %4.2f %4.2f %d %d %4.2f %4.2f %4.2f" /**< format for the dpocket output*/
 #define M_MDP_OUTP_VAR(i, d) i, d->volume, \
                               d->surf_vdw14, \
                               d->surf_pol_vdw14, \
                               d->surf_apol_vdw14, \
+                              d->surf_vdw22, \
+                              d->surf_pol_vdw22, \
+                              d->surf_apol_vdw22, \
                               d->nb_asph,\
                               d->mean_asph_ray, \
                               d->masph_sacc, \

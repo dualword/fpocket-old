@@ -51,6 +51,10 @@ float pte_get_vdw_ray(const char *symbol) ;
 float pte_get_mass(const char *symbol) ;
 float pte_get_enegativity(const char *symbol) ;
 int is_valid_element(const char *str, int ignore_case) ;
-
+int element_in_std_res(char *res_name);
+int element_in_nucl_acid(char *res_name);
+int is_water(char *res_name);
+int is_valid_prot_element(const char *str, int ignore_case);
+int is_valid_nucl_acid_element(const char *str, int ignore_case);
 #endif
  

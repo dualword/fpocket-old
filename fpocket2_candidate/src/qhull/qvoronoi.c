@@ -278,8 +278,11 @@ int run_qvoronoi(FILE *fin,FILE *fout) {
   argv[3]="Pp\0";
   argv[4]=malloc(sizeof(char)*3);
   argv[4]="Fn\0";
+/*  argv[5]=malloc(sizeof(char)*7);
+  argv[5]="QJ1e-6\0";*/
   argv[5]=malloc(sizeof(char)*3);
   argv[5]="Qt\0";
+
 #if __MWERKS__ && __POWERPC__
   char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
   SIOUXSettings.showstatusline= false;

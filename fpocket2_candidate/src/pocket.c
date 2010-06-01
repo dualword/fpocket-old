@@ -539,6 +539,32 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	}
 }
 
+void set_pocket_contacted_lig_name(s_pocket *pocket, s_pdb *pdb_w_lig)
+{
+        s_atm *curatom = NULL ;
+        int natoms=pdb_w_lig->nhetatm;
+        int i;
+        s_atm ** atoms=pdb_w_lig->lhetatm;
+        //printf("rahhhh %d %p\n",pdb_w_lig->nhetatm,pdb_w_lig->lhetatm);
+        for(i=0;i<natoms;i++){
+            curatom=atoms[i];
+            if(pocket) {
+                
+            // Remember atoms already stored.
+                if(dist(pocket->bary[0],pocket->bary[1],pocket->bary[2],curatom->x,curatom->y,curatom->z) < M_LIG_IN_POCKET_DIST && !element_in_kept_res(curatom->res_name)) {
+                    strncpy(pocket->pdesc->ligTag,curatom->res_name,7);
+                    pocket->pdesc->ligTag[7]='\0';
+                    
+                    return;
+                }
+            }
+            
+        }
+        
+        strncpy(pocket->pdesc->ligTag,"NULL\0",5);
+	return ;
+}
+
 /**
    ## FUNCTION: 
 	set_descriptors
@@ -553,19 +579,19 @@ void set_pockets_bary(c_lst_pockets *pockets)
 	void
   
 */
-void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params)
+void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params, s_pdb *pdb_w_lig)
 {
 	node_pocket *cur = NULL ;
 	s_pocket *pcur = NULL ;
         int niter=params->nb_mcv_iter;
 	int natms = 0, i ;
-
+        
 	if(pockets && pockets->n_pockets > 0) {
 		cur = pockets->first ;
 		/* Perform a first loop to calculate atom and vertice based descriptors */
 		while(cur) {
 			pcur = cur->pocket ;
-
+                        reset_desc(pcur->pdesc);
 			/* Get a list of vertices in a tab of pointer */
 			s_vvertice **tab_vert = (s_vvertice **)
                                                 my_malloc(pcur->v_lst->n_vertices*sizeof(s_vvertice*)) ;
@@ -588,14 +614,18 @@ void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params
 
 			/* Get atoms contacted by vertices, and calculate descriptors */
 			s_atm **pocket_atoms = get_pocket_contacted_atms(pcur, &natms) ;
-
+                        /*fprintf(stdout,"%s\n",get_pocket_contacted_lig_name(pcur,pdb_w_lig));
+                        fflush(stdout);*/
+                        if(pdb_w_lig) set_pocket_contacted_lig_name(pcur,pdb_w_lig);
+                        
 			/* Calculate descriptors*/
 			set_descriptors(pocket_atoms, natms, tab_vert,pcur->v_lst->n_vertices, pcur->pdesc,niter,pdb,params->flag_do_asa_and_volume_calculations) ;
-
+                        
 			my_free(pocket_atoms) ;
 			my_free(tab_vert) ;
 
 			cur = cur->next ;
+                        
 		}
 
 		/* Set normalized descriptors */
@@ -605,7 +635,7 @@ void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params
 		cur = pockets->first ;
 		while(cur) {
 			cur->pocket->score = score_pocket(cur->pocket->pdesc) ;
-
+                        cur->pocket->pdesc->drug_score = drug_score_pocket(cur->pocket->pdesc);
 			cur = cur->next ;
 		}
 	}
@@ -706,31 +736,49 @@ void set_normalized_descriptors(c_lst_pockets *pockets)
 
 	/* Perform a second loop to do the actual normalisation */
 	cur = pockets->first ;
-	while(cur) {
-		dcur = cur->pocket->pdesc ;
-		/* Calculate normalized descriptors */
-		dcur->as_max_dst_norm =
-			(dcur->as_max_dst - as_max_dst_m) / (as_max_dst_M - as_max_dst_m) ;
+        if(pockets->n_pockets> 1){
+            while(cur) {
+                    dcur = cur->pocket->pdesc ;
+                    /* Calculate normalized descriptors */
+                    if(as_max_dst_M - as_max_dst_m!=0.0){
+                        dcur->as_max_dst_norm =
+                                (dcur->as_max_dst - as_max_dst_m) / (as_max_dst_M - as_max_dst_m) ;
+                    }
+                    if(density_M - density_m!=0.0){
+                        dcur->as_density_norm =
+                                (dcur->as_density - density_m) / (density_M - density_m) ;
+                    }
+                    if(polarity_M - polarity_m!=0.0){
+                        dcur->polarity_score_norm =
+                                (float)(dcur->polarity_score - polarity_m) /
+                                (float)(polarity_M - polarity_m) ;
+                    }
+                    if(mlhd_M - mlhd_m!=0.0){
+                        dcur->mean_loc_hyd_dens_norm =
+                                (dcur->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
+                    }
+                    if(flex_M - flex_m!=0.0) dcur->flex = (dcur->flex - flex_m) / (flex_M - flex_m) ;
+                    if(nas_M - nas_m!=0.0) dcur->nas_norm = (float) (dcur->nb_asph - nas_m) /
+                                                                    (float) (nas_M - nas_m) ;
+                    if(nas_apolp_M - nas_apolp_m!=0.0){
+                        dcur->prop_asapol_norm =
+                            (dcur->apolar_asphere_prop - nas_apolp_m)
+                            / (nas_apolp_M - nas_apolp_m);
+                    }
 
-		dcur->as_density_norm =
-			(dcur->as_density - density_m) / (density_M - density_m) ;
-
-		dcur->polarity_score_norm =
-			(float)(dcur->polarity_score - polarity_m) /
-			(float)(polarity_M - polarity_m) ;
-
-		dcur->mean_loc_hyd_dens_norm =
-			(dcur->mean_loc_hyd_dens - mlhd_m) / (mlhd_M - mlhd_m) ;
-
-		dcur->flex = (dcur->flex - flex_m) / (flex_M - flex_m) ;
-		dcur->nas_norm = (float) (dcur->nb_asph - nas_m) /
-								(float) (nas_M - nas_m) ;
-		dcur->prop_asapol_norm =
-			(dcur->apolar_asphere_prop - nas_apolp_m)
-			/ (nas_apolp_M - nas_apolp_m);
-
-		cur = cur->next ;
-	}
+                    cur = cur->next ;
+            }
+        }
+        else {
+            dcur = cur->pocket->pdesc ;
+            dcur->polarity_score_norm=0.0;
+            dcur->as_density_norm=0.0;
+            dcur->as_max_dst_norm=0.0;
+            dcur->mean_loc_hyd_dens_norm=0.0;
+            dcur->flex=0.0;
+            dcur->nas_norm=0.0;
+            dcur->prop_asapol_norm=0.0;
+        }
 }
 
 

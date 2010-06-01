@@ -38,6 +38,7 @@
  * pocket (single linkage clustering) */
 #define MAX_CON_DIST 2.5
 
+#define M_LIG_IN_POCKET_DIST 4.0  /**< maximum distance a ligand atom could have to a pocket barycenter to be considered inside the pocket*/
 /* -----------------------------INCLUDES--------------------------------------*/
 
 #include <math.h>
@@ -104,12 +105,13 @@ int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid,int curPocket,c
 void addStats(int resid, int size, int **stats,int *lenStats);
 
 /* DESCRIPTOR FUNCTIONS */
-void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params) ;
+void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params, s_pdb *pdb_w_lig) ;
 void set_normalized_descriptors(c_lst_pockets *pockets) ;
 void set_pockets_bary(c_lst_pockets *pockets) ;
 s_atm** get_pocket_contacted_atms(s_pocket *pocket, int *natoms) ;
 int count_pocket_contacted_atms(s_pocket *pocket) ;
 s_vvertice** get_pocket_pvertices(s_pocket *pocket) ;
+void set_pocket_contacted_lig_name(s_pocket *pocket, s_pdb *pdb_w_lig);
 
 float set_pocket_mtvolume(s_pocket *pocket, int niter) ;
 float set_pocket_volume(s_pocket *pocket, int discret) ;

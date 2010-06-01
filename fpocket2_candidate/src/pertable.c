@@ -75,6 +75,30 @@ static const char *ST_pte_symbol[] = {
 	"Ds", "Rg"
 } ; /**< element list*/
 
+
+static const int ST_prot_nelem = 5 ;
+static const char *ST_pte_prot_symbol[] = {
+	"H",  "C",  "N",  "O", "S"
+} ;
+
+static const int ST_nucl_acid_nelem = 5 ;
+static const char *ST_pte_nucl_acid_symbol[] = {
+	"H",  "C",  "N",  "O", "P"
+} ;
+
+static const int ST_n_standard_res_names = 23;
+static const char *ST_standard_res_names [] = {
+    "GLY", "LEU", "ILE", "TRP", "MET", "SER", "THR", "LYS", "ARG", "ASN",
+    "GLN", "GLU", "ASP", "CYS", "PRO", "HIS", "TYR", "PHE", "VAL", "ALA",
+    "HIE", "HID", "HIP", "HSD", "HSE", "HSP"
+} ;
+
+static const int ST_n_standard_nucl_acid_names = 9;
+static const char *ST_standard_nucl_acid_names [] = {
+    "dG","dC", "dT","dA","A","C","T","G","U"
+} ;
+
+
 static const float ST_pte_electronegativity[] = {
 	 0.0,  2.1, 0.98,  1.0,  1.5,  2.0,  2.5,  3.0,  3.5,  4.0, -1.0,
 	 0.9,  1.2,  1.5,  1.8,  2.1,  2.5,  3.0, -1.0,  0.8,  1.0,  1.3,
@@ -291,3 +315,160 @@ int is_valid_element(const char *str, int ignore_case)
 	
 	return -1 ;
 }
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	int element_in_std_res(char *res_name)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Compare resname to the list of standard protein resnames. Return 1 if
+        resname is in this list, 0 else.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *res_name	: The current residue name
+   -----------------------------------------------------------------------------
+   ## RETURN: int
+   -----------------------------------------------------------------------------
+*/
+int element_in_std_res(char *res_name){
+    int i;
+    for(i=0;i<ST_n_standard_res_names;i++){
+        if(!strncmp(res_name, ST_standard_res_names[i],3)) return 1;
+    }
+    return 0;
+}
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	int element_in_nucl_acid(char *res_name)
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Compare resname to the list of standard nucleic acid residues. Return 1 if
+        resname is in this list, 0 else.
+   -----------------------------------------------------------------------------
+   ## PARAMETRES:
+	@ char *res_name	: The current residue name
+   -----------------------------------------------------------------------------
+   ## RETURN: int
+   -----------------------------------------------------------------------------
+*/
+int element_in_nucl_acid(char *res_name){
+    int i;
+    for(i=0;i<ST_n_standard_nucl_acid_names;i++){
+        if(!strncmp(res_name, ST_standard_nucl_acid_names[i],3)) return 1;
+    }
+    return 0;
+}
+
+int is_water(char *res_name){
+    if(!strncmp(res_name, "HOH",3)||!strncmp(res_name, "WAT",3)) return 1;
+    return 0;
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	is_valid_prot_element
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Check if a given string corresponds to an atom element.
+   -----------------------------------------------------------------------------
+   ## PARAMETERS:
+	@ const char *str : The string to test
+	@ int tcase       : If = 1, dont take into account the case.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: -1 if the strig is not an atom element, the index in the periodic table if so.
+   -----------------------------------------------------------------------------
+*/
+int is_valid_prot_element(const char *str, int ignore_case)
+{
+	if(str == NULL) return -1 ;
+	if(strlen(str) <= 0) return -1 ;
+	/* Use temporary variable to work on the string */
+	int i ;
+	char str_tmp[strlen(str)+1] ;
+	strcpy(str_tmp, str) ;
+
+
+	/* Remove spaces and case if asked*/
+	str_trim(str_tmp) ;
+	if(ignore_case == 1) {
+		str_tmp[0] = tolower(str_tmp[0]) ;
+		str_tmp[1] = tolower(str_tmp[1]) ;
+	}
+
+	/* Loop over standard protein element table*/
+	for (i = 0; i < ST_prot_nelem ; i++) {
+		char tmp[3] ;
+		tmp[0] = ST_pte_prot_symbol[i][0] ;
+		tmp[1] = ST_pte_prot_symbol[i][1] ;
+
+		/* Remove case if asked */
+		if(ignore_case == 1) {
+			tmp[0] = tolower(tmp[0]) ;
+			tmp[1] = tolower(tmp[1]) ;
+		}
+		tmp[2] = '\0' ;
+
+		/* Do the comparison*/
+		if(strncmp(str_tmp, tmp,1) == 0) return i ;
+	}
+
+	return -1 ;
+}
+
+
+/**-----------------------------------------------------------------------------
+   ## FUNCTION:
+	is_valid_nucl_acid_element
+   -----------------------------------------------------------------------------
+   ## SPECIFICATION:
+	Check if a given string corresponds to an atom element.
+   -----------------------------------------------------------------------------
+   ## PARAMETERS:
+	@ const char *str : The string to test
+	@ int tcase       : If = 1, dont take into account the case.
+   -----------------------------------------------------------------------------
+   ## RETURN:
+	int: -1 if the strig is not an atom element, the index in the periodic table if so.
+   -----------------------------------------------------------------------------
+*/
+int is_valid_nucl_acid_element(const char *str, int ignore_case)
+{
+	if(str == NULL) return -1 ;
+	if(strlen(str) <= 0) return -1 ;
+	/* Use temporary variable to work on the string */
+	int i ;
+	char str_tmp[strlen(str)+1] ;
+	strcpy(str_tmp, str) ;
+
+
+	/* Remove spaces and case if asked*/
+	str_trim(str_tmp) ;
+	if(ignore_case == 1) {
+		str_tmp[0] = tolower(str_tmp[0]) ;
+		str_tmp[1] = tolower(str_tmp[1]) ;
+	}
+
+	/* Loop over standard protein element table*/
+	for (i = 0; i < ST_nucl_acid_nelem ; i++) {
+		char tmp[3] ;
+		tmp[0] = ST_pte_nucl_acid_symbol[i][0] ;
+		tmp[1] = ST_pte_nucl_acid_symbol[i][1] ;
+
+		/* Remove case if asked */
+		if(ignore_case == 1) {
+			tmp[0] = tolower(tmp[0]) ;
+			tmp[1] = tolower(tmp[1]) ;
+		}
+		tmp[2] = '\0' ;
+
+		/* Do the comparison*/
+		if(strncmp(str_tmp, tmp,1) == 0) return i ;
+	}
+
+	return -1 ;
+}
+
+

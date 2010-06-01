@@ -56,7 +56,7 @@
 #define M_VORONOI_SUCCESS 0 /**< alpha sphere type - hydrophobic alpha sphere */
 #define M_APOLAR_AS 0 /**< alpha sphere type - hydrophilic alpha sphere */
 #define M_POLAR_AS 1 /**< tolerance for coordinate imprecion during alpha sphere search	 */
-#define M_PREC_TOLERANCE 1e-4
+#define M_PREC_TOLERANCE 1e-5
 
 #define M_BUFSIZE 1e7   /**< buffer size*/
 /* --------------------------------STRUCTURES-------------------------------- */

@@ -78,20 +78,23 @@ s_mdparams *init_def_mdparams(void)
 	s_mdparams *par = (s_mdparams*) my_malloc(sizeof(s_mdparams)) ;
 
 	par->f_pqr = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-	par->f_dx = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
-        par->f_iso = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+	par->f_freqdx = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_densdx = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_freqiso = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
+        par->f_densiso = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_desc = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_ppdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_apdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char)) ;
         par->f_appdb = (char *)my_malloc(M_MAX_FILE_NAME_LENGTH*sizeof(char));
 	strcpy(par->f_pqr, M_MDP_OUTPUT_FILE1_DEFAULT) ;
-	strcpy(par->f_dx, M_MDP_OUTPUT_FILE2_DEFAULT) ;
-        strcpy(par->f_iso, M_MDP_OUTPUT_FILE3_DEFAULT) ;
+	strcpy(par->f_freqdx, M_MDP_OUTPUT_FILE2_DEFAULT) ;
+        strcpy(par->f_freqiso, M_MDP_OUTPUT_FILE3_DEFAULT) ;
         strcpy(par->f_desc, M_MDP_OUTPUT_FILE4_DEFAULT) ;
         strcpy(par->f_ppdb, M_MDP_OUTPUT_FILE5_DEFAULT) ;
         strcpy(par->f_apdb, M_MDP_OUTPUT_FILE6_DEFAULT) ;
-        strcpy(par->f_appdb, M_MDP_OUTPUT_FILE7_DEFAULT) ;
-
+        strcpy(par->f_appdb, M_MDP_OUTPUT_FILE7_DEFAULT);
+        strcpy(par->f_densdx, M_MDP_OUTPUT_FILE8_DEFAULT) ;
+        strcpy(par->f_densiso, M_MDP_OUTPUT_FILE9_DEFAULT) ;
 	par->fsnapshot = NULL ;
         par->fwantedpocket[0] = 0 ;
 	par->nfiles = 0 ;
@@ -140,8 +143,10 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 								if(strlen(args[++i]) < M_MAX_FILE_NAME_LENGTH) {
 									remove_ext(args[i]) ;
 									sprintf(par->f_pqr, "%s.pqr", args[i]) ;
-									sprintf(par->f_dx, "%s.dx", args[i]) ;
-                                                                        sprintf(par->f_iso, "%s_iso_8.pdb", args[i]) ;
+									sprintf(par->f_freqdx, "%s.dx", args[i]) ;
+                                                                        sprintf(par->f_densdx, "%s.dx", args[i]) ;
+                                                                        sprintf(par->f_freqiso, "%s_freq_iso_0_5.pdb", args[i]) ;
+                                                                        sprintf(par->f_densiso, "%s_dens_iso_8.pdb", args[i]) ;
                                                                         sprintf(par->f_desc, "%s_descriptors.txt", args[i]) ;
                                                                         sprintf(par->f_ppdb, "%s_mdpocket.pdb", args[i]) ;
                                                                         sprintf(par->f_apdb, "%s_mdpocket_atoms.pdb", args[i]) ;
@@ -394,25 +399,26 @@ void free_mdparams(s_mdparams *p)
 	if(p) {
 		
 		if(p->fsnapshot) {
-			my_free(p->fsnapshot) ;
-			p->fsnapshot = NULL ;
+			my_free(p->fsnapshot);
+			p->fsnapshot = NULL;
 		}
-
 		if(p->f_pqr) {
-			my_free(p->f_pqr) ;
-			p->f_pqr = NULL ;
+			my_free(p->f_pqr);
+			p->f_pqr = NULL;
 		}
-
-		if(p->f_dx) {
-			my_free(p->f_dx) ;
-			p->f_dx = NULL ;
+		if(p->f_densdx) {
+			my_free(p->f_densdx);
+			p->f_densdx = NULL ;
+		}
+                if(p->f_freqdx) {
+			my_free(p->f_freqdx);
+			p->f_freqdx = NULL ;
 		}
 		if(p->f_desc) {
-			my_free(p->f_desc) ;
-			p->f_desc = NULL ;
+			my_free(p->f_desc);
+			p->f_desc = NULL;
 		}
-		free_fparams(p->fpar) ;
-
+		free_fparams(p->fpar);
  		my_free(p) ;
 	}
 }

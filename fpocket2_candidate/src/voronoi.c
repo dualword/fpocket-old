@@ -127,7 +127,7 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 			if(strcmp(ca->symbol,"H")) {
 			/* Only if this is a heavy atom export it for voronoi tesselation,
 			 * else discard it */
-				fprintf(fvoro,"%f %f %f \n", ca->x, ca->y, ca->z);
+				fprintf(fvoro,"%.3f %.3f %.3f \n", ca->x, ca->y, ca->z);
 			}
 		}
 
@@ -371,7 +371,7 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 		  distVatom3,
 		  distVatom4;
 
-	if(min_asph_size <= distVatom1  && distVatom1 <= max_asph_size){
+	if(min_asph_size <= distVatom1 + M_PREC_TOLERANCE  && distVatom1 - M_PREC_TOLERANCE <= max_asph_size){
 		cura = &(atoms[lvvert->h_tr[curNbIdx[1]]]) ;
 		distVatom2 = dist(x, y, z, cura->x, cura->y, cura->z);
 

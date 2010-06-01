@@ -70,10 +70,10 @@
 */
 int main(int argc, char *argv[])
 {
-	fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
+	
 
 	s_fparams *params = get_fpocket_args(argc, argv) ;
-
+        if(!params->db_run) fprintf(stdout, "***** POCKET HUNTING BEGINS ***** \n") ;
 	/* If parameters parsing is ok */
 	if(params) {
 		if(params->pdb_lst != NULL) {
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 		print_pocket_usage(stdout) ;
 	}
 
-	fprintf(stdout, "***** POCKET HUNTING ENDS ***** \n") ;
+	if(!params->db_run)fprintf(stdout, "***** POCKET HUNTING ENDS ***** \n") ;
 	free_all() ;
 
 	return 0;
@@ -141,13 +141,20 @@ void process_pdb(char *pdbname, s_fparams *params)
 	
 	/* Try to open it */
 	s_pdb *pdb =  rpdb_open(pdbname, NULL, M_DONT_KEEP_LIG) ;
+        s_pdb *pdb_w_lig =  rpdb_open(pdbname, NULL, M_KEEP_LIG) ;
 	
 	if(pdb) {
 		/* Actual reading of pdb data and then calculation */
 			rpdb_read(pdb, NULL, M_DONT_KEEP_LIG) ;
-			c_lst_pockets *pockets = search_pocket(pdb, params);
+                        rpdb_read(pdb_w_lig, NULL, M_KEEP_LIG) ;
+			c_lst_pockets *pockets = search_pocket(pdb, params,pdb_w_lig);
 			if(pockets) {
-				write_out_fpocket(pockets, pdb, pdbname);
+				
+                                if(params->db_run) {
+                                    write_descriptors_DB(pockets,stdout);
+                                    write_out_fpocket_DB(pockets, pdb, pdbname);
+                                }
+                                else write_out_fpocket(pockets, pdb, pdbname);
 				c_lst_pocket_free(pockets) ;
 			}
                         fclose(pdb->fpdb);

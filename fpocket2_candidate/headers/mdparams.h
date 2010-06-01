@@ -59,13 +59,16 @@
 
 
 #define M_MDP_OUTPUT_FILE1_DEFAULT "mdpout_snapshots_concat.pqr"
-#define M_MDP_OUTPUT_FILE2_DEFAULT "mdpout_snapshots.dx"
-#define M_MDP_OUTPUT_FILE3_DEFAULT "mdpout_iso_3.pdb"
+#define M_MDP_OUTPUT_FILE2_DEFAULT "mdpout_freq_grid.dx"
+#define M_MDP_OUTPUT_FILE3_DEFAULT "mdpout_freq_iso_0_5.pdb"
 #define M_MDP_OUTPUT_FILE4_DEFAULT "mdpout_descriptors.txt"
 #define M_MDP_OUTPUT_FILE5_DEFAULT "mdpout_mdpocket.pdb"
 #define M_MDP_OUTPUT_FILE6_DEFAULT "mdpout_mdpocket_atoms.pdb"
 #define M_MDP_OUTPUT_FILE7_DEFAULT "mdpout_all_atom_pdensities.pdb"
-#define M_MDP_DEFAULT_ISO_VALUE 3.0
+#define M_MDP_OUTPUT_FILE8_DEFAULT "mdpout_dens_grid.dx"
+#define M_MDP_OUTPUT_FILE9_DEFAULT "mdpout_dens_iso_8.pdb"
+#define M_MDP_DEFAULT_ISO_VALUE_FREQ 0.5
+#define M_MDP_DEFAULT_ISO_VALUE_DENS 8.0
 
 #define M_MAX_FILE_NAME_LENGTH 300
 #define M_NB_MC_ITER 2500
@@ -123,8 +126,10 @@ typedef struct s_mdparams
         char fwantedpocket[M_MAX_PDB_NAME_LEN];    /**< path of the wanted pocket file*/
 
 	char *f_pqr,        /**< name of the pqr concatenated snapshot file*/
-		*f_dx,      /**< name of the dx grid file*/
-                *f_iso,     /**< name of the iso pdb file*/
+		*f_densdx,      /**< name of the density dx grid file*/
+                *f_freqdx,      /**< name of the frequency dx grid file*/
+                *f_densiso,     /**< name of the density iso pdb file*/
+                *f_freqiso,     /**< name of the frequency iso pdb file*/
                 *f_desc,    /**< name of the descriptor file*/
                 *f_ppdb,    /**< name of the pocket pdb output file */
                 *f_apdb,    /**< name of the atoms pdb output file */

@@ -39,7 +39,7 @@ void store_vertice_positions(s_mdconcat *m,c_lst_pockets *pockets){
 
 /**
    ## FUNCTION:
-	calculate_md_grid
+	calculate_md_dens_grid
 
    ## SPECIFICATION:
 	Do the actual grid calculation (count number of vertices near a grid point)
@@ -51,7 +51,7 @@ void store_vertice_positions(s_mdconcat *m,c_lst_pockets *pockets){
 	void
 
 */
-void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
+void calculate_md_dens_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
     int xidx=0,yidx=0,zidx=0;                     /*direct indices of the positions in the grid*/
     int sxidx,syidx,szidx;                  /*indices nearby xidx,yidx,zidx that are within M_MDP_CUBE_SIDE of this point*/
     int sxi=0,syi=0,szi=0;
@@ -68,7 +68,8 @@ void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
     while(cp){
         pocket=cp->pocket;
         cnv=pocket->v_lst->first;
-        if(par->flag_scoring) incre=pocket->score;
+        /*if(par->flag_scoring) incre=pocket->score;*/
+        if(par->flag_scoring) incre=pocket->pdesc->drug_score;
         while(cnv){
             cv=cnv->vertice;
             vx=cv->x;                               /*tmp the vertice position*/
@@ -77,6 +78,8 @@ void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
             xidx=(int)roundf((vx-g->origin[0])/g->resolution);      /*calculate the nearest grid point internal coordinates*/
             yidx=(int)roundf((vy-g->origin[1])/g->resolution);
             zidx=(int)roundf((vz-g->origin[2])/g->resolution);
+            /*s=(int)roundf((cnv->vertice->ray)*0.5/g->resolution);*/
+            /*s=(int)roundf(M_MDP_CUBE_SIDE/2.0);*/
             /*we use a cube of M_MDP_CUBE_SIDE**3 volume to check if there are grid points nearby,
              *thus a check in the neighbourhood is performed here...this looks a bit awful and should be changed later on*/
             for(sxi=-s;sxi<=s;sxi++){
@@ -95,7 +98,10 @@ void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
                             else if(szi>0) szidx=(int)floor(((float)szi+vz-g->origin[2])/g->resolution);
                             else if(szi==0) szidx=zidx;
                             /*double check if we are not on the already incremented grid point*/
-                            if(((sxidx!=xidx) || (syidx!=yidx) || (szidx!=zidx)) && (sxidx>=0 && syidx>=0 && szidx>=0 && sxidx<g->nx && syidx<g->ny && szidx<g->nz)) g->gridvalues[sxidx][syidx][szidx]+=incre;
+                            if(((sxidx!=xidx) || (syidx!=yidx) || (szidx!=zidx))
+                                        && (sxidx>=0 && syidx>=0 && szidx>=0 && sxidx<g->nx && syidx<g->ny && szidx<g->nz)) {
+                                        g->gridvalues[sxidx][syidx][szidx]+=incre;
+                            }                            /*added condition if grid value already set, do not update, to better density measurements and match drug score*/
                         }
                     }
                 }
@@ -106,11 +112,125 @@ void calculate_md_grid(s_mdgrid *g,c_lst_pockets *pockets,s_mdparams *par){
         //if(zidx<0 || zidx>=g->nz) printf("herez zidx : %d max : %d\n",zidx,g->nz);
         //fprintf(stdout,"%d\n",n);
         //fflush(stdout);
-        if(xidx<g->nx && yidx<g->ny && zidx<g->nz && xidx>=0 && yidx>=0 && zidx>=0) g->gridvalues[xidx][yidx][zidx]+=incre;   /*increment the already known grid point value*/
+        
+        if(xidx<g->nx && yidx<g->ny && zidx<g->nz && xidx>=0 && yidx>=0 && zidx>=0){
+            
+                g->gridvalues[xidx][yidx][zidx]+=incre;   /*increment the already known grid point value*/
+            
+
+            
+        }
         else fprintf(stderr,"\n\nWarning (oh oh!!) : Your structure is not aligned or is moving a lot. Results might not reflect what you expect. Consider first structural alignemnt\nIf your structure is moving a lot, consider to split up analysis in two distinct parts.\n\n");
         cp=cp->next;
     }
     //return g;
+}
+
+/**
+   ## FUNCTION:
+	calculate_md_dens_grid
+
+   ## SPECIFICATION:
+	Do the actual grid calculation (count number of vertices near a grid point)
+
+   ## PARAMETRES:
+	@ s_mdconcat *mdc: Pointer to the mdconcat structure (vertices),
+
+   ## RETURN:
+	void
+
+*/
+void update_md_grid(s_mdgrid *g, s_mdgrid *refg, c_lst_pockets *pockets,s_mdparams *par){
+    int xidx=0,yidx=0,zidx=0;                     /*direct indices of the positions in the grid*/
+    int sxidx=0,syidx=0,szidx=0;                  /*indices nearby xidx,yidx,zidx that are within M_MDP_CUBE_SIDE of this point*/
+    int sxi=0,syi=0,szi=0;
+    float vx,vy,vz;
+    float incre=1.0;
+    node_pocket *cp=NULL;
+    s_pocket *pocket=NULL;
+    node_vertice *cnv=NULL;
+    s_vvertice *cv=NULL;
+    int s=(int)(((float)M_MDP_CUBE_SIDE/2.0)/g->resolution);    /*possible stepsize (resolution dependent) in the discrete grid*/
+    /*loop over all known vertices and CALCULATE the grid positions and increment grid values by 1*/
+    /*important : no distance calculations are done here, thus this routine is very fast*/
+    cp=pockets->first;
+    while(cp){
+        pocket=cp->pocket;
+        cnv=pocket->v_lst->first;
+        /*if(par->flag_scoring) incre=pocket->score;*/
+        if(par->flag_scoring) incre=pocket->pdesc->drug_score;
+        while(cnv){
+            cv=cnv->vertice;
+            vx=cv->x;                               /*tmp the vertice position*/
+            vy=cv->y;
+            vz=cv->z;
+            xidx=(int)roundf((vx-g->origin[0])/g->resolution);      /*calculate the nearest grid point internal coordinates*/
+            yidx=(int)roundf((vy-g->origin[1])/g->resolution);
+            zidx=(int)roundf((vz-g->origin[2])/g->resolution);
+            //s=(int)roundf((cnv->vertice->ray)*0.5/g->resolution);
+            //s=(int)roundf((cnv->vertice->ray-1.7)/g->resolution);
+            /*s=(int)roundf(M_MDP_CUBE_SIDE/2.0);*/
+            /*we use a cube of M_MDP_CUBE_SIDE**3 volume to check if there are grid points nearby,
+             *thus a check in the neighbourhood is performed here...this looks a bit awful and should be changed later on*/
+
+            for(sxi=-s;sxi<=s;sxi++){
+                for(syi=-s;syi<=s;syi++){
+                    for(szi=-s;szi<=s;szi++){
+                        /*check if we are not on the point xidx,yidx, zidx....the square sum is just a little trick*/
+                        if((sxi*sxi+syi*syi+szi*szi)!=0){
+                            /*next we have to check in a discrete manner if we can include a new grid point or not.*/
+                            if(sxi<0) sxidx=(int)ceil(((float)sxi+vx-g->origin[0])/g->resolution);
+                            else if(sxi>0) sxidx=(int)floor(((float)sxi+vx-g->origin[0])/g->resolution);
+                            else if(sxi==0) sxidx=xidx;
+                            if(syi<0) syidx=(int)ceil(((float)syi+vy-g->origin[1])/g->resolution);
+                            else if(syi>0) syidx=(int)floor(((float)syi+vy-g->origin[1])/g->resolution);
+                            else if(syi==0) syidx=yidx;
+                            if(szi<0) szidx=(int)ceil(((float)szi+vz-g->origin[2])/g->resolution);
+                            else if(szi>0) szidx=(int)floor(((float)szi+vz-g->origin[2])/g->resolution);
+                            else if(szi==0) szidx=zidx;
+                            /*double check if we are not on the already incremented grid point*/
+                            if(((sxidx!=xidx) || (syidx!=yidx) || (szidx!=zidx))
+                                        && (sxidx>=0 && syidx>=0 && szidx>=0 && sxidx<g->nx && syidx<g->ny && szidx<g->nz)) {
+                                if(refg->gridvalues[sxidx][syidx][szidx]<1.0){
+                                    g->gridvalues[sxidx][syidx][szidx]+=incre;
+                                    refg->gridvalues[sxidx][syidx][szidx]=1.0;
+                                    
+                                }
+                            }                            /*added condition if grid value already set, do not update, to better density measurements and match drug score*/
+                        }
+                    }
+                }
+            }
+            cnv=cnv->next;
+        }
+
+        //if(zidx<0 || zidx>=g->nz) printf("herez zidx : %d max : %d\n",zidx,g->nz);
+        //fprintf(stdout,"%d\n",n);
+        //fflush(stdout);
+
+        if(xidx<g->nx && yidx<g->ny && zidx<g->nz && xidx>=0 && yidx>=0 && zidx>=0){
+            if(refg->gridvalues[xidx][yidx][zidx]<1.0) {
+                g->gridvalues[xidx][yidx][zidx]+=incre;   /*increment the already known grid point value*/
+                refg->gridvalues[xidx][yidx][zidx]=1.0;
+            }
+        }
+        else fprintf(stderr,"\n\nWarning (oh oh!!) : Your structure is not aligned or is moving a lot. Results might not reflect what you expect. Consider first structural alignemnt\nIf your structure is moving a lot, consider to split up analysis in two distinct parts.\n\n");
+        cp=cp->next;
+    }
+    //return g;
+}
+
+
+
+void reset_grid(s_mdgrid *g){
+    int x,y,z;
+    for(x=0;x<g->nx;x++){
+        for(y=0;y<g->ny;y++){
+            for(z=0;z<g->nz;z++){
+                g->gridvalues[x][y][z]=0.0;
+            }
+        }
+    }
 }
 
 
@@ -131,12 +251,12 @@ void project_grid_on_atoms(s_mdgrid *g,s_pdb *pdb){
         maxix=(int)ceil((x+M_MDP_ATOM_DENSITY_DIST-g->origin[0])/g->resolution);
         maxiy=(int)ceil((y+M_MDP_ATOM_DENSITY_DIST-g->origin[1])/g->resolution);
         maxiz=(int)ceil((z+M_MDP_ATOM_DENSITY_DIST-g->origin[2])/g->resolution);
-        while(ix<=maxix){
+        while(ix<=maxix && g->nx > ix){
             iy=(int)floor((y-M_MDP_ATOM_DENSITY_DIST-g->origin[1])/g->resolution);
-            while(iy<=maxiy){
+            while(iy<=maxiy && g->ny > iy){
                 iz=(int)floor((z-M_MDP_ATOM_DENSITY_DIST-g->origin[2])/g->resolution);
-                while(iz<=maxiz){
-                    density+=g->gridvalues[ix][iy][iz];
+                while(iz<=maxiz && g->nz > iz){
+                    density+=g->gridvalues[ix][iy][iz];           
                     iz++;
                 }
                 iy++;
@@ -147,7 +267,7 @@ void project_grid_on_atoms(s_mdgrid *g,s_pdb *pdb){
     }
 }
 
-void calculate_pocket_densities(s_mdgrid *g, int n){
+void normalize_grid(s_mdgrid *g, int n){
     int x,y,z;
     for(x=0;x<g->nx;x++){
         for(y=0;y<g->ny;y++){
