@@ -114,7 +114,8 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 {
 	int i,
 		status = 0,
-		nstats = 0 ;
+		nstats = 0,
+                res;
 	
 	char *str_list_file = NULL ;
 
@@ -188,7 +189,7 @@ s_dparams* get_dpocket_args(int nargs, char **args)
 	}
 	else {
 		if(str_list_file) {
-			int res = add_list_complexes(str_list_file, par) ;
+                        res = add_list_complexes(str_list_file, par) ;
 			if(res <= 0) {
 				fprintf(stdout, "! No data has been read.\n") ;
 				free_dparams(par) ;

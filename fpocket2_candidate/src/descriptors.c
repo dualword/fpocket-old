@@ -108,48 +108,48 @@ s_desc* allocate_s_desc(void)
 void reset_desc(s_desc *desc)
 {
     desc->hydrophobicity_score = 0.0 ;
-	desc->volume_score = 0.0 ;
-	desc->volume = 0.0 ;
-	desc->prop_polar_atm = 0.0 ;
-	desc->mean_asph_ray = 0.0 ;
-	desc->masph_sacc = 0.0 ;
-	desc->apolar_asphere_prop = 0.0 ;
-	desc->mean_loc_hyd_dens = 0.0 ;
-	desc->as_density = 0.0 ;
-	desc->as_max_dst = 0.0 ;
+    desc->volume_score = 0.0 ;
+    desc->volume = 0.0 ;
+    desc->prop_polar_atm = 0.0 ;
+    desc->mean_asph_ray = 0.0 ;
+    desc->masph_sacc = 0.0 ;
+    desc->apolar_asphere_prop = 0.0 ;
+    desc->mean_loc_hyd_dens = 0.0 ;
+    desc->as_density = 0.0 ;
+    desc->as_max_dst = 0.0 ;
 
-	desc->flex = 0.0 ;
-	desc->nas_norm = 0.0 ;
-	desc->prop_asapol_norm = 0.0 ;
-	desc->mean_loc_hyd_dens_norm = 0.0 ;
-	desc->as_density_norm = 0.0 ;
-        desc->polarity_score_norm = 0.0 ;
-	desc->as_max_dst_norm = 0.0 ;
+    desc->flex = 0.0 ;
+    desc->nas_norm = 0.0 ;
+    desc->prop_asapol_norm = 0.0 ;
+    desc->mean_loc_hyd_dens_norm = 0.0 ;
+    desc->as_density_norm = 0.0 ;
+    desc->polarity_score_norm = 0.0 ;
+    desc->as_max_dst_norm = 0.0 ;
 
-	desc->nb_asph = 0 ;
-	desc->polarity_score  = 0 ;
-	desc->charge_score = 0 ;
+    desc->nb_asph = 0 ;
+    desc->polarity_score  = 0 ;
+    desc->charge_score = 0 ;
 
-        desc->surf_apol_vdw=0.0;
-        desc->surf_apol_vdw14=0.0;
-        desc->surf_apol_vdw22=0.0;
+    desc->surf_apol_vdw=0.0;
+    desc->surf_apol_vdw14=0.0;
+    desc->surf_apol_vdw22=0.0;
 
-        desc->surf_pol_vdw=0.0;
-        desc->surf_pol_vdw14=0.0;
-        desc->surf_pol_vdw22=0.0;
+    desc->surf_pol_vdw=0.0;
+    desc->surf_pol_vdw14=0.0;
+    desc->surf_pol_vdw22=0.0;
 
-        desc->surf_vdw=0.0;
-        desc->surf_vdw14=0.0;
-        desc->surf_vdw22=0.0;
+    desc->surf_vdw=0.0;
+    desc->surf_vdw14=0.0;
+    desc->surf_vdw22=0.0;
 
-        desc->drug_score=0.0;
-        desc->numResChain1=0;
-        desc->numResChain2=0;
-        desc->characterChain1=0;
-        desc->characterChain2=0;
+    desc->drug_score=0.0;
+    desc->numResChain1=0;
+    desc->numResChain2=0;
+    desc->characterChain1=0;
+    desc->characterChain2=0;
 
-	int i ;
-	for(i = 0 ; i < 20 ; i++) desc->aa_compo[i] = 0 ;
+    int i ;
+    for(i = 0 ; i < 20 ; i++) desc->aa_compo[i] = 0 ;
 }
 
 /**

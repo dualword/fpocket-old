@@ -85,8 +85,8 @@
 float get_mol_mass(s_atm *latoms, int natoms)
 {
 	float mass = 00.0 ;
+        int i ;
 	if(latoms) {
-		int i ;
 		for(i = 0 ; i < natoms ; i++) {
 			mass += latoms[i].mass ;
 		}
@@ -112,8 +112,9 @@ float get_mol_mass(s_atm *latoms, int natoms)
 float get_mol_mass_ptr(s_atm **latoms, int natoms)
 {
 	float mass = 00.0 ;
+        int i ;
 	if(latoms) {
-		int i ;
+		
 		for(i = 0 ; i < natoms ; i++) {
 			mass += latoms[i]->mass ;
 		}
@@ -143,9 +144,9 @@ void set_mol_barycenter_ptr(s_atm **latoms, int natoms, float bary[3])
 	float xsum = 0.0, 
 		  ysum = 0.0,
 		  zsum = 0.0 ;
-
+        int i ;
 	if(latoms) {
-		int i ;
+		
 		for(i = 0 ; i < natoms ; i++) {
 			xsum += latoms[i]->x ;
 			ysum += latoms[i]->y ;

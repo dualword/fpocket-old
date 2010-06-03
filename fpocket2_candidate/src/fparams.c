@@ -173,6 +173,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 
 			f = fopen (pdb_lst, "r") ; 
 			int i = 0, l = 0 ;
+                        char *line;
 			while(fgets(cline, M_MAX_PDB_NAME_LEN, f) != NULL) {
 				if(strcmp("\n", cline) != 0) {
 					l = strlen(cline) ;
@@ -180,7 +181,7 @@ s_fparams* get_fpocket_args(int nargs, char **args)
 						l-- ;
 						cline[l] = '\0' ;
 					}
-					char *line = (char *) my_malloc((l+1)*sizeof(char)) ;
+					line = (char *) my_malloc((l+1)*sizeof(char)) ;
 					memcpy (line, cline, l+1);
 	
 					par->pdb_lst[i] = line ;
@@ -560,16 +561,16 @@ int is_fpocket_opt(const char opt)
 */
 void free_fparams(s_fparams *p)
 {
-	if(p) {
-		if(p->npdb > 0 && p->pdb_lst != NULL) {
-			int i ;
-			for (i = 0 ; i < p->npdb ; i++) {
-				if(p->pdb_lst[i] != NULL) my_free(p->pdb_lst[i]) ;
-			}
-			my_free(p->pdb_lst) ;
-		}
-		my_free(p) ;
-	}
+    int i ;
+    if(p) {
+        if(p->npdb > 0 && p->pdb_lst != NULL) {
+                for (i = 0 ; i < p->npdb ; i++) {
+                        if(p->pdb_lst[i] != NULL) my_free(p->pdb_lst[i]) ;
+                }
+                my_free(p->pdb_lst) ;
+        }
+        my_free(p) ;
+    }
 }
 
 /**
