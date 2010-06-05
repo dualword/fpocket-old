@@ -1,5 +1,95 @@
 #include "../headers/mdpout.h"
 
+/*
+
+## GENERAL INFORMATION
+##
+## FILE 					mdpout.c.
+## AUTHORS					P. Schmidtke and V. Le Guilloux
+## LAST MODIFIED			28-11-10
+##
+## SPECIFICATIONS
+##
+##	This file implements a memory handler. Whenever you call
+##	my_bloc_malloc function, the allocated pointer will be
+##	stored in a simple chained list. Then, if a malloc fails,
+##	or if you call the my_exit function, all allocated variable
+##	will be freed if not NULL of course. Therefore, a bloc
+##	allocated by my_... functions MUST be freed by the my_free,
+##	or a double free error should appears.
+##
+##	WARNING
+##
+##	This is an easy way to handle memory. However, if many bloc
+##	are allocated and removed during the programm, it might be
+##	solwed down as for each free, as we have to look for the bloc
+##	to free in the list, and remove it.
+##
+##	REMEMBER: if you use my_malloc, you MUST use my_free. If you
+##	free a bloc allocated by my_(..), and if you call free_all at
+##	the end, a double free coprruption will occure.
+##
+## MODIFICATIONS HISTORY
+##
+##	01-01-08	(vp) Created (random date...)
+##
+## TODO or SUGGESTIONS
+##
+
+*/
+
+
+/*
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
+
+
+/**
+   ## FUNCTION:
+        write_md_grid
+
+   ## SPECIFICATION:
+	Write the md grid to a file.
+
+   ## PARAMETRES:
+	@ s_mdgrid g : structure containing the grid
+        @ FILE *f : file handle for output file
+        @ FILE *fiso : file handle for iso pdb output file
+        @ s_mdparams *par : parameters for mdpocket
+        @ float isovalue : isovalue at which one wants to extract the iso PDB
+
+   ## RETURN:
+	void :
+
+*/
 
 
 void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso,s_mdparams *par,float isovalue)
@@ -48,6 +138,27 @@ void write_md_grid(s_mdgrid *g, FILE *f, FILE *fiso,s_mdparams *par,float isoval
     }
 }
 
+
+
+/**
+   ## FUNCTION:
+        write_md_pocket_atoms
+
+   ## SPECIFICATION:
+        writes a pdb file containing all pocket atoms at each snapshot in
+        distinct models
+
+   ## PARAMETRES:
+	@ FILE *f : output file handle
+        @ int *ids : list of atom identifiers
+        @ s_pdb *prot : the protein handle
+        @ int nids : number of ids in ids list
+        @ int sn : number of snapshots
+
+   ## RETURN:
+	void
+
+*/
 void write_md_pocket_atoms(FILE *f,int *ids,s_pdb *prot, int nids, int sn){
     s_atm *cura;
     int i,j,flag;
@@ -74,6 +185,21 @@ void write_md_pocket_atoms(FILE *f,int *ids,s_pdb *prot, int nids, int sn){
 
 
 
+/**
+   ## FUNCTION:
+        write_first_bfactor_density
+
+   ## SPECIFICATION:
+	writes the protein structure with pocket densities in the bfactor column.
+
+   ## PARAMETRES:
+	@ FILE *f : output file handle
+        @ s_pdb *prot : protein handle
+
+   ## RETURN:
+	void
+
+*/
 void write_first_bfactor_density(FILE *f,s_pdb *prot){
     s_atm *cura;
     int i;
