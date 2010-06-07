@@ -32,7 +32,7 @@ PROJECT_NAME           = fpocket
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 1.0
+PROJECT_NUMBER         = 2.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -1004,7 +1004,7 @@ COMPACT_LATEX          = NO
 # by the printer. Possible values are: a4, a4wide, letter, legal and 
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX 
 # packages that should be included in the LaTeX output.
@@ -1026,7 +1026,7 @@ LATEX_HEADER           =
 PDF_HYPERLINKS         = YES
 
 # If the USE_PDFLATEX tag is set to YES, pdflatex will be used instead of 
-# plain latex in the generated Makefile. Set this option to YES to get a 
+# plain latex in the generated Makefile. yastSet this option to YES to get a
 # higher quality PDF documentation.
 
 USE_PDFLATEX           = YES
