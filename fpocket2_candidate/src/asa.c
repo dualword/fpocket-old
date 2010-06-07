@@ -1,5 +1,59 @@
 #include "../headers/asa.h"
 
+/*
+
+## GENERAL INFORMATION
+##
+## FILE 					asa.c
+## AUTHORS					P. Schmidtke and V. Le Guilloux
+## LAST MODIFIED			01-04-08
+##
+## SPECIFICATIONS
+##
+##	Top function to call fpocket routines. Get and check programm parameters,
+##	call functions, write output and free memory.
+##
+## MODIFICATIONS HISTORY
+##
+##	01-04-08	(p)  Added comments and creation of history
+##	01-01-08	(vp) Created (random date...)
+##
+## TODO or SUGGESTIONS
+##
+
+*/
+
+/*
+    COPYRIGHT DISCLAIMER
+
+    Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
+	disclaim all copyright interest in the program “fpocket” (which
+	performs protein cavity detection) written by Vincent Le Guilloux and Peter
+	Schmidtke.
+
+    Vincent Le Guilloux  28 November 2008
+    Peter Schmidtke      28 November 2008
+    Pierre Tuffery       28 November 2008
+
+    GNU GPL
+
+    This file is part of the fpocket package.
+
+    fpocket is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    fpocket is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
+
+**/
+
 
 
 /**
@@ -33,6 +87,23 @@ int atom_in_list(s_atm *a, s_atm **atoms, int natoms){
 }
 
 
+/**
+   ## FUNCTION:
+        get_surrounding_atoms_idx
+
+   ## SPECIFICATION:
+        Get atom ids around a given set of voronoi vertices
+
+   ## PARAMETRES:
+	@ s_vvertices **tvert : List of pointers to voronoi vertices,
+	@ int nvert : Number of Voronoi vertices
+        @ s_pdb *pdb : Structure of the protein
+        @ int *n_sa : Pointer to int holding the number of surrounding atoms
+
+   ## RETURN:
+        int * : atom ids of surrounding atoms
+ */
+
 int *get_surrounding_atoms_idx(s_vvertice **tvert,int nvert,s_pdb *pdb, int *n_sa){
     s_atm *a=NULL;
     int *sa=NULL;
@@ -63,6 +134,26 @@ int *get_surrounding_atoms_idx(s_vvertice **tvert,int nvert,s_pdb *pdb, int *n_s
     return sa;
 }
 
+
+/**
+   ## FUNCTION:
+        get_unique_atoms
+
+   ## SPECIFICATION:
+        Get a list of unique atom ids near the pocket
+
+   ## PARAMETRES:
+	@ s_vvertices **tvert : List of pointers to voronoi vertices,
+	@ int nvert : Number of Voronoi vertices
+        @ int *n_sa : Pointer to int holding the number of surrounding atoms
+        @ s_atm **atoms : List of pointers to atoms
+        @ int na : Number of atoms in atoms
+
+
+   ## RETURN:
+        int * : atom ids of unique atoms
+ */
+
 int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua, s_atm **atoms,int na){
     s_atm *a=NULL;
     int *ua=NULL;
@@ -89,19 +180,19 @@ int *get_unique_atoms(s_vvertice **tvert,int nvert, int *n_ua, s_atm **atoms,int
                 
                 if(a->id-1 < na && a==atoms[a->id-1]) {
                     ua[*n_ua-1]=a->id-1;
-                    if(a->id >= 1631) {
+               /*     if(a->id >= 1631) {
                         fprintf(stdout, "\nSetting bad id! %d", a->id ) ;
-                    }
+                    }*/
                 }
                 else {
                     for(ca_idx=0;ca_idx<na;ca_idx++){
                         if(a==atoms[ca_idx]) {
                             ua[*n_ua-1]=ca_idx;
 
-                            if(ca_idx >= 1631) {
+                 /*           if(ca_idx >= 1631) {
 
                                 fprintf(stdout, "\nSetting bad id! %d", ca_idx ) ;
-                            }
+                            }*/
                             break;
                         }
                     }
@@ -150,6 +241,28 @@ s_atm **get_unique_atoms_DEPRECATED(s_vvertice **tvert,int nvert, int *n_ua)
 
     return ua;
 }
+
+
+/**
+   ## FUNCTION:
+        set_ASA
+
+   ## SPECIFICATION:
+        The actual ASA calculation, resulst are written to the descriptor
+        structure
+
+   ## PARAMETRES:
+	@ s_desc *desc : Structure of descriptors
+	@ s_pdb *pdb : Structure containing the protein
+        @ s_vvertices **tvert : List of pointers to Voronoi vertices
+        @ int nvert : Number of vertices
+
+
+   ## RETURN:
+        void
+ */
+
+
 
 void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
 {

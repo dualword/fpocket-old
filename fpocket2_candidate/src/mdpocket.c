@@ -362,6 +362,27 @@ s_pocket* extract_wanted_vertices(c_lst_pockets *pockets,s_pdb *pdb){
     return(p);
 }
 
+
+
+/**
+   ## FUNCTION:
+        get_wanted_atom_ids
+
+   ## SPECIFICATION:
+        Given an input pocket by the user, this function returns all atoms on
+        the protein that are nearby (usually on the first snapshot).
+        This is useful for the output of the pocket motions
+
+   ## PARAMETRES:
+	@ s_pdb *prot : Protein structure
+        @ s_pdb *pocket : The pocket (grid points) organized as s_pdb structure
+        @ int *n : Pointer to int storing the number of atoms that are selected
+            by this function.
+
+   ## RETURN:
+	int * : List of atom ids
+
+*/
 int *get_wanted_atom_ids(s_pdb *prot,s_pdb *pocket, int *n){
     int *ids=(int *)my_malloc(sizeof(int));
     int v,a;
