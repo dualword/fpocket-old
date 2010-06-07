@@ -1,6 +1,6 @@
 #include "../headers/mdpbase.h"
 
-/**
+/*
 
 ## GENERAL INFORMATION
 ##
@@ -21,7 +21,7 @@
 ##
  */
 
-/**
+/*
     COPYRIGHT DISCLAIMER
 
     Vincent Le Guilloux, Peter Schmidtke and Pierre Tuffery, hereby
@@ -50,7 +50,7 @@
     You should have received a copy of the GNU General Public License
     along with fpocket.  If not, see <http://www.gnu.org/licenses/>.
 
- **/
+ */
 
 /**
    ## FUNCTION:
@@ -486,8 +486,7 @@ s_mdgrid *init_md_grid(c_lst_pockets *pockets) {
 
    ## RETURN:
         void
-
- */
+*/
 void alloc_first_md_concat(s_mdconcat *m, size_t n) {
     size_t z;
     m->vertpos = (float **) my_malloc(sizeof (float *) * n);
