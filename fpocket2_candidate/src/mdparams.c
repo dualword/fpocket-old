@@ -143,8 +143,8 @@ s_mdparams* get_mdpocket_args(int nargs, char **args)
 								if(strlen(args[++i]) < M_MAX_FILE_NAME_LENGTH) {
 									remove_ext(args[i]) ;
 									sprintf(par->f_pqr, "%s.pqr", args[i]) ;
-									sprintf(par->f_freqdx, "%s.dx", args[i]) ;
-                                                                        sprintf(par->f_densdx, "%s.dx", args[i]) ;
+									sprintf(par->f_freqdx, "%s_freq.dx", args[i]) ;
+                                                                        sprintf(par->f_densdx, "%s_dens.dx", args[i]) ;
                                                                         sprintf(par->f_freqiso, "%s_freq_iso_0_5.pdb", args[i]) ;
                                                                         sprintf(par->f_densiso, "%s_dens_iso_8.pdb", args[i]) ;
                                                                         sprintf(par->f_desc, "%s_descriptors.txt", args[i]) ;

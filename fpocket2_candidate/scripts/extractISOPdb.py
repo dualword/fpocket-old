@@ -98,4 +98,4 @@ for count in range(n_entries/3) :
 path.close()
 f.close()
 
-print "finished writing %s"(path)
+print "finished writing %s"%(pathOutput)
