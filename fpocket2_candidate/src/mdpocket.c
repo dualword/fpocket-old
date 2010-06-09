@@ -317,6 +317,7 @@ void write_md_descriptors(FILE *f, s_pocket *p, int i){
     for(j = 0 ; j < 20 ; j++) fprintf(f, " %3d", d->aa_compo[j]) ;
 
     fprintf(f, "\n") ;
+    fflush(f);
 }
 
 /**
