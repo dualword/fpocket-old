@@ -69,7 +69,7 @@
   
    ## PARAMETRES:
  *  @ c_lst_pockets *pockets : All pockets found and kept.
- *  @ c_lst_pockets *pockets : The (input) pdb structure
+ *  @ s_pdb *pdb : The (input) pdb structure
 	@ char *pdbname          : Name of the pdb
   
    ## RETURN: 
@@ -82,6 +82,7 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 	char pdb_path[350] = "" ;
 	char out_path[350] = "" ;
 	char pdb_out_path[350] = "" ;
+        char info_out_path[350]="";
 	char fout[350] = "" ;
 	char command[370] = "" ;
 	int status ;
@@ -113,7 +114,10 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		sprintf(pdb_out_path, "%s_out.pdb", out_path) ;
 
 		write_pockets_single_pdb(pdb_out_path, pdb, pockets) ;
-	
+
+                sprintf(info_out_path,"%s_info.txt",out_path);
+                write_out_fpocket_info_file(pockets,info_out_path);
+
 	/* Writing pockets as a single pqr */
 		sprintf(fout, "%s_pockets.pqr", out_path) ;
 		write_pockets_single_pqr(fout, pockets) ;
@@ -132,8 +136,64 @@ void write_out_fpocket(c_lst_pockets *pockets, s_pdb *pdb, char *pdbname)
 		write_each_pocket(out_path, pockets) ;
 	}
 }
+/**
+   ## FUNCTION:
+	write_out_fpocket_info_file
+
+   ## SPECIFICATION:
+        Writing the pocket information file to the output directory
+
+   ## PARAMETRES:
+ *  @ c_lst_pockets *pockets : All pockets found and kept.
+ *  @ char *output_file_name : The filename of the output file
+
+   ## RETURN:
+	void
+
+*/
+void write_out_fpocket_info_file(c_lst_pockets *pockets, char *output_file_name){
+    FILE *f=NULL;
+    f=fopen(output_file_name,"w");
+    node_pocket *pcur=NULL ;
+    s_desc *pdesc=NULL;
+    int i=0;
+    if(pockets){
+        pcur = pockets->first ;
+        
+        while(pcur){
+            pdesc=pcur->pocket->pdesc;
+            fprintf(f,"Pocket %d :\n",i+1);
+            fprintf(f,"\tScore : \t\t\t%.3f\n",pcur->pocket->score);
+            fprintf(f,"\tDruggability Score : \t\t%.3f\n",pdesc->drug_score);
+            fprintf(f,"\tNumber of Alpha Spheres : \t%d\n",pcur->pocket->size);
+            fprintf(f,"\tTotal SASA : \t\t\t%.3f\n",pdesc->surf_vdw14);
+            fprintf(f,"\tPolar SASA : \t\t\t%.3f\n",pdesc->surf_pol_vdw14);
+            fprintf(f,"\tApolar SASA : \t\t\t%.3f\n",pdesc->surf_apol_vdw14);
+            fprintf(f,"\tVolume : \t\t\t%.3f\n",pdesc->volume);
+            fprintf(f,"\tMean local hydrophobic density : %.3f\n",pdesc->mean_loc_hyd_dens);
+            fprintf(f,"\tMean alpha sphere radius :\t%.3f\n",pdesc->mean_asph_ray);
+            fprintf(f,"\tMean alp. sph. solvent access :  %.3f\n",pdesc->masph_sacc);
+            fprintf(f,"\tApolar alpha sphere proportion : %.3f\n",pdesc->apolar_asphere_prop);
+            fprintf(f,"\tHydrophobicity score:\t\t%.3f\n",pdesc->hydrophobicity_score);
+            fprintf(f,"\tVolume score: \t\t\t %.3f\n",pdesc->volume_score);
+            fprintf(f,"\tPolarity score:\t\t\t %d\n",pdesc->polarity_score);
+            fprintf(f,"\tCharge score :\t\t\t %d\n",pdesc->charge_score);
+            fprintf(f,"\tProportion of polar atoms: \t%.3f\n",pdesc->prop_polar_atm);
+            fprintf(f,"\tAlpha sphere density : \t\t%.3f\n",pdesc->as_density);
+            fprintf(f,"\tCent. of mass - Alpha Sphere max dist: %.3f\n",pdesc->as_max_dst);
+            fprintf(f,"\tFlexibility : \t\t\t %.3f\n",pdesc->flex);
+            fprintf(f,"\n");
+            pcur = pcur->next ;
+            i++ ;
+        }
+    }
+    else {
+        fprintf(f,"No pockets found\n");
+    }
+    
 
 
+}
 /**-----------------------------------------------------------------------------
    ## FUNCTION:
 	void write_out(c_lst_pockets *pockets)
