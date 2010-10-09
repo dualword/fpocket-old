@@ -23,7 +23,7 @@ MYPROGS	    = $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET) 
 
 CC          = gcc
 CCQHULL	    = gcc
-LINKE       = gcc
+LINKER      = gcc
 LINKERQHULL = gcc
 
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
