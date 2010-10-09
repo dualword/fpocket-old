@@ -15,37 +15,40 @@ MANDIR  = /usr/local/man/man8/
 
 
 FPOCKET     = fpocket
-TPOCKET		= tpocket
-DPOCKET		= dpocket
-MDPOCKET	= mdpocket
-CHECK		= pcheck
-MYPROGS		= $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET) $(PATH_BIN)$(MDPOCKET)
+TPOCKET	    = tpocket
+DPOCKET	    = dpocket
+MDPOCKET    = mdpocket
+CHECK	    = pcheck
+MYPROGS	    = $(PATH_BIN)$(FPOCKET) $(PATH_BIN)$(TPOCKET) $(PATH_BIN)$(DPOCKET) $(PATH_BIN)$(MDPOCKET)
 
 CC          = gcc
 CCQHULL	    = gcc
-LINKER		= gcc
+LINKE       = gcc
 LINKERQHULL = gcc
 
 CGSL        = -DMD_NOT_USE_GSL -I$(PATH_GSL)include
 COS         = -DM_OS_LINUX
-CDEBUG		= -DMNO_MEM_DEBUG
+CDEBUG      = -DMNO_MEM_DEBUG
 CWARN       = -Wall -Wextra -Wwrite-strings -Wstrict-prototypes
 
 CFLAGS      = $(CWARN) $(COS) $(CDEBUG) -O2 -g -pg -std=c99#$(CGSL)
 QCFLAGS     = -O -g -pg -ansi
 
 LGSL        = -L$(PATH_GSL)lib -lgsl -lgslcblas 
-LFLAGS	    = -fno-underscoring -lm
+LFLAGS	    = -lm
 
 #------------------------------------------------------------
 # BINARIES OBJECTS 
 #------------------------------------------------------------
 
-QOBJS = $(PATH_QHULL)qvoronoi.o $(PATH_QHULL)user.o $(PATH_QHULL)global.o \
-		$(PATH_QHULL)io.o $(PATH_QHULL)geom2.o $(PATH_QHULL)poly2.o \
-		$(PATH_QHULL)merge.o $(PATH_QHULL)qhull.o $(PATH_QHULL)geom.o  \
-		$(PATH_QHULL)poly.o $(PATH_QHULL)qset.o $(PATH_QHULL)mem.o \
-		$(PATH_QHULL)stat.o
+QOBJS = $(PATH_QHULL)geom2.o $(PATH_QHULL)geom.o $(PATH_QHULL)global.o \
+        $(PATH_QHULL)io.o $(PATH_QHULL)io.h $(PATH_QHULL)libqhull.o \
+        $(PATH_QHULL)mem.o $(PATH_QHULL)merge.o $(PATH_QHULL)poly2.o \
+        $(PATH_QHULL)poly.o $(PATH_QHULL)qset.o \
+        $(PATH_QHULL)random.o $(PATH_QHULL)rboxlib.o \
+        $(PATH_QHULL)stat.o $(PATH_QHULL)user.o \
+        $(PATH_QHULL)usermem.o \
+        $(PATH_QHULL)userprintf.o $(PATH_QHULL)qvoronoi.o
 
 CHOBJ = $(PATH_OBJ)check.o $(PATH_OBJ)psorting.o $(PATH_OBJ)pscoring.o \
 		$(PATH_OBJ)utils.o $(PATH_OBJ)pertable.o $(PATH_OBJ)memhandler.o \
@@ -153,6 +156,10 @@ test:
 clean:
 	rm -f $(PATH_QHULL)*.o
 	rm -f $(PATH_OBJ)*.o
+	rm -f $(PATH_BIN)$(FPOCKET)
+	rm -f $(PATH_BIN)$(TPOCKET)
+	rm -f $(PATH_BIN)$(DPOCKET)
+	rm -f $(PATH_BIN)$(MDPOCKET)
 
 uninstall:
 	rm -f $(PATH_BIN)$(FPOCKET) $(BINDIR)$(FPOCKET)
