@@ -274,7 +274,7 @@ void set_ASA(s_desc *desc,s_pdb *pdb, s_vvertice **tvert,int nvert)
     desc->surf_apol_vdw22=0.0;
     desc->n_abpa=0;
     int *sa=NULL;    /*surrounding atoms container*/
-    /*int *ua=NULL;    /*unique atoms contacting vvertices*/
+    /*int *ua=NULL;    unique atoms contacting vvertices*/
     s_atm ** ua = NULL ;
     
     int n_sa = 0;
