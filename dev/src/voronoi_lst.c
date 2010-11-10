@@ -15,6 +15,7 @@
 ##
 ## MODIFICATIONS HISTORY
 ##
+##	03-11-10	(v)  Added method to remove a node (not tested yet)
 ##	02-12-08	(v)  Comments UTD
 ##	01-04-08	(v)  Added template for comments and creation of history
 ##	01-01-08	(vp) Created (random date...)
@@ -170,6 +171,53 @@ node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice)
 	}
 
 	return newn ;
+}
+
+/**
+   ## FONCTION:
+	c_lst_vertices_drop
+
+   ## SPECIFICATION:
+    Remove a node. We don't free the memory of the node.
+
+   ## PARAMETRES:
+	@ c_lst_vertices *lst : chained list of vertices
+	@ node_vertice *node : node to remove
+
+   ## RETURN:
+	node_vertice *: a pointer to the node following the node to remove (might be
+                    null if the node removed was the last node of the list).
+
+*/
+node_vertice *c_lst_vertices_drop(c_lst_vertices *lst, node_vertice *node)
+{
+    node_vertice *next = node->next ;
+    if(node->next != NULL) {
+        /* The node is not the last one*/
+        node->next->prev = node->prev ;
+        if(node->prev == NULL) {
+            /* The node was the first node*/
+            lst->first = node->next ;
+        }
+        else {
+            node->prev->next = node->next ;
+        }
+    }
+    else {
+        /* We are at the end of the list */
+        if(node->prev != NULL) {
+            node->prev->next = NULL ;
+        }
+        else {
+            /* Last node in the list..*/
+            lst->first = NULL ;
+            lst->last = NULL ;
+        }
+    }
+    
+	lst->n_vertices -= 1 ;
+    
+    return next ;
 }
 
 /**

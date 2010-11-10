@@ -94,12 +94,16 @@ typedef struct s_lst_vvertice
 {
 	s_vvertice *vertices ;      /**< List of voronoi vertices */
         s_vvertice **pvertices ;  /**< list of pointers to vertices*/
-        
-	int *h_tr;  /**< translation of voronoi vertice indices*/
-	int n_h_tr; /**< size of *h_tr*/
+
+        /* Indexes of heavy atoms used as input for qhull in the s_pdb list of atoms */
+	int *h_tr;
+
+        /* Size of h_tr */
+	int n_h_tr;
+
 	int *tr,    /**< translation of voronoi vertice indices*/
-		nvert,  /**< no of vertices*/
-		qhullSize ; /**< number of vertices in qhull*/
+            nvert,  /**< no of vertices*/
+	    qhullSize ; /**< number of vertices in qhull*/
 
 } s_lst_vvertice ;
 

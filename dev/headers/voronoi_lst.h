@@ -74,6 +74,7 @@ c_lst_vertices *c_lst_vertices_alloc(void);
 node_vertice *node_vertice_alloc(s_vvertice *vertice);
 node_vertice *c_lst_vertices_add_first(c_lst_vertices *lst, s_vvertice *vertice);
 node_vertice *c_lst_vertices_add_last(c_lst_vertices *lst,s_vvertice *vertice);
+node_vertice *c_lst_vertices_drop(c_lst_vertices *lst, node_vertice *node) ;
 void c_lst_vertices_free(c_lst_vertices *lst);
 
 s_atm** get_vert_contacted_atms(c_lst_vertices *v_lst, int *nneigh) ;
