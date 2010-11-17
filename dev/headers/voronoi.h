@@ -56,7 +56,7 @@
 #define M_VORONOI_SUCCESS 0 /**< alpha sphere type - hydrophobic alpha sphere */
 #define M_APOLAR_AS 0 /**< alpha sphere type - hydrophilic alpha sphere */
 #define M_POLAR_AS 1 /**< tolerance for coordinate imprecion during alpha sphere search	 */
-#define M_PREC_TOLERANCE 1e-5
+#define M_PREC_TOLERANCE 1e-2
 
 #define M_BUFSIZE 1e7   /**< buffer size*/
 /* --------------------------------STRUCTURES-------------------------------- */
@@ -107,6 +107,24 @@ typedef struct s_lst_vvertice
 
 } s_lst_vvertice ;
 
+
+/**
+ * clusterlib vertice info container
+ */
+
+typedef struct s_clusterlib_vertices
+{
+        double ** pos;          /**< Positions (xyz) of Voronoi vertices*/
+        int ** mask;            /**< Mask for position array*/
+        double weight[3];       /**< column (coordinate weights for distance matrix calculation*/
+        int transpose;          /**< cluster by rows (transpose=0) or column(transpose=1)*/
+        char dist;              /**< char defining distance measure used*/
+        char method;            /**< char defining method used (clustering)*/
+        
+
+        
+} s_clusterlib_vertices ;
+
 /* -----------------------------PROTOTYPES----------------------------------- */
 
 s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, 
@@ -115,6 +133,8 @@ float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
 				   float min_asph_size, float max_asph_size, 
 				   s_lst_vvertice *lvvert);
 
+double **get_3d_array_from_vvertice_list(s_lst_vvertice *lvvert);
+s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert);
 void set_barycenter(s_vvertice *v) ;
 int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id) ;
 int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert);

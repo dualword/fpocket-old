@@ -50,6 +50,7 @@
 #include "cluster.h"
 #include "refine.h"
 #include "descriptors.h"
+#include "clusterlib.h"
 
 #include "fparams.h"
 #include "memhandler.h"

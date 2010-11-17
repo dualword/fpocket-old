@@ -232,7 +232,9 @@ void write_pockets_single_pdb(const char out[],  s_pdb *pdb, c_lst_pockets *pock
 					nextVertice = pockets->current->pocket->v_lst->current->next;
 					pockets->current->pocket->v_lst->current = nextVertice;
 				}
-
+/*
+                                printf("pocket %d\n",pockets->current->pocket->rank);
+*/
 				nextPocket=pockets->current->next;
 				pockets->current=nextPocket;
 			}

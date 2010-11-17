@@ -103,6 +103,7 @@ typedef struct c_lst_pockets
 c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params);
 int updateIds(s_lst_vvertice *lvvert, int i, int *vNb, int resid,int curPocket,c_lst_pockets *pockets, s_fparams *params);
 void addStats(int resid, int size, int **stats,int *lenStats);
+c_lst_pockets *assign_pockets(s_lst_vvertice *lvvert, s_fparams *params);
 
 /* DESCRIPTOR FUNCTIONS */
 void set_pockets_descriptors(c_lst_pockets *pockets,s_pdb *pdb,s_fparams *params, s_pdb *pdb_w_lig) ;

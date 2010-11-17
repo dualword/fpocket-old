@@ -98,8 +98,15 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 
     pid_t pid = getpid() ;
     
+
     sprintf(tmpn1, "/tmp/qvoro_in_fpocket_%d.dat", pid) ;
     sprintf(tmpn2, "/tmp/qvoro_out_fpocket_%d.dat", pid) ;
+
+    
+/*
+    sprintf(tmpn1, "qvoro_in_fpocket_%d.dat", pid) ;
+    sprintf(tmpn2, "qvoro_out_fpocket_%d.dat", pid) ;
+*/
 
     FILE *fvoro = fopen(tmpn1, "w+") ;
     FILE *ftmp = fopen(tmpn2, "w") ;
@@ -150,10 +157,66 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
     }
     fclose(fvoro) ;
     fclose(ftmp) ;
+
     remove(tmpn1) ;
     remove(tmpn2) ;
+
     
     return lvvert ;
+}
+
+double **get_3d_array_from_vvertice_list(s_lst_vvertice *lvvert){
+    double **res=(double**)my_malloc(lvvert->nvert*(sizeof(double *)));
+    int i;
+    for(i=0;i<lvvert->nvert;i++){
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=(double) lvvert->vertices[i].x;
+        res[i][1]=(double) lvvert->vertices[i].y;
+        res[i][2]=(double) lvvert->vertices[i].z;
+        
+    }
+/*
+    printf("%d vertices\n",lvvert->nvert);
+*/
+    return res;
+}
+
+int **get_mask(int n){
+    int **res=(int**)my_malloc(n*(sizeof(int *)));
+    int i;
+    for(i=0;i<n;i++){
+        res[i]=(int*) my_malloc(3*sizeof(int));
+        res[i][0]=1.0;
+        res[i][1]=1.0;
+        res[i][2]=1.0;
+
+    }
+    return res;
+}
+
+
+s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert){
+    s_clusterlib_vertices *clusterObject=my_malloc(sizeof(s_clusterlib_vertices));
+    clusterObject->pos=get_3d_array_from_vvertice_list(lvvert);
+    clusterObject->mask=get_mask(lvvert->nvert);
+    clusterObject->weight[0]=1.0;    clusterObject->weight[1]=1.0;    clusterObject->weight[2]=1.0;
+    clusterObject->transpose=0; /*set a global flag here somehow*/
+    /**Distance metric from command.c in clusterlib
+     *Specifies the distance measure for gene clustering\n");
+       u: Uncentered correlation
+       c: Pearson correlation\n"
+       x: Uncentered correlation, absolute value\n"
+       a: Pearson correlation, absolute value\n"
+       s: Spearman's rank correlation\n"
+       k: Kendall's tau\n"
+       e: Euclidean distance\n"
+       b: City-block distance\n"
+
+     * */
+
+    clusterObject->dist='e';    /**put general flag here, but right now euclidean distance is ok*/
+    clusterObject->method='s';  /** clustering method, see doc for options, right now, average clustering*/
+    return(clusterObject);
 }
 
 /**

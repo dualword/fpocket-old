@@ -67,7 +67,7 @@
 */
 
 
-void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb *pdb_w_lig)
+void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,float max_dist, int min_nneigh,s_pdb *pdb,s_pdb *pdb_w_lig)
 {
 	node_pocket *pcur = NULL,
 				*pnext = NULL ,
@@ -103,20 +103,21 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
 	/* Set the first pocket */
         set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
 	pcur = pockets->first ;
-        //fprintf(stdout,"\nHaving %d comparisons\n",pockets->n_pockets*pockets->n_pockets);
+        fprintf(stdout,"\n% Pockets : Having %d comparisons\n",pockets->n_pockets,pockets->n_pockets*pockets->n_pockets);
         i=0;
         size_t n_slist=0;
 	while(pcur) {
             j=i+1;
-		/* Set the second pocket */
+            /* Set the second pocket */
 		curMobilePocket = pcur->next ;
 		while(curMobilePocket) {
                         curdist=0.0;
-
+            
 			nflag = 0 ;
 			/* Set the first vertice/alpha sphere center of the first pocket */
 			vcur = pcur->pocket->v_lst->first ;
 			while(vcur){
+            
 				/* Set the first vertice/alpha sphere center of the second pocket */
 				curMobileVertice = curMobilePocket->pocket->v_lst->first ;
 				vvcur = vcur->vertice ;
@@ -126,8 +127,9 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
 
 				/* Double loop for vertices -> if not near */
 				while(curMobileVertice){
+
 					mvvcur = curMobileVertice->vertice ;
-                                        if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z)<params->sl_clust_max_dist) curdist-=1.0;
+                                        if(dist(vcurx, vcury, vcurz, mvvcur->x, mvvcur->y, mvvcur->z)<max_dist) curdist-=1.0;
 					curMobileVertice = curMobileVertice->next;
 				}
 				vcur = vcur->next ;
@@ -156,6 +158,7 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
 		pcur = pcur->next ;
                 i++;
 	}
+        
 
         /* Now we have to merge nearby pockets without loosing track*/
 
@@ -166,7 +169,9 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
         //s_sorted_pocket_list slist[n_slist];
         for(i=0;i<n_slist;i++) slist[i].dist=0.0;
         //for(i=0;i<n_slist;i++)slist[i]=(s_sorted_pocket_list *)my_malloc(sizeof(s_sorted_pocket_list));
+/*
         s_sorted_pocket_list *el=my_malloc(sizeof(s_sorted_pocket_list));
+*/
 //        pcur=pockets->first;
 
 
@@ -175,11 +180,16 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
             //curMobilePocket=pcur->next;
             for(j=i+1;j<pockets->n_pockets;j++){
 
+/*
                 el->dist=dmat[i][j];
+*/
                 memcpy(&(slist[c].dist),&(dmat[i][j]),sizeof(float));
                 //slist[i+j-1].dist=dmat[i][j];
                 slist[c].pid1=i;
                 slist[c].pid2=j;
+/*
+                printf("dist : %f\n",slist[c].dist);
+*/
                 //if(i==173 && j==299)fprintf(stdout,"\ncurdist %d %d %f %f\n",j+i-1, n_slist,dmat[i][j], slist[j+i-1].dist);
                 //fprintf(stdout,"%f %d %d\n",slist[c].dist,slist[c].pid1,slist[c].pid2);
                 c++;
@@ -190,7 +200,10 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
         //fflush(stdout);
         qsort((void *)slist,n_slist,sizeof(s_sorted_pocket_list),comp_pocket);
 
-        //for(i=0;i<n_slist;i++) fprintf(stdout,"%f %d %d\n",slist[i].dist,slist[i].pid1,slist[i].pid2);
+
+/*
+        for(i=0;i<n_slist;i++) fprintf(stdout,"%f %d %d\n",slist[i].dist,slist[i].pid1,slist[i].pid2);
+*/
         /*TODO : debug here there are still some neighbours with nan pid's after the qsort*/
         i=0;
 
@@ -210,9 +223,11 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
         i=0;
         size_t init_n_pockets=pockets->n_pockets;
 
-        while((slist[i].dist<=-params->sl_clust_min_nneigh) && (i<n_slist)){
+        while((slist[i].dist<=-min_nneigh) && (i<n_slist)){
             /*for all nearby pockets merge*/
-            //fprintf(stdout,"%f\n",slist[i].dist);
+/*
+            fprintf(stdout,"%f\n",slist[i].dist);
+*/
             idx1=slist[i].pid1;
             idx2=slist[i].pid2;
 
@@ -220,11 +235,19 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
             fflush(stdout);*/
             if(pock_list[idx1]!=pock_list[idx2]){
                 p1=*(pock_list+idx1);
+                p1=pock_list[idx1];
                 p2=*(pock_list+idx2);
+                p2=pock_list[idx2];
+/*
                 dens1=((isnan(p1->pocket->pdesc->as_density)) ? 0.0 : p1->pocket->pdesc->as_density)/p1->pocket->pdesc->nb_asph;
+*/
+/*
                 dens2=((isnan(p2->pocket->pdesc->as_density)) ? 0.0 : p2->pocket->pdesc->as_density)/p2->pocket->pdesc->nb_asph;
+*/
                 //printf("%f vs %f\n",dens1/p1->pocket->pdesc->nb_asph, dens2/p1->pocket->pdesc->nb_asph);
+/*
                 if(dens1 < 0.1 && dens2 < 0.1){
+*/
                     for(j=0;j<init_n_pockets;j++){
                         if(pock_list[j]==p2){ //j!=idx2 &&
                             pock_list[j]=p1;
@@ -234,7 +257,9 @@ void pck_final_clust(c_lst_pockets *pockets, s_fparams *params,s_pdb *pdb,s_pdb 
 
                     mergePockets(p1,p2,pockets);
                     pock_list[idx2]=p1;
+/*
                 }
+*/
             }
             i++;
         }

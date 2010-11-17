@@ -86,6 +86,8 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 	time_t bt, et ;
 */
 	c_lst_pockets *pockets = NULL ;
+        s_clusterlib_vertices *clusterlib_vertices=NULL;
+        Node *cluster_tree=NULL;
 
 	/* Calculate and read voronoi vertices comming from qhull */
 /*
@@ -96,9 +98,26 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 	bt = time(NULL) ;
 */
 	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh,
-												params->asph_min_size,
-												params->asph_max_size) ;
+                                		params->asph_min_size,
+						params->asph_max_size) ;
 /*
+        clusterlib_vertices=prepare_vertices_for_cluster_lib(lvert);
+*/
+/*
+        cluster_tree=treecluster(lvert->nvert,
+
+                                3,
+                                clusterlib_vertices->pos,
+                                clusterlib_vertices->mask,
+                                clusterlib_vertices->weight,
+                                clusterlib_vertices->transpose,
+                                clusterlib_vertices->dist,
+                                clusterlib_vertices->method,
+                                NULL);
+
+        cuttree_distance (lvert->nvert, cluster_tree, 3.0);
+*/
+        /*
 	et = time(NULL) ;
  	fprintf(stdout, "> Vertices successfully calculated in apox. %f sec.\n",
 					(float) (et-bt)) ;
@@ -113,10 +132,15 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 
 		b = clock() ;
 */
+/*
 	pockets = clusterPockets(lvert, params);
-
+*/
         
+        pockets = assign_pockets(lvert,params);
+        
+
 	if(pockets) {
+
 		pockets->vertices = lvert ;
 /*
 		e = clock() ;
@@ -130,7 +154,10 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 		b = clock() ;
 		fprintf(stdout,"> Cluster refinment steps: \n");
 */
+
+
 		reIndexPockets(pockets) ;
+
 
 /*
 		drop_tiny(pockets) ;	
@@ -140,14 +167,36 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 /*
 		fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
 */
-		refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
+
+
+
+		/*refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
+
+
+
+
+/*
 		reIndexPockets(pockets) ;
+*/
+
+
+
 
 /*
 		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
 */
-		pck_final_clust(pockets, params,pdb,pdb_w_lig);	/* Single Linkage Clustering */
-		reIndexPockets(pockets) ;
+
+		pck_final_clust(pockets, params,2.0,1,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+                reIndexPockets(pockets) ;
+
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+                reIndexPockets(pockets) ;
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+                reIndexPockets(pockets) ;
+
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+                reIndexPockets(pockets) ;
+
 
 	/* Descriptors calculation */
 /*
@@ -155,7 +204,9 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 		b = clock() ;
 */
                 
+
 		set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
+
                 
 /*
 		e = clock() ;
@@ -165,23 +216,37 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 */
 
 	/* Drop small and too polar binding pockets */
+
+
 		dropSmallNpolarPockets(pockets, params);
+
+
 		reIndexPockets(pockets) ;
+
 /*
 		e = clock() ;
 		fprintf(stdout, "> Refinment OK in %f sec.\n", ((double)e - b) / CLOCKS_PER_SEC) ;
 */
 
 	/* Sorting pockets */
+
 		sort_pockets(pockets, M_SCORE_SORT_FUNCT) ;
-		/*sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;*/
+
+
+/*
+		sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;
+*/
+
+
 
 		reIndexPockets(pockets) ;
+
 /*
 		fprintf(stdout,"===== fpocket algorithm ends =====\n");
 */
+
 	}
-	
+
 	return pockets ;
 }
 

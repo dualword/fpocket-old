@@ -78,27 +78,26 @@ int main(int argc, char *argv[])
 	if(params) {
 		if(params->pdb_lst != NULL) {
 		/* Handle a list of pdb */
-			int i ;
-            for (i = 0 ; i < params->npdb ; i++) {
-				
-				printf("> Protein %d / %d : %s", i, params->npdb,
-												   params->pdb_lst[i]) ;
-				if(i == params->npdb - 1) fprintf(stdout, "\n") ;
-				else fprintf(stdout, "\r") ;
-				fflush(stdout) ;
-                process_pdb(params->pdb_lst[i], params) ;
-            }
-        }
-        else {
-                if(params->pdb_path == NULL || strlen(params->pdb_path) <= 0) {
-                        fprintf(stdout, "! Invalid pdb name given.\n");
-                        print_pocket_usage(stdout) ;
+                    int i ;
+                    for (i = 0 ; i < params->npdb ; i++) {
+
+                                        printf("> Protein %d / %d : %s", i, params->npdb,
+                                                                                                           params->pdb_lst[i]) ;
+                                        if(i == params->npdb - 1) fprintf(stdout, "\n") ;
+                                        else fprintf(stdout, "\r") ;
+                                        fflush(stdout) ;
+                        process_pdb(params->pdb_lst[i], params) ;
+                    }
                 }
                 else {
-                
-                        process_pdb(params->pdb_path, params) ;
+                        if(params->pdb_path == NULL || strlen(params->pdb_path) <= 0) {
+                                fprintf(stdout, "! Invalid pdb name given.\n");
+                                print_pocket_usage(stdout) ;
+                        }
+                        else {
+                                process_pdb(params->pdb_path, params) ;
+                        }
                 }
-        }
 	
 		free_fparams(params) ;
 	}

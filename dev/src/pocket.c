@@ -78,6 +78,8 @@
 					/* CLUSTERING FUNCTIONS */
 					/* */
 
+
+
 /**
    ## FUNCTION: 
 	clusterPockets
@@ -147,6 +149,86 @@ c_lst_pockets *clusterPockets(s_lst_vvertice *lvvert, s_fparams *params)
 		return NULL ;
 	}
 }
+
+
+/**
+   ## FUNCTION:
+    assign_pockets
+
+   ## SPECIFICATION:
+	This function takes in argument a list of vertice, and assigns one pocket
+        to each vertice
+
+   ## PARAMETRES:
+	@ s_lst_vvertice *lvvert : The list of vertices.
+	@ s_fparams *params      : Parameters
+
+   ## RETURN:
+	list of pockets!
+
+*/
+c_lst_pockets *assign_pockets(s_lst_vvertice *lvvert, s_fparams *params)
+{
+	int i = -1,
+		j = -1,
+		curPocketId=1,
+                cur_n_pol=0,
+                cur_n_apol=0;
+
+	s_vvertice *vertices = lvvert->vertices,
+			   *vcur = NULL ;
+
+/*
+        printf("alloc pockets");
+        print_number_of_objects_in_memory();
+*/
+
+	c_lst_pockets *pockets = c_lst_pockets_alloc();
+
+/*
+        printf("outside");
+*/
+/*
+        print_number_of_objects_in_memory();
+*/
+
+
+	for(i=0;i<lvvert->nvert;i++) {
+		vcur = vertices + i ;
+                vcur->resid=i+1;
+                vcur->id=i+1;
+                /* Create a new pocket */
+                s_pocket *pocket = alloc_pocket();
+                pocket->v_lst=c_lst_vertices_alloc();
+                /* Add vertices to the pocket */
+                c_lst_vertices_add_last(pocket->v_lst, vcur);
+
+                if(vcur->type==M_APOLAR_AS) cur_n_apol++;
+                else cur_n_pol++;
+                pocket->rank=i+1;
+                
+                c_lst_pockets_add_last(pockets, pocket,cur_n_apol,cur_n_pol);
+	}
+
+/*
+        print_number_of_objects_in_memory();
+*/
+
+
+
+	node_pocket *p = pockets->first ;
+	while(p) {
+		p->pocket->size = p->pocket->v_lst->n_vertices ;
+		p = p->next ;
+	}
+
+	if(pockets->n_pockets > 0) return pockets ;
+	else {
+		my_free(pockets) ;
+		return NULL ;
+	}
+}
+
 
 /**
    ## FUNCTION: 
