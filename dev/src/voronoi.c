@@ -61,7 +61,8 @@
  **/
 
 static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
-                           int min_apol_neigh, float asph_min_size, float asph_max_size) ;
+                           int min_apol_neigh, float asph_min_size, float asph_max_size,
+                           float xshift, float yshift, float zshift) ;
 
 /**
    ## FUNCTION:
@@ -85,7 +86,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
     s_lst_vvertice * :The structure containing the list of vertices.
   
  */
-s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_size, float asph_max_size)
+s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_size, float asph_max_size,float xshift,float yshift,float zshift)
 {
     int i,
         nb_h = 0 ;
@@ -131,7 +132,7 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
         for (i = 0 ; i < pdb->natoms ; i++) {
             ca = (pdb->latoms) + i ;
             if (strcmp(ca->symbol, "H") != 0) {
-                fprintf(fvoro, "%.3f %.3f %.3f\n", ca->x, ca->y, ca->z) ;
+                fprintf(fvoro, "%.3f %.3f %.3f\n", ca->x+xshift, ca->y+yshift, ca->z+zshift) ;
             }
         }
 
@@ -144,7 +145,7 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
 
         if (status == M_VORONOI_SUCCESS) {
             fill_vvertices(lvvert, tmpn2, pdb->latoms, pdb->natoms,
-                           min_apol_neigh, asph_min_size, asph_max_size) ;
+                           min_apol_neigh, asph_min_size, asph_max_size,xshift,yshift,zshift) ;
         }
         else {
             my_free(lvvert) ;
@@ -242,7 +243,8 @@ s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert){
   
  */
 static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *atoms, int natoms,
-                           int min_apol_neigh, float asph_min_size, float asph_max_size)
+                           int min_apol_neigh, float asph_min_size, float asph_max_size,
+                           float xshift, float yshift,float zshift)
 {
     FILE *f = NULL ; /* File handler for vertices coordinates */
     FILE *fNb = NULL ; /* File handler for vertices atomic neighbours */
@@ -250,7 +252,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 
     s_vvertice *v = NULL ;
 
-    float tmpRay ; /* Temporary Ray of voronoi vertice (ray of alpha sphere) */
+    float tmpRadius ; /* Temporary Ray of voronoi vertice (ray of alpha sphere) */
     float xyz[3] = {0, 0, 0} ;
 
     int i, j, nchar_max = 255,
@@ -315,30 +317,41 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
                     sscanf(vNbline, "%d %d %d %d %d", &trash, &curVnbIdx[0],
                            &curVnbIdx[1], &curVnbIdx[2], &curVnbIdx[3]) ;
                     
-                    /* Test voro. vert. for alpha sphere cond. and returns ray if
+                    /* Test voro. vert. for alpha sphere cond. and returns radius if
                      * cond. are ok, -1 else */
-                    tmpRay = testVvertice(xyz, curNbIdx, atoms, asph_min_size,
-                                          asph_max_size, lvvert) ;
-                    if (tmpRay > 0) {
+                    
+                    tmpRadius = testVvertice(xyz, curNbIdx, atoms, asph_min_size,
+                                          asph_max_size, lvvert,xshift,yshift,zshift) ;
+                    if (tmpRadius > 0) {
                         v = (lvvert->vertices + vInMem) ;
                         v->x = xyz[0] ;
                         v->y = xyz[1] ;
                         v->z = xyz[2] ;
-                        v->ray = tmpRay ;
+                        v->ray = tmpRadius ;
                         v->sort_x = -1 ;
                         v->seen = 0 ;
 
                         tmpApolar = 0 ;
 
                         for (j = 0 ; j < 4 ; j++) {
-                            v->neigh[j] = &(atoms[lvvert->h_tr[curNbIdx[j]]]) ;
-
                             if (atoms[lvvert->h_tr[curNbIdx[j]]].electroneg < 2.8) tmpApolar++ ;
                             // We take the indice as is only if it is > to 0.
                             // Thihich mean that indexes starts
                             if (curVnbIdx[j] >= 0) v->vneigh[j] = curVnbIdx[j] ;
                             else v->vneigh[i] = -1 ;
+                            
+                            v->neigh[j]=&(atoms[lvvert->h_tr[curNbIdx[j]]]) ;
+
                         }
+                        v->neigh[0]=&(atoms[lvvert->h_tr[curNbIdx[0]]]);
+                        v->neigh[2]=&(atoms[lvvert->h_tr[curNbIdx[2]]]);
+                        v->neigh[3]=&(atoms[lvvert->h_tr[curNbIdx[3]]]);
+
+                        v->neigh[1]=&(atoms[lvvert->h_tr[curNbIdx[1]]]);
+/*
+                        fprintf(stdout,"%p\n",&(atoms[lvvert->h_tr[curNbIdx[2]]]));
+                        fprintf(stdout,"%p\n",v->neigh[2]);
+*/
 
                         v->apol_neighbours = 0 ;
                         lvvert->tr[i] = vInMem ;
@@ -353,7 +366,10 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 
                         v->qhullId = i ; /* Set index in the qhull file */
                         v->resid = -1 ; /* Initialize internal index */
+                        
+
                         set_barycenter(v) ; /* Set barycentre */
+
                     }
                     i++ ;
                 }
@@ -365,6 +381,73 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
     fclose(f) ;
     fclose(fNb) ;
     fclose(fvNb) ;
+}
+
+
+
+s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,s_lst_vvertice *list_shifted,float xshift,float yshift,float zshift){
+    s_vvertice *cur_vert=NULL ;
+    s_vvertice *cur_shifted_vert=NULL;
+    s_lst_vvertice *new_lvvert=my_malloc(sizeof(s_lst_vvertice));
+
+    new_lvvert->h_tr=lvvert->h_tr;
+    new_lvvert->n_h_tr=lvvert->n_h_tr;
+
+    size_t idx1=0,idx2=0;
+    int i;
+    short found=0;
+    float diff_x=0.0,diff_y=0.0,diff_z=0.0;
+
+    new_lvvert->vertices=(s_vvertice *)my_malloc(sizeof(s_vvertice)*lvvert->nvert) ;      /**< List of voronoi vertices */
+    new_lvvert->pvertices=(s_vvertice **)my_malloc(sizeof(s_vvertice*)*lvvert->nvert);
+    for(i=0;i<lvvert->nvert;i++)new_lvvert->pvertices[i]=NULL;
+    new_lvvert->tr=(int*)my_malloc(lvvert->nvert*sizeof(int));
+    for (i = 0 ; i < new_lvvert->nvert ; i++) new_lvvert->tr[i] = -1 ;
+    
+    int n_found=0;
+    fprintf(stdout,"%d nverts\n",lvvert->nvert);
+    fflush(stdout);
+    for(idx1=0;idx1<lvvert->nvert;idx1++){
+        found=0;
+        cur_vert=lvvert->pvertices[idx1];
+
+        printf("%d\n",list_shifted->nvert);
+
+        
+        for(idx2=0;idx2<list_shifted->nvert && !found;idx2++){
+            cur_shifted_vert=list_shifted->pvertices[idx2];
+            
+            diff_x=cur_vert->x-(cur_shifted_vert->x-xshift); diff_x=diff_x*diff_x;
+            diff_y=cur_vert->y-(cur_shifted_vert->y-yshift); diff_y=diff_y*diff_y;
+            diff_z=cur_vert->z-(cur_shifted_vert->z-zshift); diff_z=diff_z*diff_z;
+
+/*
+            printf("%f\n",diff_x);
+*/
+
+            if(diff_x<1e-10 && diff_y<1e-10 && diff_z<1e-10) {
+                found=1;
+                memcpy(new_lvvert->vertices+n_found,cur_vert,sizeof(s_vvertice));
+
+                new_lvvert->pvertices[n_found]=&(new_lvvert->vertices[n_found]);    /*just pointer to ancient vertice list!!!*/
+
+/*
+                memcpy(new_lvvert->pvertices[n_found],new_lvvert->vertices+n_found,sizeof(s_vvertice));
+*/
+
+                printf("%.3f vs %.3f\n",new_lvvert->vertices[n_found].y,lvvert->vertices[idx1].y);
+                printf("found : %d\n",idx1);
+                
+                n_found++;
+                
+            }
+        }
+    }
+    printf("nfound here : %d\n",n_found);
+    new_lvvert->nvert=n_found;
+    new_lvvert->qhullSize=lvvert->qhullSize;
+
+    return(new_lvvert);
 }
 
 /**
@@ -386,11 +469,19 @@ void set_barycenter(s_vvertice *v)
     float xsum = 0.0,
         ysum = 0.0,
         zsum = 0.0 ;
-
+/*
+    fprintf(stdout,"%.3f\n",v->neigh[2]->x);
+    fflush(stdout);
+*/
     for (i = 0 ; i < 4 ; i++) {
+/*
+        fprintf(stdout,"i : %d\n",i);
+*/
+        
         xsum += v->neigh[i]->x ;
         ysum += v->neigh[i]->y ;
         zsum += v->neigh[i]->z ;
+
     }
 
     v->bary[0] = xsum * 0.25 ;
@@ -420,11 +511,12 @@ void set_barycenter(s_vvertice *v)
  */
 float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms,
                    float min_asph_size, float max_asph_size,
-                   s_lst_vvertice *lvvert)
+                   s_lst_vvertice *lvvert,
+                   float xshift, float yshift, float zshift)
 {
-    float x = xyz[0],
-        y = xyz[1],
-        z = xyz[2] ;
+    float x = xyz[0]-xshift,
+        y = xyz[1]-yshift,
+        z = xyz[2]-zshift ;
 
     s_atm *cura = &(atoms[lvvert->h_tr[curNbIdx[0]]]) ;
 

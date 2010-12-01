@@ -128,10 +128,16 @@ typedef struct s_clusterlib_vertices
 /* -----------------------------PROTOTYPES----------------------------------- */
 
 s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, 
-				float ashape_min_size, float ashape_max_size) ;
+				float ashape_min_size, float ashape_max_size,
+                                float xshift,float yshift, float zshift) ;
 float testVvertice(float xyz[3], int curNbIdx[4], s_atm *atoms, 
 				   float min_asph_size, float max_asph_size, 
-				   s_lst_vvertice *lvvert);
+				   s_lst_vvertice *lvvert,
+                                   float xshift, float yshift, float zshift);
+
+s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,
+        s_lst_vvertice *list_shifted,float xshift,float yshift,float zshift);
+
 
 double **get_3d_array_from_vvertice_list(s_lst_vvertice *lvvert);
 s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert);

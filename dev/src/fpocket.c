@@ -86,8 +86,10 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 	time_t bt, et ;
 */
 	c_lst_pockets *pockets = NULL ;
+/*
         s_clusterlib_vertices *clusterlib_vertices=NULL;
         Node *cluster_tree=NULL;
+*/
 
 	/* Calculate and read voronoi vertices comming from qhull */
 /*
@@ -97,9 +99,57 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 
 	bt = time(NULL) ;
 */
-	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh,
+        fprintf(stdout,"first run\n");
+        fflush(stdout);
+	s_lst_vvertice *lvertStart = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size) ;
+						params->asph_max_size,0.0,0.0,0.0) ;
+        fprintf(stdout,"second run\n");
+        fflush(stdout);
+
+        s_lst_vvertice *lvertShift1 = load_vvertices(pdb, params->min_apol_neigh,
+                                		params->asph_min_size,
+						params->asph_max_size,1.45,10.0,1.0) ;
+        fprintf(stdout,"third run\n");
+        fflush(stdout);
+
+        s_lst_vvertice *lvertShift2 = load_vvertices(pdb, params->min_apol_neigh,
+                                		params->asph_min_size,
+						params->asph_max_size,2.0,0.0,0.0) ;
+        fprintf(stdout,"fourth run\n");
+        fflush(stdout);
+        s_lst_vvertice *lvertShift3 = load_vvertices(pdb, params->min_apol_neigh,
+                                		params->asph_min_size,
+						params->asph_max_size,0.0,0.0,1.201) ;
+
+        fprintf(stdout,"fifth run\n");
+        fflush(stdout);
+        s_lst_vvertice *lvertShift4 = load_vvertices(pdb, params->min_apol_neigh,
+                                		params->asph_min_size,
+						params->asph_max_size,1.0,1.5,1.201) ;
+
+
+        fprintf(stdout,"sixth run\n");
+        fflush(stdout);
+        s_lst_vvertice *lvertShift5 = load_vvertices(pdb, params->min_apol_neigh,
+                                		params->asph_min_size,
+						params->asph_max_size,2.0,0.0,1.201) ;
+
+
+        /*Usage of this function disrupts functioning of former initial clustering
+         * step based on vertice neighbourhood trough index lists, as the ->tr
+         * list is not updated here*/
+        s_lst_vvertice *lvert2=compare_vvertice_shifted_lists(lvertStart,lvertShift1,1.45,10.0,1.0);
+        s_lst_vvertice *lvert3=compare_vvertice_shifted_lists(lvert2,lvertShift2,2.0,0.0,0.0);
+        s_lst_vvertice *lvert4=compare_vvertice_shifted_lists(lvert3,lvertShift3,0.0,0.0,1.201);
+
+        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert4,lvertShift4,1.0,1.5,1.201);
+/*        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert5,lvertShift5,2.0,0.0,1.201);
+*/
+
+
+        
+
 /*
         clusterlib_vertices=prepare_vertices_for_cluster_lib(lvert);
 */
@@ -168,19 +218,11 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 		fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
 */
 
-
-
 		/*refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
-
-
-
 
 /*
 		reIndexPockets(pockets) ;
 */
-
-
-
 
 /*
 		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
@@ -197,14 +239,18 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
                 pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
                 reIndexPockets(pockets) ;
 
+/*
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);
+                reIndexPockets(pockets) ;
 
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);
+                reIndexPockets(pockets) ;
+*/
 	/* Descriptors calculation */
 /*
 		fprintf(stdout,"> Calculating descriptors and score...\n");
 		b = clock() ;
 */
-                
-
 		set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
 
                 

@@ -78,6 +78,19 @@ static gsl_rng *ST_r = NULL ;
 	void
   
 */
+
+
+short file_exists(const char * filename)
+{
+    FILE * file = fopen(filename, "r");
+    if (file)
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
 void start_rand_generator(void) 
 {
 	if(ST_is_rand_init == 0) {

@@ -192,9 +192,10 @@ c_lst_pockets *assign_pockets(s_lst_vvertice *lvvert, s_fparams *params)
         print_number_of_objects_in_memory();
 */
 
+        printf("%d\n",lvvert->nvert);
 
 	for(i=0;i<lvvert->nvert;i++) {
-		vcur = vertices + i ;
+        	vcur = vertices + i ;
                 vcur->resid=i+1;
                 vcur->id=i+1;
                 /* Create a new pocket */
