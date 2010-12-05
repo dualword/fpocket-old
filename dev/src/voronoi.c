@@ -86,7 +86,13 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
     s_lst_vvertice * :The structure containing the list of vertices.
   
  */
-s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_size, float asph_max_size,float xshift,float yshift,float zshift)
+s_lst_vvertice* load_vvertices(s_pdb *pdb, 
+                               int min_apol_neigh,
+                               float asph_min_size,
+                               float asph_max_size,
+                               float xshift,
+                               float yshift,
+                               float zshift)
 {
     int i,
         nb_h = 0 ;
@@ -144,8 +150,14 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_si
         int status = M_VORONOI_SUCCESS ;
 
         if (status == M_VORONOI_SUCCESS) {
-            fill_vvertices(lvvert, tmpn2, pdb->latoms, pdb->natoms,
-                           min_apol_neigh, asph_min_size, asph_max_size,xshift,yshift,zshift) ;
+            fill_vvertices(lvvert, tmpn2,
+                           pdb->latoms, pdb->natoms,
+                           min_apol_neigh,
+                           asph_min_size,
+                           asph_max_size,
+                           xshift,
+                           yshift,
+                           zshift) ;
         }
         else {
             my_free(lvvert) ;
@@ -393,14 +405,16 @@ s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,s_lst_vver
     new_lvvert->h_tr=lvvert->h_tr;
     new_lvvert->n_h_tr=lvvert->n_h_tr;
 
-    size_t idx1=0,idx2=0;
+    int idx1=0,idx2=0;
     int i;
     short found=0;
     float diff_x=0.0,diff_y=0.0,diff_z=0.0;
 
+    new_lvvert->nvert = lvvert->nvert ;
     new_lvvert->vertices=(s_vvertice *)my_malloc(sizeof(s_vvertice)*lvvert->nvert) ;      /**< List of voronoi vertices */
     new_lvvert->pvertices=(s_vvertice **)my_malloc(sizeof(s_vvertice*)*lvvert->nvert);
     for(i=0;i<lvvert->nvert;i++)new_lvvert->pvertices[i]=NULL;
+    printf("AHHHHHHHHHHHHH %d %d\n", lvvert->nvert, new_lvvert->nvert) ;
     new_lvvert->tr=(int*)my_malloc(lvvert->nvert*sizeof(int));
     for (i = 0 ; i < new_lvvert->nvert ; i++) new_lvvert->tr[i] = -1 ;
     
