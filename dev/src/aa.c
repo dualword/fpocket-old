@@ -100,6 +100,28 @@ static const s_amino_a ST_aa[20] =
 	{ "VAL", 'V', 117.0, 4.0,  76.0,  0, 0, 2 }
 } ;
 
+//be careful to keep amino-acid order with above list !!!
+
+//#define M_ALA_IDX 0 /**< 0 for ALA*/
+//#define M_CYS_IDX 1 /**< 1 for CYS*/
+//#define M_ASP_IDX 2 /**< 2 for ASP*/
+//#define M_GLU_IDX 3 /**< 3 for GLU*/
+//#define M_PHE_IDX 4 /**< 4 for PHE*/
+//#define M_GLY_IDX 5 /**< 5 for GLY*/
+//#define M_HIS_IDX 6 /**< 6 for HIS*/
+//#define M_ILE_IDX 7 /**< 7 for ILE*/
+//#define M_LYS_IDX 8 /**< 8 for LYS*/
+//#define M_LEU_IDX 9 /**< 9 for LEU
+//#define M_MET_IDX 10 /**< 10 for MET*/
+//#define M_ASN_IDX 11 /**< 11 for ASN*/
+//#define M_PRO_IDX 12 /**< 12 for PRO*/
+//#define M_GLN_IDX 13 /**< 13 for GLN*/
+//#define M_ARG_IDX 14 /**< 14 for ARG*/
+//#define M_SER_IDX 15 /**< 15 for SER*/
+//#define M_THR_IDX 16 /**< 16 for THR*/
+//#define M_VAL_IDX 17 /**< 17 for VAL*/
+//#define M_TRP_IDX 18 /**< 18 for TRP*/
+//#define M_TYR_IDX 19 /**< 19 for TYR*/
 /**
    ## FUNCTION: 
 	get_aa_name3

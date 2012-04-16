@@ -64,6 +64,11 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
                            int min_apol_neigh, float asph_min_size, float asph_max_size,
                            float xshift, float yshift, float zshift) ;
 
+
+double frand_a_b(double a, double b){
+    return ( rand()/(double)RAND_MAX ) * (b-a) + a;
+}
+
 /**
    ## FUNCTION:
     s_lst_vvertice
@@ -86,13 +91,7 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
     s_lst_vvertice * :The structure containing the list of vertices.
   
  */
-s_lst_vvertice* load_vvertices(s_pdb *pdb, 
-                               int min_apol_neigh,
-                               float asph_min_size,
-                               float asph_max_size,
-                               float xshift,
-                               float yshift,
-                               float zshift)
+s_lst_vvertice* load_vvertices(s_pdb *pdb, int min_apol_neigh, float asph_min_size, float asph_max_size,float xshift,float yshift,float zshift)
 {
     int i,
         nb_h = 0 ;
@@ -108,8 +107,9 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb,
 
     sprintf(tmpn1, "/tmp/qvoro_in_fpocket_%d.dat", pid) ;
     sprintf(tmpn2, "/tmp/qvoro_out_fpocket_%d.dat", pid) ;
+    printf(tmpn1);
 
-    
+    srand(time(NULL));
 /*
     sprintf(tmpn1, "qvoro_in_fpocket_%d.dat", pid) ;
     sprintf(tmpn2, "qvoro_out_fpocket_%d.dat", pid) ;
@@ -135,10 +135,15 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb,
         /* Write the header for qvoronoi */
         fprintf(fvoro, "3 rbox D3\n%d\n", lvvert->n_h_tr) ;
         /* Loop a second time for the qvoronoi input coordinates */
+        float xrand=0.0;
+        float yrand=0.0;
+        float zrand=0.0;
         for (i = 0 ; i < pdb->natoms ; i++) {
+            
+        
             ca = (pdb->latoms) + i ;
             if (strcmp(ca->symbol, "H") != 0) {
-                fprintf(fvoro, "%.3f %.3f %.3f\n", ca->x+xshift, ca->y+yshift, ca->z+zshift) ;
+                fprintf(fvoro, "%.6f %.6f %.6f\n", ca->x+xshift, ca->y+yshift, ca->z+zshift) ;
             }
         }
 
@@ -150,14 +155,8 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb,
         int status = M_VORONOI_SUCCESS ;
 
         if (status == M_VORONOI_SUCCESS) {
-            fill_vvertices(lvvert, tmpn2,
-                           pdb->latoms, pdb->natoms,
-                           min_apol_neigh,
-                           asph_min_size,
-                           asph_max_size,
-                           xshift,
-                           yshift,
-                           zshift) ;
+            fill_vvertices(lvvert, tmpn2, pdb->latoms, pdb->natoms,
+                           min_apol_neigh, asph_min_size, asph_max_size,xshift,yshift,zshift) ;
         }
         else {
             my_free(lvvert) ;
@@ -171,27 +170,69 @@ s_lst_vvertice* load_vvertices(s_pdb *pdb,
     fclose(fvoro) ;
     fclose(ftmp) ;
 
-    remove(tmpn1) ;
-    remove(tmpn2) ;
+    //remove(tmpn1) ;
+    //remove(tmpn2) ;
 
     
     return lvvert ;
 }
 
 double **get_3d_array_from_vvertice_list(s_lst_vvertice *lvvert){
-    double **res=(double**)my_malloc(lvvert->nvert*(sizeof(double *)));
-    int i;
-    for(i=0;i<lvvert->nvert;i++){
-        res[i]=(double*) my_malloc(3*sizeof(double));
-        res[i][0]=(double) lvvert->vertices[i].x;
-        res[i][1]=(double) lvvert->vertices[i].y;
-        res[i][2]=(double) lvvert->vertices[i].z;
-        
+    int debug=0;
+
+    if(debug==0){
+        double **res=(double**)my_malloc(lvvert->nvert*(sizeof(double *)));
+        int i;
+        for(i=0;i<lvvert->nvert;i++){
+            res[i]=(double*) my_malloc(3*sizeof(double));
+            res[i][0]=(double) lvvert->vertices[i].x;
+            res[i][1]=(double) lvvert->vertices[i].y;
+            res[i][2]=(double) lvvert->vertices[i].z;
+
+        }
+        return res;
     }
-/*
-    printf("%d vertices\n",lvvert->nvert);
-*/
-    return res;
+
+    else {
+        double **res=(double**)my_malloc(7*(sizeof(double *)));
+        int i=0;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=0.5;
+        res[i][1]=0.5;
+        res[i][2]=0.5;
+        i=1;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=0.5;
+        res[i][1]=0.6;
+        res[i][2]=1.0;
+        i=2;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=100.0;
+        res[i][1]=0.5;
+        res[i][2]=0.5;
+        i=3;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=100.0;
+        res[i][1]=1.5;
+        res[i][2]=1.5;
+        i=4;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=-50.0;
+        res[i][1]=0.5;
+        res[i][2]=50.0;
+        i=5;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=-52.0;
+        res[i][1]=0.5;
+        res[i][2]=55.0;
+        i=6;
+        res[i]=(double*) my_malloc(3*sizeof(double));
+        res[i][0]=0.0;
+        res[i][1]=0.5;
+        res[i][2]=50.0;
+        return res;
+    }
+    
 }
 
 int **get_mask(int n){
@@ -207,8 +248,28 @@ int **get_mask(int n){
     return res;
 }
 
+void transferClustersToVertices(int **clusterIds,s_lst_vvertice *lvert){
+    /*Transfer cluster Ids to vertice residue Ids which are later used for pocket clustering*/
+    int nelements=lvert->nvert;
+    int i;
+/*
+    FILE *f=fopen("test2.tmp","w");
+*/
+    for(i=0;i<nelements;i++){
+        if (clusterIds[i][0]>0) lvert->pvertices[i]->resid=clusterIds[i][1];
+/*
+        fprintf(f,"%d\n",clusterIds[i][1]);
+*/
+    }
+/*
+    fclose(f);
+*/
+}
 
-s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert){
+
+
+s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert,char c_method){
+    /*transform vertices to something the clusterlib can treat*/
     s_clusterlib_vertices *clusterObject=my_malloc(sizeof(s_clusterlib_vertices));
     clusterObject->pos=get_3d_array_from_vvertice_list(lvvert);
     clusterObject->mask=get_mask(lvvert->nvert);
@@ -226,9 +287,21 @@ s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert){
        b: City-block distance\n"
 
      * */
+/*
+    method     (input) char
+Defines which hierarchical clustering method is used:
+method=='s': pairwise single-linkage clustering
+method=='m': pairwise maximum- (or complete-) linkage clustering
+method=='a': pairwise average-linkage clustering
+method=='c': pairwise centroid-linkage clustering
+For the first three, either the distance matrix or the gene expression data is
+sufficient to perform the clustering algorithm. For pairwise centroid-linkage
+clustering, however, the gene expression data are always needed, even if the
+distance matrix itself is available.
+*/
 
     clusterObject->dist='e';    /**put general flag here, but right now euclidean distance is ok*/
-    clusterObject->method='s';  /** clustering method, see doc for options, right now, average clustering*/
+    clusterObject->method=c_method;  /** clustering method, see doc for options, right now, average clustering*/
     return(clusterObject);
 }
 
@@ -398,48 +471,59 @@ static void fill_vvertices(s_lst_vvertice *lvvert, const char fpath[], s_atm *at
 
 
 s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,s_lst_vvertice *list_shifted,float xshift,float yshift,float zshift){
+
     s_vvertice *cur_vert=NULL ;
     s_vvertice *cur_shifted_vert=NULL;
     s_lst_vvertice *new_lvvert=my_malloc(sizeof(s_lst_vvertice));
-
+    double dist=0.0;
     new_lvvert->h_tr=lvvert->h_tr;
     new_lvvert->n_h_tr=lvvert->n_h_tr;
 
-    int idx1=0,idx2=0;
+    size_t idx1=0,idx2=0;
     int i;
     short found=0;
-    float diff_x=0.0,diff_y=0.0,diff_z=0.0;
-
-    new_lvvert->nvert = lvvert->nvert ;
+    double diff_x=0.0,diff_y=0.0,diff_z=0.0;
+    
+    /*allocate a new vertice list prior to calculation*/
     new_lvvert->vertices=(s_vvertice *)my_malloc(sizeof(s_vvertice)*lvvert->nvert) ;      /**< List of voronoi vertices */
     new_lvvert->pvertices=(s_vvertice **)my_malloc(sizeof(s_vvertice*)*lvvert->nvert);
-    for(i=0;i<lvvert->nvert;i++)new_lvvert->pvertices[i]=NULL;
-    printf("AHHHHHHHHHHHHH %d %d\n", lvvert->nvert, new_lvvert->nvert) ;
+    for(i=0;i<lvvert->nvert;i++) new_lvvert->pvertices[i]=NULL;
     new_lvvert->tr=(int*)my_malloc(lvvert->nvert*sizeof(int));
+    short *shifted_vertice_found_flags=(short *)my_malloc(sizeof(short)*list_shifted->nvert);    //just a flag list to put 1 if we already found a vertice
+    for(i=0;i<list_shifted->nvert;i++) shifted_vertice_found_flags[i]=0;
+    /*new_lvvert->nvert=lvvert->nvert;
     for (i = 0 ; i < new_lvvert->nvert ; i++) new_lvvert->tr[i] = -1 ;
-    
+    */
     int n_found=0;
+/*
     fprintf(stdout,"%d nverts\n",lvvert->nvert);
+*/
+/*
     fflush(stdout);
+*/
     for(idx1=0;idx1<lvvert->nvert;idx1++){
         found=0;
         cur_vert=lvvert->pvertices[idx1];
 
+/*
         printf("%d\n",list_shifted->nvert);
-
-        
+*/
         for(idx2=0;idx2<list_shifted->nvert && !found;idx2++){
             cur_shifted_vert=list_shifted->pvertices[idx2];
             
             diff_x=cur_vert->x-(cur_shifted_vert->x-xshift); diff_x=diff_x*diff_x;
             diff_y=cur_vert->y-(cur_shifted_vert->y-yshift); diff_y=diff_y*diff_y;
             diff_z=cur_vert->z-(cur_shifted_vert->z-zshift); diff_z=diff_z*diff_z;
-
+            dist=sqrt(diff_x+diff_y+diff_z);
 /*
             printf("%f\n",diff_x);
 */
 
-            if(diff_x<1e-10 && diff_y<1e-10 && diff_z<1e-10) {
+            if(dist<1.0e-5 && shifted_vertice_found_flags[idx2]<1) {
+                shifted_vertice_found_flags[idx2]=1;
+/*
+                printf("found %d vs %d\n",idx1,idx2);
+*/
                 found=1;
                 memcpy(new_lvvert->vertices+n_found,cur_vert,sizeof(s_vvertice));
 
@@ -449,15 +533,18 @@ s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,s_lst_vver
                 memcpy(new_lvvert->pvertices[n_found],new_lvvert->vertices+n_found,sizeof(s_vvertice));
 */
 
-                printf("%.3f vs %.3f\n",new_lvvert->vertices[n_found].y,lvvert->vertices[idx1].y);
-                printf("found : %d\n",idx1);
+                //printf("%.3f vs %.3f\n",new_lvvert->vertices[n_found].y,lvvert->vertices[idx1].y);
+                //printf("found : %d\n",idx1);
                 
                 n_found++;
                 
             }
         }
     }
+    my_free(shifted_vertice_found_flags);
+/*
     printf("nfound here : %d\n",n_found);
+*/
     new_lvvert->nvert=n_found;
     new_lvvert->qhullSize=lvvert->qhullSize;
 

@@ -3222,22 +3222,103 @@ distance      (input) float
 
 ========================================================================
 */
-void cuttree_distance (int nelements, Node* tree, float distance)
+int **cuttree_distance (int nelements, Node* tree, float distance)
 {
     int i;
-    int **cluster_assign=(int **)malloc(sizeof(int *)*nelements);
+    int **cluster_assign=(int **)malloc(sizeof(int *)*nelements); /*[2d array, 0 contains actual cluster id and 1 contains a flag if a cluster has been assigned or not]*/
     for(i=0;i<nelements;i++){
         cluster_assign[i]=(int*)malloc(sizeof(int)*2);
+        cluster_assign[i][0]=-1;
+        cluster_assign[i][1]=0;
     }
-    for(i=nelements-1;i>=0;i--){
+    int cluster_id=1;
+    for(i=nelements-2;i>=0;i--){
+    //    cluster_id++;
+
+
+    //    printf("%d, %d = %f\n",tree[i].left,tree[i].right,tree[i].distance);
+
+/**       if (tree[i].left>=0 && cluster_assign[tree[i].left][1]==0){
+            cluster_assign[tree[i].left][1]=1;
+            cluster_assign[tree[i].left][0]=cluster_id;
+        }
+        if (tree[i].distance>distance){
+            
+        }
+        if (tree[i].right>=0 && cluster_assign[tree[i].right][1]==0){
+            cluster_assign[tree[i].right][1]=1;
+            cluster_assign[tree[i].right][0]=cluster_id;
+        }*/
+    //    if(tree[i].distance<=distance){
+
 /*
-        printf("%d, %d = %f\n",tree[i].left,tree[i].right,tree[i].distance);
+            fprintf(stdout,"%d\t%d\t%d\t%.3f\n",cluster_id,tree[i].left,tree[i].right,tree[i].distance);
 */
         
+        if(tree[i].distance>distance){
+            if (tree[i].left>=0) assign_cluster_to_children(cluster_id,tree[i].left,tree,cluster_assign);
+            
+            cluster_id++;
+            if (tree[i].right>=0) assign_cluster_to_children(cluster_id,tree[i].right,tree,cluster_assign);
+            cluster_id++;
+        }
+        else {
+            cluster_id++;
+            assign_cluster_to_children(cluster_id,tree[i].left,tree,cluster_assign);
+            assign_cluster_to_children(cluster_id,tree[i].right,tree,cluster_assign);
+        }
+
+
+/*
+        fprintf(stdout,"%d\t%d\t%d\t%.3f\n",cluster_id,tree[i].left,tree[i].right,tree[i].distance);
+
+     
+        if(tree[i].right<0){
+
+
+            fprintf(stdout,"KK%d\t%d\t%d\t%.3f\n",cluster_id,tree[tree[i].right*(-1)-1],tree[tree[i].right*(-1)-1],tree[i].distance);
+        }
+*/
+
+
+
+/*
+            fflush(stdout);
+            assign_cluster_to_children(cluster_id,tree[i].left,tree,cluster_assign);
+            assign_cluster_to_children(cluster_id,tree[i].right,tree,cluster_assign);
+*/
+        }
+
+/*
+    for(i=nelements-2;i>=0;i--){
+        fprintf(stdout,"Cluster %d, set %d : i %d\n",cluster_assign[i][1],cluster_assign[i][0],i);
     }
-    
+*/
+
+/*
+    }
+*/
+    return(cluster_assign);
 }
 
+
+void assign_cluster_to_children(int cid,int node_id,Node* tree,int **cluster_assign){
+    if (node_id<0){
+        assign_cluster_to_children(cid,tree[node_id*(-1)-1].left,tree,cluster_assign);
+        assign_cluster_to_children(cid,tree[node_id*(-1)-1].right,tree,cluster_assign);
+    }
+    else {
+        if(cluster_assign[node_id][0]!=1){
+/*
+            fprintf(stdout,"assigning cluster %d to id %d\n",cid,node_id);
+*/
+            cluster_assign[node_id][0]=1;
+            cluster_assign[node_id][1]=cid;
+        }
+    }
+    return;
+
+}
 
 /* ******************************************************************** */
 

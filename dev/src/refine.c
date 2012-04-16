@@ -6,7 +6,7 @@
 ##
 ## FILE 					refine.c
 ## AUTHORS					P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED			01-04-08
+## LAST MODIFIED			30-01-12
 ##
 ## SPECIFICATIONS
 ##
@@ -16,6 +16,7 @@
 ##
 ## MODIFICATIONS HISTORY
 ##
+##      30-01-12        (p)  Adding apply clustering routine for new clustering
 ##	09-02-09	(v)  Drop tiny pocket routine added
 ##	28-11-08	(v)  Comments UTD 
 ##	01-04-08	(v)  Added template for comments and creation of history
@@ -110,6 +111,63 @@ void refinePockets(c_lst_pockets *pockets, s_fparams *params)
 	}
 }
 
+
+/**
+   ## FUNCTION:
+	apply_clustering
+
+
+   ## SPECIFICATION:
+        Using prior clustering results written to vertice resid's, update and
+ *      merge pockets here
+
+   ## PARAMETRES:
+	@ c_lst_pockets *pockets : The list of pockets.
+	@ s_fparams *params      : Parameters
+
+   ## RETURN:
+	void
+
+*/
+void apply_clustering(c_lst_pockets *pockets, s_fparams *params)
+{
+	node_pocket *nextPocket;
+	node_pocket *curMobilePocket;
+
+	node_pocket *pcur = NULL ;
+        s_vvertice *vcur=NULL;
+        int cur_resid=-1;
+        s_vvertice *vmobile=NULL;
+
+        int cur_mobile_resid=-2;
+
+	if(pockets) {
+            pcur = pockets->first ;
+            while(pcur) {
+                vcur=pcur->pocket->v_lst->first->vertice;
+                curMobilePocket = pcur->next ;
+                cur_resid=vcur->resid;
+                while(curMobilePocket) {
+                    vmobile=curMobilePocket->pocket->v_lst->first->vertice;
+                    cur_mobile_resid=vmobile->resid;
+                    nextPocket = curMobilePocket->next;
+                    
+                    if(cur_resid==cur_mobile_resid) {
+                    // Merge pockets if barycentres are close to each other
+                            mergePockets(pcur, curMobilePocket, pockets);
+                    }
+                    curMobilePocket = nextPocket ;
+                }
+
+                pcur = pcur->next ;
+            }
+	}
+	else {
+		fprintf(stderr, "! No pocket to refine! (argument NULL: %p).\n", pockets) ;
+	}
+}
+
+
 /**
    ## FUNCTION: 
 	dropSmallNpolarPockets
@@ -173,14 +231,14 @@ void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params)
 	void
   
 */
-void drop_tiny(c_lst_pockets *pockets)
+void drop_tiny(c_lst_pockets *pockets, s_fparams *params)
 {
 	node_pocket *npcur = pockets->first,
 				*npnext = NULL ;
 	while(npcur) {
 		npnext = npcur->next ;
 
-		if(npcur->pocket->v_lst->n_vertices < 2){
+		if(npcur->pocket->v_lst->n_vertices < params->min_pock_nb_asph){
 		/* If the pocket is really small, drop it */
 			dropPocket(pockets, npcur);
 		}

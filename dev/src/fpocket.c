@@ -86,76 +86,83 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 	time_t bt, et ;
 */
 	c_lst_pockets *pockets = NULL ;
-/*
+
         s_clusterlib_vertices *clusterlib_vertices=NULL;
         Node *cluster_tree=NULL;
-*/
+
 
 	/* Calculate and read voronoi vertices comming from qhull */
-/*
+
  	fprintf(stdout,"========= fpocket algorithm begins =========\n") ;
 
  	fprintf(stdout, "> Calculating vertices ...\n");
 
+/*
 	bt = time(NULL) ;
 */
-        fprintf(stdout,"first run\n");
-        fflush(stdout);
-	s_lst_vvertice *lvertStart = load_vvertices(pdb, params->min_apol_neigh,
+
+	s_lst_vvertice *lvert = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
 						params->asph_max_size,0.0,0.0,0.0) ;
-        fprintf(stdout,"second run\n");
-        fflush(stdout);
-
-        s_lst_vvertice *lvertShift1 = load_vvertices(pdb, params->min_apol_neigh,
+        fprintf(stdout,"%d vertices\n",lvert->nvert);
+        /*Now read vertices again but this time with shifted coordinates to introduce some noise*/
+   /*   s_lst_vvertice *lvertShift1 = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size,1.45,10.0,1.0) ;
-        fprintf(stdout,"third run\n");
-        fflush(stdout);
-
+						params->asph_max_size,1.0,0.0,0.0) ;
+        
+        fprintf(stdout,"%d vertices\n",lvertShift1->nvert);
+   
         s_lst_vvertice *lvertShift2 = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size,2.0,0.0,0.0) ;
-        fprintf(stdout,"fourth run\n");
+						params->asph_max_size,0.0,0.0,0.0) ;
+        fprintf(stdout,"%d vertices\n",lvertShift2->nvert);
+  
         fflush(stdout);
         s_lst_vvertice *lvertShift3 = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size,0.0,0.0,1.201) ;
-
-        fprintf(stdout,"fifth run\n");
+						params->asph_max_size,0.0,10.0,5.0) ;
+        fprintf(stdout,"%d vertices\n",lvertShift3->nvert);
+*/
+        /*fprintf(stdout,"fifth run\n");
         fflush(stdout);
         s_lst_vvertice *lvertShift4 = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size,1.0,1.5,1.201) ;
-
-
-        fprintf(stdout,"sixth run\n");
+						params->asph_max_size,0.0,1.5,1.201) ;
+        /*fprintf(stdout,"sixth run\n");
         fflush(stdout);
         s_lst_vvertice *lvertShift5 = load_vvertices(pdb, params->min_apol_neigh,
                                 		params->asph_min_size,
-						params->asph_max_size,2.0,0.0,1.201) ;
+						params->asph_max_size,1.0,0.0,1.201) ;
 
 
         /*Usage of this function disrupts functioning of former initial clustering
          * step based on vertice neighbourhood trough index lists, as the ->tr
          * list is not updated here*/
-        s_lst_vvertice *lvert2=compare_vvertice_shifted_lists(lvertStart,lvertShift1,1.45,10.0,1.0);
-        s_lst_vvertice *lvert3=compare_vvertice_shifted_lists(lvert2,lvertShift2,2.0,0.0,0.0);
-        s_lst_vvertice *lvert4=compare_vvertice_shifted_lists(lvert3,lvertShift3,0.0,0.0,1.201);
+/*
+        s_lst_vvertice *lvert1=compare_vvertice_shifted_lists(lvertStart,lvertShift1,1.0,0.0,0.0);
+        fprintf(stdout,"%d vertices\n",lvert2->nvert);
+        fprintf(stdout,"first comparison done\n");
 
-        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert4,lvertShift4,1.0,1.5,1.201);
-/*        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert5,lvertShift5,2.0,0.0,1.201);
+        s_lst_vvertice *lvert3=compare_vvertice_shifted_lists(lvert2,lvertShift2,0.0,0.0,0.0);
+        fprintf(stdout,"%d vertices\n",lvert3->nvert);
+        fprintf(stdout,"second comparison done\n");
+        fflush(stdout);
+        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert3,lvertShift3,0.0,10.0,5.0);
+        fprintf(stdout,"%d vertices\n",lvert->nvert);*/
+/*        s_lst_vvertice *lvert5=compare_vvertice_shifted_lists(lvert4,lvertShift4,0.0,1.5,1.201);
+        s_lst_vvertice *lvert=compare_vvertice_shifted_lists(lvert5,lvertShift5,1.0,0.0,1.201);
 */
 
-
+/*
+        s_lst_vvertice *lvert=lvertStart;
+*/
         
+        
+        fprintf(stdout,"Preparing for clustering\n");
+        clusterlib_vertices=prepare_vertices_for_cluster_lib(lvert,'s');
 
-/*
-        clusterlib_vertices=prepare_vertices_for_cluster_lib(lvert);
-*/
-/*
+        fprintf(stdout,"Clustering\n");
         cluster_tree=treecluster(lvert->nvert,
-
                                 3,
                                 clusterlib_vertices->pos,
                                 clusterlib_vertices->mask,
@@ -165,8 +172,12 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
                                 clusterlib_vertices->method,
                                 NULL);
 
-        cuttree_distance (lvert->nvert, cluster_tree, 3.0);
-*/
+        int **clusterIds=cuttree_distance (lvert->nvert, cluster_tree, 2.5);
+        int i;
+
+        transferClustersToVertices(clusterIds,lvert);
+
+        //return NULL;
         /*
 	et = time(NULL) ;
  	fprintf(stdout, "> Vertices successfully calculated in apox. %f sec.\n",
@@ -182,16 +193,53 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 
 		b = clock() ;
 */
+
+
 /*
 	pockets = clusterPockets(lvert, params);
 */
-        
+
         pockets = assign_pockets(lvert,params);
+
+/*
+        pockets->vertices = lvert ;
+
+*/
+/*
+        fprintf(stdout,"%d pockets found %d\n",pockets->n_pockets,lvert->nvert);
+*/
+        apply_clustering(pockets,params) ;
+	
+
+/*
+	node_pocket *pcur = NULL;
+        pcur = pockets->first ;
+        i=0;
+        while(pcur) {
+
+            
+            fprintf(stdout,"pocket %d -> nverts %d\n",i,pcur->pocket->size);
+            pcur = pcur->next ;
+            i++;
+        }
+*/
         
+
+
+/*
+        fprintf(stdout,"%d pockets found %d\n",pockets->n_pockets,lvert->nvert);
+*/
 
 	if(pockets) {
 
+
+
+/*
 		pockets->vertices = lvert ;
+                
+*/
+
+
 /*
 		e = clock() ;
 		fprintf(stdout, "> Clustering OK in %f sec.\n",
@@ -206,51 +254,52 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 */
 
 
-		reIndexPockets(pockets) ;
+		//reIndexPockets(pockets) ;
 
 
-/*
-		drop_tiny(pockets) ;	
-		reIndexPockets(pockets) ;
-*/
 
-/*
+		//drop_tiny(pockets,params) ;
+		reIndexPockets(pockets) ;/*
 		fprintf(stdout,"\t* 2nd refinment step -> clustering : based on barycenters...\n");
-*/
 
-		/*refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
+		refinePockets(pockets, params) ;	/* Refine clustering (rapid) */
 
-/*
-		reIndexPockets(pockets) ;
-*/
+/*		reIndexPockets(pockets) ;*/
+
 
 /*
 		fprintf(stdout,"\t* 3rd refinment step -> single linkage clusturing...\n");
 */
 
+/*
 		pck_final_clust(pockets, params,2.0,1,pdb,pdb_w_lig);	/* Single Linkage Clustering */
-                reIndexPockets(pockets) ;
-
-                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
-                reIndexPockets(pockets) ;
-                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
-                reIndexPockets(pockets) ;
-
-                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
-                reIndexPockets(pockets) ;
 
 /*
-                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);
-                reIndexPockets(pockets) ;
-
-                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);
                 reIndexPockets(pockets) ;
 */
-	/* Descriptors calculation */
+
+                //pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+                //reIndexPockets(pockets) ;
 /*
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+
+/*
+                reIndexPockets(pockets) ;
+*/
+
+
+                pck_final_clust(pockets, params,params->sl_clust_max_dist,params->sl_clust_min_nneigh,pdb,pdb_w_lig);	/* Single Linkage Clustering */
+
+                reIndexPockets(pockets) ;
+
+
+	/* Descriptors calculation */
+
 		fprintf(stdout,"> Calculating descriptors and score...\n");
+/*
 		b = clock() ;
 */
+
 		set_pockets_descriptors(pockets,pdb,params,pdb_w_lig);
 
                 
@@ -264,7 +313,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 	/* Drop small and too polar binding pockets */
 
 
-		dropSmallNpolarPockets(pockets, params);
+		//dropSmallNpolarPockets(pockets, params);
 
 
 		reIndexPockets(pockets) ;
@@ -279,9 +328,7 @@ c_lst_pockets* search_pocket(s_pdb *pdb, s_fparams *params,s_pdb *pdb_w_lig)
 		sort_pockets(pockets, M_SCORE_SORT_FUNCT) ;
 
 
-/*
-		sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;
-*/
+		//sort_pockets(pockets, M_NASPH_SORT_FUNCT) ;
 
 
 
