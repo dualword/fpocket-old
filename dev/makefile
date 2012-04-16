@@ -126,19 +126,19 @@ $(PATH_OBJ)%.o: $(PATH_SRC)%.cpp
 all: $(MYPROGS) $(PATH_BIN)$(CHECK)
 		
 $(PATH_BIN)$(CHECK): $(CHOBJ) $(QOBJS)
-	$(LINKER) $(LFLAGS) $^ -o $@
+	$(LINKER) $^ -o $@ $(LFLAGS)
 
 $(PATH_BIN)$(FPOCKET): $(FPOBJ) $(QOBJS)
-	$(LINKER) $(LFLAGS) $^ -o $@
+	$(LINKER) $^ -o $@ $(LFLAGS)
 
 $(PATH_BIN)$(TPOCKET): $(TPOBJ) $(QOBJS)
-	$(LINKER) $(LFLAGS) $^ -o $@
+	$(LINKER) $^ -o $@ $(LFLAGS)
 
 $(PATH_BIN)$(DPOCKET): $(DPOBJ) $(QOBJS)
-	$(LINKER) $(LFLAGS) $^ -o $@
+	$(LINKER) $^ -o $@ $(LFLAGS)
 
 $(PATH_BIN)$(MDPOCKET): $(MDPOBJ) $(QOBJS)
-	$(LINKER) $(LFLAGS) $^ -o $@
+	$(LINKER) $^ -o $@ $(LFLAGS)
 
 install:
 	mkdir -p $(BINDIR)

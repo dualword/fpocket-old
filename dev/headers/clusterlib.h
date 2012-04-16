@@ -77,7 +77,7 @@ typedef struct {int left; int right; double distance;} Node;
 Node* treecluster (int nrows, int ncolumns, double** data, int** mask,
   double weight[], int transpose, char dist, char method, double** distmatrix);
 void cuttree (int nelements, Node* tree, int nclusters, int clusterid[]);
-void cuttree_distance (int nelements, Node* tree, float distance);
+int **cuttree_distance (int nelements, Node* tree, float distance);
 
 
 /* Chapter 5 */

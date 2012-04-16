@@ -53,8 +53,9 @@
 /* --------------------------PROTOTYPES---------------------------------------*/
 
 void refinePockets(c_lst_pockets *pockets, s_fparams *params);
+void apply_clustering(c_lst_pockets *pockets, s_fparams *params);
 void reIndexPockets(c_lst_pockets *pockets);
 void dropSmallNpolarPockets(c_lst_pockets *pockets, s_fparams *params);
-void drop_tiny(c_lst_pockets *pockets) ;
+void drop_tiny(c_lst_pockets *pockets, s_fparams *params) ;
 
 #endif

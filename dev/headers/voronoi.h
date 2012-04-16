@@ -42,7 +42,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
-
+#include <time.h>
 #include "rpdb.h"
 #include "writepdb.h"
 #include "calc.h"
@@ -140,7 +140,7 @@ s_lst_vvertice *compare_vvertice_shifted_lists(s_lst_vvertice *lvvert,
 
 
 double **get_3d_array_from_vvertice_list(s_lst_vvertice *lvvert);
-s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert);
+s_clusterlib_vertices *prepare_vertices_for_cluster_lib(s_lst_vvertice *lvvert,char c_method);
 void set_barycenter(s_vvertice *v) ;
 int is_in_lst_vert(s_vvertice **lst_vert, int nb_vert, int v_id) ;
 int is_in_lst_vert_p(s_vvertice **lst_vert, int nb_vert, s_vvertice *vert);
@@ -151,5 +151,9 @@ float get_verts_volume_ptr(s_vvertice **verts, int nvert, int niter,float correc
 
 void print_vvertices(FILE *f, s_lst_vvertice *lvvert) ;
 void free_vert_lst(s_lst_vvertice *lvvert) ;
+
+void transferClustersToVertices(int **clusterIds,s_lst_vvertice *lvert);
+
+double frand_a_b(double a, double b);
 
 #endif
