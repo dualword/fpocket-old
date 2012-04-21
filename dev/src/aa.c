@@ -6,7 +6,7 @@
 ##
 ## FILE 				aa.c
 ## AUTHORS				P. Schmidtke and V. Le Guilloux
-## LAST MODIFIED		28-11-08 (v)
+## LAST MODIFIED		21-04-12 (p)
 ##
 ## SPECIFICATIONS
 ##
@@ -18,6 +18,7 @@
 ##
 ## MODIFICATIONS HISTORY
 ##
+##      21-04-12        (p)  modifications to amino acid ordering in s_amino_a ST_aa to match IDX values in header!
 ##	28-11-08	(v)  Comments UTD
 ##	20-11-08	(v)  Added molecular weight
 ##	01-04-08	(v)  Added comments and creation of history
